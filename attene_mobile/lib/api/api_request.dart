@@ -1,0 +1,618 @@
+import 'dart:convert';
+
+import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/utlis/language/language_controller.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart' hide Response;
+
+
+const String postMethod = 'POST';
+const String getMethod = 'GET';
+const String putMethod = 'PUT';
+const String deleteMethod = 'DELETE';
+const String patchMethod = 'PATCH';
+
+enum AppMode { dev, staging, production }
+
+const AppMode currentMode = AppMode.dev;
+
+class ApiHelper {
+  static Map<String, dynamic> _getBaseHeaders() {
+    final MyAppController myAppController = Get.find<MyAppController>();
+    final LanguageController appLanguageController = Get.find<LanguageController>();
+
+    String authorization = '';
+    if (myAppController.userData.isNotEmpty && myAppController.userData['token'] != null) {
+      authorization = 'Bearer ${myAppController.userData['token']}';
+    }
+
+    return {
+      'Authorization': authorization,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Device-Type': 'MOBILE',
+      'Accept-Language': appLanguageController.appLocale.value,
+    };
+  }
+
+  static String _getBaseUrl() {
+    switch (currentMode) {
+      case AppMode.dev:
+        return 'https://aatene.dev/api';
+      case AppMode.staging:
+        return 'https://staging-api.aatene.com/api/v1';
+      case AppMode.production:
+        return 'https://api.aatene.com/api/v1';
+    }
+  }
+
+  static Dio _dio() {
+    return Dio(
+      BaseOptions(
+        baseUrl: _getBaseUrl(),
+        headers: _getBaseHeaders(),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+      ),
+    );
+  }
+
+  static Future<dynamic> get({
+    required String path,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: getMethod,
+      path: path,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> post({
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: postMethod,
+      path: path,
+      body: body,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> put({
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: putMethod,
+      path: path,
+      body: body,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> delete({
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: deleteMethod,
+      path: path,
+      body: body,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> patch({
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: patchMethod,
+      path: path,
+      body: body,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> _makeRequest({
+    required String method,
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    required bool withLoading,
+    required bool shouldShowMessage,
+  }) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+    final MyAppController myAppController = Get.find<MyAppController>();
+
+    if (!myAppController.isInternetConnect.value) {
+      _showNoInternetError(shouldShowMessage);
+      return null;
+    }
+
+    try {
+      if (withLoading) {
+        _startLoading();
+      }
+
+      final requestHeaders = {..._getBaseHeaders(), ...?headers};
+    print('''
+🎯 [API REQUEST] $method $_getBaseUrl()$path
+📦 Headers: $requestHeaders
+📤 Body: ${body != null ? jsonEncode(body) : 'null'}
+    ''');
+
+      final Dio dio = Dio(
+        BaseOptions(
+          baseUrl: _getBaseUrl(),
+          headers: requestHeaders,
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+        ),
+      );
+
+      Response response;
+      switch (method.toUpperCase()) {
+        case getMethod:
+          response = await dio.get(path, queryParameters: queryParameters);
+          break;
+        case postMethod:
+          response = await dio.post(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        case putMethod:
+          response = await dio.put(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        case deleteMethod:
+          response = await dio.delete(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        case patchMethod:
+          response = await dio.patch(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        default:
+          throw Exception('HTTP method not supported: $method');
+      }
+
+      _logRequestSuccess(method, path, response.data, stopwatch);
+
+      if (withLoading) {
+        _dismissLoading();
+      }
+
+      return response.data;
+
+    } catch (error) {
+      _dismissLoading();
+      return _handleError(error, method, path, stopwatch, shouldShowMessage);
+    }
+  }
+
+static Future<dynamic> login({
+  required String email,
+  required String password,
+  bool withLoading = true,
+}) async {
+  // Determine if the input is email or phone
+  final bool isEmail = email.contains('@');
+  final bool isPhone = RegExp(r'^[0-9]+$').hasMatch(email);
+  
+  Map<String, dynamic> body = {
+    'password': password,
+    'device_name': 'mobile',
+  };
+body['login'] = email;
+  // Add the appropriate field based on input type
+  if (isEmail) {
+    body['login'] = email;
+  } else if (isPhone) {
+    body['login'] = email;
+  } else {
+    // If unsure, use login field as fallback
+    body['login'] = email;
+  }
+
+  return await post(
+    path: '/auth/login',
+    body: body,
+    withLoading: withLoading,
+    shouldShowMessage: true,
+  );
+}
+static Future<dynamic> register({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required String passwordConfirmation,
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/register',
+      body: {
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+        'device_name': 'mobile',
+      },
+      withLoading: withLoading,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> logout() async {
+    return await post(
+      path: '/auth/logout',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> forgotPassword({
+    required String email,
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/forgot-password',
+      body: {'email': email},
+      withLoading: withLoading,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> resetPassword({
+    required String email,
+    required String token,
+    required String password,
+    required String passwordConfirmation,
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/reset-password',
+      body: {
+        'email': email,
+        'token': token,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      },
+      withLoading: withLoading,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> verifyEmail({
+    required String code,
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/verify-email',
+      body: {'code': code},
+      withLoading: withLoading,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> resendVerificationCode({
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/resend-verification',
+      withLoading: withLoading,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> checkEmailExists(String email) async {
+    return await post(
+      path: '/auth/check-email',
+      body: {'email': email},
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> checkPhoneExists(String phone) async {
+    return await post(
+      path: '/auth/check-phone',
+      body: {'phone': phone},
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> getUserProfile() async {
+    return await get(
+      path: '/user/profile',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> updateUserProfile(Map<String, dynamic> data) async {
+    return await put(
+      path: '/user/profile',
+      body: data,
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) async {
+    return await post(
+      path: '/user/change-password',
+      body: {
+        'current_password': currentPassword,
+        'password': newPassword,
+        'password_confirmation': newPasswordConfirmation,
+      },
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static void _startLoading() {
+    if (Get.isDialogOpen ?? false) return;
+    
+    Get.dialog(
+      Center(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 10),
+              Text('جاري التحميل...'),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  static void _dismissLoading() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+  }
+
+  static void _showNoInternetError(bool shouldShowMessage) {
+    if (shouldShowMessage) {
+      Get.snackbar(
+        'لا يوجد اتصال بالإنترنت',
+        'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  static dynamic _handleError(
+    dynamic error,
+    String method,
+    String path,
+    Stopwatch stopwatch,
+    bool shouldShowMessage,
+  ) {
+    stopwatch.stop();
+
+    if (error is DioException) {
+      final errorData = error.response?.data ?? {
+        'errors': [{'message': 'حدث خطأ غير متوقع'}]
+      };
+
+      _logRequestError(method, path, errorData, stopwatch, true, error.response?.statusCode);
+
+      if (shouldShowMessage) {
+        _showErrorMessage(errorData);
+      }
+
+      _handleSpecificErrors(error);
+
+      return errorData;
+    } else {
+      _logRequestError(method, path, error.toString(), stopwatch, false, null);
+      
+      if (shouldShowMessage) {
+        _showGenericError();
+      }
+      
+      return {'message': error.toString()};
+    }
+  }
+
+  static void _logRequestSuccess(String method, String path, dynamic response, Stopwatch stopwatch) {
+    stopwatch.stop();
+    print('''
+🚀 [API SUCCESS] $method $path
+⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
+📦 Response: ${_formatJson(response)}
+    ''');
+  }
+
+  static void _logRequestError(
+    String method,
+    String path,
+    dynamic error,
+    Stopwatch stopwatch,
+    bool isDioError,
+    int? statusCode,
+  ) {
+    print('''
+❌ [API ERROR] $method $path
+⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
+${isDioError ? '📊 Status Code: $statusCode' : ''}
+📦 Error: ${isDioError ? _formatJson(error) : error}
+    ''');
+  }
+
+  static void _showErrorMessage(dynamic errorData) {
+    String errorMessage = 'حدث خطأ غير متوقع';
+
+    if (errorData['errors'] != null) {
+      if (errorData['errors'] is List && errorData['errors'].isNotEmpty) {
+        errorMessage = errorData['errors'][0]['message'] ?? errorMessage;
+      } else if (errorData['errors'] is Map) {
+        final errors = errorData['errors'] as Map;
+        final firstError = errors.values.first;
+        if (firstError is List && firstError.isNotEmpty) {
+          errorMessage = firstError[0];
+        }
+      }
+    } else if (errorData['message'] != null) {
+      errorMessage = errorData['message'];
+    }
+
+    Get.snackbar(
+      'خطأ',
+      errorMessage,
+      snackPosition: SnackPosition.BOTTOM,
+      duration: Duration(seconds: 3),
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+
+  static void _showGenericError() {
+    Get.snackbar(
+      'خطأ',
+      'حدث خطأ أثناء الاتصال بالخادم',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: Duration(seconds: 3),
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+
+  static void _handleSpecificErrors(DioError error) {
+    final MyAppController myAppController = Get.find<MyAppController>();
+
+    switch (error.response?.statusCode) {
+      case 401:
+        // غير مصرح - تسجيل الخروج
+        myAppController.onSignOut();
+        Get.offAllNamed('/login');
+        break;
+      case 403:
+        // ممنوع الوصول
+        Get.snackbar(
+          'ممنوع الوصول',
+          'ليس لديك صلاحية للوصول إلى هذا المورد',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        break;
+      case 404:
+        // غير موجود
+        Get.snackbar(
+          'غير موجود',
+          'المورد المطلوب غير موجود',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        break;
+      case 422:
+        // بيانات غير صالحة (يتم معالجتها في _showErrorMessage)
+        break;
+      case 500:
+        Get.snackbar(
+          'خطأ في الخادم',
+          'حدث خطأ في الخادم، يرجى المحاولة لاحقاً',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        break;
+    }
+  }
+
+  static String _formatJson(dynamic json) {
+    try {
+      if (json is String) {
+        return json;
+      }
+      return const JsonEncoder.withIndent('  ').convert(json);
+    } catch (e) {
+      return json.toString();
+    }
+  }
+
+  static Future<bool> checkInternetConnection() async {
+    try {
+      final response = await Dio().get(
+        'https://www.google.com',
+        options: Options(receiveTimeout: Duration(seconds: 5)),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+}
