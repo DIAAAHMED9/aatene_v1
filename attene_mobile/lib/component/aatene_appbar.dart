@@ -8,7 +8,7 @@ class AateneAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
+    return  AppBar(
       title: Text(
         title,
         style: TextStyle(

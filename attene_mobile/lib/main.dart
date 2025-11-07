@@ -2,6 +2,7 @@ import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
+import 'package:attene_mobile/view/add%20new%20store/add_store.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Aatene App',
       initialBinding: AppBindings(),
+      locale: Locale('ar', 'AE'),
+      supportedLocales: [Locale('en', 'US'), Locale('ar', 'AE')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {
-        '/': (context) => const SplashScreen(),
+        '/': (context) => const AddStore(),
         '/onboarding': (context) => const Onbording(),
         '/start_login': (context) => const StartLogin(),
         '/login': (context) => Login(),
@@ -53,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/forget_password': (context) => ForgetPassword(),
         '/verification': (context) => Verification(),
         '/set_new_password': (context) => SetNewPassword(),
+        // '/add_new_store': (context) => AddStore(),
         '/home': (context) => Scaffold(
           appBar: AppBar(title: const Text('Home')),
           body: const Center(child: Text('Welcome to the Home Screen!')),
