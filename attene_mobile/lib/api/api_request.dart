@@ -47,16 +47,6 @@ class ApiHelper {
     }
   }
 
-  static Dio _dio() {
-    return Dio(
-      BaseOptions(
-        baseUrl: _getBaseUrl(),
-        headers: _getBaseHeaders(),
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-      ),
-    );
-  }
 
   static Future<dynamic> get({
     required String path,

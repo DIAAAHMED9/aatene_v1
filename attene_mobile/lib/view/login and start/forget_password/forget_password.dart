@@ -25,7 +25,7 @@ class ForgetPassword extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Align(
-                  alignment: isRTL ? Alignment.topLeft : Alignment.topRight,
+                  alignment: isRTL ? Alignment.topRight : Alignment.topLeft,
                   child: Container(
                     height: ResponsiveDimensions.h(40),
                     width: ResponsiveDimensions.w(40),
