@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 import 'login_controller.dart';
+
 class Login extends StatelessWidget {
   final LoginController controller = Get.put(LoginController());
+
   Login({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -60,10 +63,9 @@ class Login extends StatelessWidget {
                 Obx(
                   () => TextFiledAatene(
                     isRTL: isRTL,
-                    hintText:
-                        isRTL
-                            ? 'البريد الإلكتروني / رقم الجوال'
-                            : 'Email / Phone Number',
+                    hintText: isRTL
+                        ? 'البريد الإلكتروني / رقم الجوال'
+                        : 'Email / Phone Number',
                     errorValue: controller.emailError.value,
                     onChanged: controller.updateEmail,
                     isError: controller.emailError.isNotEmpty,
@@ -83,10 +85,9 @@ class Login extends StatelessWidget {
                         controller.obscurePassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color:
-                            controller.passwordError.isNotEmpty
-                                ? Colors.red
-                                : Colors.grey,
+                        color: controller.passwordError.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey,
                       ),
                       onPressed: controller.togglePasswordVisibility,
                     ),

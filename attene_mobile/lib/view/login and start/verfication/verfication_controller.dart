@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class VerificationController extends GetxController {
   var codes = List<String>.filled(5, '').obs;
   var isLoading = false.obs;
@@ -9,15 +10,18 @@ class VerificationController extends GetxController {
   var canResend = false.obs;
   var resendCountdown = 60.obs;
   List<FocusNode> focusNodes = List.generate(5, (index) => FocusNode());
+
   @override
   void onInit() {
     super.onInit();
     startCountdown();
   }
+
   void startCountdown() {
     canResend.value = false;
     resendCountdown.value = 60;
   }
+
   void updateCode(int index, String value) {
     if (value.length <= 1) {
       codes[index] = value;
@@ -38,12 +42,15 @@ class VerificationController extends GetxController {
       }
     }
   }
+
   bool isAllFieldsFilled() {
     return codes.every((code) => code.isNotEmpty);
   }
+
   String getFullCode() {
     return codes.join();
   }
+
   bool validateFields() {
     if (!isAllFieldsFilled()) {
       errorMessage.value = 'يرجى إدخال جميع الأرقام';
@@ -58,6 +65,7 @@ class VerificationController extends GetxController {
     errorMessage.value = '';
     return true;
   }
+
   Future<void> verifyCode() async {
     if (!validateFields()) {
       return;
@@ -88,11 +96,13 @@ class VerificationController extends GetxController {
       isLoading.value = false;
     }
   }
+
   void resetFields() {
     for (int i = 0; i < codes.length; i++) {
       codes[i] = '';
     }
   }
+
   Future<void> resendCode() async {
     isLoading.value = true;
     try {
@@ -119,9 +129,11 @@ class VerificationController extends GetxController {
       isLoading.value = false;
     }
   }
+
   void goBack() {
     Get.back();
   }
+
   @override
   void onClose() {
     for (var node in focusNodes) {

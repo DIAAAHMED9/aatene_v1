@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class AppColors {
   static const Color warning100 = Color(0xFFFFF8E9);
   static const Color warning200 = Color(0xFFFFDB43);

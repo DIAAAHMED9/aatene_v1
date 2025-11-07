@@ -12,7 +12,8 @@ class VerificationCodeField extends StatelessWidget {
   final Function(String) onChanged;
   final bool hasError;
   final bool autoFocus;
-  final VoidCallback? onDelete; 
+  final VoidCallback? onDelete;
+
   const VerificationCodeField({
     super.key,
     required this.controller,
@@ -22,6 +23,7 @@ class VerificationCodeField extends StatelessWidget {
     this.autoFocus = false,
     this.onDelete,
   });
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -80,9 +82,12 @@ class VerificationCodeField extends StatelessWidget {
     );
   }
 }
+
 class Verification extends StatelessWidget {
   final VerificationController controller = Get.put(VerificationController());
+
   Verification({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -118,7 +123,7 @@ class Verification extends StatelessWidget {
                     ),
                     child: IconButton(
                       icon: Icon(
-                        isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios, 
+                        isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
                         color: Colors.black,
                         size: ResponsiveDimensions.f(16),
                       ),
@@ -153,80 +158,93 @@ class Verification extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(30)),
-                Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(5, (index) {
-                    return VerificationCodeField(
-                      controller: TextEditingController(text: controller.codes[index]),
-                      focusNode: controller.focusNodes[index],
-                      onChanged: (value) => controller.updateCode(index, value),
-                      hasError: controller.errorMessage.isNotEmpty,
-                      autoFocus: index == 0, 
-                    );
-                  }),
-                )),
-SizedBox(height: ResponsiveDimensions.h(200)),
-                Obx(() => controller.errorMessage.isNotEmpty
-                    ? Padding(
-                        padding: EdgeInsets.only(
-                          top: ResponsiveDimensions.h(16),
-                          right: isRTL ? 0 : ResponsiveDimensions.w(12),
-                          left: isRTL ? ResponsiveDimensions.w(12) : 0,
+                Obx(
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(5, (index) {
+                      return VerificationCodeField(
+                        controller: TextEditingController(
+                          text: controller.codes[index],
                         ),
-                        child: Text(
-                          controller.errorMessage.value,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: ResponsiveDimensions.f(14),
-                            fontWeight: FontWeight.w500,
+                        focusNode: controller.focusNodes[index],
+                        onChanged: (value) =>
+                            controller.updateCode(index, value),
+                        hasError: controller.errorMessage.isNotEmpty,
+                        autoFocus: index == 0,
+                      );
+                    }),
+                  ),
+                ),
+                SizedBox(height: ResponsiveDimensions.h(200)),
+                Obx(
+                  () => controller.errorMessage.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            top: ResponsiveDimensions.h(16),
+                            right: isRTL ? 0 : ResponsiveDimensions.w(12),
+                            left: isRTL ? ResponsiveDimensions.w(12) : 0,
                           ),
-                          textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                        ),
-                      )
-                    : SizedBox()),
+                          child: Text(
+                            controller.errorMessage.value,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: ResponsiveDimensions.f(14),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                          ),
+                        )
+                      : SizedBox(),
+                ),
                 SizedBox(height: ResponsiveDimensions.h(50)),
-   Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isRTL ? 'لم تستلم الرمز؟ ' : 'Didn\'t receive code? ',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: ResponsiveDimensions.f(14),
-                      ),
-                    ),
-                    if (controller.canResend.value)
-                      GestureDetector(
-                        onTap: controller.isLoading.value ? null : controller.resendCode,
-                        child: Text(
-                          isRTL ? 'إعادة الإرسال' : 'Resend',
-                          style: TextStyle(
-                            color: AppColors.primary400,
-                            fontWeight: FontWeight.bold,
-                            fontSize: ResponsiveDimensions.f(14),
-                          ),
-                        ),
-                      )
-                    else
+                Obx(
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       Text(
-                        isRTL ? 
-                          'إعادة الإرسال خلال ${controller.resendCountdown.value} ثانية' :
-                          'Resend in ${controller.resendCountdown.value}s',
+                        isRTL ? 'لم تستلم الرمز؟ ' : 'Didn\'t receive code? ',
                         style: TextStyle(
-                          color: Colors.grey[500],
+                          color: Colors.grey[600],
                           fontSize: ResponsiveDimensions.f(14),
                         ),
                       ),
-                  ],
-                )),
+                      if (controller.canResend.value)
+                        GestureDetector(
+                          onTap: controller.isLoading.value
+                              ? null
+                              : controller.resendCode,
+                          child: Text(
+                            isRTL ? 'إعادة الإرسال' : 'Resend',
+                            style: TextStyle(
+                              color: AppColors.primary400,
+                              fontWeight: FontWeight.bold,
+                              fontSize: ResponsiveDimensions.f(14),
+                            ),
+                          ),
+                        )
+                      else
+                        Text(
+                          isRTL
+                              ? 'إعادة الإرسال خلال ${controller.resendCountdown.value} ثانية'
+                              : 'Resend in ${controller.resendCountdown.value}s',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: ResponsiveDimensions.f(14),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: ResponsiveDimensions.h(20)),
- Obx(
+                Obx(
                   () => AateneButton(
                     textColor: Colors.white,
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
                     isLoading: controller.isLoading.value,
-                    onTap: controller.isLoading.value ? null : controller.verifyCode,
+                    onTap: controller.isLoading.value
+                        ? null
+                        : controller.verifyCode,
                     buttonText: isRTL ? 'تحقق' : 'Verify',
                   ),
                 ),

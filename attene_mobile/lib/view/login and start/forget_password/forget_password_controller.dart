@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class ForgetPasswordController extends GetxController {
   var email = ''.obs;
   var isLoading = false.obs;
   var emailError = RxString('');
+
   void updateEmail(String value) {
     email.value = value;
     emailError.value = '';
   }
+
   bool validateFields() {
     bool isValid = true;
     if (email.value.isEmpty) {
@@ -21,10 +24,12 @@ class ForgetPasswordController extends GetxController {
     }
     return isValid;
   }
+
   bool isValidEmail(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
   }
+
   Future<void> sendPasswordReset() async {
     if (!validateFields()) {
       return;
@@ -52,9 +57,11 @@ class ForgetPasswordController extends GetxController {
       isLoading.value = false;
     }
   }
+
   void goBack() {
     Get.back();
   }
+
   @override
   void onClose() {
     email.value = '';

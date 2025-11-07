@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class LayoutUtils {
   static EdgeInsets directionSensitivePadding({
     double start = 0,
@@ -9,10 +10,11 @@ class LayoutUtils {
     double bottom = 0,
   }) {
     final isRTL = _isRTL();
-    return isRTL 
+    return isRTL
         ? EdgeInsets.fromLTRB(end, top, start, bottom)
         : EdgeInsets.fromLTRB(start, top, end, bottom);
   }
+
   static EdgeInsets directionSensitiveMargin({
     double start = 0,
     double end = 0,
@@ -26,7 +28,9 @@ class LayoutUtils {
       bottom: bottom,
     );
   }
-  static Widget directionAwareIcon(IconData icon, {
+
+  static Widget directionAwareIcon(
+    IconData icon, {
     double size = 24,
     Color? color,
   }) {
@@ -37,6 +41,7 @@ class LayoutUtils {
       child: Icon(icon, size: size, color: color),
     );
   }
+
   static Row directionAwareRow({
     List<Widget> children = const [],
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
@@ -49,10 +54,12 @@ class LayoutUtils {
       children: isRTL ? children.reversed.toList() : children,
     );
   }
+
   static List<Widget> directionAwareExpanded(List<Widget> children) {
     final isRTL = _isRTL();
     return isRTL ? children.reversed.toList() : children;
   }
+
   static bool _isRTL() {
     try {
       final locale = Get.locale;

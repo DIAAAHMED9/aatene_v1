@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 
-
 const String postMethod = 'POST';
 const String getMethod = 'GET';
 const String putMethod = 'PUT';
@@ -20,10 +19,12 @@ const AppMode currentMode = AppMode.dev;
 class ApiHelper {
   static Map<String, dynamic> _getBaseHeaders() {
     final MyAppController myAppController = Get.find<MyAppController>();
-    final LanguageController appLanguageController = Get.find<LanguageController>();
+    final LanguageController appLanguageController =
+        Get.find<LanguageController>();
 
     String authorization = '';
-    if (myAppController.userData.isNotEmpty && myAppController.userData['token'] != null) {
+    if (myAppController.userData.isNotEmpty &&
+        myAppController.userData['token'] != null) {
       authorization = 'Bearer ${myAppController.userData['token']}';
     }
 
@@ -174,7 +175,7 @@ class ApiHelper {
       }
 
       final requestHeaders = {..._getBaseHeaders(), ...?headers};
-    print('''
+      print('''
 🎯 [API REQUEST] $method $_getBaseUrl()$path
 📦 Headers: $requestHeaders
 📤 Body: ${body != null ? jsonEncode(body) : 'null'}
@@ -233,45 +234,42 @@ class ApiHelper {
       }
 
       return response.data;
-
     } catch (error) {
       _dismissLoading();
       return _handleError(error, method, path, stopwatch, shouldShowMessage);
     }
   }
 
-static Future<dynamic> login({
-  required String email,
-  required String password,
-  bool withLoading = true,
-}) async {
-  // Determine if the input is email or phone
-  final bool isEmail = email.contains('@');
-  final bool isPhone = RegExp(r'^[0-9]+$').hasMatch(email);
-  
-  Map<String, dynamic> body = {
-    'password': password,
-    'device_name': 'mobile',
-  };
-body['login'] = email;
-  // Add the appropriate field based on input type
-  if (isEmail) {
+  static Future<dynamic> login({
+    required String email,
+    required String password,
+    bool withLoading = true,
+  }) async {
+    // Determine if the input is email or phone
+    final bool isEmail = email.contains('@');
+    final bool isPhone = RegExp(r'^[0-9]+$').hasMatch(email);
+
+    Map<String, dynamic> body = {'password': password, 'device_name': 'mobile'};
     body['login'] = email;
-  } else if (isPhone) {
-    body['login'] = email;
-  } else {
-    // If unsure, use login field as fallback
-    body['login'] = email;
+    // Add the appropriate field based on input type
+    if (isEmail) {
+      body['login'] = email;
+    } else if (isPhone) {
+      body['login'] = email;
+    } else {
+      // If unsure, use login field as fallback
+      body['login'] = email;
+    }
+
+    return await post(
+      path: '/auth/login',
+      body: body,
+      withLoading: withLoading,
+      shouldShowMessage: true,
+    );
   }
 
-  return await post(
-    path: '/auth/login',
-    body: body,
-    withLoading: withLoading,
-    shouldShowMessage: true,
-  );
-}
-static Future<dynamic> register({
+  static Future<dynamic> register({
     required String name,
     required String email,
     required String phone,
@@ -410,7 +408,7 @@ static Future<dynamic> register({
 
   static void _startLoading() {
     if (Get.isDialogOpen ?? false) return;
-    
+
     Get.dialog(
       Center(
         child: Container(
@@ -462,11 +460,22 @@ static Future<dynamic> register({
     stopwatch.stop();
 
     if (error is DioException) {
-      final errorData = error.response?.data ?? {
-        'errors': [{'message': 'حدث خطأ غير متوقع'}]
-      };
+      final errorData =
+          error.response?.data ??
+          {
+            'errors': [
+              {'message': 'حدث خطأ غير متوقع'},
+            ],
+          };
 
-      _logRequestError(method, path, errorData, stopwatch, true, error.response?.statusCode);
+      _logRequestError(
+        method,
+        path,
+        errorData,
+        stopwatch,
+        true,
+        error.response?.statusCode,
+      );
 
       if (shouldShowMessage) {
         _showErrorMessage(errorData);
@@ -477,16 +486,21 @@ static Future<dynamic> register({
       return errorData;
     } else {
       _logRequestError(method, path, error.toString(), stopwatch, false, null);
-      
+
       if (shouldShowMessage) {
         _showGenericError();
       }
-      
+
       return {'message': error.toString()};
     }
   }
 
-  static void _logRequestSuccess(String method, String path, dynamic response, Stopwatch stopwatch) {
+  static void _logRequestSuccess(
+    String method,
+    String path,
+    dynamic response,
+    Stopwatch stopwatch,
+  ) {
     stopwatch.stop();
     print('''
 🚀 [API SUCCESS] $method $path

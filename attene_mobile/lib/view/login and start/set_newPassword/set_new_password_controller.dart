@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class SetNewPasswordController extends GetxController {
   var email = ''.obs;
   var name = ''.obs;
@@ -14,36 +15,47 @@ class SetNewPasswordController extends GetxController {
   var passwordError = RxString('');
   var confirmPasswordError = RxString('');
   var phoneError = RxString('');
+
   void updateEmail(String value) {
     email.value = value;
     emailError.value = '';
   }
+
   void updateName(String value) {
     name.value = value;
     nameError.value = '';
   }
+
   void updatePhone(String value) {
     phone.value = value;
     phoneError.value = '';
   }
+
   void updatePassword(String value) {
     password.value = value;
     passwordError.value = '';
     if (confirmPassword.value.isNotEmpty) {
-      confirmPasswordError.value = 
-          confirmPassword.value == value ? '' : 'كلمة المرور غير متطابقة';
+      confirmPasswordError.value = confirmPassword.value == value
+          ? ''
+          : 'كلمة المرور غير متطابقة';
     }
   }
+
   void updateConfirmPassword(String value) {
     confirmPassword.value = value;
-    confirmPasswordError.value = value == password.value ? '' : 'كلمة المرور غير متطابقة';
+    confirmPasswordError.value = value == password.value
+        ? ''
+        : 'كلمة المرور غير متطابقة';
   }
+
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
   }
+
   void toggleConfirmPasswordVisibility() {
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
+
   bool validateFields() {
     bool isValid = true;
     if (name.value.isEmpty) {
@@ -93,14 +105,17 @@ class SetNewPasswordController extends GetxController {
     }
     return isValid;
   }
+
   bool isValidEmail(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
   }
+
   bool isValidPhoneNumber(String phone) {
     final phoneRegex = RegExp(r'^[0-9]{10,15}$');
     return phoneRegex.hasMatch(phone);
   }
+
   Future<void> register() async {
     if (!validateFields()) {
       return;
@@ -120,9 +135,11 @@ class SetNewPasswordController extends GetxController {
       isLoading.value = false;
     }
   }
+
   void goToLogin() {
     Get.toNamed('/login');
   }
+
   @override
   void onClose() {
     email.value = '';

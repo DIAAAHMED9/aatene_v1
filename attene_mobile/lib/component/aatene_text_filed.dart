@@ -1,5 +1,6 @@
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
+
 class TextFiledAatene extends StatelessWidget {
   const TextFiledAatene({
     super.key,
@@ -8,31 +9,33 @@ class TextFiledAatene extends StatelessWidget {
     required this.isError,
     required this.errorValue,
     this.onChanged,
-    this.suffixIcon, 
+    this.suffixIcon,
     this.obscureText,
     this.textInputType,
   });
+
   final bool isRTL;
   final String hintText;
   final String errorValue;
   final Function(String)? onChanged;
   final bool? obscureText;
   final bool isError;
-final Widget? suffixIcon;
+  final Widget? suffixIcon;
   final TextInputType? textInputType;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-      TextFormField(
+        TextFormField(
           keyboardType: textInputType,
-          obscureText: obscureText??false,
+          obscureText: obscureText ?? false,
           textAlign: isRTL ? TextAlign.right : TextAlign.left,
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hintText,
-            suffixIcon:suffixIcon,
+            suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
               borderSide: BorderSide(

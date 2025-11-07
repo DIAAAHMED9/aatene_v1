@@ -5,47 +5,50 @@ import '../../component/aatene_button.dart';
 import '../../utlis/colors/app_color.dart';
 import '../../utlis/image_flip/image_utils.dart';
 import '../../utlis/language/language_utils.dart';
+
 class Onbording extends StatelessWidget {
   const Onbording({super.key});
+
   void _changeLanguage(String languageCode, String countryCode) {
     Get.updateLocale(Locale(languageCode, countryCode));
   }
+
   void _showLanguageDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(
-              'اختر اللغة / Choose Language',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(18),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildLanguageOption(
-                  context,
-                  'العربية',
-                  'ar',
-                  'SA',
-                  Icons.language,
-                ),
-                const SizedBox(height: 12),
-                _buildLanguageOption(
-                  context,
-                  'English',
-                  'en',
-                  'US',
-                  Icons.language,
-                ),
-              ],
-            ),
+      builder: (context) => AlertDialog(
+        title: Text(
+          'اختر اللغة / Choose Language',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: ResponsiveDimensions.f(18),
+            fontWeight: FontWeight.bold,
           ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildLanguageOption(
+              context,
+              'العربية',
+              'ar',
+              'SA',
+              Icons.language,
+            ),
+            const SizedBox(height: 12),
+            _buildLanguageOption(
+              context,
+              'English',
+              'en',
+              'US',
+              Icons.language,
+            ),
+          ],
+        ),
+      ),
     );
   }
+
   Widget _buildLanguageOption(
     BuildContext context,
     String title,
@@ -63,10 +66,9 @@ class Onbording extends StatelessWidget {
           color: isCurrentLang ? Colors.blue : Colors.black,
         ),
       ),
-      trailing:
-          isCurrentLang
-              ? const Icon(Icons.check_circle, color: Colors.blue)
-              : null,
+      trailing: isCurrentLang
+          ? const Icon(Icons.check_circle, color: Colors.blue)
+          : null,
       onTap: () {
         _changeLanguage(languageCode, countryCode);
         Navigator.of(context).pop();
@@ -79,6 +81,7 @@ class Onbording extends StatelessWidget {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -118,34 +121,31 @@ class Onbording extends StatelessWidget {
                   children: [
                     Positioned(
                       top: ResponsiveDimensions.h(40),
-                      left: isRTL ? 0 : null, 
-                      right: isRTL ? null : 0, 
-                      child:
-                          isRTL
-                              ? Image.asset(
-                                'assets/images/png/onboarding_child.png',
-                              )
-                              : ImageUtils.flipHorizontal(
-                                'assets/images/png/onboarding_child.png',
-                              ),
+                      left: isRTL ? 0 : null,
+                      right: isRTL ? null : 0,
+                      child: isRTL
+                          ? Image.asset(
+                              'assets/images/png/onboarding_child.png',
+                            )
+                          : ImageUtils.flipHorizontal(
+                              'assets/images/png/onboarding_child.png',
+                            ),
                     ),
                     Positioned(
                       top: ResponsiveDimensions.h(77),
                       left: isRTL ? null : ResponsiveDimensions.w(20),
                       right: isRTL ? ResponsiveDimensions.w(20) : null,
                       child: SizedBox(
-                        width:
-                            isRTL
-                                ? ResponsiveDimensions.w(180)
-                                : ResponsiveDimensions.w(215),
+                        width: isRTL
+                            ? ResponsiveDimensions.w(180)
+                            : ResponsiveDimensions.w(215),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Align(
-                              alignment:
-                                  isRTL
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
+                              alignment: isRTL
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
                               child: Image.asset(
                                 'assets/images/png/aatene_black_text.png',
                                 width: ResponsiveDimensions.w(120),
@@ -155,10 +155,9 @@ class Onbording extends StatelessWidget {
                             const SizedBox(height: 30),
                             Text.rich(
                               TextSpan(
-                                text:
-                                    isRTL
-                                        ? 'مزيج من الخدمات المتنوعة متواجدة في مكان '
-                                        : 'A mix of diverse services available in one ',
+                                text: isRTL
+                                    ? 'مزيج من الخدمات المتنوعة متواجدة في مكان '
+                                    : 'A mix of diverse services available in one ',
                                 style: TextStyle(
                                   fontSize: ResponsiveDimensions.f(45),
                                   fontWeight: FontWeight.w800,
@@ -176,8 +175,9 @@ class Onbording extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              textAlign:
-                                  isRTL ? TextAlign.right : TextAlign.left,
+                              textAlign: isRTL
+                                  ? TextAlign.right
+                                  : TextAlign.left,
                             ),
                           ],
                         ),
@@ -208,13 +208,16 @@ class Onbording extends StatelessWidget {
               ),
             ],
           ),
-          bottomNavigationBar: AateneButton(onTap: () {
-            Navigator.pushReplacementNamed(context, '/start_login');
-          }, buttonText: isRTL ? 'ابدأ' : 'Start',
-          color: AppColors.primary400,
-          borderColor: AppColors.primary400
+          bottomNavigationBar: AateneButton(
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/start_login');
+            },
+            buttonText: isRTL ? 'ابدأ' : 'Start',
+            color: AppColors.primary400,
+            borderColor: AppColors.primary400,
           ),
+        ),
       ),
-    ),);
+    );
   }
 }

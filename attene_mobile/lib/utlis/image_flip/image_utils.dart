@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
 class ImageUtils {
-  static Widget flipHorizontal(String imagePath, {
+  static Widget flipHorizontal(
+    String imagePath, {
     double? width,
     double? height,
     BoxFit fit = BoxFit.contain,
@@ -20,7 +22,9 @@ class ImageUtils {
       ),
     );
   }
-  static Widget flipVertical(String imagePath, {
+
+  static Widget flipVertical(
+    String imagePath, {
     double? width,
     double? height,
     BoxFit fit = BoxFit.contain,
@@ -39,17 +43,19 @@ class ImageUtils {
       ),
     );
   }
-  static Widget flipCustom(String imagePath, {
+
+  static Widget flipCustom(
+    String imagePath, {
     double? width,
     double? height,
     BoxFit fit = BoxFit.contain,
     Color? color,
-    double angle = math.pi, 
-    Axis axis = Axis.vertical, 
+    double angle = math.pi,
+    Axis axis = Axis.vertical,
   }) {
     return Transform(
       alignment: Alignment.center,
-      transform: axis == Axis.horizontal 
+      transform: axis == Axis.horizontal
           ? Matrix4.rotationY(angle)
           : Matrix4.rotationX(angle),
       child: Image.asset(

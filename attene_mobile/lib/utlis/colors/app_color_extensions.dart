@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'app_color.dart';
+
 extension AppColorScheme on ColorScheme {
   Color get warning => AppColors.warning300;
+
   Color get success => AppColors.success300;
+
   Color get error => AppColors.error300;
+
   Color get neutral => AppColors.neutral500;
+
   Color get warningBackground => AppColors.warning100;
+
   Color get successBackground => AppColors.success100;
+
   Color get errorBackground => AppColors.error100;
 }
+
 class AppColorThemes {
   static ThemeData get lightTheme => ThemeData(
     brightness: Brightness.light,
@@ -37,6 +45,7 @@ class AppColorThemes {
       bodySmall: TextStyle(color: AppColors.neutral400),
     ),
   );
+
   static ThemeData get darkTheme => ThemeData(
     brightness: Brightness.dark,
     primaryColor: AppColors.primary200,
@@ -55,6 +64,7 @@ class AppColorThemes {
       onSurface: AppColors.light1000,
     ),
   );
+
   static MaterialColor _createMaterialColor(Color color) {
     final Map<int, Color> swatch = {
       50: _withAlpha(color, 0.1),
@@ -70,6 +80,7 @@ class AppColorThemes {
     };
     return MaterialColor(color.value, swatch);
   }
+
   static Color _withAlpha(Color color, double opacity) {
     final alpha = (opacity * 255).round();
     return color.withAlpha(alpha);

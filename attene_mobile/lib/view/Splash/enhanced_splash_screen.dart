@@ -1,36 +1,44 @@
 import 'package:attene_mobile/utlis/services/app_initialization_service.dart';
 import 'package:flutter/material.dart';
 import '../../utlis/colors/app_color.dart';
+
 class EnhancedSplashScreen extends StatefulWidget {
   const EnhancedSplashScreen({super.key});
+
   @override
   State<EnhancedSplashScreen> createState() => _EnhancedSplashScreenState();
 }
-class _EnhancedSplashScreenState extends State<EnhancedSplashScreen> 
+
+class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   String _loadingText = 'Initializing App';
+
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
     _initializeApp();
   }
+
   void _initializeAnimations() {
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
     _controller.forward();
   }
+
   void _initializeApp() async {
     try {
       await _controller.forward();
@@ -47,6 +55,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
       }
     }
   }
+
   void _showErrorDialog(String error) {
     showDialog(
       context: context,
@@ -56,7 +65,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
         content: Text('Failed to initialize app: $error'),
         actions: [
           TextButton(
-            onPressed: () => _initializeApp(), 
+            onPressed: () => _initializeApp(),
             child: const Text('Retry'),
           ),
           TextButton(
@@ -67,11 +76,13 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
       ),
     );
   }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,7 +147,9 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
                 width: 30,
                 height: 30,
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.light1000),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.light1000,
+                  ),
                   strokeWidth: 2,
                 ),
               ),

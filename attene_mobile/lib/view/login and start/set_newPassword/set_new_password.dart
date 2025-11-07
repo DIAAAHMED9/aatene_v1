@@ -7,11 +7,14 @@ import 'package:get/get.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 
 import 'set_new_password_controller.dart';
+
 class SetNewPassword extends StatelessWidget {
   final SetNewPasswordController controller = Get.put(
     SetNewPasswordController(),
   );
+
   SetNewPassword({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -95,10 +98,9 @@ class SetNewPassword extends StatelessWidget {
                         controller.obscurePassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color:
-                            controller.passwordError.isNotEmpty
-                                ? Colors.red
-                                : Colors.grey,
+                        color: controller.passwordError.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey,
                       ),
                       onPressed: controller.togglePasswordVisibility,
                     ),
@@ -118,10 +120,9 @@ class SetNewPassword extends StatelessWidget {
                         controller.obscureConfirmPassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color:
-                            controller.confirmPasswordError.isNotEmpty
-                                ? Colors.red
-                                : Colors.grey,
+                        color: controller.confirmPasswordError.isNotEmpty
+                            ? Colors.red
+                            : Colors.grey,
                       ),
                       onPressed: controller.toggleConfirmPasswordVisibility,
                     ),

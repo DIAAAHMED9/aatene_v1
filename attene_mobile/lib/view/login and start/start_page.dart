@@ -4,8 +4,10 @@ import '../../utlis/colors/app_color.dart';
 import '../../utlis/language/language_utils.dart';
 import '../../utlis/responsive/responsive_dimensions.dart';
 import 'package:get/get.dart';
+
 class StartLogin extends StatelessWidget {
   const StartLogin({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;

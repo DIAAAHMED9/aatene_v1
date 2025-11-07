@@ -6,9 +6,12 @@ import 'package:attene_mobile/view/login%20and%20start/Register/register_control
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
+
 class Register extends StatelessWidget {
   final RegisterController controller = Get.put(RegisterController());
+
   Register({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -126,7 +129,9 @@ class Register extends StatelessWidget {
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
                     isLoading: controller.isLoading.value,
-                    onTap: controller.isLoading.value ? null : controller.register,
+                    onTap: controller.isLoading.value
+                        ? null
+                        : controller.register,
                     buttonText: isRTL ? 'إنشاء حساب' : 'Create account',
                   ),
                 ),
@@ -135,7 +140,9 @@ class Register extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      isRTL ? 'لديك حساب بالفعل؟ ' : 'Already have an account? ',
+                      isRTL
+                          ? 'لديك حساب بالفعل؟ '
+                          : 'Already have an account? ',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: ResponsiveDimensions.f(14),

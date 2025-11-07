@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class LanguageUtils {
   static bool get isRTL {
     try {
@@ -11,15 +12,22 @@ class LanguageUtils {
       return false;
     }
   }
+
   static bool get isLTR => !isRTL;
-  static TextDirection get textDirection => isRTL ? TextDirection.rtl : TextDirection.ltr;
-  static Alignment get textAlignment => isRTL ? Alignment.centerRight : Alignment.centerLeft;
-  static AlignmentGeometry get startAlignment => isRTL ? Alignment.centerRight : Alignment.centerLeft;
-  static AlignmentGeometry get endAlignment => isRTL ? Alignment.centerLeft : Alignment.centerRight;
+
+  static TextDirection get textDirection =>
+      isRTL ? TextDirection.rtl : TextDirection.ltr;
+
+  static Alignment get textAlignment =>
+      isRTL ? Alignment.centerRight : Alignment.centerLeft;
+
+  static AlignmentGeometry get startAlignment =>
+      isRTL ? Alignment.centerRight : Alignment.centerLeft;
+
+  static AlignmentGeometry get endAlignment =>
+      isRTL ? Alignment.centerLeft : Alignment.centerRight;
+
   static Widget directionAwareWidget(Widget child) {
-    return Directionality(
-      textDirection: textDirection,
-      child: child,
-    );
+    return Directionality(textDirection: textDirection, child: child);
   }
 }

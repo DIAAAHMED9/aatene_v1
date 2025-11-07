@@ -43,7 +43,10 @@ const String apiSkipRate = '/skip-rating-order';
 const String apiSkippedOrders = '/skipped-orders';
 const String apiCustomerFeedback = '/customer-service/feedbacks';
 const String apiReplies = '/replies';
+
 String apiCancelBooking(dynamic id) => '/booking/$id/cancel';
+
 String branchById(dynamic id) => '/branches/$id';
+
 String branchByIdByLatLng(dynamic id, dynamic latitude, dynamic longitude) =>
     '/branches/$id?latitude=$latitude&longitude=$longitude';

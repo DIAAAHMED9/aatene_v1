@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'app_color.dart';
+
 class ColorExamples extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.light1000,
       appBar: AppBar(
-        title: const Text('Color System Examples',
-            style: TextStyle(color: AppColors.neutral100)),
+        title: const Text(
+          'Color System Examples',
+          style: TextStyle(color: AppColors.neutral100),
+        ),
         backgroundColor: AppColors.light1000,
         elevation: 0,
       ),
@@ -30,25 +33,26 @@ class ColorExamples extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildColorSection(String title, List<Widget> colorBoxes) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: AppColors.neutral200,
-        )),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: colorBoxes,
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.neutral200,
+          ),
         ),
+        const SizedBox(height: 8),
+        Wrap(spacing: 8, runSpacing: 8, children: colorBoxes),
         const SizedBox(height: 20),
       ],
     );
   }
+
   Widget _buildColorBox(Color color, String label) {
     return Container(
       width: 120,
@@ -71,26 +75,28 @@ class ColorExamples extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: AppColors.neutral400,
-            ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10, color: AppColors.neutral400),
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
+
   Widget _buildAlphaComponentExamples() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Alpha Component Examples', style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: AppColors.neutral200,
-        )),
+        const Text(
+          'Alpha Component Examples',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.neutral200,
+          ),
+        ),
         const SizedBox(height: 16),
         Container(
           width: double.infinity,
@@ -109,7 +115,8 @@ class ColorExamples extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Center(
-              child: Text('Primary Alpha Overlay',
+              child: Text(
+                'Primary Alpha Overlay',
                 style: TextStyle(
                   color: AppColors.neutral100,
                   fontWeight: FontWeight.bold,
@@ -129,7 +136,8 @@ class ColorExamples extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
-                  child: Text('Success\nAlpha',
+                  child: Text(
+                    'Success\nAlpha',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.success300,
@@ -148,7 +156,8 @@ class ColorExamples extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
-                  child: Text('Warning\nAlpha',
+                  child: Text(
+                    'Warning\nAlpha',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.warning300,

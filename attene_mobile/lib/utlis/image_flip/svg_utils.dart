@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
+
 class SvgUtils {
-  static Widget flipSvgHorizontal(String assetName, {
+  static Widget flipSvgHorizontal(
+    String assetName, {
     double? width,
     double? height,
     Color? color,
@@ -16,14 +18,16 @@ class SvgUtils {
         assetName,
         width: width,
         height: height,
-        colorFilter: color != null 
+        colorFilter: color != null
             ? ColorFilter.mode(color, BlendMode.srcIn)
             : null,
         fit: fit,
       ),
     );
   }
-  static Widget flipSvgVertical(String assetName, {
+
+  static Widget flipSvgVertical(
+    String assetName, {
     double? width,
     double? height,
     Color? color,
@@ -37,7 +41,7 @@ class SvgUtils {
         assetName,
         width: width,
         height: height,
-        colorFilter: color != null 
+        colorFilter: color != null
             ? ColorFilter.mode(color, BlendMode.srcIn)
             : null,
         fit: fit,

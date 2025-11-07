@@ -1,4 +1,5 @@
-import 'package:attene_mobile/my_app/may_app_controller.dart' show MyAppController;
+import 'package:attene_mobile/my_app/may_app_controller.dart'
+    show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
@@ -12,9 +13,11 @@ import 'view/login and start/login/login.dart';
 import 'view/login and start/start_page.dart';
 import 'view/login and start/verfication/verfication.dart';
 import 'view/onboarding/onbording.dart';
+
 void main() {
   runApp(const MyApp());
 }
+
 class AppBindings extends Bindings {
   @override
   void dependencies() {
@@ -23,8 +26,10 @@ class AppBindings extends Bindings {
     Get.put(LanguageController());
   }
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -43,19 +48,15 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/onboarding': (context) => const Onbording(),
         '/start_login': (context) => const StartLogin(),
-        '/login': (context) =>  Login(),
-        '/register':(context)=>Register(),
+        '/login': (context) => Login(),
+        '/register': (context) => Register(),
         '/forget_password': (context) => ForgetPassword(),
         '/verification': (context) => Verification(),
-        '/set_new_password':(context)=>SetNewPassword(),
+        '/set_new_password': (context) => SetNewPassword(),
         '/home': (context) => Scaffold(
-          appBar: AppBar(
-            title: const Text('Home'),
-          ),
-          body: const Center(
-            child: Text('Welcome to the Home Screen!'),
-          ),
-        ),  
+          appBar: AppBar(title: const Text('Home')),
+          body: const Center(child: Text('Welcome to the Home Screen!')),
+        ),
       },
       debugShowCheckedModeBanner: false,
     );

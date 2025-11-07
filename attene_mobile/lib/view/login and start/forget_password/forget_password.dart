@@ -6,9 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 import 'forget_password_controller.dart';
+
 class ForgetPassword extends StatelessWidget {
-  final ForgetPasswordController controller = Get.put(ForgetPasswordController());
+  final ForgetPasswordController controller = Get.put(
+    ForgetPasswordController(),
+  );
+
   ForgetPassword({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -44,7 +49,7 @@ class ForgetPassword extends StatelessWidget {
                     ),
                     child: IconButton(
                       icon: Icon(
-                        isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios, 
+                        isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
                         color: Colors.black,
                         size: ResponsiveDimensions.f(16),
                       ),
@@ -96,7 +101,9 @@ class ForgetPassword extends StatelessWidget {
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
                     isLoading: controller.isLoading.value,
-                    onTap: controller.isLoading.value ? null : controller.sendPasswordReset,
+                    onTap: controller.isLoading.value
+                        ? null
+                        : controller.sendPasswordReset,
                     buttonText: isRTL ? 'أرسل رابط التعيين' : 'Send Reset Link',
                   ),
                 ),

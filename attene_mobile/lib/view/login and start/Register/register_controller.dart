@@ -3,6 +3,7 @@ import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class RegisterController extends GetxController {
   var email = ''.obs;
   var name = ''.obs;
@@ -17,36 +18,47 @@ class RegisterController extends GetxController {
   var passwordError = RxString('');
   var confirmPasswordError = RxString('');
   var phoneError = RxString('');
+
   void updateEmail(String value) {
     email.value = value;
     emailError.value = '';
   }
+
   void updateName(String value) {
     name.value = value;
     nameError.value = '';
   }
+
   void updatePhone(String value) {
     phone.value = value;
     phoneError.value = '';
   }
+
   void updatePassword(String value) {
     password.value = value;
     passwordError.value = '';
     if (confirmPassword.value.isNotEmpty) {
-      confirmPasswordError.value = 
-          confirmPassword.value == value ? '' : 'كلمة المرور غير متطابقة';
+      confirmPasswordError.value = confirmPassword.value == value
+          ? ''
+          : 'كلمة المرور غير متطابقة';
     }
   }
+
   void updateConfirmPassword(String value) {
     confirmPassword.value = value;
-    confirmPasswordError.value = value == password.value ? '' : 'كلمة المرور غير متطابقة';
+    confirmPasswordError.value = value == password.value
+        ? ''
+        : 'كلمة المرور غير متطابقة';
   }
+
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
   }
+
   void toggleConfirmPasswordVisibility() {
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
+
   bool validateFields() {
     bool isValid = true;
     if (name.value.isEmpty) {
@@ -96,14 +108,17 @@ class RegisterController extends GetxController {
     }
     return isValid;
   }
+
   bool isValidEmail(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
   }
+
   bool isValidPhoneNumber(String phone) {
     final phoneRegex = RegExp(r'^[0-9]{10,15}$');
     return phoneRegex.hasMatch(phone);
   }
+
   Future<void> register() async {
     if (!validateFields()) {
       return;
@@ -118,10 +133,10 @@ class RegisterController extends GetxController {
           'email': email.value,
           'phone': phone.value,
           'password': password.value,
-          'device_name': 'mobile', 
+          'device_name': 'mobile',
         },
-        withLoading: false, 
-        shouldShowMessage: false, 
+        withLoading: false,
+        shouldShowMessage: false,
       );
       if (response != null && response['success'] == true) {
         final userData = response['data'];
@@ -134,7 +149,7 @@ class RegisterController extends GetxController {
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
-        Get.offAllNamed('/home'); 
+        Get.offAllNamed('/home');
       } else {
         _handleApiError(response);
       }
@@ -144,6 +159,7 @@ class RegisterController extends GetxController {
       isLoading.value = false;
     }
   }
+
   void _handleApiError(dynamic response) {
     String errorMessage = 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.';
     if (response != null && response['errors'] != null) {
@@ -176,6 +192,7 @@ class RegisterController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
     );
   }
+
   void _handleGeneralError(dynamic error) {
     print('Register error: $error');
     String errorMessage = 'حدث خطأ أثناء إنشاء الحساب. ';
@@ -207,16 +224,16 @@ class RegisterController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
     );
   }
+
   void goToLogin() {
     Get.toNamed('/login');
   }
+
   Future<bool> checkUserExists() async {
     try {
       final response = await ApiHelper.post(
         path: '/auth/check-email',
-        body: {
-          'email': email.value,
-        },
+        body: {'email': email.value},
         withLoading: false,
         shouldShowMessage: false,
       );
@@ -226,13 +243,12 @@ class RegisterController extends GetxController {
       return false;
     }
   }
+
   Future<bool> checkPhoneExists() async {
     try {
       final response = await ApiHelper.post(
         path: '/auth/check-phone',
-        body: {
-          'phone': phone.value,
-        },
+        body: {'phone': phone.value},
         withLoading: false,
         shouldShowMessage: false,
       );
@@ -242,6 +258,7 @@ class RegisterController extends GetxController {
       return false;
     }
   }
+
   @override
   void onClose() {
     email.value = '';
