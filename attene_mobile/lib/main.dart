@@ -2,7 +2,6 @@ import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
-import 'package:attene_mobile/view/add%20new%20store/add_store.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
 import 'package:flutter/material.dart';
