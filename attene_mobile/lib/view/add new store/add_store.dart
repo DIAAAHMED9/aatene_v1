@@ -5,7 +5,6 @@ import '../../utlis/colors/app_color.dart';
 
 class AddStore extends StatelessWidget {
   const AddStore({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
