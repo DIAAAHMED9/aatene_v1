@@ -5,6 +5,7 @@ import '../../utlis/colors/app_color.dart';
 
 class AddStore extends StatelessWidget {
   const AddStore({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,16 +77,18 @@ class AddStore extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      width: 1.5,
                       style: BorderStyle.solid,
                       color: AppColors.neutral100,
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.store, color: AppColors.neutral100),
+                      Icon(
+                        Icons.home_repair_service_sharp,
+                        color: AppColors.neutral100,
+                      ),
                       Text(
-                        "لبيع المنتجات",
+                        "تقديم الخدمات",
                         style: TextStyle(
                           fontSize: 16,
                           color: AppColors.neutral100,
