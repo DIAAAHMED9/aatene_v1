@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/BottomNavigationBar/main_screen.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
@@ -24,6 +25,7 @@ class AppBindings extends Bindings {
     Get.put(ResponsiveService());
     Get.put(MyAppController());
     Get.put(LanguageController());
+    // Get.put(BottomNavigationController());
   }
 }
 
@@ -55,11 +57,7 @@ class MyApp extends StatelessWidget {
         '/forget_password': (context) => ForgetPassword(),
         '/verification': (context) => Verification(),
         '/set_new_password': (context) => SetNewPassword(),
-        // '/add_new_store': (context) => AddStore(),
-        '/home': (context) => Scaffold(
-          appBar: AppBar(title: const Text('Home')),
-          body: const Center(child: Text('Welcome to the Home Screen!')),
-        ),
+        '/home': (context) => HomeScreen(),
       },
       debugShowCheckedModeBanner: false,
     );
