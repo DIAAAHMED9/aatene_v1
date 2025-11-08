@@ -56,12 +56,15 @@ class AddStore extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.store, color: AppColors.primary400,),
-                      Text("لبيع المنتجات", style: TextStyle(
+                      Icon(Icons.store, color: AppColors.primary400),
+                      Text(
+                        "لبيع المنتجات",
+                        style: TextStyle(
                           fontSize: 16,
                           color: AppColors.primary400,
-                          fontWeight: FontWeight.bold
-                      ),),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       // ImageIcon(AssetImage(""), size: 24,),
                     ],
                   ),
@@ -82,18 +85,21 @@ class AddStore extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.store, color: AppColors.neutral100,),
-                      Text("لبيع المنتجات", style: TextStyle(
+                      Icon(Icons.store, color: AppColors.neutral100),
+                      Text(
+                        "لبيع المنتجات",
+                        style: TextStyle(
                           fontSize: 16,
                           color: AppColors.neutral100,
-                          fontWeight: FontWeight.bold
-                      ),),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       // ImageIcon(AssetImage(""), size: 24,),
                     ],
                   ),
                 ),
               ),
-              AateneButton(buttonText: "التالي", ),
+              AateneButton(buttonText: "التالي"),
             ],
           ),
         ),
