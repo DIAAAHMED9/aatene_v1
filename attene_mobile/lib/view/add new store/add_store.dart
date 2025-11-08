@@ -1,4 +1,3 @@
-import 'package:attene_mobile/component/aatene_appbar.dart';
 import 'package:attene_mobile/component/aatene_button.dart';
 import 'package:flutter/material.dart';
 
