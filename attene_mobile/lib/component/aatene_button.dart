@@ -45,7 +45,7 @@ class AateneButton extends StatelessWidget {
                 buttonText,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: ResponsiveDimensions.f(17),
+                  fontSize: ResponsiveDimensions.f(15),
                   fontWeight: FontWeight.w700,
                 ),
               ),
