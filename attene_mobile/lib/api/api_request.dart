@@ -48,16 +48,6 @@ class ApiHelper {
     }
   }
 
-  static Dio _dio() {
-    return Dio(
-      BaseOptions(
-        baseUrl: _getBaseUrl(),
-        headers: _getBaseHeaders(),
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-      ),
-    );
-  }
 
   static Future<dynamic> get({
     required String path,
@@ -563,7 +553,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     );
   }
 
-  static void _handleSpecificErrors(DioError error) {
+  static void _handleSpecificErrors(DioException error) {
     final MyAppController myAppController = Get.find<MyAppController>();
 
     switch (error.response?.statusCode) {
