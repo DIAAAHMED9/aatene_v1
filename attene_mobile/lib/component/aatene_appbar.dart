@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import '../utlis/colors/app_color.dart';
 
 class AateneAppbar extends StatelessWidget {
-  const AateneAppbar({super.key, required this.title, required this.widget});
+  const AateneAppbar({super.key, required this.title,});
 
   final dynamic title;
-  final dynamic widget;
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:  AppBar(
+    return
+     AppBar(
         title: Text(
           title,
           style: TextStyle(
@@ -31,14 +31,8 @@ class AateneAppbar extends StatelessWidget {
             child: Icon(Icons.arrow_back, color: AppColors.primary500),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: widget(),
-        ),
-      ),
-    );
+      );
+
 
 
   }

@@ -11,12 +11,7 @@ class HomeScreen extends StatelessWidget {
     return CustomBottomNavigation(
       notchWidthRatio: 0.3,
       notchDepthRatio: 0.4,
-      pageName: [
-        'الرئسية',
-        'المنتجات',
-        'دردشة','USER',
-
-      ],
+      pageName: ['الرئسية', 'المنتجات', 'دردشة', 'USER'],
       pages: [
         Scaffold(
           backgroundColor: Colors.white,
