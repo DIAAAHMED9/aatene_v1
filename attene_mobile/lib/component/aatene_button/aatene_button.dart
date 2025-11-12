@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utlis/responsive/responsive_dimensions.dart';
+import '../../utlis/responsive/responsive_dimensions.dart';
 
 class AateneButton extends StatelessWidget {
   const AateneButton({
@@ -45,7 +45,7 @@ class AateneButton extends StatelessWidget {
                 buttonText,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: ResponsiveDimensions.f(15),
+                  // fontSize: ResponsiveDimensions.f(15),
                   fontWeight: FontWeight.w700,
                 ),
               ),

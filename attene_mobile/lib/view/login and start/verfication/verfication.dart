@@ -1,7 +1,7 @@
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../component/aatene_button.dart';
+import '../../../component/aatene_button/aatene_button.dart';
 import '../../../utlis/colors/app_color.dart';
 import '../../../utlis/language/language_utils.dart';
 import 'verfication_controller.dart';

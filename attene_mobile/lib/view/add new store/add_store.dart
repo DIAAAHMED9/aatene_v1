@@ -1,4 +1,4 @@
-import 'package:attene_mobile/component/aatene_button.dart';
+import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../utlis/colors/app_color.dart';
@@ -10,14 +10,7 @@ class AddStore extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "نوع المتجر",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+
         leading: IconButton(
           onPressed: () {},
           icon: Container(
@@ -28,6 +21,14 @@ class AddStore extends StatelessWidget {
               color: Colors.grey[300],
             ),
             child: Icon(Icons.arrow_back, color: AppColors.primary500),
+          ),
+        ),
+        title: Text(
+          "نوع المتجر",
+          style: TextStyle(
+            color: AppColors.neutral100,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
       ),
@@ -54,7 +55,11 @@ class AddStore extends StatelessWidget {
                     ),
                   ),
                   child: Row(
+                    spacing: 5,
                     children: [
+                      SizedBox(
+                        width: 10,
+                      ),
                       Icon(Icons.store, color: AppColors.primary400),
                       Text(
                         "لبيع المنتجات",
@@ -82,7 +87,11 @@ class AddStore extends StatelessWidget {
                     ),
                   ),
                   child: Row(
+                    spacing: 5,
                     children: [
+                      SizedBox(
+                        width: 10,
+                      ),
                       Icon(
                         Icons.home_repair_service_sharp,
                         color: AppColors.neutral100,
@@ -100,7 +109,7 @@ class AddStore extends StatelessWidget {
                   ),
                 ),
               ),
-              AateneButton(buttonText: "التالي"),
+              AateneButton( buttonText: "التالي", color: AppColors.primary400, textColor: AppColors.light1000, borderColor: AppColors.primary400,),
             ],
           ),
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../component/aatene_button.dart';
+import '../../component/aatene_button/aatene_button.dart';
 import '../../utlis/colors/app_color.dart';
 import '../../utlis/language/language_utils.dart';
 import '../../utlis/responsive/responsive_dimensions.dart';
