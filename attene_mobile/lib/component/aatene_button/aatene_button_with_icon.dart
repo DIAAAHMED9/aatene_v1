@@ -1,3 +1,4 @@
+import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
 class AateneButtonWithIcon extends StatelessWidget {
@@ -5,6 +6,12 @@ class AateneButtonWithIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: Column(
+        children: [
+          ImageIcon(AssetImage(""), size: 30, color: AppColors.primary400,),
+        ],
+      ),
+    );
   }
 }
