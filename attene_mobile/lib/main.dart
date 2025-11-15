@@ -3,6 +3,7 @@ import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
+import 'package:attene_mobile/view/Control_Panal_Vendor/controler_vindor.dart';
 import 'package:attene_mobile/view/add%20new%20store/manage_account_store.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {
-        '/': (context) => const ManageAccountStore(),
+        '/': (context) => const ControllerVendor(),
         '/onboarding': (context) => const Onbording(),
         '/start_login': (context) => const StartLogin(),
         '/login': (context) => Login(),
