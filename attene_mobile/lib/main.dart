@@ -6,9 +6,11 @@ import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
 import 'package:attene_mobile/view/add%20new%20store/manage_account_store.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'utlis/sheet_controller.dart';
 import 'view/Splash/splash.dart';
 import 'view/login and start/forget_password/forget_password.dart';
 import 'view/login and start/login/login.dart';
@@ -26,6 +28,9 @@ class AppBindings extends Bindings {
     Get.put(ResponsiveService());
     Get.put(MyAppController());
     Get.put(LanguageController());
+    Get.put(ProductController());
+    Get.put(BottomSheetController());
+
     // Get.put(BottomNavigationController());
   }
 }
@@ -58,7 +63,7 @@ class MyApp extends StatelessWidget {
         '/forget_password': (context) => ForgetPassword(),
         '/verification': (context) => Verification(),
         '/set_new_password': (context) => SetNewPassword(),
-        '/home': (context) => HomeScreen(),
+        '/mainScreen': (context) => MainScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

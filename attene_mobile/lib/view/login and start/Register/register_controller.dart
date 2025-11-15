@@ -149,7 +149,7 @@ class RegisterController extends GetxController {
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
-        Get.offAllNamed('/home');
+        Get.offAllNamed('/mainScreen');
       } else {
         _handleApiError(response);
       }

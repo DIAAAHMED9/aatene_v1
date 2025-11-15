@@ -123,7 +123,7 @@ class SetNewPasswordController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(Duration(seconds: 2));
-      Get.offAllNamed('/home');
+      Get.offAllNamed('/mainScreen');
     } catch (e) {
       Get.snackbar(
         'خطأ',

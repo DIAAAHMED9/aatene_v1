@@ -10,6 +10,7 @@ class AateneButton extends StatelessWidget {
     this.textColor,
     this.onTap,
     this.isLoading = false,
+    this.raduis=99,
   });
 
   final Function()? onTap;
@@ -18,6 +19,7 @@ class AateneButton extends StatelessWidget {
   final Color? color;
   final Color? textColor;
   final bool isLoading;
+  final double raduis;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class AateneButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(99),
+          borderRadius: BorderRadius.circular(raduis),
           border: Border.all(color: borderColor ?? Color(0xFF000000), width: 1),
         ),
         child: isLoading

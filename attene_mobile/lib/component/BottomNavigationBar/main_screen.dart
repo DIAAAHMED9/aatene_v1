@@ -1,34 +1,37 @@
 import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/chat/chat.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/profile/profile.dart';
 import 'package:flutter/material.dart';
 
+import '../../view/screens_navigator_bottom_bar/home/home.dart';
 import 'custom_bottom_navigation.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return CustomBottomNavigation(
       notchWidthRatio: 0.3,
       notchDepthRatio: 0.4,
+<<<<<<< Updated upstream
       pageName: ['الرئسية', 'المنتجات', 'دردشة', 'USER'],
+=======
+      pageName: [
+        'الرئسية',
+        'المنتجات',
+        'دردشة',
+        'USER',
+
+      ],
+>>>>>>> Stashed changes
       pages: [
-        Scaffold(
-          backgroundColor: Colors.white,
-          body: const Center(child: Text('الرئسية')),
-        ),
-        Scaffold(
-          backgroundColor: Colors.white,
-          body: const Center(child: Text('المنتجات')),
-        ),
-        Scaffold(
-          backgroundColor: Colors.white,
-          body: const Center(child: Text('دردشة')),
-        ),
-        Scaffold(
-          backgroundColor: Colors.white,
-          body: const Center(child: Text('USER')),
-        ),
+     HomeScreen(),
+     ProductScreen(),
+     ChatScreen(),
+     ProfileScreen(),
+
       ],
       icons: const [
         Icons.home,
