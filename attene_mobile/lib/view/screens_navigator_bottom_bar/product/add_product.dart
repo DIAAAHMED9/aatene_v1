@@ -413,8 +413,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 controller: _priceController,
                 isRTL: isRTL,
                 hintText: 'السعر',
-                 isError: false,
-                  errorValue: '',
                 // contentPadding: EdgeInsets.only(left: 12),
               ),
             ),

@@ -107,7 +107,6 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/svg/
-    - assets/icons/svg/aatene_logo_svg.svg
     - assets/icons/svg/bottom_nav_bar/
     - assets/images/svg_images/
     - assets/images/png/

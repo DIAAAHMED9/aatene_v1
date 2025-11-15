@@ -113,7 +113,7 @@ class LoginController extends GetxController {
               colorText: Colors.white,
               snackPosition: SnackPosition.BOTTOM,
             );
-            Get.offAllNamed('/home');
+            Get.offAllNamed('/mainScreen');
           } else {
             throw Exception('Token not found in response');
           }
@@ -205,7 +205,7 @@ class LoginController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      Get.offAllNamed('/home');
+      Get.offAllNamed('/mainScreen');
     } catch (error) {
       Get.snackbar(
         'خطأ',
@@ -234,7 +234,7 @@ class LoginController extends GetxController {
     final MyAppController myAppController = Get.find<MyAppController>();
     if (myAppController.isLoggedIn) {
       print('🔑 محاولة تسجيل دخول تلقائي...');
-      Get.offAllNamed('/home');
+      Get.offAllNamed('/mainScreen');
     }
   }
 

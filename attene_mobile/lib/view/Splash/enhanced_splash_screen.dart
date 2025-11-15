@@ -47,7 +47,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
       setState(() => _loadingText = 'Almost Ready...');
       await Future.delayed(const Duration(milliseconds: 500));
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/mainScreen');
       }
     } catch (error) {
       if (mounted) {

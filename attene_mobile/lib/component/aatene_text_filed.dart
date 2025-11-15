@@ -6,78 +6,89 @@ class TextFiledAatene extends StatelessWidget {
     super.key,
     required this.isRTL,
     required this.hintText,
-    required this.isError,
-    required this.errorValue,
+     this.isError,
+     this.errorValue,
     this.onChanged,
     this.suffixIcon,
+    this.prefixIcon,
     this.obscureText,
     this.textInputType,
+    this.controller,
+    this.heightTextFiled,
   });
 
   final bool isRTL;
   final String hintText;
-  final String errorValue;
+  final String? errorValue;
   final Function(String)? onChanged;
   final bool? obscureText;
-  final bool isError;
+  final bool? isError;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
   final TextInputType? textInputType;
+  final TextEditingController? controller;
+  final double? heightTextFiled;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFormField(
-          keyboardType: textInputType,
-          obscureText: obscureText ?? false,
-          textAlign: isRTL ? TextAlign.right : TextAlign.left,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            hintText: hintText,
-            suffixIcon: suffixIcon,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-              borderSide: BorderSide(
-                color: isError ? Colors.red : Colors.grey[300]!,
-                width: isError ? 2.0 : 1.0,
+        SizedBox(
+          height: heightTextFiled,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: textInputType,
+            obscureText: obscureText ?? false,
+            textAlign: isRTL ? TextAlign.right : TextAlign.left,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              hintText: hintText,
+              suffixIcon: suffixIcon,
+              prefixIcon: prefixIcon,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+                borderSide: BorderSide(
+                  color: isError??false ? Colors.red : Colors.grey[300]!,
+                  width: isError??false ? 2.0 : 1.0,
+                ),
               ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-              borderSide: BorderSide(
-                color: isError ? Colors.red : Colors.grey[300]!,
-                width: isError ? 2.0 : 0,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+                borderSide: BorderSide(
+                  color: isError??false ? Colors.red : Colors.grey[300]!,
+                  width: isError??false ? 2.0 : 0,
+                ),
               ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-              borderSide: BorderSide(
-                color: isError ? Colors.red : Colors.blue,
-                width: isError ? 2.0 : 1.0,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+                borderSide: BorderSide(
+                  color: isError??false ? Colors.red : Colors.blue,
+                  width: isError??false ? 2.0 : 1.0,
+                ),
               ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-              borderSide: BorderSide(color: Colors.red, width: 2.0),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-              borderSide: BorderSide(color: Colors.red, width: 2.0),
-            ),
-            filled: true,
-            fillColor: isError ? Colors.transparent : Colors.grey[50],
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: ResponsiveDimensions.w(20),
-              vertical: ResponsiveDimensions.h(16),
-            ),
-            hintStyle: TextStyle(
-              color: Colors.grey[500],
-              fontSize: ResponsiveDimensions.f(14),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+                borderSide: BorderSide(color: Colors.red, width: 2.0),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+                borderSide: BorderSide(color: Colors.red, width: 2.0),
+              ),
+              filled: true,
+              fillColor: isError??false ? Colors.transparent : Colors.grey[50],
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: ResponsiveDimensions.w(20),
+                vertical: ResponsiveDimensions.h(16),
+              ),
+              hintStyle: TextStyle(
+                color: Colors.grey[500],
+                fontSize: ResponsiveDimensions.f(14),
+              ),
             ),
           ),
         ),
-        if (isError)
+        if (isError??false)
           Padding(
             padding: EdgeInsets.only(
               top: ResponsiveDimensions.h(8),
@@ -85,7 +96,7 @@ class TextFiledAatene extends StatelessWidget {
               left: isRTL ? ResponsiveDimensions.w(12) : 0,
             ),
             child: Text(
-              errorValue,
+              errorValue??'',
               style: TextStyle(
                 color: Colors.red,
                 fontSize: ResponsiveDimensions.f(12),
