@@ -1,6 +1,6 @@
+import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:attene_mobile/component/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';

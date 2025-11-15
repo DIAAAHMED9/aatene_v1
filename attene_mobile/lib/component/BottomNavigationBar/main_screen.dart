@@ -15,9 +15,6 @@ class MainScreen extends StatelessWidget {
     return CustomBottomNavigation(
       notchWidthRatio: 0.3,
       notchDepthRatio: 0.4,
-<<<<<<< Updated upstream
-      pageName: ['الرئسية', 'المنتجات', 'دردشة', 'USER'],
-=======
       pageName: [
         'الرئسية',
         'المنتجات',
@@ -25,7 +22,6 @@ class MainScreen extends StatelessWidget {
         'USER',
 
       ],
->>>>>>> Stashed changes
       pages: [
      HomeScreen(),
      ProductScreen(),
