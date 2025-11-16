@@ -1,6 +1,7 @@
+// lib/view/screens_navigator_bottom_bar/product/product_controller.dart
+import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../utlis/sheet_controller.dart';
 
 class ProductController extends GetxController 
@@ -16,7 +17,7 @@ class ProductController extends GetxController
   final RxInt currentTabIndex = 0.obs;
   final RxString searchQuery = ''.obs;
   
-  // Tab data
+  // Tab data - باستخدام TabData من الملف الموحد
   final List<TabData> tabs = [
     TabData(label: 'جميع المنتجات (0)', viewName: 'جميع المنتجات'),
     TabData(label: 'عروض', viewName: 'عروض'),
@@ -32,10 +33,12 @@ class ProductController extends GetxController
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   
+  final bottomSheetController = Get.put(BottomSheetController());
+  
   @override
   void onInit() {
     super.onInit();
-    // Initialize tab controller with 4 tabs
+    // Initialize tab controller with tabs length
     tabController = TabController(
       length: tabs.length, 
       vsync: this,
@@ -55,14 +58,12 @@ class ProductController extends GetxController
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {
       currentTabIndex.value = tabController.index;
-      // يمكنك إضافة تحميل بيانات التبويب هنا إذا لزم الأمر
       _loadTabData(tabController.index);
     }
   }
   
   void _handleSearchChange() {
     searchQuery.value = searchTextController.text;
-    // يمكنك إضافة بحث تلقائي هنا
     if (searchQuery.value.isNotEmpty) {
       _performSearch();
     }
@@ -73,8 +74,7 @@ class ProductController extends GetxController
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      // هنا يمكنك إضافة استدعاء API لتحميل البيانات
-      await Future.delayed(Duration(milliseconds: 500)); // محاكاة تحميل بيانات
+      await Future.delayed(Duration(milliseconds: 500));
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
@@ -85,7 +85,6 @@ class ProductController extends GetxController
   // دالة لتحميل بيانات تبويب معين
   Future<void> _loadTabData(int tabIndex) async {
     try {
-      // تحميل بيانات التبويب المحدد
       print('جاري تحميل بيانات التبويب: ${tabs[tabIndex].label}');
     } catch (e) {
       errorMessage.value = 'فشل في تحميل بيانات التبويب: $e';
@@ -95,9 +94,8 @@ class ProductController extends GetxController
   // دالة للبحث
   Future<void> _performSearch() async {
     try {
-      if (searchQuery.value.length >= 2) { // البحث عند كتابة حرفين على الأقل
+      if (searchQuery.value.length >= 2) {
         print('جاري البحث عن: ${searchQuery.value}');
-        // هنا يمكنك إضافة منطق البحث
       }
     } catch (e) {
       errorMessage.value = 'فشل في البحث: $e';
@@ -119,7 +117,6 @@ class ProductController extends GetxController
   // دالة إضافية لتحديث عدد المنتجات في التبويب
   void updateProductCount(int tabIndex, int count) {
     if (tabIndex >= 0 && tabIndex < tabs.length) {
-      // يمكنك تحديث الـ label إذا أردت
       print('تحديث عدد المنتجات في التبويب $tabIndex إلى $count');
     }
   }
@@ -128,7 +125,6 @@ class ProductController extends GetxController
   Future<void> refreshData() async {
     await _loadInitialData();
   }
-   final bottomSheetController = Get.put(BottomSheetController());
   
   void openFilter() {
     bottomSheetController.showBottomSheet(BottomSheetType.filter);
@@ -146,15 +142,16 @@ class ProductController extends GetxController
     bottomSheetController.showBottomSheet(BottomSheetType.singleSelect);
   }
   
-  // دالة جديدة لفتح إدارة الأقسام
+  // دالة لفتح إدارة الأقسام
   void openManageSections() {
     bottomSheetController.openManageSections();
   }
   
-  // دالة جديدة لفتح إضافة قسم جديد
+  // دالة لفتح إضافة قسم جديد
   void openAddNewSection() {
     bottomSheetController.openAddNewSection();
   }
+  
   @override
   void onClose() {
     tabController.removeListener(_handleTabChange);
@@ -165,12 +162,4 @@ class ProductController extends GetxController
   }
 }
 
-class TabData {
-  final String label;
-  final String viewName;
-  
-  TabData({
-    required this.label,
-    required this.viewName,
-  });
-}
+// ⚠️ تم إزالة التعريف المحلي لـ TabData تماماً

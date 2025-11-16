@@ -7,6 +7,7 @@ import 'package:attene_mobile/view/Control_Panal_Vendor/controler_vindor.dart';
 import 'package:attene_mobile/view/add%20new%20store/manage_account_store.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
+import 'package:attene_mobile/view/media_library/media_library_screen.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
         '/verification': (context) => Verification(),
         '/set_new_password': (context) => SetNewPassword(),
         '/mainScreen': (context) => MainScreen(),
+        '/media_library':(context)=>MediaLibraryScreen()
       },
       debugShowCheckedModeBanner: false,
     );
