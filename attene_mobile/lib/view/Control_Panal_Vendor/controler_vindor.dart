@@ -201,8 +201,6 @@ class ControllerVendor extends StatelessWidget {
           ],
         ),
       ),
-
-      //
     );
   }
 }

@@ -31,6 +31,7 @@ class VindorHome extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
+
           padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

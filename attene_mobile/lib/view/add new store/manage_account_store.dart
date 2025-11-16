@@ -154,7 +154,11 @@ class ManageAccountStore extends StatelessWidget {
                 ],
               ),
             ),
-            AateneButton( buttonText: "اضافة متجر جديد", color: AppColors.primary400, textColor: AppColors.light1000, borderColor: AppColors.primary400,),
+            AateneButton(
+              buttonText: "اضافة متجر جديد",
+              color: AppColors.primary400,
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,),
 
           ],
         ),
