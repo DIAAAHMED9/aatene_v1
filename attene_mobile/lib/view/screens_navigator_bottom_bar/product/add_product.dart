@@ -1,9 +1,14 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/view/media_library/media_library_controller.dart';
+import 'package:attene_mobile/view/media_library/media_model.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
+
+import 'package:attene_mobile/view/media_library/media_library_screen.dart';
 
 class AddProductScreen extends StatefulWidget {
   @override
@@ -12,6 +17,9 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   final isRTL = LanguageUtils.isRTL;
+  final AddProductController addProductController = Get.put(AddProductController());
+  final MediaLibraryController mediaController = Get.put(MediaLibraryController());
+  
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -44,52 +52,53 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // العنوان الرئيسي
             _buildSectionTitle('المعلومات الأساسية'),
             SizedBox(height: 20),
             
-            // قسم الملابس والأحذية
             _buildCategorySection(),
             SizedBox(height: 20),
             
-            // نصائح للصور
-            // _buildImageTipsSection(),
-            // SizedBox(height: 20),
-            
-            // قسم تحميل الصور
-            _buildImageUploadSection(),
+            InkWell(
+              onTap: _openMediaLibrary,
+              child: _buildImageUploadSection(),
+            ),
             SizedBox(height: 20),
             
-            // اسم المنتج
             _buildProductNameSection(),
             SizedBox(height: 20),
             
-            // وصف المنتج
-            _buildProductDescriptionSection(),
-            SizedBox(height: 20),
-            
-            // السعر
             _buildPriceSection(),
             SizedBox(height: 20),
-            
-            // الفئات
+          
+            _buildProductConditionSection(),
+            SizedBox(height: 20),
+
             _buildCategoriesSection(),
             SizedBox(height: 20),
             
-            // حالة المنتج
-            _buildProductConditionSection(),
+            _buildProductDescriptionSection(),
             SizedBox(height: 20),
             
-            // الأقسام الفرعية
-            _buildSubCategoriesSection(),
-            SizedBox(height: 30),
-            
-            // زر التالي
             _buildNextButton(),
           ],
         ),
       ),
     );
+  }
+
+  void _openMediaLibrary() async {
+    final List<MediaItem>? result = await Get.to(
+      () => MediaLibraryScreen(
+        isSelectionMode: true,
+        onMediaSelected: (selectedMedia) {
+          addProductController.updateSelectedMedia(selectedMedia);
+        },
+      ),
+    );
+    
+    if (result != null) {
+      addProductController.updateSelectedMedia(result);
+    }
   }
 
   Widget _buildSectionTitle(String title) {
@@ -110,7 +119,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       decoration: BoxDecoration(
         color: AppColors.primary300Alpha10,
         borderRadius: BorderRadius.circular(12),
-        // border: Border.all(color: AppColors.primary100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,47 +144,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildImageTipsSection() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.orange[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange[100]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.lightbulb_outline, color: Colors.orange[700], size: 20),
-              SizedBox(width: 8),
-              Text(
-                'نصائح لإلتقاط صور جيدة',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange[700],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          Text(
-            '• استخدم إضاءة جيدة وطبيعية\n• التقط الصور من زوايا متعددة\n• تأكد من وضوح المنتج في الصورة\n• استخدم خلفية بسيطة',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.orange[700],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildImageUploadSection() {
-    return Column(
+    return Obx(() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -196,12 +165,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
         SizedBox(height: 8),
         Container(
-         height: 22,
-         width: double.infinity,
-         padding: EdgeInsets.symmetric(vertical: 1,horizontal: 10),
+          height: 22,
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 1,horizontal: 10),
           decoration: BoxDecoration(
-                    color: AppColors.primary300Alpha10,
-        borderRadius: BorderRadius.circular(20),
+            color: AppColors.primary300Alpha10,
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             'يمكنك سحب وافلات الصورة لاعادة ترتيب الصور',
@@ -212,6 +181,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
         SizedBox(height: 16),
+        
+        // عرض الصور المختارة
+        if (addProductController.selectedMediaList.isNotEmpty) 
+          _buildSelectedMediaPreview(),
         
         // منطقة سحب وإفلات الصور
         Container(
@@ -228,7 +201,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 padding: EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: BoxBorder.all(color: Colors.black),
+                  border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(20)
                 ),
                 child: Icon(Icons.add, size: 25, color: Colors.black)),
@@ -251,9 +224,132 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
       ],
+    ));
+  }
+
+  Widget _buildSelectedMediaPreview() {
+    return Container(
+      height: 100,
+      margin: EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'الصور المختارة (${addProductController.selectedMediaList.length})',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 8),
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: addProductController.selectedMediaList.length,
+              itemBuilder: (context, index) {
+                final media = addProductController.selectedMediaList[index];
+                return _buildSelectedMediaItem(media, index);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
+  Widget _buildSelectedMediaItem(MediaItem media, int index) {
+    return Container(
+      width: 80,
+      height: 80,
+      margin: EdgeInsets.only(left: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Stack(
+        children: [
+          media.type == MediaType.image
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/images/placeholder.png',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.image, size: 30, color: Colors.grey[400]);
+                    },
+                  ),
+                )
+              : Container(
+                  color: Colors.grey[200],
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.videocam, color: Colors.grey[500]),
+                        Text(
+                          'فيديو',
+                          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+        
+          Positioned(
+            top: 4,
+            left: 4,
+            child: GestureDetector(
+              onTap: () {
+                addProductController.removeMedia(index);
+              },
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 14,
+                ),
+              ),
+            ),
+          ),
+        
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+              ),
+              child: Text(
+                media.name.length > 12 
+                    ? '${media.name.substring(0, 12)}...' 
+                    : media.name,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // باقي الدوال تبقى كما هي بدون تغيير
   Widget _buildProductNameSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,11 +374,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
         SizedBox(height: 8),
         TextFiledAatene(
+          fillColor: Colors.transparent,
           heightTextFiled: 50,
           controller: _productNameController,
           isRTL: isRTL,
           hintText: 'أدخل اسم المنتج',
         ),
+        Text('قم بتضمين الكلمات الرئيسية التي يستخدمها المشترون للبحث عن هذا العنصر.')
       ],
     );
   }
@@ -315,49 +413,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
             border: Border.all(color: Colors.grey[300]!),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Column(
-            children: [
-              TextField(
-                controller: _productDescriptionController,
-                maxLines: 4,
-                maxLength: _maxDescriptionLength,
-                onChanged: (value) {
-                  setState(() {
-                    _characterCount = value.length;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'قم بتضمين الكلمات الرئيسية التي يستخدمها المشترون للبحث عن هذا العنصر.',
-                  hintStyle: TextStyle(fontSize: 14),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(12),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(8),
-                    bottomRight: Radius.circular(8),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      '$_characterCount/$_maxDescriptionLength',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _characterCount > _maxDescriptionLength 
-                            ? Colors.red 
-                            : Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          child: TextField(
+            controller: _productDescriptionController,
+            maxLines: 4,
+            maxLength: _maxDescriptionLength,
+            onChanged: (value) {
+              setState(() {
+                _characterCount = value.length;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'وصف المنتج',
+              hintStyle: TextStyle(fontSize: 14),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(12),
+            ),
           ),
         ),
       ],
@@ -387,38 +457,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ],
         ),
         SizedBox(height: 8),
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
-                ),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Text(
-                '₪',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+        TextFiledAatene(
+          heightTextFiled: 50,
+          controller: _priceController,
+          isRTL: isRTL,
+          hintText: 'السعر',
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              '₪',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            Expanded(
-              child: TextFiledAatene(
-                heightTextFiled: 50,
-                controller: _priceController,
-                isRTL: isRTL,
-                hintText: 'السعر',
-                // contentPadding: EdgeInsets.only(left: 12),
-              ),
-            ),
-          ],
+          ),
+          fillColor: Colors.transparent,
         ),
-      ],
+      ]
     );
   }
 
@@ -445,23 +501,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ],
         ),
         SizedBox(height: 8),
-        Text(
-          'ابحث عن اسم الفئة التي ترغب بإضافة منتجك إليها',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-        SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(25),
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedCategory.isEmpty ? null : _selectedCategory,
             decoration: InputDecoration(
-              hintText: 'ابحث عن تصنيف',
+              hintText: 'ابحث عن اسم الفئة التي ترغب بإضافة منتجك إليها',
+              hintStyle: TextStyle(fontSize: 9),
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 12),
             ),
@@ -508,7 +557,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(25),
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedCondition.isEmpty ? null : _selectedCondition,
@@ -534,83 +583,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildSubCategoriesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'ملابس',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 12),
-        
-        // وصف المنتج
-        _buildSubCategoryField(
-          title: 'وصف المنتج',
-          hint: 'ملابس نساء',
-        ),
-        SizedBox(height: 12),
-        
-        // ماهو وصف المنتج
-        _buildSubCategoryField(
-          title: 'ماهو وصف المنتج',
-          hint: 'جاكت',
-        ),
-        SizedBox(height: 12),
-        
-        // اخري
-        _buildSubCategoryField(
-          title: 'اخري',
-          hint: 'وصف المنتج',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubCategoryField({required String title, required String hint}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(height: 4),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: _selectedSubCategory.isEmpty ? null : _selectedSubCategory,
-            decoration: InputDecoration(
-              hintText: hint,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12),
-            ),
-            items: _subCategories.map((subCategory) {
-              return DropdownMenuItem(
-                value: subCategory,
-                child: Text(subCategory),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedSubCategory = value!;
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildNextButton() {
     return Center(
       child: AateneButton(
@@ -619,9 +591,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         borderColor: Colors.transparent,
         buttonText: isRTL ? 'التالي' : 'Next',
         onTap: () {
-          // التحقق من الحقول المطلوبة قبل المتابعة
           if (_validateForm()) {
-            // الانتقال للخطوة التالية
             _goToNextStep();
           }
         },
@@ -631,69 +601,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   bool _validateForm() {
     if (_productNameController.text.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى إدخال اسم المنتج',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('خطأ', 'يرجى إدخال اسم المنتج', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
-    
     if (_productDescriptionController.text.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى إدخال وصف المنتج',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('خطأ', 'يرجى إدخال وصف المنتج', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
-    
     if (_priceController.text.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى إدخال سعر المنتج',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('خطأ', 'يرجى إدخال سعر المنتج', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
-    
     if (_selectedCategory.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى اختيار الفئة',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('خطأ', 'يرجى اختيار الفئة', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
-    
     if (_selectedCondition.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى اختيار حالة المنتج',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('خطأ', 'يرجى اختيار حالة المنتج', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
-    
     return true;
   }
 
   void _goToNextStep() {
-    // هنا يمكنك الانتقال للخطوة التالية
-    Get.snackbar(
-      'نجاح',
-      'تم حفظ المعلومات الأساسية بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-    
-    // مثال للانتقال للخطوة التالية:
-    // Get.to(() => NextStepScreen());
+    Get.snackbar('نجاح', 'تم حفظ المعلومات الأساسية بنجاح', backgroundColor: Colors.green, colorText: Colors.white);
   }
 
   @override

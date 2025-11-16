@@ -1,0 +1,55 @@
+// lib/models/tab_model.dart
+import 'package:flutter/material.dart';
+
+class TabData {
+  final String label;
+  final String viewName;
+  final IconData? icon;
+
+  TabData({
+    required this.label,
+    required this.viewName,
+    this.icon,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TabData &&
+          runtimeType == other.runtimeType &&
+          label == other.label &&
+          viewName == other.viewName;
+
+  @override
+  int get hashCode => label.hashCode ^ viewName.hashCode;
+}
+
+class AppBarConfig {
+  final String title;
+  final String actionText;
+  final VoidCallback? onActionPressed;
+  final List<TabData> tabs;
+  final TextEditingController searchController;
+  final ValueChanged<String>? onSearchChanged;
+  final VoidCallback? onFilterPressed;
+  final VoidCallback? onSortPressed;
+  final TabController? tabController;
+  final ValueChanged<int>? onTabChanged;
+  final bool showSearch;
+  final bool showTabs;
+
+  AppBarConfig({
+    required this.title,
+    required this.actionText,
+    this.onActionPressed,
+    required this.tabs,
+    required this.searchController,
+    this.onSearchChanged,
+    this.onFilterPressed,
+    this.onSortPressed,
+    this.tabController,
+    this.onTabChanged,
+    this.showSearch = true,
+    this.showTabs = true,
+  });
+}
