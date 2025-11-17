@@ -109,7 +109,11 @@ class TypeStore extends StatelessWidget {
                   ),
                 ),
               ),
-              AateneButton( buttonText: "التالي", color: AppColors.primary400, textColor: AppColors.light1000, borderColor: AppColors.primary400,),
+              AateneButton(
+                buttonText: "التالي",
+                color: AppColors.primary400,
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary400,),
             ],
           ),
         ),

@@ -15,6 +15,7 @@ class TextFiledAatene extends StatelessWidget {
     this.textInputType,
     this.controller,
     this.heightTextFiled,
+     this.fillColor,
   });
 
   final bool isRTL;
@@ -28,6 +29,7 @@ class TextFiledAatene extends StatelessWidget {
   final TextInputType? textInputType;
   final TextEditingController? controller;
   final double? heightTextFiled;
+  final Color?fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,7 @@ class TextFiledAatene extends StatelessWidget {
                 borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
                 borderSide: BorderSide(
                   color: isError??false ? Colors.red : Colors.grey[300]!,
-                  width: isError??false ? 2.0 : 0,
+                  width: isError??false ? 2.0 : 1.5,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -76,7 +78,7 @@ class TextFiledAatene extends StatelessWidget {
                 borderSide: BorderSide(color: Colors.red, width: 2.0),
               ),
               filled: true,
-              fillColor: isError??false ? Colors.transparent : Colors.grey[50],
+              fillColor: isError??false ? Colors.transparent :fillColor?? Colors.grey[50],
               contentPadding: EdgeInsets.symmetric(
                 horizontal: ResponsiveDimensions.w(20),
                 vertical: ResponsiveDimensions.h(16),
