@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../utlis/colors/app_color.dart';
 
-class AddStore extends StatelessWidget {
-  const AddStore({super.key});
+class TypeStore extends StatelessWidget {
+  const TypeStore({super.key});
 
   @override
   Widget build(BuildContext context) {

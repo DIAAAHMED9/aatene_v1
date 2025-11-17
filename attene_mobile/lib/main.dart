@@ -3,16 +3,14 @@ import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
-import 'package:attene_mobile/view/Control_Panal_Vendor/controler_vindor.dart';
-import 'package:attene_mobile/view/add%20new%20store/manage_account_store.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
+import 'package:attene_mobile/view/shipping%20method/edit_shipping_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'utlis/sheet_controller.dart';
-import 'view/Splash/splash.dart';
 import 'view/login and start/forget_password/forget_password.dart';
 import 'view/login and start/login/login.dart';
 import 'view/login and start/start_page.dart';
@@ -56,7 +54,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {
-        '/': (context) => const SplashScreen(),
+        '/': (context) => const EditShippingMethod(),
         '/onboarding': (context) => const Onbording(),
         '/start_login': (context) => const StartLogin(),
         '/login': (context) => Login(),
