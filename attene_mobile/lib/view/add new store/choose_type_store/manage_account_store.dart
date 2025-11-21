@@ -1,7 +1,9 @@
+import 'package:attene_mobile/component/aatene_button/aatene_button_with_arrow_icon.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
-import '../../component/aatene_button/aatene_button.dart';
+import '../../../component/aatene_button/aatene_button.dart';
+
 
 class ManageAccountStore extends StatelessWidget {
   const ManageAccountStore({super.key});
@@ -160,12 +162,7 @@ class ManageAccountStore extends StatelessWidget {
               separatorBuilder: (context, index) => const SizedBox(height: 10),
               itemCount: 3,
             ),
-            AateneButton(
-              buttonText: "اضافة متجر جديد",
-              color: AppColors.primary400,
-              textColor: AppColors.light1000,
-              borderColor: AppColors.primary400,
-            ),
+            AateneButtonWithIcon(buttonText: "buttonText", icon: Icon(Icons.add),),
           ],
         ),
       ),

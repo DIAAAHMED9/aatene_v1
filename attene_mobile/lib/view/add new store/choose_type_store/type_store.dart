@@ -1,7 +1,8 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/component/aatene_button/aatene_button_with_arrow_icon.dart';
 import 'package:flutter/material.dart';
 
-import '../../utlis/colors/app_color.dart';
+import '../../../utlis/colors/app_color.dart';
 
 class TypeStore extends StatelessWidget {
   const TypeStore({super.key});
@@ -10,7 +11,6 @@ class TypeStore extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         leading: IconButton(
           onPressed: () {},
           icon: Container(
@@ -57,9 +57,7 @@ class TypeStore extends StatelessWidget {
                   child: Row(
                     spacing: 5,
                     children: [
-                      SizedBox(
-                        width: 10,
-                      ),
+                      SizedBox(width: 10),
                       Icon(Icons.store, color: AppColors.primary400),
                       Text(
                         "لبيع المنتجات",
@@ -89,9 +87,7 @@ class TypeStore extends StatelessWidget {
                   child: Row(
                     spacing: 5,
                     children: [
-                      SizedBox(
-                        width: 10,
-                      ),
+                      SizedBox(width: 10),
                       Icon(
                         Icons.home_repair_service_sharp,
                         color: AppColors.neutral100,
@@ -109,11 +105,7 @@ class TypeStore extends StatelessWidget {
                   ),
                 ),
               ),
-              AateneButton(
-                buttonText: "التالي",
-                color: AppColors.primary400,
-                textColor: AppColors.light1000,
-                borderColor: AppColors.primary400,),
+              AateneButtonWithIcon(buttonText: "التالي"),
             ],
           ),
         ),

@@ -53,7 +53,6 @@ class VindorHome extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100),
                         color: AppColors.primary500,
                       ),
-
                       width: 40,
                       height: 30,
                       child: IconButton(
