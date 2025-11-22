@@ -1,24 +1,28 @@
+// lib/view/screens_navigator_bottom_bar/product/add_product_content.dart
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/view/advance_info/keyword_management_screen.dart';
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
+import 'package:attene_mobile/view/product_variations/product_variations_screen.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
-
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';
 
-class AddProductScreen extends StatefulWidget {
+class AddProductContent extends StatefulWidget {
+  const AddProductContent({super.key});
+
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  _AddProductContentState createState() => _AddProductContentState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _AddProductContentState extends State<AddProductContent> {
   final isRTL = LanguageUtils.isRTL;
-  final AddProductController addProductController = Get.put(AddProductController());
-  final MediaLibraryController mediaController = Get.put(MediaLibraryController());
+  final AddProductController addProductController = Get.find<AddProductController>();
+  final MediaLibraryController mediaController = Get.find<MediaLibraryController>();
   
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescriptionController = TextEditingController();
@@ -28,64 +32,61 @@ class _AddProductScreenState extends State<AddProductScreen> {
   
   String _selectedCategory = '';
   String _selectedCondition = '';
-  String _selectedSubCategory = '';
   
   List<String> _productConditions = ['جديد', 'مستعمل', 'مجدول'];
   List<String> _categories = ['ملابس', 'أحذية', 'إلكترونيات', 'منزلية'];
-  List<String> _subCategories = ['ملابس نساء', 'ملابس رجال', 'ملابس أطفال'];
   
   int _characterCount = 0;
   final int _maxDescriptionLength = 140;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('إضافة منتج جديد'),
-        backgroundColor: AppColors.primary400,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle('المعلومات الأساسية'),
-            SizedBox(height: 20),
-            
-            _buildCategorySection(),
-            SizedBox(height: 20),
-            
-            InkWell(
-              onTap: _openMediaLibrary,
-              child: _buildImageUploadSection(),
-            ),
-            SizedBox(height: 20),
-            
-            _buildProductNameSection(),
-            SizedBox(height: 20),
-            
-            _buildPriceSection(),
-            SizedBox(height: 20),
-          
-            _buildProductConditionSection(),
-            SizedBox(height: 20),
+        print('🔴 AddProductContent built'); // 🔴 راقب في الكونسول
 
-            _buildCategoriesSection(),
-            SizedBox(height: 20),
-            
-            _buildProductDescriptionSection(),
-            SizedBox(height: 20),
-            
-            _buildNextButton(),
-          ],
-        ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: (){
+              Get.to(KeywordManagementScreen());
+            },
+            child: _buildSectionTitle('المعلومات الأساسية')),
+          const SizedBox(height: 20),
+          
+          _buildCategorySection(),
+          const SizedBox(height: 20),
+          
+          InkWell(
+            onTap: _openMediaLibrary,
+            child: _buildImageUploadSection(),
+          ),
+          const SizedBox(height: 20),
+          
+          _buildProductNameSection(),
+          const SizedBox(height: 20),
+          
+          _buildPriceSection(),
+          const SizedBox(height: 20),
+        
+          _buildProductConditionSection(),
+          const SizedBox(height: 20),
+
+          _buildCategoriesSection(),
+          const SizedBox(height: 20),
+          
+          _buildProductDescriptionSection(),
+          const SizedBox(height: 20),
+          
+          _buildNextButton(),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 
+  // ... باقي الدوال تبقى كما هي بدون أي تغيير ...
   void _openMediaLibrary() async {
     final List<MediaItem>? result = await Get.to(
       () => MediaLibraryScreen(
@@ -104,7 +105,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
         color: AppColors.primary400,
@@ -115,7 +116,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget _buildCategorySection() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.primary300Alpha10,
         borderRadius: BorderRadius.circular(12),
@@ -131,7 +132,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               color: AppColors.primary400,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'منتجات خاصة بالملابس و متعلقاتها',
             style: TextStyle(
@@ -155,7 +156,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Text(
           'يمكنك إضافة حتى (10) صور و (1) فيديو',
           style: TextStyle(
@@ -163,11 +164,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
             color: Colors.black,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           height: 22,
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 1,horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
           decoration: BoxDecoration(
             color: AppColors.primary300Alpha10,
             borderRadius: BorderRadius.circular(20),
@@ -180,44 +181,42 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         
-        // عرض الصور المختارة
         if (addProductController.selectedMediaList.isNotEmpty) 
           _buildSelectedMediaPreview(),
         
-        // منطقة سحب وإفلات الصور
         Container(
           height: 120,
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
-            color: Color(0xFFF8F8F8),
+            color: const Color(0xFFF8F8F8),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(7),
+                padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(20)
                 ),
-                child: Icon(Icons.add, size: 25, color: Colors.black)),
-              SizedBox(height: 8),
+                child: const Icon(Icons.add, size: 25, color: Colors.black)),
+              const SizedBox(height: 8),
               Text(
                 'اضف او اسحب صورة او فيديو',
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),
               ),
-              SizedBox(height: 4),
-              Text(
+              const SizedBox(height: 4),
+              const Text(
                 'png , jpg , svg',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[500],
+                  color: Colors.grey,
                 ),
               ),
             ],
@@ -230,19 +229,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget _buildSelectedMediaPreview() {
     return Container(
       height: 100,
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'الصور المختارة (${addProductController.selectedMediaList.length})',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -262,7 +261,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Container(
       width: 80,
       height: 80,
-      margin: EdgeInsets.only(left: 8),
+      margin: const EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
@@ -306,11 +305,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
               child: Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.red,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.close,
                   color: Colors.white,
                   size: 14,
@@ -324,10 +323,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(8),
                   bottomRight: Radius.circular(8),
                 ),
@@ -336,7 +335,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 media.name.length > 12 
                     ? '${media.name.substring(0, 12)}...' 
                     : media.name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 8,
                 ),
@@ -349,30 +348,29 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  // باقي الدوال تبقى كما هي بدون تغيير
   Widget _buildProductNameSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'اسم المنتج',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
               '*',
               style: TextStyle(
-                color: Colors.red,
+                color: Colors.red[400],
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFiledAatene(
           fillColor: Colors.transparent,
           heightTextFiled: 50,
@@ -380,7 +378,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
           isRTL: isRTL,
           hintText: 'أدخل اسم المنتج',
         ),
-        Text('قم بتضمين الكلمات الرئيسية التي يستخدمها المشترون للبحث عن هذا العنصر.')
+        const SizedBox(height: 8),
+        Text(
+          'قم بتضمين الكلمات الرئيسية التي يستخدمها المشترون للبحث عن هذا العنصر.',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+          ),
+        ),
       ],
     );
   }
@@ -391,23 +396,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'وصف المنتج',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
               '*',
               style: TextStyle(
-                color: Colors.red,
+                color: Colors.red[400],
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
@@ -424,9 +429,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
             },
             decoration: InputDecoration(
               hintText: 'وصف المنتج',
-              hintStyle: TextStyle(fontSize: 14),
+              hintStyle: const TextStyle(fontSize: 14),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(12),
+              contentPadding: const EdgeInsets.all(12),
+              counterText: '$_characterCount/$_maxDescriptionLength',
             ),
           ),
         ),
@@ -440,30 +446,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'السعر',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
               '*',
               style: TextStyle(
-                color: Colors.red,
+                color: Colors.red[400],
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFiledAatene(
           heightTextFiled: 50,
           controller: _priceController,
           isRTL: isRTL,
           hintText: 'السعر',
-          suffixIcon: Padding(
-            padding: const EdgeInsets.only(top: 12),
+          suffixIcon: const Padding(
+            padding: EdgeInsets.only(top: 12),
             child: Text(
               '₪',
               style: TextStyle(
@@ -484,23 +490,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'الفئات',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
               '*',
               style: TextStyle(
-                color: Colors.red,
+                color: Colors.red[400],
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
@@ -510,9 +516,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
             value: _selectedCategory.isEmpty ? null : _selectedCategory,
             decoration: InputDecoration(
               hintText: 'ابحث عن اسم الفئة التي ترغب بإضافة منتجك إليها',
-              hintStyle: TextStyle(fontSize: 9),
+              hintStyle: const TextStyle(fontSize: 12),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
             ),
             items: _categories.map((category) {
               return DropdownMenuItem(
@@ -537,23 +543,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'حالة المنتج',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
               '*',
               style: TextStyle(
-                color: Colors.red,
+                color: Colors.red[400],
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
@@ -561,7 +567,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedCondition.isEmpty ? null : _selectedCondition,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'اختر حالة المنتج',
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -592,6 +598,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         buttonText: isRTL ? 'التالي' : 'Next',
         onTap: () {
           if (_validateForm()) {
+            Get.to( ProductVariationsScreen());
             _goToNextStep();
           }
         },
