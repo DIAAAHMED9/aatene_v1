@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide Response;
+import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 
 const String postMethod = 'POST';
 const String getMethod = 'GET';
@@ -619,4 +620,96 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       return false;
     }
   }
+  // دالة لرفع الملفات إلى media-center
+static Future<dynamic> uploadMedia({
+  required File file,
+  required String type,
+  bool withLoading = false,
+  Function(int, int)? onSendProgress,
+}) async {
+  try {
+    if (withLoading) {
+      _startLoading();
+    }
+
+    final String fileName = file.path.split('/').last;
+    final FormData formData = FormData.fromMap({
+      'type': type,
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: fileName,
+      ),
+    });
+
+    final requestHeaders = _getBaseHeaders();
+    // إزالة Content-Type ليتيح Dio إضافة الصيغة المناسبة تلقائياً
+    requestHeaders.remove('Content-Type');
+
+    print('''
+🔼 [UPLOAD] Starting upload...
+📁 File: $fileName
+📊 Type: $type
+📦 Size: ${file.lengthSync()} bytes
+    ''');
+
+    final Dio dio = Dio(
+      BaseOptions(
+        baseUrl: _getBaseUrl(),
+        headers: requestHeaders,
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+      ),
+    );
+
+    final Response response = await dio.post(
+      '/media-center/add-new',
+      data: formData,
+      onSendProgress: onSendProgress,
+    );
+
+    if (withLoading) {
+      _dismissLoading();
+    }
+
+    _logRequestSuccess('POST', '/media-center/add-new', response.data, Stopwatch()..start());
+
+    return response.data;
+  } catch (error) {
+    _dismissLoading();
+    return _handleError(error, 'POST', '/media-center/add-new', Stopwatch()..start(), true);
+  }
+}
+
+// دالة لجلب قائمة الملفات حسب النوع
+static Future<dynamic> getMediaList({
+  required String type,
+  bool withLoading = false,
+}) async {
+  return await _makeRequest(
+    method: getMethod,
+    path: '/media-center/list',
+    queryParameters: {'type': type},
+    withLoading: withLoading,
+    shouldShowMessage: false,
+  );
+}
+
+// دالة لحذف الملف
+static Future<dynamic> deleteMedia({
+  required String fileName,
+  bool withLoading = true,
+}) async {
+  return await _makeRequest(
+    method: deleteMethod,
+    path: '/media-center/delete',
+    queryParameters: {'file_name': fileName},
+    withLoading: withLoading,
+    shouldShowMessage: true,
+  );
+}
+
+// دالة للحصول على الرابط الأساسي (للاستخدام في عرض الصور)
+static String getBaseUrl() {
+  return _getBaseUrl().replaceAll('/api', '');
+}
 }

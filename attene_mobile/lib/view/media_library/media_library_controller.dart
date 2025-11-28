@@ -1,13 +1,19 @@
 // lib/controllers/media_library_controller.dart
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
+import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaLibraryController extends GetxController 
-    with SingleGetTickerProviderMixin {
+    with SingleGetTickerProviderMixin, WidgetsBindingObserver {
   
   late TabController tabController;
   final TextEditingController searchTextController = TextEditingController();
@@ -17,9 +23,8 @@ class MediaLibraryController extends GetxController
   final RxBool isLoading = false.obs;
   final RxDouble uploadProgress = 0.0.obs;
 
-  // ✅ تصحيح: استخدام RxList بشكل صحيح
-  final RxList<MediaItem> uploadedMediaItems = <MediaItem>[].obs; // الملفات المرفوعة سابقاً
-  final RxList<MediaItem> temporaryMediaItems = <MediaItem>[].obs; // الملفات المختارة حديثاً
+  final RxList<MediaItem> uploadedMediaItems = <MediaItem>[].obs;
+  final RxList<MediaItem> temporaryMediaItems = <MediaItem>[].obs;
   final RxList<String> selectedMediaIds = <String>[].obs;
 
   final List<TabData> tabs = [
@@ -28,10 +33,18 @@ class MediaLibraryController extends GetxController
   ];
 
   final ImagePicker _picker = ImagePicker();
+  Timer? _autoRefreshTimer;
+  DateTime? _lastLoadTime;
+
+  // أنواع الوسائط المدعومة في API
+  final List<String> supportedMediaTypes = [
+    'media', 'pdf', 'excel', 'word', 'gallery', 'image', 'avatar', 'thumbnail'
+  ];
 
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     
     tabController = TabController(
       length: tabs.length, 
@@ -42,291 +55,10 @@ class MediaLibraryController extends GetxController
     tabController.addListener(_handleTabChange);
     searchTextController.addListener(_handleSearchChange);
     
-    // تحميل البيانات من API عند التهيئة
-    loadUploadedMediaFromAPI();
-  }
-  
-  void _handleTabChange() {
-    if (!tabController.indexIsChanging) {
-      currentTabIndex.value = tabController.index;
-    }
-  }
-  
-  void _handleSearchChange() {
-    searchQuery.value = searchTextController.text;
-  }
-  
-  void changeTab(int index) {
-    if (index >= 0 && index < tabs.length) {
-      tabController.animateTo(index);
-      currentTabIndex.value = index;
-    }
-  }
-  
-  void clearSearch() {
-    searchTextController.clear();
-    searchQuery.value = '';
-  }
-
-  // ✅ دوال الوسائط
-  bool get canSelectMore {
-    return selectedMediaIds.length < 10;
-  }
-
-  void toggleMediaSelection(String mediaId) {
-    if (selectedMediaIds.contains(mediaId)) {
-      selectedMediaIds.remove(mediaId);
-    } else {
-      if (canSelectMore) {
-        selectedMediaIds.add(mediaId);
-      } else {
-        Get.snackbar(
-          'تنبيه',
-          'يمكن اختيار 10 صور كحد أقصى',
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
-      }
-    }
-  }
-
-  // ✅ دالة محاكاة جلب البيانات من API
-  Future<void> loadUploadedMediaFromAPI() async {
-    isLoading.value = true;
+    _startAutoRefresh();
+    _loadInitialData();
     
-    try {
-      // هنا نضيف محاكاة لجلب البيانات من API
-      await Future.delayed(Duration(seconds: 1));
-      
-      final apiData = <MediaItem>[];
-      for (int i = 1; i <= 8; i++) {
-        apiData.add(MediaItem(
-          id: 'api_$i',
-          path: 'https://example.com/image_$i.jpg', // رابط من API
-          type: i % 3 == 0 ? MediaType.video : MediaType.image,
-          name: 'ملف مرفوع $i.${i % 3 == 0 ? 'mp4' : 'png'}',
-          dateAdded: DateTime.now().subtract(Duration(days: i * 2)),
-          size: (i * 1024 * 1024).toInt(), // حجم مختلف لكل ملف
-        ));
-      }
-      
-      uploadedMediaItems.assignAll(apiData);
-    } catch (e) {
-      Get.snackbar('خطأ', 'فشل في تحميل الملفات السابقة');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  // ✅ دوال اختيار الملفات
-  Future<void> pickImages() async {
-    try {
-      final List<XFile>? images = await _picker.pickMultiImage(
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (images != null) {
-        await _processSelectedFiles(images, MediaType.image);
-      }
-    } catch (e) {
-      Get.snackbar('خطأ', 'فشل في اختيار الصور');
-    }
-  }
-
-  Future<void> pickVideo() async {
-    try {
-      final XFile? video = await _picker.pickVideo(
-        source: ImageSource.gallery,
-        maxDuration: const Duration(minutes: 10),
-      );
-
-      if (video != null) {
-        await _processSelectedFiles([video], MediaType.video);
-      }
-    } catch (e) {
-      Get.snackbar('خطأ', 'فشل في اختيار الفيديو');
-    }
-  }
-
-  Future<void> takePhoto() async {
-    try {
-      final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (photo != null) {
-        await _processSelectedFiles([photo], MediaType.image);
-      }
-    } catch (e) {
-      Get.snackbar('خطأ', 'فشل في التقاط الصورة');
-    }
-  }
-
-  Future<void> takeVideo() async {
-    try {
-      final XFile? video = await _picker.pickVideo(
-        source: ImageSource.camera,
-        maxDuration: const Duration(minutes: 10),
-      );
-
-      if (video != null) {
-        await _processSelectedFiles([video], MediaType.video);
-      }
-    } catch (e) {
-      Get.snackbar('خطأ', 'فشل في تسجيل الفيديو');
-    }
-  }
-
-  // ✅ معالجة الملفات المختارة
-  Future<void> _processSelectedFiles(List<XFile> files, MediaType type) async {
-    isLoading.value = true;
-    uploadProgress.value = 0.0;
-
-    final newMediaItems = <MediaItem>[];
-
-    for (int i = 0; i < files.length; i++) {
-      final file = files[i];
-      final fileSize = await _getFileSize(file.path);
-      
-      final mediaItem = MediaItem(
-        id: 'temp_${DateTime.now().millisecondsSinceEpoch}_$i',
-        path: file.path,
-        type: type,
-        name: file.name,
-        dateAdded: DateTime.now(),
-        size: fileSize,
-        isLocal: true, // ✅ إضافة علامة أن الملف محلي
-      );
-
-      await _simulateUpload();
-      newMediaItems.add(mediaItem);
-      
-      uploadProgress.value = (i + 1) / files.length;
-    }
-
-    temporaryMediaItems.addAll(newMediaItems);
-    
-    // ✅ اختيار الملفات المرفوعة تلقائياً
-    for (final item in newMediaItems) {
-      if (canSelectMore) {
-        selectedMediaIds.add(item.id);
-      }
-    }
-
-    isLoading.value = false;
-    uploadProgress.value = 0.0;
-    
-    if (files.isNotEmpty) {
-      Get.snackbar('نجاح', 'تم إضافة ${files.length} ملف بنجاح');
-      
-      // ✅ الانتقال تلقائياً إلى تبويب الملفات السابقة بعد الرفع
-      if (temporaryMediaItems.isNotEmpty) {
-        changeTab(1); // الانتقال إلى تبويب الملفات السابقة
-      }
-    }
-  }
-
-  Future<int> _getFileSize(String path) async {
-    final file = File(path);
-    final stat = await file.stat();
-    return stat.size;
-  }
-
-  Future<void> _simulateUpload() async {
-    await Future.delayed(Duration(milliseconds: 500));
-  }
-
-  void clearSelection() {
-    selectedMediaIds.clear();
-  }
-
-  // ✅ الحصول على الوسائط المعروضة حسب التبويب النشط
-  List<MediaItem> get displayedMedia {
-    if (currentTabIndex.value == 0) {
-      // تبويب التحميل - نعرض الملفات المؤقتة
-      return temporaryMediaItems;
-    } else {
-      // تبويب الملفات السابقة - نعرض الملفات من API
-      return uploadedMediaItems;
-    }
-  }
-
-  // ✅ الحصول على الوسائط المصفاة حسب البحث
-  List<MediaItem> get filteredMedia {
-    var filtered = displayedMedia;
-    
-    if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((item) => 
-        item.name.toLowerCase().contains(searchQuery.value.toLowerCase())
-      ).toList();
-    }
-    
-    return filtered;
-  }
-
-  // ✅ دالة التأكيد على الإدراج
-  void confirmSelection() {
-    if (selectedMediaIds.isNotEmpty) {
-      final selectedMedia = _getSelectedMediaItems();
-      
-      // ✅ هنا يمكنك إضافة كود لرفع الملفات إلى API
-      _uploadSelectedMediaToAPI(selectedMedia);
-      
-      Get.back(result: selectedMedia);
-      Get.snackbar(
-        'تم الإدراج', 
-        'تم إدراج ${selectedMediaIds.length} عنصر',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    }
-  }
-
-  // ✅ الحصول على الوسائط المختارة
-  List<MediaItem> _getSelectedMediaItems() {
-    final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
-    return allMedia.where((item) => selectedMediaIds.contains(item.id)).toList();
-  }
-
-  // ✅ محاكاة رفع الملفات إلى API
-  Future<void> _uploadSelectedMediaToAPI(List<MediaItem> mediaItems) async {
-    isLoading.value = true;
-    
-    try {
-      // محاكاة رفع الملفات إلى API
-      for (final media in mediaItems) {
-        if (media.isLocal??false) {
-          // رفع الملفات المحلية إلى API
-          await _uploadFileToAPI(media);
-        }
-      }
-      
-      // بعد الرفع الناجح، ننقل الملفات المؤقتة إلى الملفات المرفوعة
-      final uploadedItems = temporaryMediaItems.where((item) => selectedMediaIds.contains(item.id)).toList();
-      uploadedMediaItems.addAll(uploadedItems);
-      
-      // إزالة الملفات المرفوعة من القائمة المؤقتة
-      temporaryMediaItems.removeWhere((item) => selectedMediaIds.contains(item.id));
-      
-    } catch (e) {
-      Get.snackbar('خطأ', 'فشل في رفع الملفات إلى السيرفر');
-    } finally {
-      isLoading.value = false;
-      selectedMediaIds.clear();
-    }
-  }
-
-  Future<void> _uploadFileToAPI(MediaItem media) async {
-    // محاكاة رفع ملف إلى API
-    await Future.delayed(Duration(seconds: 1));
-    
-    // هنا يمكنك إضافة كود الرفع الفعلي إلى API
-    print('رفع الملف: ${media.name} إلى API');
+    print('🎯 [CONTROLLER] MediaLibraryController initialized for user: $currentUserId');
   }
 
   @override
@@ -335,6 +67,719 @@ class MediaLibraryController extends GetxController
     searchTextController.removeListener(_handleSearchChange);
     tabController.dispose();
     searchTextController.dispose();
+    _autoRefreshTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.onClose();
+    
+    print('🔚 [CONTROLLER] MediaLibraryController closed');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      print('📱 [LIFECYCLE] App resumed, checking for updates...');
+      _loadMediaWhenAppResumed();
+    }
+  }
+
+  // ========== التحديث التلقائي ==========
+  void _startAutoRefresh() {
+    _autoRefreshTimer = Timer.periodic(Duration(minutes: 2), (timer) {
+      if (currentTabIndex.value == 1 && !isLoading.value) {
+        print('🔄 [AUTO REFRESH] Periodic auto-refresh triggered');
+        loadUploadedMediaFromAPI();
+      }
+    });
+  }
+
+  Future<void> _loadMediaWhenAppResumed() async {
+    if (currentTabIndex.value == 1) {
+      print('📱 [APP RESUMED] Auto-refresh on app resume');
+      await _loadMediaWhenTabOpened();
+    }
+  }
+
+  void changeTab(int index) {
+    if (index >= 0 && index < tabs.length) {
+      tabController.animateTo(index);
+      currentTabIndex.value = index;
+      
+      if (index == 1) {
+        _loadMediaWhenTabOpened();
+      }
+    }
+  }
+
+  Future<void> _loadMediaWhenTabOpened() async {
+    if (_lastLoadTime != null && 
+        DateTime.now().difference(_lastLoadTime!).inSeconds < 30) {
+      print('⏱️ [TAB OPEN] Skipping auto-load, last load was recent');
+      return;
+    }
+    
+    print('🔄 [TAB OPEN] Auto-load triggered when opening previous files tab');
+    await loadUploadedMediaFromAPI();
+    _lastLoadTime = DateTime.now();
+  }
+
+  // ========== التخزين المحلي ==========
+  Future<void> _saveMediaToLocalStorage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final mediaJsonList = uploadedMediaItems.map((item) => _mediaItemToJson(item)).toList();
+      await prefs.setString('user_media_$currentUserId', jsonEncode(mediaJsonList));
+      print('💾 [LOCAL STORAGE] Saved ${uploadedMediaItems.length} items locally for user: $currentUserId');
+    } catch (e) {
+      print('❌ [LOCAL STORAGE] Error saving locally: $e');
+    }
+  }
+
+  Future<void> _loadMediaFromLocalStorage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final mediaJson = prefs.getString('user_media_$currentUserId');
+      
+      if (mediaJson != null) {
+        final List<dynamic> mediaList = jsonDecode(mediaJson);
+        final List<MediaItem> loadedMedia = mediaList.map((json) => _mediaItemFromJson(json)).toList();
+        
+        uploadedMediaItems.assignAll(loadedMedia);
+        print('📂 [LOCAL STORAGE] Loaded ${loadedMedia.length} items from local storage');
+        
+        for (var item in loadedMedia) {
+          print('   📄 [LOCAL] ${item.name} (ID: ${item.id})');
+        }
+      } else {
+        print('ℹ️ [LOCAL STORAGE] No local data found for user: $currentUserId');
+      }
+    } catch (e) {
+      print('❌ [LOCAL STORAGE] Error loading from local storage: $e');
+    }
+  }
+
+  Future<void> _loadInitialData() async {
+    print('🚀 [INIT] Starting initial data load...');
+    await _loadMediaFromLocalStorage();
+    
+    if (uploadedMediaItems.isEmpty) {
+      print('🔄 [INIT] No local data, fetching from API...');
+      await loadUploadedMediaFromAPI();
+    } else {
+      print('✅ [INIT] Using local data, will sync with API in background');
+      loadUploadedMediaFromAPI();
+    }
+  }
+
+  // ========== دوال الوسائط الأساسية ==========
+  bool get canSelectMore {
+    return selectedMediaIds.length < 10;
+  }
+
+  void toggleMediaSelection(String mediaId) {
+    if (selectedMediaIds.contains(mediaId)) {
+      selectedMediaIds.remove(mediaId);
+      print('🔘 [SELECTION] Deselected: $mediaId');
+    } else {
+      if (canSelectMore) {
+        selectedMediaIds.add(mediaId);
+        print('✅ [SELECTION] Selected: $mediaId (Total: ${selectedMediaIds.length})');
+      } else {
+        Get.snackbar(
+          'تنبيه',
+          'يمكن اختيار 10 ملفات كحد أقصى',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+      }
+    }
+  }
+
+  String get currentUserId {
+    final MyAppController myAppController = Get.find<MyAppController>();
+    return myAppController.userData['id']?.toString() ?? 'unknown';
+  }
+
+  // ========== جلب البيانات من API - محدث ==========
+  Future<void> loadUploadedMediaFromAPI() async {
+    if (isLoading.value) {
+      print('⏳ [API LOAD] Already loading, skipping duplicate request');
+      return;
+    }
+    
+    isLoading.value = true;
+    print('🔄 [API LOAD] Starting API media load for user: $currentUserId');
+    
+    try {
+      final List<MediaItem> allMediaItems = [];
+      int totalFilesFound = 0;
+      
+      for (String mediaType in supportedMediaTypes) {
+        try {
+          print('🔍 [API LOAD] Trying type: $mediaType');
+          
+          final response = await ApiHelper.getMediaList(type: mediaType);
+          
+          if (response != null && response['status'] == true) {
+            final dynamic data = response['data'];
+            final int fileCount = data is List ? data.length : 0;
+            totalFilesFound += fileCount;
+            
+            print('📊 [API LOAD] Found $fileCount files of type: $mediaType');
+            
+            if (data is List) {
+              for (var item in data) {
+                try {
+                  final mediaItem = MediaItem.fromApiMap(item);
+                  
+                  // التحقق من أن الملف يعود للمستخدم الحالي
+                  if (mediaItem.userId == currentUserId || mediaItem.userId == null) {
+                    allMediaItems.add(mediaItem);
+                    print('   ✅ [API] Added: ${mediaItem.name} (Type: $mediaType)');
+                  } else {
+                    print('   ❌ [API] Skipped (wrong user): ${mediaItem.name} (User: ${mediaItem.userId})');
+                  }
+                } catch (e) {
+                  print('⚠️ [API LOAD] Error parsing media item: $e');
+                }
+              }
+            } else if (data is Map) {
+              // في حالة كانت البيانات عبارة عن Map بدلاً من List
+              try {
+                final mediaItem = MediaItem.fromApiMap(data);
+                if (mediaItem.userId == currentUserId || mediaItem.userId == null) {
+                  allMediaItems.add(mediaItem);
+                  print('   ✅ [API] Added single item: ${mediaItem.name}');
+                }
+              } catch (e) {
+                print('⚠️ [API LOAD] Error parsing single media item: $e');
+              }
+            }
+          } else {
+            print('ℹ️ [API LOAD] No files or invalid response for type: $mediaType');
+            print('   💬 Response: ${response?['message'] ?? 'No message'}');
+          }
+        } catch (e) {
+          print('⚠️ [API LOAD] Error loading type $mediaType: $e');
+        }
+      }
+      
+      print('🎯 [API LOAD] Total files found: $totalFilesFound, User files: ${allMediaItems.length}');
+      
+      // منع التكرار باستخدام المعرف الفريد
+      final uniqueMediaItems = <String, MediaItem>{};
+      for (var item in allMediaItems) {
+        uniqueMediaItems[item.id] = item;
+      }
+      
+      final int previousCount = uploadedMediaItems.length;
+      uploadedMediaItems.assignAll(uniqueMediaItems.values.toList());
+      final int newCount = uploadedMediaItems.length;
+      
+      print('📈 [API LOAD] List updated: $previousCount → $newCount items');
+      
+      // حفظ البيانات محلياً
+      await _saveMediaToLocalStorage();
+      
+      if (newCount > previousCount) {
+        print('🎉 [API LOAD] Added ${newCount - previousCount} new items');
+      } else if (newCount < previousCount) {
+        print('🗑️ [API LOAD] Removed ${previousCount - newCount} items');
+      } else {
+        print('✅ [API LOAD] No changes in item count');
+      }
+      
+    } catch (e) {
+      print('❌ [API LOAD] General error loading media: $e');
+      Get.snackbar(
+        'خطأ',
+        'فشل في تحميل الملفات السابقة',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+      print('🏁 [API LOAD] Media load completed');
+    }
+  }
+
+  // ========== رفع الملفات - محدث ==========
+  Future<void> _uploadFilesToAPI(List<File> files, List<MediaItem> mediaItems) async {
+    print('🚀 [UPLOAD] Starting upload of ${files.length} files');
+    
+    try {
+      final successfulUploads = <MediaItem>[];
+      int successCount = 0;
+      int failCount = 0;
+      
+      for (int i = 0; i < files.length; i++) {
+        final file = files[i];
+        final mediaItem = mediaItems[i];
+
+        uploadProgress.value = i / files.length;
+
+        // تحديد النوع المناسب بناءً على امتداد الملف
+        String uploadType = _determineUploadType(mediaItem);
+        print('🔼 [UPLOAD] Uploading: ${mediaItem.name} (Type: $uploadType, Size: ${file.lengthSync()} bytes)');
+
+        final response = await ApiHelper.uploadMedia(
+          file: file,
+          type: uploadType,
+          withLoading: false,
+          onSendProgress: (sent, total) {
+            if (total != -1) {
+              final progress = (i + (sent / total)) / files.length;
+              uploadProgress.value = progress;
+              print('   📊 [UPLOAD] Progress: ${(progress * 100).toStringAsFixed(1)}%');
+            }
+          },
+        );
+
+        if (response != null && response['status'] == true) {
+          print('✅ [UPLOAD] SUCCESS: ${mediaItem.name}');
+          print('   📦 Response: ${response['data'] ?? response}');
+          
+          final responseData = response['data'] ?? response;
+          final updatedMediaItem = MediaItem.fromApiMap(responseData);
+          
+          successfulUploads.add(updatedMediaItem);
+          temporaryMediaItems.remove(mediaItem);
+
+          // تحديث التحديد إذا كان الملف محدداً
+          if (selectedMediaIds.contains(mediaItem.id)) {
+            selectedMediaIds.remove(mediaItem.id);
+            selectedMediaIds.add(updatedMediaItem.id);
+          }
+
+          successCount++;
+          print('   📁 Processed: ${updatedMediaItem.name} → ID: ${updatedMediaItem.id}');
+        } else {
+          print('❌ [UPLOAD] FAILED: ${mediaItem.name}');
+          print('   💬 Error: ${response?['message'] ?? 'Unknown error'}');
+          
+          // محاولة الرفع بنوع بديل
+          final alternativeSuccess = await _tryAlternativeUpload(file, mediaItem, successfulUploads);
+          if (alternativeSuccess) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        }
+      }
+
+      uploadProgress.value = 1.0;
+      
+      // معالجة الملفات المرفوعة بنجاح
+      if (successfulUploads.isNotEmpty) {
+        final existingIds = uploadedMediaItems.map((item) => item.id).toSet();
+        final newItems = successfulUploads.where((item) => !existingIds.contains(item.id)).toList();
+        
+        if (newItems.isNotEmpty) {
+          uploadedMediaItems.addAll(newItems);
+          
+          await _saveMediaToLocalStorage();
+          
+          print('🎉 [UPLOAD] COMPLETED: $successCount successful, $failCount failed');
+          print('   📈 Added ${newItems.length} new items to list');
+          
+          // تحديث تلقائي للقائمة بعد الرفع
+          if (currentTabIndex.value == 1) {
+            print('🔄 [UPLOAD] Auto-refreshing list after successful upload');
+            await loadUploadedMediaFromAPI();
+          }
+          
+          Get.snackbar(
+            'نجاح', 
+            'تم رفع $successCount ملف بنجاح${failCount > 0 ? ' وفشل $failCount ملف' : ''}',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        print('😞 [UPLOAD] No files were successfully uploaded');
+        Get.snackbar(
+          'خطأ',
+          'فشل في رفع جميع الملفات',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+      
+    } catch (e) {
+      print('❌ [UPLOAD] Upload process error: $e');
+      Get.snackbar(
+        'خطأ',
+        'فشل في رفع بعض الملفات',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // تحديد نوع الرفع بناءً على امتداد الملف
+  String _determineUploadType(MediaItem mediaItem) {
+    final extension = mediaItem.name.toLowerCase().split('.').last;
+    
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'bmp':
+      case 'webp':
+        return 'image';
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+      case 'wmv':
+      case 'flv':
+      case 'mkv':
+        return 'media';
+      case 'pdf':
+        return 'pdf';
+      case 'xlsx':
+      case 'xls':
+        return 'excel';
+      case 'doc':
+      case 'docx':
+        return 'word';
+      default:
+        return 'gallery'; // نوع افتراضي
+    }
+  }
+
+  Future<bool> _tryAlternativeUpload(File file, MediaItem mediaItem, List<MediaItem> successfulUploads) async {
+    try {
+      print('🔄 [ALTERNATIVE UPLOAD] Trying alternative upload for: ${mediaItem.name}');
+      
+      // تجربة أنواع بديلة
+      final List<String> alternativeTypes = ['gallery', 'image', 'media'];
+      
+      for (String altType in alternativeTypes) {
+        print('   🔁 Trying type: $altType');
+        
+        final response = await ApiHelper.uploadMedia(
+          file: file,
+          type: altType,
+          withLoading: false,
+        );
+
+        if (response != null && response['status'] == true) {
+          print('   ✅ [ALTERNATIVE] SUCCESS with type: $altType');
+          
+          final responseData = response['data'] ?? response;
+          final updatedMediaItem = MediaItem.fromApiMap(responseData);
+          
+          successfulUploads.add(updatedMediaItem);
+          temporaryMediaItems.remove(mediaItem);
+          print('   🎯 Added via alternative: ${updatedMediaItem.name}');
+          return true;
+        }
+      }
+    } catch (e) {
+      print('❌ [ALTERNATIVE UPLOAD] Alternative upload failed: $e');
+    }
+    return false;
+  }
+
+  // ========== دوال اختيار الملفات ==========
+  Future<void> pickImages() async {
+    try {
+      print('🖼️ [PICKER] Opening image picker...');
+      final List<XFile>? images = await _picker.pickMultiImage(
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (images != null && images.isNotEmpty) {
+        print('✅ [PICKER] Selected ${images.length} images');
+        await _processSelectedFiles(images, MediaType.image);
+      } else {
+        print('ℹ️ [PICKER] No images selected');
+      }
+    } catch (e) {
+      print('❌ [PICKER] Error picking images: $e');
+      Get.snackbar('خطأ', 'فشل في اختيار الصور');
+    }
+  }
+
+  Future<void> pickVideo() async {
+    try {
+      print('🎥 [PICKER] Opening video picker...');
+      final XFile? video = await _picker.pickVideo(
+        source: ImageSource.gallery,
+        maxDuration: const Duration(minutes: 10),
+      );
+
+      if (video != null) {
+        print('✅ [PICKER] Selected video: ${video.name}');
+        await _processSelectedFiles([video], MediaType.video);
+      } else {
+        print('ℹ️ [PICKER] No video selected');
+      }
+    } catch (e) {
+      print('❌ [PICKER] Error picking video: $e');
+      Get.snackbar('خطأ', 'فشل في اختيار الفيديو');
+    }
+  }
+
+  Future<void> takePhoto() async {
+    try {
+      print('📸 [CAMERA] Opening camera for photo...');
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (photo != null) {
+        print('✅ [CAMERA] Captured photo: ${photo.name}');
+        await _processSelectedFiles([photo], MediaType.image);
+      } else {
+        print('ℹ️ [CAMERA] No photo captured');
+      }
+    } catch (e) {
+      print('❌ [CAMERA] Error taking photo: $e');
+      Get.snackbar('خطأ', 'فشل في التقاط الصورة');
+    }
+  }
+
+  Future<void> takeVideo() async {
+    try {
+      print('🎬 [CAMERA] Opening camera for video...');
+      final XFile? video = await _picker.pickVideo(
+        source: ImageSource.camera,
+        maxDuration: const Duration(minutes: 10),
+      );
+
+      if (video != null) {
+        print('✅ [CAMERA] Recorded video: ${video.name}');
+        await _processSelectedFiles([video], MediaType.video);
+      } else {
+        print('ℹ️ [CAMERA] No video recorded');
+      }
+    } catch (e) {
+      print('❌ [CAMERA] Error taking video: $e');
+      Get.snackbar('خطأ', 'فشل في تسجيل الفيديو');
+    }
+  }
+
+  Future<void> _processSelectedFiles(List<XFile> files, MediaType type) async {
+    isLoading.value = true;
+    uploadProgress.value = 0.0;
+
+    print('⚙️ [PROCESS] Processing ${files.length} ${type == MediaType.image ? 'images' : 'videos'}');
+
+    final newMediaItems = <MediaItem>[];
+    final filesToUpload = <File>[];
+
+    try {
+      for (int i = 0; i < files.length; i++) {
+        final file = files[i];
+        final fileSize = await _getFileSize(file.path);
+        
+        final mediaItem = MediaItem(
+          id: 'temp_${DateTime.now().millisecondsSinceEpoch}_$i',
+          path: file.path,
+          type: type,
+          name: file.name,
+          dateAdded: DateTime.now(),
+          size: fileSize,
+          isLocal: true,
+          userId: currentUserId,
+        );
+
+        newMediaItems.add(mediaItem);
+        filesToUpload.add(File(file.path));
+        print('   📄 Added to queue: ${file.name} (${_formatFileSize(fileSize)})');
+      }
+
+      temporaryMediaItems.addAll(newMediaItems);
+      print('📦 [PROCESS] Added ${newMediaItems.length} items to temporary list');
+
+      await _uploadFilesToAPI(filesToUpload, newMediaItems);
+
+    } catch (e) {
+      print('❌ [PROCESS] Error processing files: $e');
+      Get.snackbar('خطأ', 'فشل في معالجة الملفات');
+    } finally {
+      isLoading.value = false;
+      uploadProgress.value = 0.0;
+      print('🏁 [PROCESS] File processing completed');
+    }
+  }
+
+  // ========== دالة حذف الملف ==========
+  Future<void> deleteMediaItem(MediaItem media) async {
+    try {
+      print('🗑️ [DELETE] Deleting media: ${media.name} (ID: ${media.id})');
+      
+      // إذا كان الملف محلياً، فقط أزله من القائمة
+      if (media.isLocal == true) {
+        temporaryMediaItems.remove(media);
+        selectedMediaIds.remove(media.id);
+        print('✅ [DELETE] Removed local file: ${media.name}');
+        Get.snackbar('نجاح', 'تم حذف الملف المحلي');
+        return;
+      }
+      
+      // إذا كان الملف من السيرفر، أرسل طلب حذف
+      final response = await ApiHelper.deleteMedia(fileName: media.fileName ?? media.name);
+      
+      if (response != null && response['status'] == true) {
+        uploadedMediaItems.remove(media);
+        selectedMediaIds.remove(media.id);
+        await _saveMediaToLocalStorage();
+        
+        print('✅ [DELETE] Successfully deleted: ${media.name}');
+        Get.snackbar(
+          'نجاح',
+          'تم حذف الملف بنجاح',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        print('❌ [DELETE] API returned error: ${response?['message']}');
+        Get.snackbar(
+          'خطأ',
+          'فشل في حذف الملف',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print('❌ [DELETE] Error deleting media: $e');
+      Get.snackbar(
+        'خطأ',
+        'فشل في حذف الملف',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // ========== دوال مساعدة ==========
+  Map<String, dynamic> _mediaItemToJson(MediaItem item) {
+    return {
+      'id': item.id,
+      'path': item.path,
+      'type': item.type.index,
+      'name': item.name,
+      'dateAdded': item.dateAdded.toIso8601String(),
+      'size': item.size,
+      'isLocal': item.isLocal,
+      'fileName': item.fileName,
+      'fileUrl': item.fileUrl,
+      'userId': item.userId,
+    };
+  }
+
+  MediaItem _mediaItemFromJson(Map<String, dynamic> json) {
+    return MediaItem(
+      id: json['id'],
+      path: json['path'],
+      type: MediaType.values[json['type']],
+      name: json['name'],
+      dateAdded: DateTime.parse(json['dateAdded']),
+      size: json['size'],
+      isLocal: json['isLocal'] ?? false,
+      fileName: json['fileName'],
+      fileUrl: json['fileUrl'],
+      userId: json['userId'],
+    );
+  }
+
+  Future<int> _getFileSize(String path) async {
+    try {
+      final file = File(path);
+      final stat = await file.stat();
+      return stat.size;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1048576) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / 1048576).toStringAsFixed(1)} MB';
+  }
+
+  void clearSelection() {
+    print('🗑️ [SELECTION] Cleared ${selectedMediaIds.length} selections');
+    selectedMediaIds.clear();
+  }
+
+  List<MediaItem> get displayedMedia {
+    return currentTabIndex.value == 0 ? temporaryMediaItems : uploadedMediaItems;
+  }
+
+  List<MediaItem> get filteredMedia {
+    var filtered = displayedMedia;
+    
+    if (searchQuery.isNotEmpty) {
+      filtered = filtered.where((item) => 
+        item.name.toLowerCase().contains(searchQuery.value.toLowerCase())
+      ).toList();
+      print('🔍 [SEARCH] Filtered ${displayedMedia.length} → ${filtered.length} items');
+    }
+    
+    return filtered;
+  }
+
+  void confirmSelection() {
+    if (selectedMediaIds.isNotEmpty) {
+      final selectedMedia = _getSelectedMediaItems();
+      
+      print('✅ [CONFIRM] Confirmed selection of ${selectedMedia.length} items');
+      
+      Get.back(result: selectedMedia);
+      Get.snackbar(
+        'تم الإدراج', 
+        'تم إدراج ${selectedMediaIds.length} عنصر',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      print('⚠️ [CONFIRM] No items selected');
+      Get.snackbar(
+        'تنبيه', 
+        'لم تقم باختيار أي ملفات',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  List<MediaItem> _getSelectedMediaItems() {
+    final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
+    return allMedia.where((item) => selectedMediaIds.contains(item.id)).toList();
+  }
+
+  String getMediaDisplayUrl(MediaItem media) {
+    if (media.isLocal == true) {
+      return media.path;
+    } else if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
+      return media.fileUrl!;
+    } else if (media.path.isNotEmpty) {
+      if (media.path.startsWith('http')) {
+        return media.path;
+      } else {
+        return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
+      }
+    } else {
+      return '';
+    }
+  }
+
+  void _handleTabChange() {
+    if (!tabController.indexIsChanging) {
+      currentTabIndex.value = tabController.index;
+    }
+  }
+  
+  void _handleSearchChange() {
+    searchQuery.value = searchTextController.text;
   }
 }
