@@ -3,6 +3,8 @@ import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
+import 'package:attene_mobile/view/Services/Home%20/home_services.dart';
+import 'package:attene_mobile/view/Services/Services%20Detail/services_detail.dart';
 import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
 import 'package:attene_mobile/view/add%20new%20store/shipping%20method/add_shipping_method.dart';
 import 'package:attene_mobile/view/add%20new%20store/shipping%20method/edit_shipping_method.dart';
@@ -10,6 +12,7 @@ import 'package:attene_mobile/view/add%20new%20store/shipping%20method/edit_ship
 import 'package:attene_mobile/view/add%20new%20store/shipping%20method/shipping_method.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/chat/chat_all.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -58,7 +61,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {
-        '/': (context) => ShippingMethod(),
+        '/': (context) => ChatAll(),
         '/onboarding': (context) => const Onbording(),
         '/start_login': (context) => const StartLogin(),
         '/login': (context) => Login(),
