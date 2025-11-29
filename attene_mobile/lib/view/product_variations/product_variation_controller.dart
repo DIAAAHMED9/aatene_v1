@@ -71,11 +71,11 @@ class ProductVariationController extends GetxController {
     final bottomSheetController = Get.find<BottomSheetController>();
     bottomSheetController.openManageAttributes(allAttributes);
     
-    // ✅ الاستماع للتحديثات عند إغلاق الـ Bottom Sheet
-    ever(bottomSheetController.selectedAttributes, (attributes) {
-      selectedAttributes.assignAll(attributes);
-      update([attributesUpdateId, variationsUpdateId]);
-    });
+    // // ✅ الاستماع للتحديثات عند إغلاق الـ Bottom Sheet
+    // ever(bottomSheetController.selectedAttributes, (attributes) {
+    //   selectedAttributes.assignAll(attributes);
+    //   update([attributesUpdateId, variationsUpdateId]);
+    // });
   }
 
   void removeSelectedAttribute(ProductAttribute attribute) {

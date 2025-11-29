@@ -1,4 +1,3 @@
-// lib/controllers/media_library_controller.dart
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -35,17 +34,21 @@ class MediaLibraryController extends GetxController
   final ImagePicker _picker = ImagePicker();
   Timer? _autoRefreshTimer;
   DateTime? _lastLoadTime;
-
-  // أنواع الوسائط المدعومة في API
-  final List<String> supportedMediaTypes = [
-    'media', 'pdf', 'excel', 'word', 'gallery', 'image', 'avatar', 'thumbnail'
-  ];
+  final RxBool _isInitialized = false.obs;
+  final RxBool _isAuthChecked = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
     
+    _initializeBasicControllers();
+    _setupAuthListener();
+    
+    print('🎯 [CONTROLLER] MediaLibraryController created');
+  }
+
+  void _initializeBasicControllers() {
     tabController = TabController(
       length: tabs.length, 
       vsync: this,
@@ -54,11 +57,65 @@ class MediaLibraryController extends GetxController
     
     tabController.addListener(_handleTabChange);
     searchTextController.addListener(_handleSearchChange);
+  }
+
+  void _setupAuthListener() {
+    final MyAppController myAppController = Get.find<MyAppController>();
+    
+    // الاستماع لتغير حالة التهيئة أولاً
+    ever(myAppController.isAppInitialized, (bool initialized) {
+      if (initialized) {
+        _checkAndInitialize();
+      }
+    });
+    
+    // الاستماع لتغير حالة تسجيل الدخول
+    ever(myAppController.isLoggedIn, (bool isLoggedIn) {
+      _isAuthChecked.value = true;
+      if (isLoggedIn) {
+        _initializeMediaController();
+      } else {
+        _resetMediaController();
+      }
+    });
+    
+    // إذا كان التطبيق مهيأ بالفعل، نتحقق مباشرة
+    if (myAppController.isAppInitialized.value) {
+      _checkAndInitialize();
+    }
+  }
+
+  void _checkAndInitialize() {
+    final MyAppController myAppController = Get.find<MyAppController>();
+    if (myAppController.isLoggedIn.value) {
+      _initializeMediaController();
+    } else {
+      print('⏸️ [AUTH] User not logged in, media controller paused');
+      _isAuthChecked.value = true;
+    }
+  }
+
+  void _initializeMediaController() {
+    if (_isInitialized.value) return;
+    
+    print('🚀 [CONTROLLER] Initializing MediaLibraryController for user: $currentUserId');
     
     _startAutoRefresh();
     _loadInitialData();
+    _isInitialized.value = true;
+  }
+
+  void _resetMediaController() {
+    if (!_isInitialized.value) return;
     
-    print('🎯 [CONTROLLER] MediaLibraryController initialized for user: $currentUserId');
+    print('🔁 [CONTROLLER] Resetting MediaLibraryController due to logout');
+    
+    _isInitialized.value = false;
+    uploadedMediaItems.clear();
+    temporaryMediaItems.clear();
+    selectedMediaIds.clear();
+    _autoRefreshTimer?.cancel();
+    _lastLoadTime = null;
   }
 
   @override
@@ -76,7 +133,7 @@ class MediaLibraryController extends GetxController
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && _isInitialized.value) {
       print('📱 [LIFECYCLE] App resumed, checking for updates...');
       _loadMediaWhenAppResumed();
     }
@@ -85,7 +142,7 @@ class MediaLibraryController extends GetxController
   // ========== التحديث التلقائي ==========
   void _startAutoRefresh() {
     _autoRefreshTimer = Timer.periodic(Duration(minutes: 2), (timer) {
-      if (currentTabIndex.value == 1 && !isLoading.value) {
+      if (currentTabIndex.value == 1 && !isLoading.value && _isInitialized.value) {
         print('🔄 [AUTO REFRESH] Periodic auto-refresh triggered');
         loadUploadedMediaFromAPI();
       }
@@ -93,7 +150,7 @@ class MediaLibraryController extends GetxController
   }
 
   Future<void> _loadMediaWhenAppResumed() async {
-    if (currentTabIndex.value == 1) {
+    if (currentTabIndex.value == 1 && _isInitialized.value) {
       print('📱 [APP RESUMED] Auto-refresh on app resume');
       await _loadMediaWhenTabOpened();
     }
@@ -104,13 +161,18 @@ class MediaLibraryController extends GetxController
       tabController.animateTo(index);
       currentTabIndex.value = index;
       
-      if (index == 1) {
+      if (index == 1 && _isInitialized.value) {
         _loadMediaWhenTabOpened();
       }
     }
   }
 
   Future<void> _loadMediaWhenTabOpened() async {
+    if (!_isInitialized.value) {
+      print('⏸️ [TAB OPEN] Controller not initialized, skipping load');
+      return;
+    }
+    
     if (_lastLoadTime != null && 
         DateTime.now().difference(_lastLoadTime!).inSeconds < 30) {
       print('⏱️ [TAB OPEN] Skipping auto-load, last load was recent');
@@ -158,6 +220,8 @@ class MediaLibraryController extends GetxController
   }
 
   Future<void> _loadInitialData() async {
+    if (!_isInitialized.value) return;
+    
     print('🚀 [INIT] Starting initial data load...');
     await _loadMediaFromLocalStorage();
     
@@ -186,7 +250,7 @@ class MediaLibraryController extends GetxController
       } else {
         Get.snackbar(
           'تنبيه',
-          'يمكن اختيار 10 ملفات كحد أقصى',
+          'يمكن اختيار 10 صور كحد أقصى',
           backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
@@ -199,8 +263,15 @@ class MediaLibraryController extends GetxController
     return myAppController.userData['id']?.toString() ?? 'unknown';
   }
 
-  // ========== جلب البيانات من API - محدث ==========
+  // ========== جلب البيانات من API ==========
   Future<void> loadUploadedMediaFromAPI() async {
+    // التحقق من المصادقة أولاً
+    final MyAppController myAppController = Get.find<MyAppController>();
+    if (!myAppController.isLoggedIn.value) {
+      print('⏸️ [API LOAD] User not authenticated, skipping API call');
+      return;
+    }
+
     if (isLoading.value) {
       print('⏳ [API LOAD] Already loading, skipping duplicate request');
       return;
@@ -210,16 +281,17 @@ class MediaLibraryController extends GetxController
     print('🔄 [API LOAD] Starting API media load for user: $currentUserId');
     
     try {
+      final List<String> mediaTypes = ['gallery', 'image', 'media', 'avatar', 'thumbnail'];
       final List<MediaItem> allMediaItems = [];
       int totalFilesFound = 0;
       
-      for (String mediaType in supportedMediaTypes) {
+      for (String mediaType in mediaTypes) {
         try {
           print('🔍 [API LOAD] Trying type: $mediaType');
           
           final response = await ApiHelper.getMediaList(type: mediaType);
           
-          if (response != null && response['status'] == true) {
+          if (response != null && response['status'] == true && response['data'] != null) {
             final dynamic data = response['data'];
             final int fileCount = data is List ? data.length : 0;
             totalFilesFound += fileCount;
@@ -228,35 +300,18 @@ class MediaLibraryController extends GetxController
             
             if (data is List) {
               for (var item in data) {
-                try {
-                  final mediaItem = MediaItem.fromApiMap(item);
-                  
-                  // التحقق من أن الملف يعود للمستخدم الحالي
-                  if (mediaItem.userId == currentUserId || mediaItem.userId == null) {
-                    allMediaItems.add(mediaItem);
-                    print('   ✅ [API] Added: ${mediaItem.name} (Type: $mediaType)');
-                  } else {
-                    print('   ❌ [API] Skipped (wrong user): ${mediaItem.name} (User: ${mediaItem.userId})');
-                  }
-                } catch (e) {
-                  print('⚠️ [API LOAD] Error parsing media item: $e');
-                }
-              }
-            } else if (data is Map) {
-              // في حالة كانت البيانات عبارة عن Map بدلاً من List
-              try {
-                final mediaItem = MediaItem.fromApiMap(data);
-                if (mediaItem.userId == currentUserId || mediaItem.userId == null) {
+                final mediaItem = MediaItem.fromApiMap(item);
+                
+                if (mediaItem.userId == currentUserId) {
                   allMediaItems.add(mediaItem);
-                  print('   ✅ [API] Added single item: ${mediaItem.name}');
+                  print('   ✅ [API] Added: ${mediaItem.name} (Type: $mediaType)');
+                } else {
+                  print('   ❌ [API] Skipped (wrong user): ${mediaItem.name} (User: ${mediaItem.userId})');
                 }
-              } catch (e) {
-                print('⚠️ [API LOAD] Error parsing single media item: $e');
               }
             }
           } else {
             print('ℹ️ [API LOAD] No files or invalid response for type: $mediaType');
-            print('   💬 Response: ${response?['message'] ?? 'No message'}');
           }
         } catch (e) {
           print('⚠️ [API LOAD] Error loading type $mediaType: $e');
@@ -265,7 +320,6 @@ class MediaLibraryController extends GetxController
       
       print('🎯 [API LOAD] Total files found: $totalFilesFound, User files: ${allMediaItems.length}');
       
-      // منع التكرار باستخدام المعرف الفريد
       final uniqueMediaItems = <String, MediaItem>{};
       for (var item in allMediaItems) {
         uniqueMediaItems[item.id] = item;
@@ -277,7 +331,6 @@ class MediaLibraryController extends GetxController
       
       print('📈 [API LOAD] List updated: $previousCount → $newCount items');
       
-      // حفظ البيانات محلياً
       await _saveMediaToLocalStorage();
       
       if (newCount > previousCount) {
@@ -302,8 +355,15 @@ class MediaLibraryController extends GetxController
     }
   }
 
-  // ========== رفع الملفات - محدث ==========
+  // ========== رفع الملفات ==========
   Future<void> _uploadFilesToAPI(List<File> files, List<MediaItem> mediaItems) async {
+    // التحقق من المصادقة أولاً
+    final MyAppController myAppController = Get.find<MyAppController>();
+    if (!myAppController.isLoggedIn.value) {
+      print('⏸️ [UPLOAD] User not authenticated, skipping upload');
+      return;
+    }
+
     print('🚀 [UPLOAD] Starting upload of ${files.length} files');
     
     try {
@@ -317,8 +377,11 @@ class MediaLibraryController extends GetxController
 
         uploadProgress.value = i / files.length;
 
-        // تحديد النوع المناسب بناءً على امتداد الملف
-        String uploadType = _determineUploadType(mediaItem);
+        String uploadType = 'image';
+        if (mediaItem.type == MediaType.video) {
+          uploadType = 'media';
+        }
+
         print('🔼 [UPLOAD] Uploading: ${mediaItem.name} (Type: $uploadType, Size: ${file.lengthSync()} bytes)');
 
         final response = await ApiHelper.uploadMedia(
@@ -336,39 +399,40 @@ class MediaLibraryController extends GetxController
 
         if (response != null && response['status'] == true) {
           print('✅ [UPLOAD] SUCCESS: ${mediaItem.name}');
-          print('   📦 Response: ${response['data'] ?? response}');
+          print('   📦 Response: ${response['data'] ?? 'No data'}');
           
           final responseData = response['data'] ?? response;
           final updatedMediaItem = MediaItem.fromApiMap(responseData);
           
-          successfulUploads.add(updatedMediaItem);
-          temporaryMediaItems.remove(mediaItem);
+          if (updatedMediaItem.userId == currentUserId) {
+            successfulUploads.add(updatedMediaItem);
+            temporaryMediaItems.remove(mediaItem);
 
-          // تحديث التحديد إذا كان الملف محدداً
-          if (selectedMediaIds.contains(mediaItem.id)) {
-            selectedMediaIds.remove(mediaItem.id);
-            selectedMediaIds.add(updatedMediaItem.id);
+            if (selectedMediaIds.contains(mediaItem.id)) {
+              selectedMediaIds.remove(mediaItem.id);
+              selectedMediaIds.add(updatedMediaItem.id);
+            }
+
+            successCount++;
+            print('   📁 Processed: ${updatedMediaItem.name} → ID: ${updatedMediaItem.id}');
+          } else {
+            print('⚠️ [UPLOAD] File belongs to different user: ${updatedMediaItem.userId}');
           }
-
-          successCount++;
-          print('   📁 Processed: ${updatedMediaItem.name} → ID: ${updatedMediaItem.id}');
         } else {
           print('❌ [UPLOAD] FAILED: ${mediaItem.name}');
           print('   💬 Error: ${response?['message'] ?? 'Unknown error'}');
+          failCount++;
           
-          // محاولة الرفع بنوع بديل
           final alternativeSuccess = await _tryAlternativeUpload(file, mediaItem, successfulUploads);
           if (alternativeSuccess) {
             successCount++;
-          } else {
-            failCount++;
+            failCount--;
           }
         }
       }
 
       uploadProgress.value = 1.0;
       
-      // معالجة الملفات المرفوعة بنجاح
       if (successfulUploads.isNotEmpty) {
         final existingIds = uploadedMediaItems.map((item) => item.id).toSet();
         final newItems = successfulUploads.where((item) => !existingIds.contains(item.id)).toList();
@@ -381,7 +445,6 @@ class MediaLibraryController extends GetxController
           print('🎉 [UPLOAD] COMPLETED: $successCount successful, $failCount failed');
           print('   📈 Added ${newItems.length} new items to list');
           
-          // تحديث تلقائي للقائمة بعد الرفع
           if (currentTabIndex.value == 1) {
             print('🔄 [UPLOAD] Auto-refreshing list after successful upload');
             await loadUploadedMediaFromAPI();
@@ -415,44 +478,11 @@ class MediaLibraryController extends GetxController
     }
   }
 
-  // تحديد نوع الرفع بناءً على امتداد الملف
-  String _determineUploadType(MediaItem mediaItem) {
-    final extension = mediaItem.name.toLowerCase().split('.').last;
-    
-    switch (extension) {
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-      case 'bmp':
-      case 'webp':
-        return 'image';
-      case 'mp4':
-      case 'avi':
-      case 'mov':
-      case 'wmv':
-      case 'flv':
-      case 'mkv':
-        return 'media';
-      case 'pdf':
-        return 'pdf';
-      case 'xlsx':
-      case 'xls':
-        return 'excel';
-      case 'doc':
-      case 'docx':
-        return 'word';
-      default:
-        return 'gallery'; // نوع افتراضي
-    }
-  }
-
   Future<bool> _tryAlternativeUpload(File file, MediaItem mediaItem, List<MediaItem> successfulUploads) async {
     try {
       print('🔄 [ALTERNATIVE UPLOAD] Trying alternative upload for: ${mediaItem.name}');
       
-      // تجربة أنواع بديلة
-      final List<String> alternativeTypes = ['gallery', 'image', 'media'];
+      final List<String> alternativeTypes = ['gallery', 'avatar', 'thumbnail', 'media'];
       
       for (String altType in alternativeTypes) {
         print('   🔁 Trying type: $altType');
@@ -469,10 +499,12 @@ class MediaLibraryController extends GetxController
           final responseData = response['data'] ?? response;
           final updatedMediaItem = MediaItem.fromApiMap(responseData);
           
-          successfulUploads.add(updatedMediaItem);
-          temporaryMediaItems.remove(mediaItem);
-          print('   🎯 Added via alternative: ${updatedMediaItem.name}');
-          return true;
+          if (updatedMediaItem.userId == currentUserId) {
+            successfulUploads.add(updatedMediaItem);
+            temporaryMediaItems.remove(mediaItem);
+            print('   🎯 Added via alternative: ${updatedMediaItem.name}');
+            return true;
+          }
         }
       }
     } catch (e) {
@@ -566,6 +598,14 @@ class MediaLibraryController extends GetxController
   }
 
   Future<void> _processSelectedFiles(List<XFile> files, MediaType type) async {
+    // التحقق من المصادقة أولاً
+    final MyAppController myAppController = Get.find<MyAppController>();
+    if (!myAppController.isLoggedIn.value) {
+      print('⏸️ [PROCESS] User not authenticated, skipping file processing');
+      Get.snackbar('تنبيه', 'يرجى تسجيل الدخول أولاً');
+      return;
+    }
+
     isLoading.value = true;
     uploadProgress.value = 0.0;
 
@@ -587,7 +627,6 @@ class MediaLibraryController extends GetxController
           dateAdded: DateTime.now(),
           size: fileSize,
           isLocal: true,
-          userId: currentUserId,
         );
 
         newMediaItems.add(mediaItem);
@@ -607,55 +646,6 @@ class MediaLibraryController extends GetxController
       isLoading.value = false;
       uploadProgress.value = 0.0;
       print('🏁 [PROCESS] File processing completed');
-    }
-  }
-
-  // ========== دالة حذف الملف ==========
-  Future<void> deleteMediaItem(MediaItem media) async {
-    try {
-      print('🗑️ [DELETE] Deleting media: ${media.name} (ID: ${media.id})');
-      
-      // إذا كان الملف محلياً، فقط أزله من القائمة
-      if (media.isLocal == true) {
-        temporaryMediaItems.remove(media);
-        selectedMediaIds.remove(media.id);
-        print('✅ [DELETE] Removed local file: ${media.name}');
-        Get.snackbar('نجاح', 'تم حذف الملف المحلي');
-        return;
-      }
-      
-      // إذا كان الملف من السيرفر، أرسل طلب حذف
-      final response = await ApiHelper.deleteMedia(fileName: media.fileName ?? media.name);
-      
-      if (response != null && response['status'] == true) {
-        uploadedMediaItems.remove(media);
-        selectedMediaIds.remove(media.id);
-        await _saveMediaToLocalStorage();
-        
-        print('✅ [DELETE] Successfully deleted: ${media.name}');
-        Get.snackbar(
-          'نجاح',
-          'تم حذف الملف بنجاح',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      } else {
-        print('❌ [DELETE] API returned error: ${response?['message']}');
-        Get.snackbar(
-          'خطأ',
-          'فشل في حذف الملف',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    } catch (e) {
-      print('❌ [DELETE] Error deleting media: $e');
-      Get.snackbar(
-        'خطأ',
-        'فشل في حذف الملف',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
     }
   }
 
@@ -782,4 +772,8 @@ class MediaLibraryController extends GetxController
   void _handleSearchChange() {
     searchQuery.value = searchTextController.text;
   }
+  
+  // Getter للإطلاع على حالة التهيئة
+  bool get isControllerInitialized => _isInitialized.value;
+  bool get isAuthChecked => _isAuthChecked.value;
 }

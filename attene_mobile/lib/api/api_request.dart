@@ -18,25 +18,31 @@ enum AppMode { dev, staging, production }
 const AppMode currentMode = AppMode.dev;
 
 class ApiHelper {
-  static Map<String, dynamic> _getBaseHeaders() {
-    final MyAppController myAppController = Get.find<MyAppController>();
-    final LanguageController appLanguageController =
-        Get.find<LanguageController>();
+static Map<String, dynamic> _getBaseHeaders() {
+  final MyAppController myAppController = Get.find<MyAppController>();
+  final LanguageController appLanguageController = Get.find<LanguageController>();
 
-    String authorization = '';
-    if (myAppController.userData.isNotEmpty &&
-        myAppController.userData['token'] != null) {
-      authorization = 'Bearer ${myAppController.userData['token']}';
-    }
-
-    return {
-      'Authorization': authorization,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Device-Type': 'MOBILE',
-      'Accept-Language': appLanguageController.appLocale.value,
-    };
+  String authorization = '';
+  if (myAppController.userData.isNotEmpty && myAppController.userData['token'] != null) {
+    authorization = 'Bearer ${myAppController.userData['token']}';
   }
+
+  final headers = {
+    'Authorization': authorization,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Device-Type': 'MOBILE',
+    'Accept-Language': appLanguageController.appLocale.value,
+    'storeId':33
+  };
+  
+  // ✅ إضافة storeId إذا كان موجوداً
+  // if (myAppController.userData.isNotEmpty && myAppController.userData['store_id'] != null) {
+  //   headers['storeId'] = myAppController.userData['store_id'].toString();
+  // }
+
+  return headers;
+}
 
   static String _getBaseUrl() {
     switch (currentMode) {

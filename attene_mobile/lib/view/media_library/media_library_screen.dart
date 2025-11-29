@@ -492,7 +492,7 @@ void _showDeleteDialog(MediaItem media) {
         TextButton(
           onPressed: () {
             Get.back();
-            controller.deleteMediaItem(media); // ✅ تأكد من استدعاء الدالة الصحيحة
+            // controller.deleteMediaItem(media); // ✅ تأكد من استدعاء الدالة الصحيحة
           },
           child: Text('حذف', style: TextStyle(color: Colors.red)),
         ),

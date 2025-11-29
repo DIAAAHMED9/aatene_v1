@@ -1,4 +1,3 @@
-// lib/controllers/keyword_controller.dart
 import 'package:attene_mobile/view/advance_info/keyword_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -89,7 +88,7 @@ class KeywordController extends GetxController {
   }
 
   // دوال إدارة الوسوم
-   void addCustomKeyword() {
+  void addCustomKeyword() {
     if (searchInputText.value.trim().isEmpty) return;
 
     if (!canAddMoreKeywords) {
