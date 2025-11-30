@@ -351,45 +351,48 @@ void openAddProductScreen() {
   }
 
   // === دوال فتح الـ Bottom Sheets ===
-  void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, ProductAttribute? attribute}) {
-    _currentType.value = type;
-    
-    if (attributes != null && type == BottomSheetType.manageAttributes) {
-      _tempAttributes.assignAll(attributes);
-      if (_selectedAttributes.isEmpty) {
-        _selectedAttributes.clear();
-      }
-      if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
-        _currentEditingAttribute.value = _selectedAttributes.first;
-      }
+void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, ProductAttribute? attribute}) {
+  _currentType.value = type;
+  
+  if (attributes != null && type == BottomSheetType.manageAttributes) {
+    _tempAttributes.assignAll(attributes);
+    if (_selectedAttributes.isEmpty) {
+      _selectedAttributes.clear();
     }
-    
-    if (attribute != null && type == BottomSheetType.addAttributeValue) {
-      _currentEditingAttribute.value = attribute;
+    if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
+      _currentEditingAttribute.value = _selectedAttributes.first;
     }
-    
-    if (type == BottomSheetType.manageSections) {
-      loadSections();
-    }
-    
-    _resetFields();
-    
-    Get.bottomSheet(
-      _buildBottomSheetContent(),
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      enableDrag: true,
-    ).then((_) {
-      _resetFields();
-    });
   }
-
+  
+  if (attribute != null && type == BottomSheetType.addAttributeValue) {
+    _currentEditingAttribute.value = attribute;
+  }
+  
+  if (type == BottomSheetType.manageSections) {
+    loadSections();
+  }
+  
+  _resetFields();
+  
+  Get.bottomSheet(
+    _buildBottomSheetContent(),
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+      ),
+    ),
+    enableDrag: true,
+  ).then((_) {
+    // ✅ عند إغلاق البوتوم شيت، نلغي الاختيار دائماً
+    if (_currentType.value == BottomSheetType.manageSections) {
+      clearSectionSelection();
+    }
+    _resetFields();
+  });
+}
   void _resetFields() {
     _selectedOptions.clear();
     _selectedOption.value = '';
@@ -589,7 +592,7 @@ void openAddProductScreen() {
         case BottomSheetType.singleSelect:
           return _buildSingleSelectContent();
         case BottomSheetType.manageSections:
-          return _buildManageSectionsContent();
+          return buildManageSectionsContent();
         case BottomSheetType.addNewSection:
           return _buildAddNewSectionContent();
         case BottomSheetType.manageAttributes:
@@ -604,10 +607,13 @@ void openAddProductScreen() {
     });
   }
 
-  // === واجهات إدارة الأقسام ===
-  Widget _buildManageSectionsContent() {
+Widget buildManageSectionsContent() {
+  return Obx(() {
+    final hasSections = _sections.isNotEmpty;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           'أضف وعدّل الأقسام الخاصة بمتجرك لترتيب منتجاتك بالطريقة التي تناسبك، هذه الأقسام لا تؤثر على التصنيفات الرئيسية للمنصة، بل تسهل على عملائك تصفح متجرك',
@@ -619,56 +625,92 @@ void openAddProductScreen() {
           textAlign: TextAlign.right,
         ),
         const SizedBox(height: 20),
-        
-        AateneButton(
-          color: AppColors.primary400,
-          textColor: Colors.white,
-          borderColor: Colors.transparent,
-          buttonText: 'إضافة قسم جديد',
-          onTap: () {
-            Get.back();
-            openAddNewSection();
-          },
-        ),
-        const SizedBox(height: 20),
 
-        TextFiledAatene(
-          heightTextFiled: 50,
-          onChanged: (value) {
-            _sectionSearchText.value = value;
-            _sectionSearchController.add(value);
-          },
-          prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-          isRTL: isRTL,
-          hintText: 'ابحث في الأقسام',
-        ),
-        const SizedBox(height: 20),
+        // الحالة 1: لا توجد أقسام - عرض زر الإضافة فقط
+        if (!hasSections) ...[
+          AateneButton(
+            color: AppColors.primary400,
+            textColor: Colors.white,
+            borderColor: Colors.transparent,
+            buttonText: 'إضافة قسم جديد',
+            onTap: () {
+              Get.back();
+              openAddNewSection();
+            },
+          ),
+        ],
 
-        Expanded(
-          child: _buildSectionsList(),
-        ),
+        // الحالة 2: توجد أقسام - عرض البحث والقائمة والزرين
+        if (hasSections) ...[
+          TextFiledAatene(
+            heightTextFiled: 50,
+            onChanged: (value) {
+              _sectionSearchText.value = value;
+              _sectionSearchController.add(value);
+            },
+            prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+            isRTL: isRTL,
+            hintText: 'ابحث في الأقسام',
+          ),
+          const SizedBox(height: 20),
 
-        Obx(() {
-          if (hasSelectedSection) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: AateneButton(
-                color: AppColors.primary400,
-                textColor: Colors.white,
-                borderColor: Colors.transparent,
-                buttonText: 'متابعة لإضافة المنتج',
-                onTap: () {
-                  Get.back();
-                  _navigateToAddProductStepper();
-                },
+          Container(
+            height: 200,
+            child: _buildSectionsList(),
+          ),
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Get.back();
+                    openAddNewSection();
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: AppColors.primary400),
+                  ),
+                  child: Text(
+                    'إضافة قسم جديد',
+                    style: TextStyle(color: AppColors.primary400),
+                  ),
+                ),
               ),
-            );
-          }
-          return const SizedBox();
-        }),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Obx(() => ElevatedButton(
+                  onPressed: hasSelectedSection ? () {
+                    // ✅ حفظ القسم المختار مؤقتاً قبل الانتقال
+                    final selectedSection = _selectedSection.value;
+                    Get.back();
+                    
+                    // ✅ إلغاء الاختيار بعد الانتقال
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      clearSectionSelection();
+                      _navigateToAddProductStepper();
+                    });
+                  } : null,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: hasSelectedSection 
+                        ? AppColors.primary400 
+                        : Colors.grey[400],
+                  ),
+                  child: const Text(
+                    'التالي',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )),
+              ),
+            ],
+          ),
+        ],
       ],
     );
-  }
+  });
+}
 
   Widget _buildSectionsList() {
     return Obx(() {

@@ -1,4 +1,3 @@
-// lib/controller/product_central_controller.dart
 import 'dart:convert';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/models/section_model.dart';
@@ -39,6 +38,9 @@ class ProductCentralController extends GetxController {
 
   // ✅ إضافة متغير للقسم المختار
   var selectedSection = Rx<Section?>(null);
+
+  // ✅ إضافة متغير لمنع التكرار
+  bool _isUpdatingSection = false;
 
   @override
   void onInit() {
@@ -462,11 +464,32 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
 ''');
   }
 
-  // ✅ دالة لتحديث القسم المختار
-  void updateSelectedSection(Section section) {
+  // ✅ إصلاح: دالة لتحديث القسم المختار مع منع التكرار
+void updateSelectedSection(Section section) {
+  if (_isUpdatingSection) return;
+  
+  _isUpdatingSection = true;
+  
+  try {
+    // ✅ التحقق مما إذا كان القسم هو نفسه المحدد مسبقاً
+    if (selectedSection.value?.id == section.id) {
+      print('⚠️ [SECTION ALREADY UPDATED]: ${section.name} (ID: ${section.id})');
+      return;
+    }
+    
     selectedSection(section);
     print('✅ [SECTION UPDATED]: ${section.name} (ID: ${section.id})');
+    
+    // ✅ تحديث BottomSheetController أيضاً
+    final bottomSheetController = Get.find<BottomSheetController>();
+    bottomSheetController.selectSection(section);
+  } finally {
+    // ✅ استخدام تأخير بسيط لمنع التكرار السريع
+    Future.delayed(Duration(milliseconds: 100), () {
+      _isUpdatingSection = false;
+    });
   }
+}
 
   // ✅ دالة اختبار للبيانات الصحيحة
   Future<Map<String, dynamic>> testWithCorrectStructure() async {

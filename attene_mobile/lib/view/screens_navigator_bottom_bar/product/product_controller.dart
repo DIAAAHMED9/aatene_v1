@@ -1,6 +1,8 @@
-// lib/view/screens_navigator_bottom_bar/product/product_controller.dart
+import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/demo_stepper_screen.dart';
+import 'package:attene_mobile/models/product_model.dart';
+import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:flutter/material.dart';
@@ -30,37 +32,41 @@ class ProductController extends GetxController
   late BottomSheetController bottomSheetController;
   final MyAppController myAppController = Get.find<MyAppController>();
   
+  // ✅ جديد: بيانات المنتجات
+  final RxList<Product> _products = <Product>[].obs;
+  final RxList<Product> _filteredProducts = <Product>[].obs;
+  final RxBool _isLoadingProducts = false.obs;
+  final RxString _productsErrorMessage = ''.obs;
+  final RxMap<String, int> _productsCountBySection = <String, int>{}.obs;
+  
+  // ✅ إضافة متغير لمنع التكرار
+  bool _isUpdatingTabs = false;
+
   @override
   void onInit() {
     super.onInit();
     
-    // ✅ تهيئة الـ Controllers الأساسية فقط
     bottomSheetController = Get.find<BottomSheetController>();
     
     _initializeBasicControllers();
     _setupAuthListener();
+    _setupProductsListener();
+    _setupSectionsListener();
   }
 
   void _initializeBasicControllers() {
-    // Initialize tab controller فقط
     _initializeTabController();
-    
-    // Listen to tab changes
     tabController.addListener(_handleTabChange);
-    
-    // Listen to search text changes
     searchTextController.addListener(_handleSearchChange);
   }
 
   void _setupAuthListener() {
-    // الاستماع لتغير حالة التهيئة أولاً
     ever(myAppController.isAppInitialized, (bool initialized) {
       if (initialized) {
         _checkAndInitialize();
       }
     });
     
-    // الاستماع لتغير حالة تسجيل الدخول
     ever(myAppController.isLoggedIn, (bool isLoggedIn) {
       if (isLoggedIn) {
         _initializeProductController();
@@ -69,17 +75,25 @@ class ProductController extends GetxController
       }
     });
     
-    // ✅ التصحيح: الاستماع لتغيرات الأقسام باستخدام RxList
-    ever(bottomSheetController.sectionsRx, (_) {
-      if (myAppController.isLoggedIn.value && _isInitialized.value) {
-        _updateTabsWithSections();
-      }
-    });
-    
-    // إذا كان التطبيق مهيأ بالفعل، نتحقق مباشرة
     if (myAppController.isAppInitialized.value) {
       _checkAndInitialize();
     }
+  }
+
+  // ✅ جديد: الاستماع لتغيرات الأقسام مع منع التكرار
+  void _setupSectionsListener() {
+    ever(bottomSheetController.sectionsRx, (List<Section> sections) {
+      if (myAppController.isLoggedIn.value && _isInitialized.value && !_isUpdatingTabs) {
+        _updateTabsWithSections();
+      }
+    });
+  }
+
+  // ✅ جديد: الاستماع لتغيرات المنتجات
+  void _setupProductsListener() {
+    ever(searchQuery, (_) {
+      _filterProducts();
+    });
   }
 
   void _checkAndInitialize() {
@@ -97,10 +111,12 @@ class ProductController extends GetxController
     
     _isInitialized.value = true;
     
-    // ✅ تحديث التبويبات فور التهيئة إذا كانت هناك أقسام
     if (bottomSheetController.sections.isNotEmpty) {
       _updateTabsWithSections();
     }
+    
+    // ✅ تحميل المنتجات عند التهيئة
+    _loadProducts();
   }
 
   void _resetProductController() {
@@ -116,10 +132,14 @@ class ProductController extends GetxController
       TabData(label: 'مراجعات', viewName: 'مراجعات'),
     ]);
     
-    // إعادة تهيئة الـ TabController - استخدام طريقة آمنة
     _safeDisposeTabController();
     _initializeTabController();
     tabController.addListener(_handleTabChange);
+    
+    // ✅ إعادة تعيين بيانات المنتجات
+    _products.clear();
+    _filteredProducts.clear();
+    _productsCountBySection.clear();
     
     update();
   }
@@ -143,48 +163,64 @@ class ProductController extends GetxController
     );
   }
   
+  // ✅ إصلاح: منع التكرار في تحديث التبويبات
   void _updateTabsWithSections() {
-    if (!_isInitialized.value) return;
+    if (!_isInitialized.value || _isUpdatingTabs) return;
+    
+    _isUpdatingTabs = true;
     
     try {
-      // ✅ التصحيح: استخدام getSections() بدلاً من sections مباشرة
       final sections = bottomSheetController.getSections();
       
-      // إنشاء قائمة تبويبات جديدة
       final updatedTabs = <TabData>[
-        TabData(label: 'جميع المنتجات (0)', viewName: 'جميع المنتجات'),
+        TabData(label: 'جميع المنتجات (${_getTotalProductsCount()})', viewName: 'جميع المنتجات'),
         TabData(label: 'عروض', viewName: 'عروض'),
         TabData(label: 'مراجعات', viewName: 'مراجعات'),
       ];
       
-      // إضافة تبويبات للأقسام
+      // إضافة تبويبات للأقسام مع عدد المنتجات
       for (final section in sections) {
+        final productCount = _productsCountBySection[section.id.toString()] ?? 0;
         updatedTabs.add(TabData(
-          label: '${section.name} (0)',
+          label: '${section.name} ($productCount)',
           viewName: section.name,
         ));
       }
       
-      // تحديث التبويبات
-      tabs.clear();
-      tabs.addAll(updatedTabs);
-      
-      // إعادة تهيئة الـ TabController إذا تغير عدد التبويبات
-      if (tabController.length != updatedTabs.length) {
-        final oldIndex = tabController.index;
-        _safeDisposeTabController();
-        _initializeTabController();
-        final newIndex = oldIndex.clamp(0, updatedTabs.length - 1);
-        tabController.index = newIndex;
-        currentTabIndex.value = newIndex;
-        tabController.addListener(_handleTabChange);
+      // ✅ التحقق مما إذا كانت التبويبات مختلفة فعلاً
+      if (!_areTabsEqual(tabs, updatedTabs)) {
+        tabs.clear();
+        tabs.addAll(updatedTabs);
+        
+        if (tabController.length != updatedTabs.length) {
+          final oldIndex = tabController.index;
+          _safeDisposeTabController();
+          _initializeTabController();
+          final newIndex = oldIndex.clamp(0, updatedTabs.length - 1);
+          tabController.index = newIndex;
+          currentTabIndex.value = newIndex;
+          tabController.addListener(_handleTabChange);
+        }
+        
+        update();
+        print('✅ [PRODUCT] Updated tabs with ${sections.length} sections');
       }
-      
-      update();
-      print('✅ [PRODUCT] Updated tabs with ${sections.length} sections');
     } catch (e) {
       print('❌ [PRODUCT] Error updating tabs: $e');
+    } finally {
+      _isUpdatingTabs = false;
     }
+  }
+
+  // ✅ دالة للمقارنة لمنع التحديثات غير الضرورية
+  bool _areTabsEqual(List<TabData> list1, List<TabData> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i].label != list2[i].label || list1[i].viewName != list2[i].viewName) {
+        return false;
+      }
+    }
+    return true;
   }
   
   void _handleTabChange() {
@@ -196,8 +232,73 @@ class ProductController extends GetxController
   
   void _handleSearchChange() {
     searchQuery.value = searchTextController.text;
-    if (searchQuery.value.isNotEmpty) {
-      _performSearch();
+    _filterProducts();
+  }
+  
+  // ✅ جديد: جلب المنتجات من API
+  Future<void> _loadProducts() async {
+    try {
+      if (!_isUserAuthenticated()) {
+        print('⚠️ [PRODUCTS] User not authenticated');
+        return;
+      }
+
+      _isLoadingProducts(true);
+      _productsErrorMessage('');
+      
+      print('📡 [LOADING PRODUCTS FROM API]');
+      
+      final response = await ApiHelper.get(
+        path: '/merchants/products',
+        withLoading: false,
+      );
+      
+      if (response != null && response['status'] == true) {
+        final List<dynamic> data = response['data'] ?? [];
+        _products.assignAll(data.map((product) => Product.fromJson(product)).toList());
+        _filteredProducts.assignAll(_products);
+        
+        // ✅ تحديث عدد المنتجات لكل قسم
+        _updateProductsCountBySection();
+        
+        // ✅ تحديث التبويبات بالأعداد الجديدة
+        _updateTabsWithSections();
+        
+        print('✅ [PRODUCTS] Loaded ${_products.length} products successfully');
+      } else {
+        _productsErrorMessage.value = response?['message'] ?? 'فشل في تحميل المنتجات';
+        print('❌ [PRODUCTS] Failed to load: ${_productsErrorMessage.value}');
+      }
+    } catch (e) {
+      _productsErrorMessage.value = 'خطأ في تحميل المنتجات: ${e.toString()}';
+      print('❌ [PRODUCTS] Error loading: $e');
+    } finally {
+      _isLoadingProducts(false);
+    }
+  }
+  
+  // ✅ جديد: تحديث عدد المنتجات لكل قسم
+  void _updateProductsCountBySection() {
+    _productsCountBySection.clear();
+    
+    for (final product in _products) {
+      final sectionId = product.sectionId ?? '0';
+      _productsCountBySection[sectionId] = (_productsCountBySection[sectionId] ?? 0) + 1;
+    }
+    
+    print('📊 [PRODUCTS COUNT BY SECTION]: $_productsCountBySection');
+  }
+  
+  // ✅ جديد: تصفية المنتجات حسب البحث
+  void _filterProducts() {
+    if (searchQuery.value.isEmpty) {
+      _filteredProducts.assignAll(_products);
+    } else {
+      final filtered = _products.where((product) => 
+        product.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+        (product.sku?.toLowerCase().contains(searchQuery.value.toLowerCase()) ?? false)
+      ).toList();
+      _filteredProducts.assignAll(filtered);
     }
   }
   
@@ -215,6 +316,7 @@ class ProductController extends GetxController
     try {
       if (searchQuery.value.length >= 2) {
         print('جاري البحث عن: ${searchQuery.value}');
+        _filterProducts();
       }
     } catch (e) {
       errorMessage.value = 'فشل في البحث: $e';
@@ -224,6 +326,7 @@ class ProductController extends GetxController
   void clearSearch() {
     searchTextController.clear();
     searchQuery.value = '';
+    _filterProducts();
   }
   
   void changeTab(int index) {
@@ -233,7 +336,33 @@ class ProductController extends GetxController
     }
   }
   
-  // دوال فتح البوتوم شيت
+  // ✅ جديد: إعادة تحميل المنتجات
+  Future<void> reloadProducts() async {
+    await _loadProducts();
+  }
+  
+  // ✅ جديد: الحصول على المنتجات للعرض
+  List<Product> getProductsForTab(int tabIndex) {
+    if (tabIndex == 0) {
+      // جميع المنتجات
+      return _filteredProducts.toList();
+    } else if (tabIndex >= 3) {
+      // تبويبات الأقسام (التبويب 3 فما فوق)
+      final sectionIndex = tabIndex - 3;
+      final sections = bottomSheetController.getSections();
+      if (sectionIndex < sections.length) {
+        final section = sections[sectionIndex];
+        return _filteredProducts.where((product) => product.sectionId == section.id.toString()).toList();
+      }
+    }
+    return []; // للتبويبات الأخرى (عروض، مراجعات)
+  }
+  
+  int _getTotalProductsCount() {
+    return _products.length;
+  }
+  
+  // دوال فتح البوتوم شيت - محدثة
   void openManageSections() {
     bottomSheetController.openManageSections();
   }
@@ -248,8 +377,18 @@ class ProductController extends GetxController
       return;
     }
 
-    // ✅ التصحيح: استخدام hasSelectedSection بدلاً من getSelectedSection()
-    if (!bottomSheetController.hasSelectedSection) {
+    final hasSections = bottomSheetController.sections.isNotEmpty;
+    
+    if (!hasSections) {
+      // إذا لم يكن هناك أقسام، فتح بوتوم شيت إضافة قسم جديد مباشرة
+      Get.snackbar(
+        'تنبيه',
+        'يجب إضافة قسم أولاً قبل إضافة المنتجات',
+        backgroundColor: Colors.orange,
+      );
+      bottomSheetController.openAddNewSection();
+    } else if (!bottomSheetController.hasSelectedSection) {
+      // إذا كان هناك أقسام ولكن لم يتم اختيار قسم
       Get.snackbar(
         'تنبيه',
         'يرجى اختيار قسم أولاً',
@@ -257,7 +396,7 @@ class ProductController extends GetxController
       );
       bottomSheetController.openManageSections();
     } else {
-      // ✅ التصحيح: استخدام openAddProductScreen بدلاً من Get.to مباشرة
+      // الانتقال إلى شاشة إضافة المنتج
       bottomSheetController.openAddProductScreen();
     }
   }
@@ -291,6 +430,11 @@ class ProductController extends GetxController
     super.onClose();
   }
   
-  // Getter للإطلاع على حالة التهيئة
+  // ✅ جديد: Getters للبيانات
   bool get isControllerInitialized => _isInitialized.value;
+  RxBool get isLoadingProducts => _isLoadingProducts;
+  RxString get productsErrorMessage => _productsErrorMessage;
+  List<Product> get allProducts => _products.toList();
+  List<Product> get filteredProducts => _filteredProducts.toList();
+  int get totalProductsCount => _products.length;
 }

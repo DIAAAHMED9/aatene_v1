@@ -5,6 +5,7 @@ class Product {
   final String name;
   final String? slug;
   final String? shortDescription;
+  final String? description;
   final String? cover;
   final String? coverUrl;
   final String? endDate;
@@ -12,6 +13,9 @@ class Product {
   final String favoritesCount;
   final String messagesCount;
   final String? viewCount;
+  final String? sectionId; // ✅ تحديث: من String وليس int
+  final String? status;
+  final Map<String, dynamic>? section; // ✅ إضافة حقل section
 
   Product({
     required this.id,
@@ -19,6 +23,7 @@ class Product {
     required this.name,
     this.slug,
     this.shortDescription,
+    this.description,
     this.cover,
     this.coverUrl,
     this.endDate,
@@ -26,6 +31,9 @@ class Product {
     required this.favoritesCount,
     required this.messagesCount,
     this.viewCount,
+    this.sectionId, // ✅ تحديث
+    this.status,
+    this.section, // ✅ جديد
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,7 @@ class Product {
       name: json['name'] ?? '',
       slug: json['slug'],
       shortDescription: json['short_description'],
+      description: json['description'],
       cover: json['cover'],
       coverUrl: json['cover_url'],
       endDate: json['end_date'],
@@ -42,6 +51,9 @@ class Product {
       favoritesCount: json['favorites_count']?.toString() ?? '0',
       messagesCount: json['messages_count']?.toString() ?? '0',
       viewCount: json['view_count']?.toString(),
+      sectionId: json['section_id']?.toString(), // ✅ تحويل إلى String
+      status: json['status'],
+      section: json['section'] != null ? Map<String, dynamic>.from(json['section']) : null,
     );
   }
 
@@ -52,6 +64,7 @@ class Product {
       'name': name,
       'slug': slug,
       'short_description': shortDescription,
+      'description': description,
       'cover': cover,
       'cover_url': coverUrl,
       'end_date': endDate,
@@ -59,6 +72,15 @@ class Product {
       'favorites_count': favoritesCount,
       'messages_count': messagesCount,
       'view_count': viewCount,
+      'section_id': sectionId, // ✅ تحديث
+      'status': status,
+      'section': section,
     };
+  }
+
+  // ✅ دالة مساعدة للحصول على sectionId كـ int (إذا احتجنا)
+  int? get sectionIdAsInt {
+    if (sectionId == null) return null;
+    return int.tryParse(sectionId!);
   }
 }
