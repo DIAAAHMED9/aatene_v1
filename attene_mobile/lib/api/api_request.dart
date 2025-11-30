@@ -110,7 +110,74 @@ static Map<String, dynamic> _getBaseHeaders() {
       shouldShowMessage: shouldShowMessage,
     );
   }
+  static String parseApiError(dynamic error, StackTrace stackTrace) {
+    try {
+      if (error is DioException) {
+        switch (error.type) {
+          case DioExceptionType.connectionTimeout:
+          case DioExceptionType.sendTimeout:
+          case DioExceptionType.receiveTimeout:
+            return 'انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى';
+          
+          case DioExceptionType.badResponse:
+            if (error.response != null) {
+              final statusCode = error.response!.statusCode;
+              final data = error.response!.data;
+              
+              if (statusCode == 422) {
+                return _parse422Error(data);
+              } else if (statusCode == 401) {
+                return 'انتهت جلسة التسجيل، يرجى تسجيل الدخول مرة أخرى';
+              } else if (statusCode == 403) {
+                return 'ليس لديك صلاحية للقيام بهذا الإجراء';
+              } else if (statusCode == 404) {
+                return 'الرابط غير موجود';
+              } else if (statusCode! >= 500) {
+                return 'خطأ في الخادم، يرجى المحاولة لاحقًا';
+              }
+            }
+            return 'حدث خطأ في الاستجابة: ${error.response?.statusCode}';
+          
+          case DioExceptionType.cancel:
+            return 'تم إلغاء الطلب';
+          
+          case DioExceptionType.unknown:
+            return 'خطأ في الاتصال بالإنترنت';
+          
+          default:
+            return 'حدث خطأ غير متوقع';
+        }
+      }
+      
+      return error.toString();
+    } catch (e) {
+      return 'حدث خطأ غير معروف';
+    }
+  }
 
+  // ✅ جديد: تحليل أخطاء 422
+  static String _parse422Error(dynamic data) {
+    try {
+      if (data is Map<String, dynamic>) {
+        if (data['errors'] != null && data['errors'] is Map) {
+          final errors = Map<String, dynamic>.from(data['errors']);
+          if (errors.isNotEmpty) {
+            final firstError = errors.entries.first;
+            final errorMessages = List<String>.from(firstError.value);
+            return errorMessages.isNotEmpty ? errorMessages.first : 'بيانات غير صحيحة';
+          }
+        }
+        
+        if (data['message'] != null) {
+          return data['message'].toString();
+        }
+      }
+      
+      return 'بيانات غير صحيحة يرجى التحقق من المدخلات';
+    } catch (e) {
+      return 'بيانات غير صحيحة';
+    }
+  }
   static Future<dynamic> delete({
     required String path,
     dynamic body,

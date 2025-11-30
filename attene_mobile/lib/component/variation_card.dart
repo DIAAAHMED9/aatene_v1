@@ -107,72 +107,86 @@ class VariationCard extends StatelessWidget {
     ));
   }
 
-  Widget _buildVariationAttributes() {
-    return GetBuilder<ProductVariationController>(
-      id: ProductVariationController.attributesUpdateId,
-      builder: (controller) {
-        if (controller.selectedAttributes.isEmpty) {
-          return _buildNoAttributes();
-        }
-        
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'السمات',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
-                  ),
+// في VariationCard - تحديث _buildVariationAttributes
+// في VariationCard - تحديث _buildVariationAttributes لتحسين الواجهة
+Widget _buildVariationAttributes() {
+  return GetBuilder<ProductVariationController>(
+    id: ProductVariationController.attributesUpdateId,
+    builder: (controller) {
+      // ✅ استخدام selectedAttributes من الـ Controller مباشرة
+      if (controller.selectedAttributes.isEmpty) {
+        return _buildNoAttributes();
+      }
+      
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'السمات',
+                style: TextStyle(
+                  fontSize: ResponsiveDimensions.f(16),
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
                 ),
-                SizedBox(width: ResponsiveDimensions.w(8)),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveDimensions.w(8),
-                    vertical: ResponsiveDimensions.h(2),
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${controller.selectedAttributes.length}',
-                    style: TextStyle(
-                      color: AppColors.primary400,
-                      fontSize: ResponsiveDimensions.f(12),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: ResponsiveDimensions.h(12)),
-            
-            // شبكة السمات مع تصميم متجاوب
-            GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: _getGridCrossAxisCount(),
-                crossAxisSpacing: ResponsiveDimensions.w(12),
-                mainAxisSpacing: ResponsiveDimensions.h(12),
-                childAspectRatio: _getChildAspectRatio(),
               ),
-              itemCount: controller.selectedAttributes.length,
-              itemBuilder: (context, index) {
-                final attribute = controller.selectedAttributes[index];
-                return _buildAttributeField(attribute);
-              },
+              SizedBox(width: ResponsiveDimensions.w(8)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveDimensions.w(8),
+                  vertical: ResponsiveDimensions.h(2),
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${controller.selectedAttributes.length}',
+                  style: TextStyle(
+                    color: AppColors.primary400,
+                    fontSize: ResponsiveDimensions.f(12),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Spacer(),
+              // ✅ زر لإدارة السمات من داخل البطاقة
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  size: ResponsiveDimensions.w(18),
+                  color: AppColors.primary400,
+                ),
+                onPressed: () => controller.openAttributesManagement(),
+                tooltip: 'إدارة السمات',
+              ),
+            ],
+          ),
+          SizedBox(height: ResponsiveDimensions.h(12)),
+          
+          // ✅ استخدام السمات من الـ Controller
+          GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getGridCrossAxisCount(),
+              crossAxisSpacing: ResponsiveDimensions.w(12),
+              mainAxisSpacing: ResponsiveDimensions.h(12),
+              childAspectRatio: _getChildAspectRatio(),
             ),
-          ],
-        );
-      },
-    );
-  }
+            itemCount: controller.selectedAttributes.length,
+            itemBuilder: (context, index) {
+              final attribute = controller.selectedAttributes[index];
+              return _buildAttributeField(attribute);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   Widget _buildAttributeField(ProductAttribute attribute) {
     return Obx(() {

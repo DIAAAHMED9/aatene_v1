@@ -1,4 +1,6 @@
+import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:attene_mobile/view/advance_info/keyword_management_screen.dart';
+import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/product_variations/product_variations_screen.dart';
 import 'package:attene_mobile/view/related_products/related_products_screen.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product.dart';
@@ -18,30 +20,43 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
   
   final List<StepperStep> steps = [
     const StepperStep(
-      title: 'المستخدم',
-      subtitle: 'معلومات المستخدم',
+      title: 'المعلومات الأساسية',
+      subtitle: 'بيانات المنتج الأساسية',
     ),
     const StepperStep(
-      title: 'المنتجات', 
-      subtitle: 'عربة التسوق',
+      title: 'الكلمات المفتاحية', 
+      subtitle: 'إدارة الكلمات المفتاحية',
     ),
     const StepperStep(
-      title: 'الشحن',
-      subtitle: 'عنوان الشحن',
+      title: 'المتغيرات',
+      subtitle: 'إدارة السمات والمتغيرات',
     ),
     const StepperStep(
-      title: 'الدفع',
-      subtitle: 'طريقة الدفع',
+      title: 'المنتجات المرتبطة',
+      subtitle: 'إدارة المنتجات المرتبطة',
     ),
-
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ التأكد من تسجيل الـ Controllers
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!Get.isRegistered<ProductCentralController>()) {
+        Get.put(ProductCentralController(), permanent: true);
+      }
+      if (!Get.isRegistered<ProductVariationController>()) {
+        Get.put(ProductVariationController(), permanent: true);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('مثال توضيحي - عملية الشراء'),
+        title: const Text('إضافة منتج جديد'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -103,7 +118,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
   Widget _buildStepBody(int stepIndex) {
     switch (stepIndex) {
       case 0:
-        return  AddProductContent(); // فقط المحتوى بدون أي إضافات
+        return AddProductContent(); // فقط المحتوى بدون أي إضافات
       case 1:
         return KeywordManagementScreen();
       case 2:
@@ -116,292 +131,68 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
     }
   }
 
-  Widget _buildProductsStep() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildStepHeader(1),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildInfoCard(
-              'عربة التسوق',
-              Icons.shopping_cart_outlined,
-              [
-                _buildInfoRow('آيفون 14 برو', '4,500 ريال'),
-                _buildInfoRow('سماعات ايربودز', '800 ريال'),
-                _buildInfoRow('الإجمالي', '5,300 ريال', isBold: true, color: Colors.blue),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShippingStep() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildStepHeader(2),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildInfoCard(
-              'عنوان الشحن',
-              Icons.location_on_outlined,
-              [
-                _buildInfoRow('العنوان:', 'حي النخيل، الرياض'),
-                _buildInfoRow('طريقة الشحن:', 'توصيل سريع'),
-                _buildInfoRow('التكلفة:', '25 ريال'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentStep() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildStepHeader(3),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildInfoCard(
-              'طريقة الدفع',
-              Icons.credit_card_rounded,
-              [
-                _buildInfoRow('الطريقة:', 'بطاقة ائتمان'),
-                _buildInfoRow('رقم البطاقة:', '**** **** **** 1234'),
-                _buildInfoRow('المبلغ الإجمالي:', '5,325 ريال', isBold: true, color: Colors.green),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildConfirmationStep() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildStepHeader(4),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildInfoCard(
-              'تأكيد الطلب',
-              Icons.check_circle_outline_rounded,
-              [
-                _buildInfoRow('رقم الطلب:', '#123456'),
-                _buildInfoRow('الحالة:', 'قيد المعالجة', color: Colors.orange),
-                _buildInfoRow('وقت التوصيل:', '2-3 أيام'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildSuccessCard(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStepHeader(int stepIndex) {
-    Map<int, Map<String, String>> stepInfo = {
-      0: {'title': 'معلومات المستخدم', 'subtitle': 'تحقق من معلوماتك الشخصية'},
-      1: {'title': 'عربة التسوق', 'subtitle': 'راجع المنتجات في سلة التسوق'},
-      2: {'title': 'معلومات الشحن', 'subtitle': 'حدد عنوان الشحن وطريقة التوصيل'},
-      3: {'title': 'طريقة الدفع', 'subtitle': 'اختر طريقة الدفع المناسبة'},
-      4: {'title': 'تأكيد الطلب', 'subtitle': 'راجع الطلب قبل الإتمام'},
-    };
-
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            stepInfo[stepIndex]!['title']!,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: Colors.black87,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            stepInfo[stepIndex]!['subtitle']!,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[700],
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard(String title, IconData icon, List<Widget> content) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: Colors.blue, size: 24),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...content,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value, {bool isBold = false, Color? color}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
-              color: Colors.grey[700],
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-              color: color ?? Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSuccessCard() {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      color: Colors.green[50],
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Icon(
-              Icons.celebration_rounded,
-              size: 60,
-              color: Colors.green,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'تم تأكيد الطلب بنجاح! 🎉',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: Colors.green,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'شكراً لك على شرائك! تم استلام طلبك وسيتم تجهيزه للشحن.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.green[800],
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStepNavigation() {
-    return Row(
-      children: [
-        if (currentStep > 0)
-          Expanded(
-            child: OutlinedButton(
-              onPressed: _previousStep,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                side: const BorderSide(color: Colors.blue, width: 2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'رجوع',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-          ),
-        if (currentStep > 0) const SizedBox(width: 16),
+Widget _buildStepNavigation() {
+  return Row(
+    children: [
+      if (currentStep > 0)
         Expanded(
-          child: ElevatedButton(
-            onPressed: _nextStep,
-            style: ElevatedButton.styleFrom(
+          child: OutlinedButton(
+            onPressed: _previousStep,
+            style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.blue, width: 2),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              elevation: 3,
-              shadowColor: Colors.blue.withOpacity(0.3),
             ),
-            child: Text(
-              currentStep == steps.length - 1 ? 'إنهاء الطلب' : 'التالي',
-              style: const TextStyle(
+            child: const Text(
+              'رجوع',
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
+                color: Colors.blue,
               ),
             ),
           ),
         ),
-      ],
-    );
-  }
+      if (currentStep > 0) const SizedBox(width: 16),
+      Expanded(
+        child: ElevatedButton(
+          onPressed: currentStep == steps.length - 1 ? _submitProduct : _nextStep,
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 3,
+            shadowColor: Colors.blue.withOpacity(0.3),
+          ),
+          child: Obx(() {
+            final productController = Get.find<ProductCentralController>();
+            return productController.isSubmitting.isTrue
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    currentStep == steps.length - 1 ? 'إنهاء وإرسال' : 'التالي',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+          }),
+        ),
+      ),
+    ],
+  );
+}
 
   void _nextStep() {
     if (currentStep < steps.length - 1) {
@@ -409,7 +200,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         currentStep++;
       });
     } else {
-      _completeProcess();
+      _submitProduct();
     }
   }
 
@@ -421,7 +212,40 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
     }
   }
 
-  void _completeProcess() {
+void _submitProduct() async {
+  final ProductCentralController productController = Get.find<ProductCentralController>();
+  
+  print('🚀 [FINAL SUBMISSION STARTED]');
+  productController.printDataSummary();
+
+  if (!productController.isBasicInfoComplete()) {
+    Get.snackbar(
+      'خطأ', 
+      'يرجى إكمال المعلومات الأساسية أولاً', 
+      backgroundColor: Colors.red, 
+      colorText: Colors.white
+    );
+    return;
+  }
+
+  // التحقق من صحة المتغيرات إذا كانت موجودة
+  final variationController = Get.find<ProductVariationController>();
+  if (variationController.hasVariations.value) {
+    final validation = variationController.validateVariations();
+    if (!validation.isValid) {
+      Get.snackbar(
+        'خطأ', 
+        validation.errorMessage, 
+        backgroundColor: Colors.red, 
+        colorText: Colors.white
+      );
+      return;
+    }
+  }
+
+  final result = await productController.submitProduct();
+  
+  if (result['success'] == true) {
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.white,
@@ -430,25 +254,25 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         ),
         title: const Row(
           children: [
-            Icon(Icons.celebration_rounded, color: Colors.green, size: 28),
+            Icon(Icons.check_circle, color: Colors.green, size: 28),
             SizedBox(width: 12),
             Text(
-              'تهانينا!',
+              'تمت العملية بنجاح!',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: Colors.green,
               ),
             ),
           ],
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.shopping_bag_rounded, size: 80, color: Colors.green),
-            SizedBox(height: 20),
-            Text(
-              'تم إتمام عملية الشراء بنجاح!',
+            const Icon(Icons.shopping_bag_rounded, size: 60, color: Colors.green),
+            const SizedBox(height: 20),
+            const Text(
+              'تم إضافة المنتج بنجاح',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -456,12 +280,22 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 10),
+            if (result['data'] != null && result['data'].isNotEmpty)
+              Text(
+                'رقم المنتج: ${result['data'][0]['sku'] ?? 'N/A'}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () {
               Get.back();
+              productController.reset();
               setState(() {
                 currentStep = 0;
               });
@@ -478,5 +312,14 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         ],
       ),
     );
+  } else {
+    Get.snackbar(
+      'خطأ', 
+      result['message'] ?? 'فشل في إضافة المنتج', 
+      backgroundColor: Colors.red, 
+      colorText: Colors.white,
+      duration: const Duration(seconds: 5),
+    );
   }
+}
 }

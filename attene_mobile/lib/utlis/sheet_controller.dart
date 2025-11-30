@@ -2,10 +2,12 @@ import 'dart:async';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:attene_mobile/demo_stepper_screen.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
+import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,32 +59,56 @@ class BottomSheetController extends GetxController {
   // === Stream Controllers ===
   final _sectionSearchController = StreamController<String>.broadcast();
   final MyAppController _myAppController = Get.find<MyAppController>();
-
-  // === Getters ===
-  BottomSheetType get currentType => _currentType.value;
-  List<String> get selectedOptions => _selectedOptions.toList();
-  String get selectedOption => _selectedOption.value;
-  Section? get selectedSection => _selectedSection.value;
-  String get selectedSectionName => _selectedSectionName.value;
-  bool get hasSelectedSection => _selectedSection.value != null;
-  List<Section> get sections => _sections.toList();
-  List<Section> get filteredSections => _filteredSections.toList();
-  bool get isLoadingSections => _isLoadingSections.value;
-  String get sectionsErrorMessage => _sectionsErrorMessage.value;
-  List<ProductAttribute> get tempAttributes => _tempAttributes.toList();
-  List<ProductAttribute> get selectedAttributes => _selectedAttributes.toList();
-
-  // ✅ إضافة Getter لـ RxList للاستماع للتغيرات
-  RxList<Section> get sectionsRx => _sections;
-
+final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
+RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributesRx;
+// ✅ تحديث دالة updateSelectedAttributes لتحديث الـ Rx أيضاً
+void updateSelectedAttributes(List<ProductAttribute> attributes) {
+  _selectedAttributes.assignAll(attributes);
+  _selectedAttributesRx.assignAll(attributes); // ✅ تحديث الـ Rx أيضاً
+  print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
+}
+void _saveAttributesAndClose() {
+  try {
+    final productVariationController = Get.find<ProductVariationController>();
+    
+    // ✅ نقل السمات المختارة إلى ProductVariationController
+    productVariationController.updateSelectedAttributes(_selectedAttributes.toList());
+    
+    // ✅ إغلاق الـ BottomSheet
+    Get.back();
+    
+    // ✅ إظهار رسالة نجاح
+    Get.snackbar(
+      'نجاح', 
+      'تم حفظ السمات والصفات بنجاح',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: Duration(seconds: 2),
+    );
+    
+    print('✅ [ATTRIBUTES SAVED]: ${_selectedAttributes.length} سمات محفوظة');
+    
+  } catch (e) {
+    print('❌ [ERROR SAVING ATTRIBUTES]: $e');
+    Get.snackbar(
+      'خطأ', 
+      'حدث خطأ أثناء حفظ السمات',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+}
   @override
   void onInit() {
     super.onInit();
     _initializeAttributeListeners();
-    _initializeSampleAttributes();
+    _loadAttributesFromApi();
     _initializeSectionSearch();
     _loadSections();
   }
+
+
+
   // === دوال إدارة الأقسام مع API ===
   Future<void> _loadSections() async {
     try {
@@ -91,8 +117,8 @@ class BottomSheetController extends GetxController {
         return;
       }
 
-      _isLoadingSections.value = true;
-      _sectionsErrorMessage.value = '';
+      _isLoadingSections(true);
+      _sectionsErrorMessage('');
       
       final response = await ApiHelper.get(
         path: '/merchants/sections',
@@ -109,11 +135,38 @@ class BottomSheetController extends GetxController {
     } catch (e) {
       _sectionsErrorMessage.value = 'خطأ في تحميل الأقسام: ${e.toString()}';
     } finally {
-      _isLoadingSections.value = false;
+      _isLoadingSections(false);
     }
   }
 
+  // ✅ محدث: جلب السمات من API
+  Future<void> _loadAttributesFromApi() async {
+    try {
+      print('📡 [LOADING ATTRIBUTES FROM API - BOTTOM SHEET]');
 
+      final response = await ApiHelper.get(
+        path: '/merchants/attributes',
+        withLoading: false,
+      );
+
+      print('🎯 [ATTRIBUTES API RESPONSE - BOTTOM SHEET]: ${response?['status']}');
+
+      if (response != null && response['status'] == true) {
+        final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        
+        final loadedAttributes = attributesList.map((attributeJson) {
+          return ProductAttribute.fromApiJson(attributeJson);
+        }).toList();
+
+        _tempAttributes.assignAll(loadedAttributes);
+        print('✅ تم تحميل ${_tempAttributes.length} سمة في الـ BottomSheet بنجاح');
+      } else {
+        print('❌ فشل في تحميل السمات في الـ BottomSheet: ${response?['message']}');
+      }
+    } catch (e) {
+      print('❌ خطأ في تحميل السمات في الـ BottomSheet: $e');
+    }
+  }
 
   // === دوال التهيئة ===
   void _initializeAttributeListeners() {
@@ -136,38 +189,6 @@ class BottomSheetController extends GetxController {
     });
   }
 
-  void _initializeSampleAttributes() {
-    _tempAttributes.assignAll([
-      ProductAttribute(
-        id: '1',
-        name: 'اللون',
-        values: [
-          AttributeValue(id: '1-1', value: 'أحمر', isSelected: true),
-          AttributeValue(id: '1-2', value: 'أزرق', isSelected: true),
-          AttributeValue(id: '1-3', value: 'أخضر', isSelected: true),
-        ],
-      ),
-      ProductAttribute(
-        id: '2', 
-        name: 'المقاس',
-        values: [
-          AttributeValue(id: '2-1', value: 'صغير', isSelected: true),
-          AttributeValue(id: '2-2', value: 'متوسط', isSelected: true),
-          AttributeValue(id: '2-3', value: 'كبير', isSelected: true),
-        ],
-      ),
-      ProductAttribute(
-        id: '3',
-        name: 'المادة',
-        values: [
-          AttributeValue(id: '3-1', value: 'قطن', isSelected: true),
-          AttributeValue(id: '3-2', value: 'حرير', isSelected: true),
-          AttributeValue(id: '3-3', value: 'صوف', isSelected: true),
-        ],
-      ),
-    ]);
-  }
-
   void _filterSections(String searchText) {
     if (searchText.isEmpty) {
       _filteredSections.assignAll(_sections);
@@ -187,8 +208,8 @@ class BottomSheetController extends GetxController {
         return;
       }
 
-      _isLoadingSections.value = true;
-      _sectionsErrorMessage.value = '';
+      _isLoadingSections(true);
+      _sectionsErrorMessage('');
       
       final response = await ApiHelper.get(
         path: '/merchants/sections',
@@ -205,7 +226,7 @@ class BottomSheetController extends GetxController {
     } catch (e) {
       _sectionsErrorMessage.value = 'خطأ في تحميل الأقسام: ${e.toString()}';
     } finally {
-      _isLoadingSections.value = false;
+      _isLoadingSections(false);
     }
   }
 
@@ -216,7 +237,7 @@ class BottomSheetController extends GetxController {
 
   Future<bool> addSection(String name) async {
     try {
-      _isLoadingSections.value = true;
+      _isLoadingSections(true);
       
       final response = await ApiHelper.post(
         path: '/merchants/sections',
@@ -235,13 +256,13 @@ class BottomSheetController extends GetxController {
       _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
       return false;
     } finally {
-      _isLoadingSections.value = false;
+      _isLoadingSections(false);
     }
   }
 
   Future<bool> deleteSection(int sectionId) async {
     try {
-      _isLoadingSections.value = true;
+      _isLoadingSections(true);
       
       final response = await ApiHelper.delete(
         path: '/merchants/sections/$sectionId',
@@ -263,14 +284,44 @@ class BottomSheetController extends GetxController {
       _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
       return false;
     } finally {
-      _isLoadingSections.value = false;
+      _isLoadingSections(false);
     }
   }
 
-  void selectSection(Section section) {
-    _selectedSection.value = section;
-    _selectedSectionName.value = section.name;
+void selectSection(Section section) {
+  _selectedSection.value = section;
+  _selectedSectionName.value = section.name;
+  
+  // ✅ نقل القسم المختار إلى ProductCentralController
+  final productController = Get.find<ProductCentralController>();
+  productController.updateSelectedSection(section);
+  
+  print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
+}
+
+
+  // ✅ تحديث دالة openAddProductScreen للتحقق من القسم
+void openAddProductScreen() {
+  if (!_isUserAuthenticated()) {
+    _showLoginRequiredMessage();
+    return;
   }
+
+  if (!hasSelectedSection) {
+    Get.snackbar(
+      'قسم مطلوب',
+      'يجب اختيار قسم أولاً قبل إضافة المنتج',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+    
+    openManageSections();
+    return;
+  }
+
+  _navigateToAddProductStepper();
+}
 
   void clearSectionSelection() {
     _selectedSection.value = null;
@@ -305,11 +356,8 @@ class BottomSheetController extends GetxController {
     
     if (attributes != null && type == BottomSheetType.manageAttributes) {
       _tempAttributes.assignAll(attributes);
-      _selectedAttributes.clear();
-      for (final attr in attributes) {
-        if (attr.values.any((value) => value.isSelected.value)) {
-          _selectedAttributes.add(attr);
-        }
+      if (_selectedAttributes.isEmpty) {
+        _selectedAttributes.clear();
       }
       if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
         _currentEditingAttribute.value = _selectedAttributes.first;
@@ -390,29 +438,6 @@ class BottomSheetController extends GetxController {
     showBottomSheet(BottomSheetType.addNewSection);
   }
 
-  // ✅ دالة الانتقال إلى شاشة إضافة المنتج الجديدة
-  void openAddProductScreen() {
-    if (!_isUserAuthenticated()) {
-      _showLoginRequiredMessage();
-      return;
-    }
-
-    if (!hasSelectedSection) {
-      Get.snackbar(
-        'قسم مطلوب',
-        'يجب اختيار قسم أولاً قبل إضافة المنتج',
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
-      
-      // فتح إدارة الأقسام مباشرة
-      openManageSections();
-      return;
-    }
-
-    _navigateToAddProductStepper();
-  }
 
   void _navigateToAddProductStepper() {
     Get.back(); // إغلاق أي BottomSheet مفتوح
@@ -446,7 +471,48 @@ class BottomSheetController extends GetxController {
       ),
     );
   }
-
+  Widget _buildActions() {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () {
+              _selectedOptions.clear();
+              _selectedOption.value = '';
+              Get.back();
+            },
+            child: const Text('إلغاء'),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: _applySelection,
+            child: const Text('تطبيق'),
+          ),
+        ),
+      ],
+    );
+  }
+    void _applySelection() {
+    switch (_currentType.value) {
+      case BottomSheetType.filter:
+        print('تطبيق الفلاتر: ${_selectedOptions.join(', ')}');
+        break;
+      case BottomSheetType.sort:
+        print('تم الترتيب حسب: ${_selectedOption.value}');
+        break;
+      case BottomSheetType.multiSelect:
+        print('الخيارات المحددة: ${_selectedOptions.join(', ')}');
+        break;
+      case BottomSheetType.singleSelect:
+        print('الخيار المحدد: ${_selectedOption.value}');
+        break;
+      default:
+        break;
+    }
+    Get.back();
+  }
   bool get _shouldShowActions {
     return _currentType.value != BottomSheetType.manageSections && 
            _currentType.value != BottomSheetType.addNewSection &&
@@ -655,83 +721,81 @@ class BottomSheetController extends GetxController {
     });
   }
 
-Widget _buildSectionRadioItem(Section section) {
-  return Obx(() {
-    final isSelected = _selectedSection.value?.id == section.id;
-    
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Container(
-        decoration: BoxDecoration(
-          border: isSelected 
-              ? Border.all(color: AppColors.primary400, width: 2)
-              : null,
-          borderRadius: BorderRadius.circular(8),
-          color: isSelected ? AppColors.primary100 : Colors.white,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            children: [
-              // ✅ إصلاح: جعل الـ Radio يستمع للتغييرات
-              Obx(() => Radio<Section>(
-                value: section,
-                groupValue: _selectedSection.value,
-                onChanged: (Section? value) {
-                  if (value != null) {
-                    selectSection(value);
-                    // _showSelectionConfirmation(value.name);
-                  }
-                },
-                activeColor: AppColors.primary400,
-              )),
-              
-              Icon(
-                Icons.folder_rounded,
-                color: isSelected ? AppColors.primary400 : Colors.blue,
-                size: 24,
-              ),
-              const SizedBox(width: 12),
-              
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      section.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: isSelected ? AppColors.primary400 : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'ID: ${section.id}',
-                      style: TextStyle(
-                        color: isSelected ? AppColors.primary500 : Colors.grey[600],
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+  Widget _buildSectionRadioItem(Section section) {
+    return Obx(() {
+      final isSelected = _selectedSection.value?.id == section.id;
+      
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: Container(
+          decoration: BoxDecoration(
+            border: isSelected 
+                ? Border.all(color: AppColors.primary400, width: 2)
+                : null,
+            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? AppColors.primary100 : Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              children: [
+                Obx(() => Radio<Section>(
+                  value: section,
+                  groupValue: _selectedSection.value,
+                  onChanged: (Section? value) {
+                    if (value != null) {
+                      selectSection(value);
+                    }
+                  },
+                  activeColor: AppColors.primary400,
+                )),
+                
+                Icon(
+                  Icons.folder_rounded,
+                  color: isSelected ? AppColors.primary400 : Colors.blue,
+                  size: 24,
                 ),
-              ),
-              
-              IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: Colors.red[400],
-                  size: 20,
+                const SizedBox(width: 12),
+                
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        section.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isSelected ? AppColors.primary400 : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'ID: ${section.id}',
+                        style: TextStyle(
+                          color: isSelected ? AppColors.primary500 : Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: () => _showDeleteSectionConfirmation(section),
-              ),
-            ],
+                
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: Colors.red[400],
+                    size: 20,
+                  ),
+                  onPressed: () => _showDeleteSectionConfirmation(section),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  });
-}
+      );
+    });
+  }
 
   void _showDeleteSectionConfirmation(Section section) {
     Get.dialog(
@@ -828,7 +892,6 @@ Widget _buildSectionRadioItem(Section section) {
     }
   }
 
-  // ... (بقية دوال إدارة السمات والواجهات تبقى كما هي بدون تغيير)
   // === واجهات إدارة السمات ===
   Widget _buildManageAttributesContent() {
     return Column(
@@ -844,6 +907,8 @@ Widget _buildSectionRadioItem(Section section) {
             ],
           ),
         ),
+        // ✅ نقل زر الحفظ إلى هنا ليكون ظاهراً دائماً
+        _buildSaveButton(),
       ],
     );
   }
@@ -1347,19 +1412,30 @@ Widget _buildSectionRadioItem(Section section) {
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: _saveAttributesAndClose,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary400,
-              ),
-              child: const Text(
-                'حفظ والتطبيق',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
+          // ❌ إزالة زر الحفظ من هنا
         ],
+      ),
+    );
+  }
+
+  // ✅ جديد: زر الحفظ الرئيسي
+  Widget _buildSaveButton() {
+    return Container(
+      padding: EdgeInsets.only(top: 16),
+      child: ElevatedButton(
+        onPressed: _saveAttributesAndClose,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary400,
+          minimumSize: Size(double.infinity, 50),
+        ),
+        child: Text(
+          'حفظ والتطبيق',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -1523,7 +1599,7 @@ Widget _buildSectionRadioItem(Section section) {
     final newValue = AttributeValue(
       id: '${attribute.id}-${DateTime.now().millisecondsSinceEpoch}',
       value: valueText,
-      isSelected: true,
+      isSelected: true.obs,
     );
 
     attribute.values.add(newValue);
@@ -1536,129 +1612,85 @@ Widget _buildSectionRadioItem(Section section) {
   void _toggleAttributeValueSelection(AttributeValue value) {
     value.isSelected.toggle();
   }
+// في BottomSheetController - إضافة هذه الدوال في النهاية قبل onClose()
 
-  void _saveAttributesAndClose() {
-    Get.back();
-    Get.snackbar('نجاح', 'تم حفظ السمات والصفات بنجاح');
-  }
+// === دوال بناء المحتوى للأنواع المختلفة ===
+Widget _buildFilterContent() {
+  return Column(
+    children: [
+      _buildFilterOption('نطاق السعر', Icons.attach_money),
+      _buildFilterOption('الفئة', Icons.category),
+      _buildFilterOption('الماركة', Icons.branding_watermark),
+      _buildFilterOption('التقييم', Icons.star),
+    ],
+  );
+}
 
-  // === واجهات الفلترة والترتيب ===
-  Widget _buildFilterContent() {
-    return Column(
-      children: [
-        _buildFilterOption('نطاق السعر', Icons.attach_money),
-        _buildFilterOption('الفئة', Icons.category),
-        _buildFilterOption('الماركة', Icons.branding_watermark),
-        _buildFilterOption('التقييم', Icons.star),
-      ],
-    );
-  }
-  
-  Widget _buildFilterOption(String title, IconData icon) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {
-        print('فتح $title');
-      },
-    );
-  }
-  
-  Widget _buildSortContent() {
-    final List<String> sortOptions = ['الأحدث', 'الأقدم', 'السعر من الأعلى', 'السعر من الأدنى'];
-    return Column(
-      children: sortOptions.map((option) {
-        return Obx(() => RadioListTile<String>(
-          title: Text(option),
-          value: option,
-          groupValue: _selectedOption.value,
-          onChanged: (value) {
-            _selectedOption.value = value!;
-          },
-        ));
-      }).toList(),
-    );
-  }
-  
-  Widget _buildMultiSelectContent() {
-    final List<String> multiSelectOptions = ['خيار 1', 'خيار 2', 'خيار 3', 'خيار 4'];
-    return Column(
-      children: multiSelectOptions.map((option) {
-        return Obx(() => CheckboxListTile(
-          title: Text(option),
-          value: _selectedOptions.contains(option),
-          onChanged: (value) {
-            if (value == true) {
-              _selectedOptions.add(option);
-            } else {
-              _selectedOptions.remove(option);
-            }
-          },
-        ));
-      }).toList(),
-    );
-  }
-  
-  Widget _buildSingleSelectContent() {
-    final List<String> singleSelectOptions = ['خيار أ', 'خيار ب', 'خيار ج', 'خيار د'];
-    return Column(
-      children: singleSelectOptions.map((option) {
-        return Obx(() => RadioListTile<String>(
-          title: Text(option),
-          value: option,
-          groupValue: _selectedOption.value,
-          onChanged: (value) {
-            _selectedOption.value = value!;
-          },
-        ));
-      }).toList(),
-    );
-  }
-  
-  Widget _buildActions() {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-              _selectedOptions.clear();
-              _selectedOption.value = '';
-              Get.back();
-            },
-            child: const Text('إلغاء'),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: _applySelection,
-            child: const Text('تطبيق'),
-          ),
-        ),
-      ],
-    );
-  }
-  
-  void _applySelection() {
-    switch (_currentType.value) {
-      case BottomSheetType.filter:
-        print('تطبيق الفلاتر: ${_selectedOptions.join(', ')}');
-        break;
-      case BottomSheetType.sort:
-        print('تم الترتيب حسب: ${_selectedOption.value}');
-        break;
-      case BottomSheetType.multiSelect:
-        print('الخيارات المحددة: ${_selectedOptions.join(', ')}');
-        break;
-      case BottomSheetType.singleSelect:
-        print('الخيار المحدد: ${_selectedOption.value}');
-        break;
-      default:
-        break;
-    }
-    Get.back();
-  }
+Widget _buildFilterOption(String title, IconData icon) {
+  return ListTile(
+    leading: Icon(icon),
+    title: Text(title),
+    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+    onTap: () {
+      print('فتح $title');
+    },
+  );
+}
+
+Widget _buildSortContent() {
+  final List<String> sortOptions = ['الأحدث', 'الأقدم', 'السعر من الأعلى', 'السعر من الأدنى'];
+  return Column(
+    children: sortOptions.map((option) {
+      return Obx(() => RadioListTile<String>(
+        title: Text(option),
+        value: option,
+        groupValue: _selectedOption.value,
+        onChanged: (value) {
+          _selectedOption.value = value!;
+        },
+      ));
+    }).toList(),
+  );
+}
+
+Widget _buildMultiSelectContent() {
+  final List<String> multiSelectOptions = ['خيار 1', 'خيار 2', 'خيار 3', 'خيار 4'];
+  return Column(
+    children: multiSelectOptions.map((option) {
+      return Obx(() => CheckboxListTile(
+        title: Text(option),
+        value: _selectedOptions.contains(option),
+        onChanged: (value) {
+          if (value == true) {
+            _selectedOptions.add(option);
+          } else {
+            _selectedOptions.remove(option);
+          }
+        },
+      ));
+    }).toList(),
+  );
+}
+
+Widget _buildSingleSelectContent() {
+  final List<String> singleSelectOptions = ['خيار أ', 'خيار ب', 'خيار ج', 'خيار د'];
+  return Column(
+    children: singleSelectOptions.map((option) {
+      return Obx(() => RadioListTile<String>(
+        title: Text(option),
+        value: option,
+        groupValue: _selectedOption.value,
+        onChanged: (value) {
+          _selectedOption.value = value!;
+        },
+      ));
+    }).toList(),
+  );
+}
+
+// ✅ إضافة getter لـ sectionsRx
+RxList<Section> get sectionsRx => _sections;
+  // ✅ محدث: دالة حفظ السمات والتطبيق
 
   // === دوال الحصول على البيانات ===
   List<ProductAttribute> getSelectedAttributes() {
@@ -1672,6 +1704,20 @@ Widget _buildSectionRadioItem(Section section) {
   void updateAttributes(List<ProductAttribute> attributes) {
     _tempAttributes.assignAll(attributes);
   }
+
+  // === Getters ===
+  BottomSheetType get currentType => _currentType.value;
+  List<String> get selectedOptions => _selectedOptions.toList();
+  String get selectedOption => _selectedOption.value;
+  Section? get selectedSection => _selectedSection.value;
+  String get selectedSectionName => _selectedSectionName.value;
+  bool get hasSelectedSection => _selectedSection.value != null;
+  List<Section> get sections => _sections.toList();
+  List<Section> get filteredSections => _filteredSections.toList();
+  bool get isLoadingSections => _isLoadingSections.value;
+  String get sectionsErrorMessage => _sectionsErrorMessage.value;
+  List<ProductAttribute> get tempAttributes => _tempAttributes.toList();
+  List<ProductAttribute> get selectedAttributes => _selectedAttributes.toList();
 
   @override
   void onClose() {

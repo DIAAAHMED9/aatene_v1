@@ -1,4 +1,4 @@
-// lib/model/section_model.dart
+// lib/models/section_model.dart
 class Section {
   final int id;
   final String name;
@@ -20,7 +20,7 @@ class Section {
       name: json['name'] ?? '',
       image: json['image'],
       imageUrl: json['image_url'],
-      storeId: json['store_id']?.toString() ?? '',
+      storeId: json['store_id']?.toString() ?? json['storeId']?.toString() ?? '',
     );
   }
 
@@ -36,22 +36,16 @@ class Section {
 
   @override
   String toString() {
-    return 'Section(id: $id, name: $name)';
+    return 'Section{id: $id, name: $name, storeId: $storeId}';
   }
 
-  Section copyWith({
-    int? id,
-    String? name,
-    String? image,
-    String? imageUrl,
-    String? storeId,
-  }) {
-    return Section(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      image: image ?? this.image,
-      imageUrl: imageUrl ?? this.imageUrl,
-      storeId: storeId ?? this.storeId,
-    );
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Section &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

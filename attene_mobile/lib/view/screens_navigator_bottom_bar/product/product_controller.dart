@@ -1,3 +1,4 @@
+// lib/view/screens_navigator_bottom_bar/product/product_controller.dart
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/demo_stepper_screen.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart';

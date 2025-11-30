@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/BottomNavigationBar/main_screen.dart';
+import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:attene_mobile/demo_stepper_screen.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
@@ -32,24 +33,28 @@ void main() {
   runApp(const MyApp());
 }
 
+// في main.dart - التأكد من تسجيل الـ Controllers
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-    // ✅ Services الأساسية
-    Get.put(ResponsiveService());
-    Get.put(MyAppController());
-    Get.put(LanguageController());
+    print('🔄 [APP BINDINGS] Registering controllers...');
     
-    // ✅ الـ Controllers الرئيسية - بالترتيب الصحيح
-    Get.put(BottomSheetController());
-    Get.put(ProductController());
-    Get.put(KeywordController());
-    Get.put(ProductVariationController());
-    Get.put(AddProductController());
-    Get.put(MediaLibraryController());
+    // ✅ Services الأساسية
+    Get.put(ResponsiveService(), permanent: true);
+    Get.put(MyAppController(), permanent: true);
+    Get.put(LanguageController(), permanent: true);
+    
+    // ✅ الـ Controllers الرئيسية - بدون تحميل بيانات تلقائي
+    Get.put(BottomSheetController(), permanent: true);
+    Get.put(ProductCentralController(), permanent: true);
+    Get.put(ProductVariationController(), permanent: true);
+    Get.put(KeywordController(), permanent: true);
+    Get.put(AddProductController(), permanent: true);
+    Get.put(MediaLibraryController(), permanent: true);
+    
+    print('✅ [APP BINDINGS] All controllers registered successfully');
   }
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

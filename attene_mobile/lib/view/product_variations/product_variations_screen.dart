@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/variation_card.dart';
+import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_helper.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:flutter/material.dart';
@@ -11,33 +12,48 @@ import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
 
-class ProductVariationsScreen extends StatelessWidget {
-  final ProductVariationController controller = Get.find<ProductVariationController>();
-  final BottomSheetController bottomSheetController = Get.find<BottomSheetController>(); // ✅ جديد
+class ProductVariationsScreen extends StatefulWidget {
+  const ProductVariationsScreen({super.key});
 
-  ProductVariationsScreen({super.key});
+  @override
+  State<ProductVariationsScreen> createState() => _ProductVariationsScreenState();
+}
+
+class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
+  final ProductVariationController controller = Get.find<ProductVariationController>();
+  final BottomSheetController bottomSheetController = Get.find<BottomSheetController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ تحميل السمات عند فتح الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadAttributesOnOpen();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return 
-       LayoutBuilder(
-          builder: (context, constraints) {
-            final isWideScreen = constraints.maxWidth > 600;
-            
-            return Column(
-              children: [
-                _buildAppBar(isWideScreen: isWideScreen),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(VariationResponsive.cardPadding),
-                    child: _buildContent(isWideScreen: isWideScreen),
-                  ),
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWideScreen = constraints.maxWidth > 600;
+          
+          return Column(
+            children: [
+              _buildAppBar(isWideScreen: isWideScreen),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(VariationResponsive.cardPadding),
+                  child: _buildContent(isWideScreen: isWideScreen),
                 ),
-                _buildBottomActions(),
-              ],
-            );
-          },
-        );
+              ),
+              _buildBottomActions(),
+            ],
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildAppBar({required bool isWideScreen}) {
@@ -256,7 +272,10 @@ class ProductVariationsScreen extends StatelessWidget {
           buttonText: 'إدارة السمات والصفات',
           color: AppColors.primary400,
           textColor: Colors.white,
-          onTap: () => controller.openAttributesManagement(), // ✅ محدث
+          onTap: () {
+            // ✅ استخدام الـ BottomSheetController مباشرة
+            bottomSheetController.openManageAttributes(controller.allAttributes);
+          },
         ),
         SizedBox(height: ResponsiveDimensions.h(12)),
         Text(
@@ -622,32 +641,48 @@ class ProductVariationsScreen extends StatelessWidget {
     );
   }
 
-  void _saveVariationsAndContinue() {
-    final validationResult = controller.validateVariations();
-    if (!validationResult.isValid) {
-      Get.snackbar(
-        'تنبيه',
-        validationResult.errorMessage,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: Duration(seconds: 3),
-      );
-      return;
-    }
-    
-    // ✅ جديد: حفظ البيانات قبل المتابعة
-    final variationsData = controller.getVariationsData();
-    print('بيانات الاختلافات المحفوظة: $variationsData');
-    
+// في lib/view/product_variations/product_variations_screen.dart - تحديث هذه الدالة فقط
+void _saveVariationsAndContinue() {
+  // ✅ التحقق من وجود قسم مختار
+  final productCentralController = Get.find<ProductCentralController>();
+  if (productCentralController.selectedSection.value == null) {
     Get.snackbar(
-      'نجاح',
-      'تم حفظ الاختلافات بنجاح',
-      backgroundColor: Colors.green,
+      'قسم مطلوب',
+      'يرجى اختيار قسم للمنتج قبل المتابعة',
+      backgroundColor: Colors.orange,
       colorText: Colors.white,
+      duration: const Duration(seconds: 3),
     );
-    Get.toNamed('/related-products');
-    // Get.back();
+    return;
   }
 
-  // ❌ محذوف: _showUnifiedBottomSheet - تم استبداله بـ openAttributesManagement
+  final validationResult = controller.validateVariations();
+  if (!validationResult.isValid) {
+    Get.snackbar(
+      'تنبيه',
+      validationResult.errorMessage,
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+    return;
+  }
+  
+  // ✅ حفظ البيانات في ProductCentralController
+  final variationsData = controller.getVariationsData();
+  final variationsList = variationsData['variations']?.map((v) => v as Map<String, dynamic>).toList() ?? [];
+  productCentralController.addVariations(variationsList);
+  
+  print('✅ [VARIATIONS SAVED]: ${variationsList.length} اختلاف محفوظ');
+  print('✅ [SELECTED SECTION]: ${productCentralController.selectedSection.value?.name}');
+  
+  Get.snackbar(
+    'نجاح',
+    'تم حفظ الاختلافات بنجاح',
+    backgroundColor: Colors.green,
+    colorText: Colors.white,
+  );
+  
+  Get.toNamed('/related-products');
+}
 }

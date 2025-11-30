@@ -1,3 +1,4 @@
+import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -14,6 +15,7 @@ class MyAppController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeApp();
+
   }
 
   Future<void> _initializeApp() async {

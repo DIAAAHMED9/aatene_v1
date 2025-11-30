@@ -1,18 +1,29 @@
-// lib/view/advance_info/keyword_management_screen.dart
 import 'package:attene_mobile/view/advance_info/keyword_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 
 class KeywordManagementScreen extends StatelessWidget {
-  final KeywordController controller = Get.find<KeywordController>();
+  final KeywordController controller = Get.put(KeywordController());
 
   KeywordManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return     SingleChildScrollView(
+    // ✅ تحميل المتاجر عند فتح الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadStoresOnOpen();
+    });
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: _buildBody(),
+      bottomNavigationBar: _buildBottomActions(),
+    );
+  }
+
+  Widget _buildBody() {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,49 +37,7 @@ class KeywordManagementScreen extends StatelessWidget {
           _buildAvailableKeywords(),
           SizedBox(height: 20),
           _buildSelectedKeywordsSection(),
-        ],
-      ),
-    );
-         
-         
-    
-    // SafeArea(
-    //   child: Scaffold(
-    //     backgroundColor: Colors.white,
-    //     body: 
-    //     bottomNavigationBar: _buildBottomActions(),
-    //   ),
-    // );
-  }
-
-  Widget _buildAppBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Get.back(),
-          ),
-          SizedBox(width: 8),
-          Text(
-            'الكلمات المفتاحية',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -79,7 +48,7 @@ class KeywordManagementScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'إظهار المنتج في متجر',
+          'الكلمات المفتاحية للمنتج',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -88,7 +57,7 @@ class KeywordManagementScreen extends StatelessWidget {
         ),
         SizedBox(height: 8),
         Text(
-          'اختر الكلمات المفتاحية المناسبة لظهور أفضل في نتائج البحث',
+          'اختر المتجر وأضف الكلمات المفتاحية المناسبة لظهور أفضل في نتائج البحث',
           style: TextStyle(
             fontSize: 14,
             color: Colors.grey[600],
@@ -98,58 +67,226 @@ class KeywordManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoreSelector() {
+Widget _buildStoreSelector() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Text(
+            'إظهار المنتج في متجر',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(width: 4),
+          Text(
+            '*',
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+          Spacer(),
+          // ✅ زر إعادة التحميل مع معالجة الحالة
+          Obx(() {
+            if (controller.storesError.isNotEmpty || 
+                (controller.stores.isEmpty && !controller.isLoadingStores.value)) {
+              return IconButton(
+                icon: Icon(Icons.refresh, size: 20),
+                onPressed: () => controller.reloadStores(),
+                tooltip: 'إعادة تحميل المتاجر',
+              );
+            }
+            return SizedBox.shrink();
+          }),
+        ],
+      ),
+      SizedBox(height: 8),
+      Obx(() {
+        print('🔄 [REBUILDING STORE SELECTOR] Loading: ${controller.isLoadingStores.value}');
+        if (controller.isLoadingStores.isTrue) {
+          return _buildStoreLoading();
+        }
+        
+        if (controller.storesError.isNotEmpty) {
+          return _buildStoreError();
+        }
+        
+        if (controller.stores.isEmpty) {
+          return _buildStoreEmpty();
+        }
+        
+        return _buildStoreDropdown();
+      }),
+    ],
+  );
+}
+
+  Widget _buildStoreLoading() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          SizedBox(width: 12),
+          Text(
+            'جاري تحميل المتاجر...',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStoreError() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'إظهار المنتج في متجر',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.red[300]!),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.red, size: 20),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  controller.storesError.value,
+                  style: TextStyle(color: Colors.red[600]),
+                ),
               ),
-            ),
-            SizedBox(width: 4),
-            Text(
-              '*',
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         SizedBox(height: 8),
-        Obx(() => Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(25),
+        ElevatedButton.icon(
+          onPressed: () => controller.reloadStores(),
+          icon: Icon(Icons.refresh),
+          label: Text('إعادة المحاولة'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
           ),
-          child: DropdownButtonFormField<String>(
-            value: controller.selectedStore.value,
-            decoration: InputDecoration(
-              hintText: 'اختر المتجر',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16),
-            ),
-            items: controller.stores.map((store) {
-              return DropdownMenuItem(
-                value: store,
-                child: Text(store),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                controller.setSelectedStore(value);
-              }
-            },
-          ),
-        )),
+        ),
       ],
     );
   }
 
+  Widget _buildStoreEmpty() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.orange[300]!),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.store_mall_directory_outlined, color: Colors.orange, size: 20),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'لا توجد متاجر متاحة',
+              style: TextStyle(color: Colors.orange[600]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+Widget _buildStoreDropdown() {
+  return Obx(() {
+    final stores = controller.stores;
+    final selectedStore = controller.selectedStore.value;
+    
+    print('🔄 [BUILDING DROPDOWN] Stores: ${stores.length}, Selected: ${selectedStore?.name}');
+    
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<Store>(
+          isExpanded: true,
+          value: selectedStore,
+          decoration: InputDecoration(
+            hintText: stores.isEmpty ? 'لا توجد متاجر متاحة' : 'اختر المتجر',
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          ),
+          items: stores.map((store) {
+            return DropdownMenuItem(
+              value: store,
+              child: Container(
+                constraints: BoxConstraints(
+                  minHeight: 60,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        if (store.logoUrl != null && store.logoUrl!.isNotEmpty)
+                          Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.only(left: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: NetworkImage(store.logoUrl!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        Expanded(
+                          child: Text(
+                            store.name,
+                            style: TextStyle(fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      controller.getStoreStatusText(store.status),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: controller.getStoreStatusColor(store.status),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (Store? value) {
+            if (value != null) {
+              controller.setSelectedStore(value);
+            }
+          },
+        ),
+      ),
+    );
+  });
+}
+
+  // باقي الدوال تبقى كما هي...
   Widget _buildSearchBox() {
     return Container(
       decoration: BoxDecoration(
@@ -158,13 +295,12 @@ class KeywordManagementScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // حقل النص - يستخدم controller.searchController مباشرة
           Expanded(
             child: TextField(
-              controller: controller.searchController, // ✅ استخدام الـ Controller من الـ GetX Controller
+              controller: controller.searchController,
               onSubmitted: (value) => controller.addCustomKeyword(),
               decoration: InputDecoration(
-                hintText: 'اكتب الوسم ثم اضغط على إضافة...',
+                hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 hintStyle: TextStyle(
@@ -174,8 +310,6 @@ class KeywordManagementScreen extends StatelessWidget {
               ),
             ),
           ),
-          
-          // زر الإضافة
           Obx(() => _buildAddButton()),
         ],
       ),
@@ -183,7 +317,7 @@ class KeywordManagementScreen extends StatelessWidget {
   }
 
   Widget _buildAddButton() {
-    final hasText = !controller.isSearchInputEmpty;
+    final hasText = !controller.isSearchInputEmpty.value;
     final canAddMore = controller.canAddMoreKeywords;
     final isDuplicate = controller.isDuplicateKeyword;
     
@@ -191,15 +325,15 @@ class KeywordManagementScreen extends StatelessWidget {
     Color buttonColor = Colors.grey[300]!;
     
     if (!hasText) {
-      tooltipMessage = 'اكتب وسماً أولاً';
+      tooltipMessage = 'اكتب كلمة مفتاحية أولاً';
     } else if (isDuplicate) {
-      tooltipMessage = 'هذا الوسم مضاف مسبقاً';
+      tooltipMessage = 'هذه الكلمة مضافه مسبقاً';
       buttonColor = Colors.orange[300]!;
     } else if (!canAddMore) {
-      tooltipMessage = 'تم الوصول للحد الأقصى (15 وسماً)';
+      tooltipMessage = 'تم الوصول للحد الأقصى (15 كلمة)';
       buttonColor = Colors.red[300]!;
     } else {
-      tooltipMessage = 'إضافة الوسم';
+      tooltipMessage = 'إضافة الكلمة المفتاحية';
       buttonColor = AppColors.primary400;
     }
     
@@ -302,7 +436,7 @@ class KeywordManagementScreen extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            'جرب البحث بكلمات مختلفة أو اختر متجراً آخر',
+            'جرب البحث بكلمات مختلفة',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[500],
@@ -321,7 +455,7 @@ class KeywordManagementScreen extends StatelessWidget {
         Row(
           children: [
             Text(
-              'الوسوم المختارة',
+              'الكلمات المفتاحية المختارة',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -372,7 +506,7 @@ class KeywordManagementScreen extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'لا توجد وسوم مختارة',
+              'لا توجد كلمات مفتاحية مختارة',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -413,19 +547,18 @@ class KeywordManagementScreen extends StatelessWidget {
               label: Text(keyword.text),
               backgroundColor: AppColors.primary100,
               deleteIconColor: AppColors.primary400,
-              
               onDeleted: () => controller.removeKeyword(keyword.id),
               labelStyle: TextStyle(
                 color: AppColors.primary500,
                 fontWeight: FontWeight.w500,
               ),
               shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-              side: BorderSide(
-                color: AppColors.primary300,
-                width: 1.0,
+                borderRadius: BorderRadius.circular(16.0),
+                side: BorderSide(
+                  color: AppColors.primary300,
+                  width: 1.0,
+                ),
               ),
-            ),
             );
           }).toList(),
         ),
@@ -471,7 +604,7 @@ class KeywordManagementScreen extends StatelessWidget {
           SizedBox(width: 12),
           Expanded(
             child: Obx(() => ElevatedButton(
-              onPressed: controller.selectedKeywords.isNotEmpty
+              onPressed: controller.selectedKeywords.isNotEmpty && controller.selectedStore.value != null
                   ? () => controller.confirmSelection()
                   : null,
               style: ElevatedButton.styleFrom(
@@ -482,7 +615,7 @@ class KeywordManagementScreen extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'تأكيد الوسوم',
+                'تأكيد الاختيار',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -495,5 +628,4 @@ class KeywordManagementScreen extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -1,3 +1,6 @@
+// lib/view/product_variations/product_variation_controller.dart
+import 'package:attene_mobile/api/api_request.dart';
+import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/utlis/variation_validator.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +16,11 @@ class ProductVariationController extends GetxController {
   // === متغيرات الاختلافات ===
   final RxList<ProductVariation> variations = <ProductVariation>[].obs;
   
+  // === حالة التحميل ===
+  final RxBool isLoadingAttributes = false.obs;
+  final RxString attributesError = ''.obs;
+  final RxBool hasAttemptedLoad = false.obs;
+
   // === IDs للتحديث المحدد ===
   static const String attributesUpdateId = 'attributes';
   static const String variationsUpdateId = 'variations';
@@ -20,39 +28,63 @@ class ProductVariationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _initializeAttributes();
   }
 
-  void _initializeAttributes() {
-    allAttributes.assignAll([
-      ProductAttribute(
-        id: '1',
-        name: 'اللون',
-        values: [
-          AttributeValue(id: '1-1', value: 'أحمر', isSelected: true),
-          AttributeValue(id: '1-2', value: 'أزرق', isSelected: true),
-          AttributeValue(id: '1-3', value: 'أخضر', isSelected: true),
-        ],
-      ),
-      ProductAttribute(
-        id: '2', 
-        name: 'المقاس',
-        values: [
-          AttributeValue(id: '2-1', value: 'صغير', isSelected: true),
-          AttributeValue(id: '2-2', value: 'متوسط', isSelected: true),
-          AttributeValue(id: '2-3', value: 'كبير', isSelected: true),
-        ],
-      ),
-      ProductAttribute(
-        id: '3',
-        name: 'المادة',
-        values: [
-          AttributeValue(id: '3-1', value: 'قطن', isSelected: true),
-          AttributeValue(id: '3-2', value: 'حرير', isSelected: true),
-          AttributeValue(id: '3-3', value: 'صوف', isSelected: true),
-        ],
-      ),
-    ]);
+  // ✅ تحميل السمات فقط عند فتح الشاشة
+  Future<void> loadAttributesOnOpen() async {
+    if (hasAttemptedLoad.value && allAttributes.isNotEmpty) {
+      return;
+    }
+    await _loadAttributesFromApi();
+  }
+
+  // ✅ محسّن: جلب السمات من API مع معالجة أفضل للأخطاء
+  Future<void> _loadAttributesFromApi() async {
+    try {
+      final MyAppController myAppController = Get.find<MyAppController>();
+      if (!myAppController.isLoggedIn.value) {
+        attributesError('يجب تسجيل الدخول أولاً');
+        print('⚠️ [ATTRIBUTES] User not logged in');
+        return;
+      }
+
+      hasAttemptedLoad(true);
+      isLoadingAttributes(true);
+      attributesError('');
+      print('📡 [LOADING ATTRIBUTES FROM API]');
+
+      final response = await ApiHelper.get(
+        path: '/merchants/attributes',
+        withLoading: false,
+      );
+
+      if (response != null && response['status'] == true) {
+        final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        
+        final loadedAttributes = attributesList.map((attributeJson) {
+          return ProductAttribute.fromApiJson(attributeJson);
+        }).toList();
+
+        allAttributes.assignAll(loadedAttributes);
+        print('✅ تم تحميل ${allAttributes.length} سمة بنجاح');
+      } else {
+        final errorMessage = response?['message'] ?? 'فشل في تحميل السمات';
+        attributesError(errorMessage);
+        print('❌ فشل في تحميل السمات: $errorMessage');
+      }
+    } catch (e) {
+      final error = 'حدث خطأ أثناء تحميل السمات: $e';
+      attributesError(error);
+      print('❌ خطأ في تحميل السمات: $e');
+    } finally {
+      isLoadingAttributes(false);
+    }
+  }
+
+  // ✅ إعادة تحميل السمات
+  Future<void> reloadAttributes() async {
+    allAttributes.clear();
+    await _loadAttributesFromApi();
   }
 
   // === دوال التحكم الرئيسية ===
@@ -66,20 +98,57 @@ class ProductVariationController extends GetxController {
     update([attributesUpdateId, variationsUpdateId]);
   }
 
-  // ✅ جديد: فتح إدارة السمات باستخدام BottomSheetController
   void openAttributesManagement() {
+    if (isLoadingAttributes.value) {
+      Get.snackbar('تنبيه', 'جاري تحميل السمات...');
+      return;
+    }
+
+    if (allAttributes.isEmpty) {
+      Get.snackbar('تنبيه', 'لا توجد سمات متاحة. جاري التحميل...');
+      _loadAttributesFromApi().then((_) {
+        if (allAttributes.isNotEmpty) {
+          _openAttributesBottomSheet();
+        }
+      });
+      return;
+    }
+
+    _openAttributesBottomSheet();
+  }
+
+  void _openAttributesBottomSheet() {
     final bottomSheetController = Get.find<BottomSheetController>();
-    bottomSheetController.openManageAttributes(allAttributes);
     
-    // // ✅ الاستماع للتحديثات عند إغلاق الـ Bottom Sheet
-    // ever(bottomSheetController.selectedAttributes, (attributes) {
-    //   selectedAttributes.assignAll(attributes);
-    //   update([attributesUpdateId, variationsUpdateId]);
-    // });
+    print('🎯 [OPENING ATTRIBUTES BOTTOM SHEET]');
+    
+    bottomSheetController.openManageAttributes(allAttributes);
+    bottomSheetController.updateSelectedAttributes(selectedAttributes);
+    
+    ever(bottomSheetController.selectedAttributesRx, (List<ProductAttribute> attributes) {
+      if (attributes.isNotEmpty) {
+        updateSelectedAttributes(attributes);
+        
+        if (variations.isEmpty && hasVariations.value) {
+          generateSingleVariation();
+        }
+      }
+    });
+  }
+
+  void updateSelectedAttributes(List<ProductAttribute> attributes) {
+    selectedAttributes.assignAll(attributes);
+    print('✅ [ATTRIBUTES UPDATED]: ${attributes.length} سمات محفوظة');
+    update([attributesUpdateId]);
   }
 
   void removeSelectedAttribute(ProductAttribute attribute) {
     selectedAttributes.removeWhere((attr) => attr.id == attribute.id);
+    
+    for (final variation in variations) {
+      variation.attributes.remove(attribute.name);
+    }
+    
     update([attributesUpdateId, variationsUpdateId]);
   }
 
@@ -88,10 +157,15 @@ class ProductVariationController extends GetxController {
     update([attributesUpdateId, variationsUpdateId]);
   }
 
-  // === دوال الاختلافات ===
+  // ✅ إنشاء اختلاف مع التحقق من السمات
   void generateSingleVariation() {
     if (selectedAttributes.isEmpty) {
       Get.snackbar('تنبيه', 'يرجى اختيار السمات أولاً');
+      return;
+    }
+
+    if (!hasSelectedAttributesWithValues) {
+      Get.snackbar('تنبيه', 'يرجى اختيار قيم للسمات أولاً');
       return;
     }
 
@@ -102,15 +176,20 @@ class ProductVariationController extends GetxController {
       stock: 0,
       sku: 'SKU_${variations.length + 1}',
       isActive: true,
-      images: [],
+      images: [], // ✅ صور فارغة لتجنب المشاكل
     );
 
     variations.add(newVariation);
     update([variationsUpdateId]);
-    Get.snackbar('نجاح', 'تم إنشاء بطاقة اختلاف جديدة');
+    
+    Get.snackbar(
+      'نجاح', 
+      'تم إنشاء بطاقة اختلاف جديدة',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
   }
 
-  // ✅ جديد: الحصول على السمات الافتراضية
   Map<String, String> _getDefaultAttributes() {
     final defaultAttributes = <String, String>{};
     for (final attribute in selectedAttributes) {
@@ -119,6 +198,8 @@ class ProductVariationController extends GetxController {
       );
       if (selectedValue != null) {
         defaultAttributes[attribute.name] = selectedValue.value;
+      } else if (attribute.values.isNotEmpty) {
+        defaultAttributes[attribute.name] = attribute.values.first.value;
       }
     }
     return defaultAttributes;
@@ -144,86 +225,76 @@ class ProductVariationController extends GetxController {
     return true;
   }
 
- void updateVariationAttribute(ProductVariation variation, String attributeName, String attributeValue) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    final newAttributes = Map<String, String>.from(variation.attributes);
-    newAttributes[attributeName] = attributeValue;
-    
-    if (isVariationDuplicate(newAttributes)) {
-      Get.snackbar('تنبيه', 'هذه التركيبة موجودة مسبقاً');
-      return;
+  void updateVariationAttribute(ProductVariation variation, String attributeName, String attributeValue) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      final newAttributes = Map<String, String>.from(variation.attributes);
+      newAttributes[attributeName] = attributeValue;
+      
+      if (isVariationDuplicate(newAttributes)) {
+        Get.snackbar('تنبيه', 'هذه التركيبة موجودة مسبقاً');
+        return;
+      }
+      
+      variations[index].attributes[attributeName] = attributeValue;
     }
-    
-    // ✅ تحديث مباشر على الـ RxMap
-    variations[index].attributes[attributeName] = attributeValue;
-    
-    // ❌ لا حاجة لـ update لأن البيانات تفاعلية
-    // variations[index] = variation.copyWith(attributes: newAttributes);
   }
-}
 
-  // دوال إدارة الاختلافات
-void toggleVariationActive(ProductVariation variation) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    // ✅ تحديث مباشر على الـ RxBool
-    variations[index].isActive.toggle();
-  }
-}
-
-void updateVariationPrice(ProductVariation variation, String price) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    final parsedPrice = double.tryParse(price);
-    if (parsedPrice == null) {
-      Get.snackbar('خطأ', 'يرجى إدخال سعر صحيح');
-      return;
+  void toggleVariationActive(ProductVariation variation) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      variations[index].isActive.toggle();
     }
-    // ✅ تحديث مباشر على الـ RxDouble
-    variations[index].price.value = parsedPrice;
   }
-}
 
-
-void updateVariationStock(ProductVariation variation, String stock) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    // ✅ تحديث مباشر على الـ RxInt
-    variations[index].stock.value = int.tryParse(stock) ?? 0;
+  void updateVariationPrice(ProductVariation variation, String price) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      final parsedPrice = double.tryParse(price);
+      if (parsedPrice == null) {
+        Get.snackbar('خطأ', 'يرجى إدخال سعر صحيح');
+        return;
+      }
+      variations[index].price.value = parsedPrice;
+    }
   }
-}
 
-void updateVariationSku(ProductVariation variation, String sku) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    // ✅ تحديث مباشر على الـ RxString
-    variations[index].sku.value = sku;
+  void updateVariationStock(ProductVariation variation, String stock) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      variations[index].stock.value = int.tryParse(stock) ?? 0;
+    }
   }
-}
 
-void addImageToVariation(ProductVariation variation, String imageUrl) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    // ✅ تحديث مباشر على الـ RxList
-    variations[index].images.add(imageUrl);
+  void updateVariationSku(ProductVariation variation, String sku) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      variations[index].sku.value = sku;
+    }
   }
-}
 
-void removeImageFromVariation(ProductVariation variation, String imageUrl) {
-  final index = variations.indexWhere((v) => v.id == variation.id);
-  if (index != -1) {
-    // ✅ تحديث مباشر على الـ RxList
-    variations[index].images.remove(imageUrl);
+  void addImageToVariation(ProductVariation variation, String imageUrl) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      // ✅ التحقق من أن الصورة ليست افتراضية
+      if (!imageUrl.contains('variation_default.jpg') && imageUrl.isNotEmpty) {
+        variations[index].images.add(imageUrl);
+      }
+    }
   }
-}
+
+  void removeImageFromVariation(ProductVariation variation, String imageUrl) {
+    final index = variations.indexWhere((v) => v.id == variation.id);
+    if (index != -1) {
+      variations[index].images.remove(imageUrl);
+    }
+  }
 
   void removeVariation(ProductVariation variation) {
     variations.removeWhere((v) => v.id == variation.id);
     update([variationsUpdateId]);
   }
 
-  // === التحقق من الصحة ===
   ValidationResult validateVariations() {
     if (hasVariations.value && selectedAttributes.isEmpty) {
       return ValidationResult(
@@ -240,14 +311,13 @@ void removeImageFromVariation(ProductVariation variation, String imageUrl) {
     }
 
     for (final variation in variations) {
-      if (variation.price <= 0) {
+      if (variation.price.value <= 0) {
         return ValidationResult(
           isValid: false,
           errorMessage: 'يرجى إدخال سعر صحيح لجميع الاختلافات',
         );
       }
 
-      // ✅ جديد: التحقق من اكتمال جميع السمات
       for (final attribute in selectedAttributes) {
         if (!variation.attributes.containsKey(attribute.name)) {
           return ValidationResult(
@@ -261,20 +331,6 @@ void removeImageFromVariation(ProductVariation variation, String imageUrl) {
     return ValidationResult(isValid: true, errorMessage: '');
   }
 
-  // === دوال المساعدة ===
-  
-  bool isAttributeSelected(ProductAttribute attribute) {
-    return selectedAttributes.any((attr) => attr.id == attribute.id);
-  }
-
-  bool get hasSelectedValues {
-    if (selectedAttributes.isEmpty) return false;
-    return selectedAttributes.any((attribute) => 
-      attribute.values.any((value) => value.isSelected.value)
-    );
-  }
-
-  // ✅ جديد: الحصول على تفاصيل الاختلافات للتخزين
   Map<String, dynamic> getVariationsData() {
     return {
       'hasVariations': hasVariations.value,
@@ -283,7 +339,6 @@ void removeImageFromVariation(ProductVariation variation, String imageUrl) {
     };
   }
 
-  // ✅ جديد: تحميل بيانات الاختلافات
   void loadVariationsData(Map<String, dynamic> data) {
     hasVariations.value = data['hasVariations'] ?? false;
     
@@ -300,6 +355,51 @@ void removeImageFromVariation(ProductVariation variation, String imageUrl) {
     }
     
     update([attributesUpdateId, variationsUpdateId]);
+  }
+
+  // ✅ **الحل النهائي**: تحضير بيانات الاختلافات بدون صور
+  List<Map<String, dynamic>> prepareVariationsForApi() {
+    return variations.map((variation) {
+      final attributeOptions = <Map<String, dynamic>>[];
+      
+      for (final attrEntry in variation.attributes.entries) {
+        final attribute = allAttributes.firstWhere(
+          (attr) => attr.name == attrEntry.key,
+          orElse: () => ProductAttribute(id: '', name: '', values: []),
+        );
+        
+        if (attribute.id.isNotEmpty) {
+          final value = attribute.values.firstWhere(
+            (v) => v.value == attrEntry.value,
+            orElse: () => AttributeValue(id: '', value: '', isSelected: false.obs),
+          );
+          
+          if (value.id.isNotEmpty) {
+            attributeOptions.add({
+              'attribute_id': int.parse(attribute.id),
+              'option_id': int.parse(value.id),
+            });
+          }
+        }
+      }
+      
+      // ✅ **الحل: إرجاع البيانات بدون صور**
+      return {
+        'price': variation.price.value,
+        'attributeOptions': attributeOptions,
+      };
+    }).toList();
+  }
+
+  bool get hasSelectedAttributesWithValues {
+    if (selectedAttributes.isEmpty) return false;
+    
+    for (final attribute in selectedAttributes) {
+      if (attribute.values.any((value) => value.isSelected.value)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
