@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide Response;
+import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 
 const String postMethod = 'POST';
 const String getMethod = 'GET';
@@ -17,25 +18,31 @@ enum AppMode { dev, staging, production }
 const AppMode currentMode = AppMode.dev;
 
 class ApiHelper {
-  static Map<String, dynamic> _getBaseHeaders() {
-    final MyAppController myAppController = Get.find<MyAppController>();
-    final LanguageController appLanguageController =
-        Get.find<LanguageController>();
+static Map<String, dynamic> _getBaseHeaders() {
+  final MyAppController myAppController = Get.find<MyAppController>();
+  final LanguageController appLanguageController = Get.find<LanguageController>();
 
-    String authorization = '';
-    if (myAppController.userData.isNotEmpty &&
-        myAppController.userData['token'] != null) {
-      authorization = 'Bearer ${myAppController.userData['token']}';
-    }
-
-    return {
-      'Authorization': authorization,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Device-Type': 'MOBILE',
-      'Accept-Language': appLanguageController.appLocale.value,
-    };
+  String authorization = '';
+  if (myAppController.userData.isNotEmpty && myAppController.userData['token'] != null) {
+    authorization = 'Bearer ${myAppController.userData['token']}';
   }
+
+  final headers = {
+    'Authorization': authorization,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Device-Type': 'MOBILE',
+    'Accept-Language': appLanguageController.appLocale.value,
+    'storeId':33
+  };
+  
+  // ✅ إضافة storeId إذا كان موجوداً
+  // if (myAppController.userData.isNotEmpty && myAppController.userData['store_id'] != null) {
+  //   headers['storeId'] = myAppController.userData['store_id'].toString();
+  // }
+
+  return headers;
+}
 
   static String _getBaseUrl() {
     switch (currentMode) {
@@ -103,7 +110,74 @@ class ApiHelper {
       shouldShowMessage: shouldShowMessage,
     );
   }
+  static String parseApiError(dynamic error, StackTrace stackTrace) {
+    try {
+      if (error is DioException) {
+        switch (error.type) {
+          case DioExceptionType.connectionTimeout:
+          case DioExceptionType.sendTimeout:
+          case DioExceptionType.receiveTimeout:
+            return 'انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى';
+          
+          case DioExceptionType.badResponse:
+            if (error.response != null) {
+              final statusCode = error.response!.statusCode;
+              final data = error.response!.data;
+              
+              if (statusCode == 422) {
+                return _parse422Error(data);
+              } else if (statusCode == 401) {
+                return 'انتهت جلسة التسجيل، يرجى تسجيل الدخول مرة أخرى';
+              } else if (statusCode == 403) {
+                return 'ليس لديك صلاحية للقيام بهذا الإجراء';
+              } else if (statusCode == 404) {
+                return 'الرابط غير موجود';
+              } else if (statusCode! >= 500) {
+                return 'خطأ في الخادم، يرجى المحاولة لاحقًا';
+              }
+            }
+            return 'حدث خطأ في الاستجابة: ${error.response?.statusCode}';
+          
+          case DioExceptionType.cancel:
+            return 'تم إلغاء الطلب';
+          
+          case DioExceptionType.unknown:
+            return 'خطأ في الاتصال بالإنترنت';
+          
+          default:
+            return 'حدث خطأ غير متوقع';
+        }
+      }
+      
+      return error.toString();
+    } catch (e) {
+      return 'حدث خطأ غير معروف';
+    }
+  }
 
+  // ✅ جديد: تحليل أخطاء 422
+  static String _parse422Error(dynamic data) {
+    try {
+      if (data is Map<String, dynamic>) {
+        if (data['errors'] != null && data['errors'] is Map) {
+          final errors = Map<String, dynamic>.from(data['errors']);
+          if (errors.isNotEmpty) {
+            final firstError = errors.entries.first;
+            final errorMessages = List<String>.from(firstError.value);
+            return errorMessages.isNotEmpty ? errorMessages.first : 'بيانات غير صحيحة';
+          }
+        }
+        
+        if (data['message'] != null) {
+          return data['message'].toString();
+        }
+      }
+      
+      return 'بيانات غير صحيحة يرجى التحقق من المدخلات';
+    } catch (e) {
+      return 'بيانات غير صحيحة';
+    }
+  }
   static Future<dynamic> delete({
     required String path,
     dynamic body,
@@ -619,4 +693,96 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       return false;
     }
   }
+  // دالة لرفع الملفات إلى media-center
+static Future<dynamic> uploadMedia({
+  required File file,
+  required String type,
+  bool withLoading = false,
+  Function(int, int)? onSendProgress,
+}) async {
+  try {
+    if (withLoading) {
+      _startLoading();
+    }
+
+    final String fileName = file.path.split('/').last;
+    final FormData formData = FormData.fromMap({
+      'type': type,
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: fileName,
+      ),
+    });
+
+    final requestHeaders = _getBaseHeaders();
+    // إزالة Content-Type ليتيح Dio إضافة الصيغة المناسبة تلقائياً
+    requestHeaders.remove('Content-Type');
+
+    print('''
+🔼 [UPLOAD] Starting upload...
+📁 File: $fileName
+📊 Type: $type
+📦 Size: ${file.lengthSync()} bytes
+    ''');
+
+    final Dio dio = Dio(
+      BaseOptions(
+        baseUrl: _getBaseUrl(),
+        headers: requestHeaders,
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+      ),
+    );
+
+    final Response response = await dio.post(
+      '/media-center/add-new',
+      data: formData,
+      onSendProgress: onSendProgress,
+    );
+
+    if (withLoading) {
+      _dismissLoading();
+    }
+
+    _logRequestSuccess('POST', '/media-center/add-new', response.data, Stopwatch()..start());
+
+    return response.data;
+  } catch (error) {
+    _dismissLoading();
+    return _handleError(error, 'POST', '/media-center/add-new', Stopwatch()..start(), true);
+  }
+}
+
+// دالة لجلب قائمة الملفات حسب النوع
+static Future<dynamic> getMediaList({
+  required String type,
+  bool withLoading = false,
+}) async {
+  return await _makeRequest(
+    method: getMethod,
+    path: '/media-center/list',
+    queryParameters: {'type': type},
+    withLoading: withLoading,
+    shouldShowMessage: false,
+  );
+}
+
+// دالة لحذف الملف
+static Future<dynamic> deleteMedia({
+  required String fileName,
+  bool withLoading = true,
+}) async {
+  return await _makeRequest(
+    method: deleteMethod,
+    path: '/media-center/delete',
+    queryParameters: {'file_name': fileName},
+    withLoading: withLoading,
+    shouldShowMessage: true,
+  );
+}
+
+// دالة للحصول على الرابط الأساسي (للاستخدام في عرض الصور)
+static String getBaseUrl() {
+  return _getBaseUrl().replaceAll('/api', '');
+}
 }

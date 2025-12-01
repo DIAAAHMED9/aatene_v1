@@ -1,116 +1,164 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/controller/product_controller.dart';
+import 'package:attene_mobile/view/advance_info/keyword_management_screen.dart';
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
+import 'package:attene_mobile/view/media_library/media_library_screen.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
+import 'package:attene_mobile/view/product_variations/product_variations_screen.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 
-import 'package:attene_mobile/view/media_library/media_library_screen.dart';
+class AddProductContent extends StatefulWidget {
+  const AddProductContent({super.key});
 
-class AddProductScreen extends StatefulWidget {
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  _AddProductContentState createState() => _AddProductContentState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _AddProductContentState extends State<AddProductContent> {
   final isRTL = LanguageUtils.isRTL;
-  final AddProductController addProductController = Get.put(
-    AddProductController(),
-  );
-  final MediaLibraryController mediaController = Get.put(
-    MediaLibraryController(),
-  );
-
+  final AddProductController addProductController = Get.find<AddProductController>();
+  final ProductCentralController productController = Get.find<ProductCentralController>();
+  final MediaLibraryController mediaController = Get.find<MediaLibraryController>();
+  
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescriptionController =
       TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
-  final TextEditingController _productConditionController =
-      TextEditingController();
-
+  
   String _selectedCategory = '';
+  int _selectedCategoryId = 0;
   String _selectedCondition = '';
-  String _selectedSubCategory = '';
-
+  
   List<String> _productConditions = ['جديد', 'مستعمل', 'مجدول'];
-  List<String> _categories = ['ملابس', 'أحذية', 'إلكترونيات', 'منزلية'];
-  List<String> _subCategories = ['ملابس نساء', 'ملابس رجال', 'ملابس أطفال'];
-
+  
   int _characterCount = 0;
   final int _maxDescriptionLength = 140;
 
   @override
+  void initState() {
+    super.initState();
+    _loadStoredData();
+    print('🔴 [ADD PRODUCT CONTENT INITIALIZED]');
+    
+    // ✅ تحميل الفئات عند فتح الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      productController.loadCategoriesIfNeeded();
+    });
+  }
+
+  void _loadStoredData() {
+    if (productController.productName.isNotEmpty) {
+      _productNameController.text = productController.productName.value;
+    }
+    if (productController.productDescription.isNotEmpty) {
+      _productDescriptionController.text = productController.productDescription.value;
+      _characterCount = productController.productDescription.value.length;
+    }
+    if (productController.price.isNotEmpty) {
+      _priceController.text = productController.price.value;
+    }
+    if (productController.selectedCondition.isNotEmpty) {
+      _selectedCondition = productController.selectedCondition.value;
+    }
+    if (productController.selectedCategoryId > 0) {
+      final category = productController.categories.firstWhere(
+        (cat) => cat['id'] == productController.selectedCategoryId.value,
+        orElse: () => {},
+      );
+      if (category.isNotEmpty) {
+        _selectedCategory = category['name'];
+        _selectedCategoryId = category['id'];
+      }
+    }
+
+    print('''
+📥 [DATA LOADED FROM CONTROLLER]:
+   الاسم: ${_productNameController.text}
+   الفئة: $_selectedCategory ($_selectedCategoryId)
+   السعر: ${_priceController.text}
+   الحالة: $_selectedCondition
+''');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('إضافة منتج جديد'),
-        backgroundColor: AppColors.primary400,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle('المعلومات الأساسية'),
-            SizedBox(height: 20),
+    print('🔴 [ADD PRODUCT CONTENT BUILT]');
 
-            _buildCategorySection(),
-            SizedBox(height: 20),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: (){
+              Get.to(() => KeywordManagementScreen());
+            },
+            child: _buildSectionTitle('المعلومات الأساسية')),
+          const SizedBox(height: 20),
+          
+          _buildCategorySection(),
+          const SizedBox(height: 20),
+          
+          InkWell(
+            onTap: _openMediaLibrary,
+            child: _buildImageUploadSection(),
+          ),
+          const SizedBox(height: 20),
+          
+          _buildProductNameSection(),
+          const SizedBox(height: 20),
+          
+          _buildPriceSection(),
+          const SizedBox(height: 20),
+        
+          _buildProductConditionSection(),
+          const SizedBox(height: 20),
 
-            InkWell(
-              onTap: _openMediaLibrary,
-              child: _buildImageUploadSection(),
-            ),
-            SizedBox(height: 20),
-
-            _buildProductNameSection(),
-            SizedBox(height: 20),
-
-            _buildPriceSection(),
-            SizedBox(height: 20),
-
-            _buildProductConditionSection(),
-            SizedBox(height: 20),
-
-            _buildCategoriesSection(),
-            SizedBox(height: 20),
-
-            _buildProductDescriptionSection(),
-            SizedBox(height: 20),
-
-            _buildNextButton(),
-          ],
-        ),
+          _buildCategoriesSection(), // ✅ محدث: مع معالجة التحميل
+          const SizedBox(height: 20),
+          
+          _buildProductDescriptionSection(),
+          const SizedBox(height: 20),
+          
+          _buildNextButton(),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 
   void _openMediaLibrary() async {
+    print('🖼️ [OPENING MEDIA LIBRARY]');
+    
     final List<MediaItem>? result = await Get.to(
       () => MediaLibraryScreen(
         isSelectionMode: true,
         onMediaSelected: (selectedMedia) {
           addProductController.updateSelectedMedia(selectedMedia);
+          productController.selectedMedia.assignAll(selectedMedia);
+          
+          print('✅ [MEDIA SELECTED]: ${selectedMedia.length} عنصر');
+          productController.printDataSummary();
         },
       ),
     );
 
     if (result != null) {
       addProductController.updateSelectedMedia(result);
+      productController.selectedMedia.assignAll(result);
+      print('✅ [MEDIA UPDATED]: ${result.length} عنصر');
     }
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
         color: AppColors.primary400,
@@ -121,7 +169,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget _buildCategorySection() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.primary300Alpha10,
         borderRadius: BorderRadius.circular(12),
@@ -137,7 +185,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               color: AppColors.primary400,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'منتجات خاصة بالملابس و متعلقاتها',
             style: TextStyle(fontSize: 14, color: Colors.grey[600]),
@@ -156,91 +204,99 @@ class _AddProductScreenState extends State<AddProductScreen> {
             'الصور *',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
-          Text(
-            'يمكنك إضافة حتى (10) صور و (1) فيديو',
-            style: TextStyle(fontSize: 12, color: Colors.black),
+        
+        const SizedBox(height: 5),
+        Text(
+          'يمكنك إضافة حتى (10) صور و (1) فيديو',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.black,
           ),
-          SizedBox(height: 8),
-          Container(
-            height: 22,
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 1, horizontal: 10),
-            decoration: BoxDecoration(
-              color: AppColors.primary300Alpha10,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'يمكنك سحب وافلات الصورة لاعادة ترتيب الصور',
-              style: TextStyle(fontSize: 12, color: AppColors.primary400),
-            ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 22,
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
+          decoration: BoxDecoration(
+            color: AppColors.primary300Alpha10,
+            borderRadius: BorderRadius.circular(20),
           ),
-          SizedBox(height: 16),
-
-          // عرض الصور المختارة
-          if (addProductController.selectedMediaList.isNotEmpty)
-            _buildSelectedMediaPreview(),
-
-          // منطقة سحب وإفلات الصور
-          Container(
-            height: 120,
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            decoration: BoxDecoration(
-              color: Color(0xFFF8F8F8),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Icon(Icons.add, size: 25, color: Colors.black),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'اضف او اسحب صورة او فيديو',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'png , jpg , svg',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                ),
-              ],
+          child: Text(
+            'يمكنك سحب وافلات الصورة لاعادة ترتيب الصور',
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.primary400,
             ),
           ),
-        ],
-      ),
-    );
+        ),
+        const SizedBox(height: 16),
+        
+        if (productController.selectedMedia.isNotEmpty) 
+          _buildSelectedMediaPreview(),
+        
+        Container(
+          height: 120,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8F8F8),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: const Icon(Icons.add, size: 25, color: Colors.black)),
+              const SizedBox(height: 8),
+              Text(
+                'اضف او اسحب صورة او فيديو',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'png , jpg , svg',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _buildSelectedMediaPreview() {
     return Container(
       height: 100,
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'الصور المختارة (${addProductController.selectedMediaList.length})',
-            style: TextStyle(
+            'الصور المختارة (${productController.selectedMedia.length})',
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: addProductController.selectedMediaList.length,
+              itemCount: productController.selectedMedia.length,
               itemBuilder: (context, index) {
-                final media = addProductController.selectedMediaList[index];
+                final media = productController.selectedMedia[index];
                 return _buildSelectedMediaItem(media, index);
               },
             ),
@@ -254,7 +310,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Container(
       width: 80,
       height: 80,
-      margin: EdgeInsets.only(left: 8),
+      margin: const EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
@@ -264,8 +320,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           media.type == MediaType.image
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    'assets/images/placeholder.png',
+                  child: Image.network(
+                    media.path ?? '',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Icon(
@@ -301,15 +357,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
             child: GestureDetector(
               onTap: () {
                 addProductController.removeMedia(index);
+                productController.selectedMedia.removeAt(index);
+                print('🗑️ [MEDIA REMOVED]: index $index');
               },
               child: Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.red,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.close, color: Colors.white, size: 14),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 14,
+                ),
               ),
             ),
           ),
@@ -319,10 +381,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(8),
                   bottomRight: Radius.circular(8),
                 ),
@@ -331,7 +393,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 media.name.length > 12
                     ? '${media.name.substring(0, 12)}...'
                     : media.name,
-                style: TextStyle(color: Colors.white, fontSize: 8),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -341,31 +406,43 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  // باقي الدوال تبقى كما هي بدون تغيير
   Widget _buildProductNameSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'اسم المنتج',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 4),
-            Text('*', style: TextStyle(color: Colors.red)),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red[400],
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFiledAatene(
           fillColor: Colors.transparent,
           heightTextFiled: 50,
           controller: _productNameController,
           isRTL: isRTL,
           hintText: 'أدخل اسم المنتج',
+          onChanged: (value) {
+            productController.productName(value);
+          },
         ),
+        const SizedBox(height: 8),
         Text(
           'قم بتضمين الكلمات الرئيسية التي يستخدمها المشترون للبحث عن هذا العنصر.',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+          ),
         ),
       ],
     );
@@ -377,15 +454,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'وصف المنتج',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 4),
-            Text('*', style: TextStyle(color: Colors.red)),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red[400],
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
@@ -399,12 +481,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
               setState(() {
                 _characterCount = value.length;
               });
+              productController.productDescription(value);
             },
             decoration: InputDecoration(
               hintText: 'وصف المنتج',
-              hintStyle: TextStyle(fontSize: 14),
+              hintStyle: const TextStyle(fontSize: 14),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(12),
+              contentPadding: const EdgeInsets.all(12),
+              counterText: '$_characterCount/$_maxDescriptionLength',
             ),
           ),
         ),
@@ -418,22 +502,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'السعر',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 4),
-            Text('*', style: TextStyle(color: Colors.red)),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red[400],
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFiledAatene(
           heightTextFiled: 50,
           controller: _priceController,
           isRTL: isRTL,
           hintText: 'السعر',
-          suffixIcon: Padding(
-            padding: const EdgeInsets.only(top: 12),
+          onChanged: (value) {
+            productController.price(value);
+          },
+          suffixIcon: const Padding(
+            padding: EdgeInsets.only(top: 12),
             child: Text(
               '₪',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -445,47 +537,194 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildCategoriesSection() {
+// ✅ محدث: تحسين قسم الفئات مع معالجة التحميل والأخطاء
+Widget _buildCategoriesSection() {
+  return Obx(() {
+    final isLoading = productController.isLoadingCategories.value;
+    final hasError = productController.categoriesError.value.isNotEmpty;
+    final categories = productController.categories;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'الفئات',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 4),
-            Text('*', style: TextStyle(color: Colors.red)),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red[400],
+              ),
+            ),
+            Spacer(),
+            // زر إعادة التحميل
+            if (hasError || (categories.isEmpty && !isLoading))
+              IconButton(
+                icon: Icon(Icons.refresh, size: 20),
+                onPressed: () => productController.reloadCategories(),
+                tooltip: 'إعادة تحميل الفئات',
+              ),
           ],
         ),
-        SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: _selectedCategory.isEmpty ? null : _selectedCategory,
-            decoration: InputDecoration(
-              hintText: 'ابحث عن اسم الفئة التي ترغب بإضافة منتجك إليها',
-              hintStyle: TextStyle(fontSize: 9),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12),
-            ),
-            items: _categories.map((category) {
-              return DropdownMenuItem(value: category, child: Text(category));
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCategory = value!;
-              });
-            },
-          ),
-        ),
+        const SizedBox(height: 8),
+        
+        if (isLoading)
+          _buildLoadingDropdown('جاري تحميل الفئات...'),
+        
+        if (!isLoading && hasError)
+          _buildErrorDropdown(productController.categoriesError.value),
+        
+        if (!isLoading && !hasError && categories.isEmpty)
+          _buildEmptyDropdown('لا توجد فئات متاحة'),
+        
+        if (!isLoading && !hasError && categories.isNotEmpty)
+          _buildCategoriesDropdown(),
       ],
     );
-  }
+  });
+}
+
+// ✅ جديد: بناء dropdown التحميل
+Widget _buildLoadingDropdown(String text) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey[300]!),
+      borderRadius: BorderRadius.circular(25),
+    ),
+    child: Row(
+      children: [
+        SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        SizedBox(width: 12),
+        Text(
+          text,
+          style: TextStyle(color: Colors.grey[600]),
+        ),
+      ],
+    ),
+  );
+}
+
+// ✅ جديد: بناء dropdown الخطأ
+Widget _buildErrorDropdown(String error) {
+  return Column(
+    children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.red[300]!),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.error_outline, color: Colors.red, size: 20),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                error,
+                style: TextStyle(color: Colors.red[600]),
+              ),
+            ),
+          ],
+        ),
+      ),
+      SizedBox(height: 8),
+      ElevatedButton.icon(
+        onPressed: () => productController.reloadCategories(),
+        icon: Icon(Icons.refresh),
+        label: Text('إعادة المحاولة'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+        ),
+      ),
+    ],
+  );
+}
+
+// ✅ جديد: بناء dropdown فارغ
+Widget _buildEmptyDropdown(String text) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey[300]!),
+      borderRadius: BorderRadius.circular(25),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.category_outlined, color: Colors.grey[500]),
+        SizedBox(width: 12),
+        Text(
+          text,
+          style: TextStyle(color: Colors.grey[600]),
+        ),
+      ],
+    ),
+  );
+}
+
+// ✅ محدث: بناء dropdown الفئات العادي
+Widget _buildCategoriesDropdown() {
+  return Obx(() {
+    final categories = productController.categories;
+    
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<String>(
+          isExpanded: true,
+          value: _selectedCategory.isEmpty ? null : _selectedCategory,
+          decoration: InputDecoration(
+            hintText: 'ابحث عن اسم الفئة',
+            hintStyle: const TextStyle(fontSize: 12),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            isCollapsed: true,
+          ),
+          items: categories.map((category) {
+            final categoryName = category['name'] as String? ?? 'غير معروف';
+            return DropdownMenuItem(
+              value: categoryName,
+              child: Text(
+                categoryName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: const TextStyle(fontSize: 14),
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                _selectedCategory = value;
+                final foundCategory = categories.firstWhere(
+                  (cat) => cat['name'] == value,
+                  orElse: () => {},
+                );
+                if (foundCategory.isNotEmpty) {
+                  _selectedCategoryId = foundCategory['id'] as int;
+                  productController.selectedCategoryId(_selectedCategoryId);
+                }
+              });
+              print('✅ [CATEGORY SELECTED]: $value (ID: $_selectedCategoryId)');
+            }
+          },
+        ),
+      ),
+    );
+  });
+}
 
   Widget _buildProductConditionSection() {
     return Column(
@@ -493,15 +732,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Row(
           children: [
-            Text(
+            const Text(
               'حالة المنتج',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 4),
-            Text('*', style: TextStyle(color: Colors.red)),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                color: Colors.red[400],
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
@@ -509,7 +753,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedCondition.isEmpty ? null : _selectedCondition,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'اختر حالة المنتج',
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -518,9 +762,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
               return DropdownMenuItem(value: condition, child: Text(condition));
             }).toList(),
             onChanged: (value) {
-              setState(() {
-                _selectedCondition = value!;
-              });
+              if (value != null) {
+                setState(() {
+                  _selectedCondition = value;
+                });
+                productController.selectedCondition(value);
+                print('✅ [CONDITION SELECTED]: $value');
+              }
             },
           ),
         ),
@@ -537,7 +785,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
         buttonText: isRTL ? 'التالي' : 'Next',
         onTap: () {
           if (_validateForm()) {
-            _goToNextStep();
+            _saveBasicInfo();
+            Get.to(() => ProductVariationsScreen());
           }
         },
       ),
@@ -593,13 +842,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return true;
   }
 
-  void _goToNextStep() {
-    Get.snackbar(
-      'نجاح',
-      'تم حفظ المعلومات الأساسية بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
+  void _saveBasicInfo() {
+    productController.updateBasicInfo(
+      name: _productNameController.text,
+      description: _productDescriptionController.text,
+      productPrice: _priceController.text,
+      categoryId: _selectedCategoryId,
+      condition: _selectedCondition,
+      media: productController.selectedMedia,
     );
+    
+    print('💾 [BASIC INFO SAVED TO CONTROLLER]');
+    productController.printDataSummary();
+    
+    Get.snackbar('نجاح', 'تم حفظ المعلومات الأساسية بنجاح', backgroundColor: Colors.green, colorText: Colors.white);
   }
 
   @override
@@ -607,8 +863,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _productNameController.dispose();
     _productDescriptionController.dispose();
     _priceController.dispose();
-    _categoryController.dispose();
-    _productConditionController.dispose();
     super.dispose();
   }
 }
