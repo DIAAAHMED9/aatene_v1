@@ -26,7 +26,8 @@ class _AddProductContentState extends State<AddProductContent> {
   final MediaLibraryController mediaController = Get.find<MediaLibraryController>();
   
   final TextEditingController _productNameController = TextEditingController();
-  final TextEditingController _productDescriptionController = TextEditingController();
+  final TextEditingController _productDescriptionController =
+      TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   
   String _selectedCategory = '';
@@ -146,7 +147,7 @@ class _AddProductContentState extends State<AddProductContent> {
         },
       ),
     );
-    
+
     if (result != null) {
       addProductController.updateSelectedMedia(result);
       productController.selectedMedia.assignAll(result);
@@ -187,10 +188,7 @@ class _AddProductContentState extends State<AddProductContent> {
           const SizedBox(height: 8),
           Text(
             'منتجات خاصة بالملابس و متعلقاتها',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -198,16 +196,15 @@ class _AddProductContentState extends State<AddProductContent> {
   }
 
   Widget _buildImageUploadSection() {
-    return Obx(() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'الصور *',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'الصور *',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-        ),
+        
         const SizedBox(height: 5),
         Text(
           'يمكنك إضافة حتى (10) صور و (1) فيديو',
@@ -327,7 +324,11 @@ class _AddProductContentState extends State<AddProductContent> {
                     media.path ?? '',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.image, size: 30, color: Colors.grey[400]);
+                      return Icon(
+                        Icons.image,
+                        size: 30,
+                        color: Colors.grey[400],
+                      );
                     },
                   ),
                 )
@@ -340,13 +341,16 @@ class _AddProductContentState extends State<AddProductContent> {
                         Icon(Icons.videocam, color: Colors.grey[500]),
                         Text(
                           'فيديو',
-                          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-        
+
           Positioned(
             top: 4,
             left: 4,
@@ -371,7 +375,7 @@ class _AddProductContentState extends State<AddProductContent> {
               ),
             ),
           ),
-        
+
           Positioned(
             bottom: 0,
             left: 0,
@@ -386,8 +390,8 @@ class _AddProductContentState extends State<AddProductContent> {
                 ),
               ),
               child: Text(
-                media.name.length > 12 
-                    ? '${media.name.substring(0, 12)}...' 
+                media.name.length > 12
+                    ? '${media.name.substring(0, 12)}...'
                     : media.name,
                 style: const TextStyle(
                   color: Colors.white,
@@ -410,10 +414,7 @@ class _AddProductContentState extends State<AddProductContent> {
           children: [
             const Text(
               'اسم المنتج',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),
             Text(
@@ -455,10 +456,7 @@ class _AddProductContentState extends State<AddProductContent> {
           children: [
             const Text(
               'وصف المنتج',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),
             Text(
@@ -506,10 +504,7 @@ class _AddProductContentState extends State<AddProductContent> {
           children: [
             const Text(
               'السعر',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),
             Text(
@@ -533,15 +528,12 @@ class _AddProductContentState extends State<AddProductContent> {
             padding: EdgeInsets.only(top: 12),
             child: Text(
               '₪',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           fillColor: Colors.transparent,
         ),
-      ]
+      ],
     );
   }
 
@@ -559,10 +551,7 @@ Widget _buildCategoriesSection() {
           children: [
             const Text(
               'الفئات',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),
             Text(
@@ -745,10 +734,7 @@ Widget _buildCategoriesDropdown() {
           children: [
             const Text(
               'حالة المنتج',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),
             Text(
@@ -773,10 +759,7 @@ Widget _buildCategoriesDropdown() {
               contentPadding: EdgeInsets.symmetric(horizontal: 12),
             ),
             items: _productConditions.map((condition) {
-              return DropdownMenuItem(
-                value: condition,
-                child: Text(condition),
-              );
+              return DropdownMenuItem(value: condition, child: Text(condition));
             }).toList(),
             onChanged: (value) {
               if (value != null) {
@@ -812,23 +795,48 @@ Widget _buildCategoriesDropdown() {
 
   bool _validateForm() {
     if (_productNameController.text.isEmpty) {
-      Get.snackbar('خطأ', 'يرجى إدخال اسم المنتج', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'خطأ',
+        'يرجى إدخال اسم المنتج',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     if (_productDescriptionController.text.isEmpty) {
-      Get.snackbar('خطأ', 'يرجى إدخال وصف المنتج', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'خطأ',
+        'يرجى إدخال وصف المنتج',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     if (_priceController.text.isEmpty) {
-      Get.snackbar('خطأ', 'يرجى إدخال سعر المنتج', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'خطأ',
+        'يرجى إدخال سعر المنتج',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     if (_selectedCategory.isEmpty) {
-      Get.snackbar('خطأ', 'يرجى اختيار الفئة', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'خطأ',
+        'يرجى اختيار الفئة',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     if (_selectedCondition.isEmpty) {
-      Get.snackbar('خطأ', 'يرجى اختيار حالة المنتج', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'خطأ',
+        'يرجى اختيار حالة المنتج',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     return true;

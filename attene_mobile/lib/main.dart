@@ -7,7 +7,6 @@ import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/Control_Panal_Vendor/controler_vindor.dart';
-import 'package:attene_mobile/view/add%20new%20store/manage_account_store.dart';
 import 'package:attene_mobile/view/advance_info/keyword_controller.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';

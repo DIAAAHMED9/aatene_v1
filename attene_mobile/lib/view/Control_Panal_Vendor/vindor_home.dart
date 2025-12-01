@@ -31,6 +31,7 @@ class VindorHome extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
+
           padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +53,6 @@ class VindorHome extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100),
                         color: AppColors.primary500,
                       ),
-
                       width: 40,
                       height: 30,
                       child: IconButton(

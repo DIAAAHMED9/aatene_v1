@@ -10,7 +10,7 @@ class AateneButton extends StatelessWidget {
     this.textColor,
     this.onTap,
     this.isLoading = false,
-    this.raduis=99,
+    this.raduis = 99,
   });
 
   final Function()? onTap;
