@@ -1,3 +1,4 @@
+import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
 import 'Chat_Interested.dart';
@@ -11,35 +12,39 @@ class ChatAll extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "الدردشه",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
           ),
-          title: const Text("دردشاتي",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black))),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
+                width: double.infinity,
+                color: AppColors.light1000,
                 height: 55,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'البحث...',
+                    hintText: 'ابحث عن دردشة ...',
                     prefixIcon: IconButton(
-                      icon: const Icon(Icons.search),
+                      icon: Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary400,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: const Icon(Icons.search, color: Colors.white),
+                      ),
                       onPressed: () {},
                     ),
                     border: OutlineInputBorder(
@@ -48,9 +53,7 @@ class ChatAll extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -73,9 +76,7 @@ class ChatAll extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Container(
                     width: 100,
                     height: 35,
@@ -86,9 +87,11 @@ class ChatAll extends StatelessWidget {
                     child: MaterialButton(
                       onPressed: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const chat_unreade()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const chat_unreade(),
+                          ),
+                        );
                       },
                       child: const Text(
                         "غير مقروء",
@@ -100,9 +103,7 @@ class ChatAll extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Container(
                     width: 100,
                     height: 35,
@@ -113,9 +114,11 @@ class ChatAll extends StatelessWidget {
                     child: MaterialButton(
                       onPressed: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ChatInterested()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChatInterested(),
+                          ),
+                        );
                       },
                       child: const Text(
                         "المهتمين",
@@ -129,105 +132,93 @@ class ChatAll extends StatelessWidget {
                   ),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
-                height: 15,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+              const Divider(color: Colors.grey, height: 15),
+              const SizedBox(height: 20),
               ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => MaterialButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ChatMassege()));
-                    },
-                    child: const Row(
-                      children: [
-                        Stack(
-                          alignment: Alignment.bottomLeft,
-                          children: [
-                            CircleAvatar(
-                              radius: 30,
-                              backgroundImage: AssetImage(
-                                "assets/image/1.png",
-                              ),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) => MaterialButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChatMassege(),
+                      ),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomLeft,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: AssetImage("assets/image/1.png"),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 3, left: 3),
+                            child: CircleAvatar(
+                              radius: 7,
+                              backgroundColor: Colors.green,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                bottom: 3,
-                                left: 3,
-                              ),
-                              child: CircleAvatar(
-                                radius: 7,
-                                backgroundColor: Colors.green,
-                              ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Albert Flores",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 30),
+                                Text(
+                                  "2صباحا",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "السعر شامل التوصيل",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                              ],
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text("d-jewellryd",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                  ),
-                                  SizedBox(
-                                    width: 30,
-                                  ),
-                                  Text("10 mins ago",
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                        "حلق القلب حلق صنع يد مميز وجديد ب...حلق القلب حلق صنع يد مميز وجديد ب...",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                        )),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircleAvatar(
-                                    radius: 5,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 20,
-                  ),
-                  itemCount: 10),
+                ),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 20),
+                itemCount: 10,
+              ),
             ],
           ),
         ),

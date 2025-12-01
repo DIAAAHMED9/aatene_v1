@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {
-        '/': (context) => ChatAll(),
+        '/': (context) => ServicesDetail(),
         '/onboarding': (context) => const Onbording(),
         '/start_login': (context) => const StartLogin(),
         '/login': (context) => Login(),
