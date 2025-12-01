@@ -430,93 +430,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                         ],
                       ),
                       children: [
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: AppColors.primary50),
-                              ),
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    value: _isChecked,
-                                    onChanged: (bool? newValue) {
-                                      setState(() {
-                                        _isChecked = newValue ?? false;
-                                      });
-                                    },
-                                    checkColor: Colors.white,
-                                    fillColor:
-                                        MaterialStateProperty.resolveWith<
-                                          Color
-                                        >((Set<MaterialState> states) {
-                                          if (states.contains(
-                                            MaterialState.selected,
-                                          )) {
-                                            return AppColors
-                                                .primary400; // Background color when selected
-                                          }
-                                          return Colors
-                                              .white; // Background color when unselected
-                                        }),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(3),
-                                    ),
-                                    side: BorderSide(
-                                      color: Colors.grey,
-                                      // Border color when unselected
-                                      width: 1.0,
-                                    ),
-                                    // Color when focused
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "هل تواجه موقفًا قانونيًا طارئًا وتحتاج إلى استشارة موثوقة وسريعة",
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            " 50.0 ₪",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: AppColors.neutral600,
-                                            ),
-                                          ),
-                                          SizedBox(width: 20),
-                                          Icon(
-                                            Icons.access_time,
-                                            color: AppColors.neutral600,
-                                            size: 24,
-                                          ),
-                                          Text(
-                                            " 5 أيام",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: AppColors.neutral600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 5),
-                          itemCount: 2,
-                        ),
+                       Container(
+                         width: double.infinity,
+                         height: 100,
+                       ),
                       ],
                     ),
                   ],
