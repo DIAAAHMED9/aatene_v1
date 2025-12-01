@@ -28,8 +28,8 @@ class AppBarConfig {
   final String title;
   final String actionText;
   final VoidCallback? onActionPressed;
-  final List<TabData> tabs;
-  final TextEditingController searchController;
+  final List<TabData>? tabs;
+  final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
   final VoidCallback? onFilterPressed;
   final VoidCallback? onSortPressed;
@@ -42,8 +42,8 @@ class AppBarConfig {
     required this.title,
     required this.actionText,
     this.onActionPressed,
-    required this.tabs,
-    required this.searchController,
+     this.tabs,
+     this.searchController,
     this.onSearchChanged,
     this.onFilterPressed,
     this.onSortPressed,

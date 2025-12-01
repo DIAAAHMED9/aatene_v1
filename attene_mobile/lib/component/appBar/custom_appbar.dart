@@ -1,4 +1,4 @@
-// lib/component/custom_app_bar_with_tabs.dart
+// lib/component/appBar/custom_appbar.dart
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +23,7 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
 
   double _calculateHeight() {
     double height = 70; // الارتفاع الأساسي
-    if (config.showTabs) height += 45;
+    if (config.showTabs && (config.tabs?.isNotEmpty ?? false)) height += 45;
     if (config.showSearch) height += 60;
     return height;
   }
@@ -33,26 +33,28 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
     return Container(
       margin: const EdgeInsets.only(top: 5),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: _buildBoxDecoration(),
-      child: SafeArea(
+      decoration:config.tabs!=null? _buildBoxDecoration():null,
+      child:config.tabs!=null?SafeArea(
         child: Column(
           children: _buildAppBarContent(),
         ),
-      ),
+      ):Column(
+          children: _buildAppBarContent(),
+        ),
     );
   }
 
   List<Widget> _buildAppBarContent() {
     final List<Widget> children = [
-      _buildTopBar(),
-      const SizedBox(height: 15),
+    config.tabs!=null?  _buildTopBar():SizedBox(),
+    config.tabs!=null?   const SizedBox(height: 15):SizedBox(),
     ];
 
-    if (config.showTabs && config.tabs.isNotEmpty) {
-      children.addAll([
+    if (config.showTabs && (config.tabs?.isNotEmpty ?? false) && config.tabController != null) {
+    config.tabs!=null?  children.addAll([
         _buildTabBar(),
         const SizedBox(height: 15),
-      ]);
+      ]):SizedBox();
     }
 
     if (config.showSearch) {
@@ -87,11 +89,11 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
             fontWeight: FontWeight.w700,
           ),
         ),
-        if (config.actionText.isNotEmpty)
+        if (config.actionText?.isNotEmpty ?? false)
           GestureDetector(
             onTap: config.onActionPressed,
             child: Text(
-              config.actionText,
+              config.actionText ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.primary400,
@@ -105,7 +107,7 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
   }
 
   Widget _buildTabBar() {
-    if (config.tabController == null) {
+    if (config.tabController == null || config.tabs == null) {
       return const SizedBox.shrink();
     }
 
@@ -126,7 +128,7 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
         indicatorColor: Colors.transparent,
         unselectedLabelColor: const Color(0XFF868687),
         onTap: config.onTabChanged,
-        tabs: config.tabs
+        tabs: config.tabs!
             .map(
               (tab) => Tab(
                 iconMargin: EdgeInsets.all(0),

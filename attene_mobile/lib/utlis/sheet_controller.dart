@@ -1,10 +1,18 @@
+import 'dart:async';
+import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/controller/product_controller.dart';
+import 'package:attene_mobile/demo_stepper_screen.dart';
+import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
-import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product.dart';
+import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
+import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../models/section_model.dart';
 
 enum BottomSheetType {
   filter,
@@ -13,104 +21,513 @@ enum BottomSheetType {
   singleSelect,
   manageSections,
   addNewSection,
-    addProduct,
+  manageAttributes,
+  addAttribute,
+  addAttributeValue,
+  selectAttributeValue,
 }
 
 class BottomSheetController extends GetxController {
-  final Rx<BottomSheetType> currentType = BottomSheetType.filter.obs;
-  final RxList<String> selectedOptions = <String>[].obs;
-  final RxString selectedOption = ''.obs;
-  final RxString newSectionName = ''.obs;
-  final RxString sectionSearchText = ''.obs; // نص البحث في الأقسام
-  final RxString selectedSection = ''.obs; // القسم المختار
-  final isRTL = LanguageUtils.isRTL;
-
-  // بيانات تجريبية - يمكن استبدالها ببيانات حقيقية
-  final List<String> filterOptions = ['الفئة 1', 'الفئة 2', 'الفئة 3', 'الفئة 4'];
-  final List<String> sortOptions = ['الأحدث', 'الأقدم', 'السعر من الأعلى', 'السعر من الأدنى'];
-  final List<String> multiSelectOptions = ['خيار 1', 'خيار 2', 'خيار 3', 'خيار 4'];
-  final List<String> singleSelectOptions = ['خيار أ', 'خيار ب', 'خيار ج', 'خيار د'];
-  final RxList<String> storeSections = <String>[].obs;
-    final RxInt currentStep = 0.obs;
-  final RxString productName = ''.obs;
-  final RxString productDescription = ''.obs;
-  final RxDouble productPrice = 0.0.obs;
-  final RxInt productQuantity = 0.obs;
-  final RxList<String> productImages = <String>[].obs;
-  final RxString selectedCategory = ''.obs;
-
-  // بيانات تجريبية للفئات
-  final List<String> productCategories = [
-    'الكترونيات',
-    'ملابس',
-    'أغذية',
-    'أثاث',
-    'رياضة'
-  ];
-
+  final Rx<BottomSheetType> _currentType = BottomSheetType.filter.obs;
+  final RxList<String> _selectedOptions = <String>[].obs;
+  final RxString _selectedOption = ''.obs;
+  final RxString _newSectionName = ''.obs;
+  final RxString _sectionSearchText = ''.obs;
+  final RxString _selectedSectionName = ''.obs;
   
-  // الحصول على الأقسام المصفاة حسب البحث
-  List<String> get filteredSections {
-    if (sectionSearchText.isEmpty) {
-      return storeSections;
-    }
-    return storeSections.where((section) => 
-      section.toLowerCase().contains(sectionSearchText.toLowerCase())
-    ).toList();
-  }
-  
-  // التحقق إذا كان النص المدخل يشابه نص موجود
-  bool get isTextSimilarToExisting {
-    if (sectionSearchText.isEmpty) return false;
-    return storeSections.any((section) => 
-      section.toLowerCase() == sectionSearchText.toLowerCase()
-    );
-  }
-  
-  void showBottomSheet(BottomSheetType type) {
-    currentType.value = type;
-    selectedOptions.clear();
-    selectedOption.value = '';
-    newSectionName.value = '';
-    sectionSearchText.value = '';
-    selectedSection.value = '';
+  final bool isRTL = LanguageUtils.isRTL;
+
+  // === إدارة السمات ===
+  final RxList<ProductAttribute> _tempAttributes = <ProductAttribute>[].obs;
+  final Rx<ProductAttribute?> _currentEditingAttribute = Rx<ProductAttribute?>(null);
+  final RxString _attributeSearchQuery = ''.obs;
+  final TextEditingController _attributeSearchController = TextEditingController();
+  final TextEditingController _newAttributeController = TextEditingController();
+  final TextEditingController _newAttributeValueController = TextEditingController();
+  final RxString _newAttributeName = ''.obs;
+  final RxString _newAttributeValue = ''.obs;
+  final RxInt _attributeTabIndex = 0.obs;
+  final RxList<ProductAttribute> _selectedAttributes = <ProductAttribute>[].obs;
+
+  // === إدارة الأقسام ===
+  final RxList<Section> _sections = <Section>[].obs;
+  final RxBool _isLoadingSections = false.obs;
+  final RxString _sectionsErrorMessage = ''.obs;
+  final Rx<Section?> _selectedSection = Rx<Section?>(null);
+  final RxList<Section> _filteredSections = <Section>[].obs;
+
+  // === Stream Controllers ===
+  final _sectionSearchController = StreamController<String>.broadcast();
+  final MyAppController _myAppController = Get.find<MyAppController>();
+final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
+RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributesRx;
+// ✅ تحديث دالة updateSelectedAttributes لتحديث الـ Rx أيضاً
+void updateSelectedAttributes(List<ProductAttribute> attributes) {
+  _selectedAttributes.assignAll(attributes);
+  _selectedAttributesRx.assignAll(attributes); // ✅ تحديث الـ Rx أيضاً
+  print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
+}
+void _saveAttributesAndClose() {
+  try {
+    final productVariationController = Get.find<ProductVariationController>();
     
-    Get.bottomSheet(
-      _buildBottomSheetContent(),
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
+    // ✅ نقل السمات المختارة إلى ProductVariationController
+    productVariationController.updateSelectedAttributes(_selectedAttributes.toList());
+    
+    // ✅ إغلاق الـ BottomSheet
+    Get.back();
+    
+    // ✅ إظهار رسالة نجاح
+    Get.snackbar(
+      'نجاح', 
+      'تم حفظ السمات والصفات بنجاح',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: Duration(seconds: 2),
+    );
+    
+    print('✅ [ATTRIBUTES SAVED]: ${_selectedAttributes.length} سمات محفوظة');
+    
+  } catch (e) {
+    print('❌ [ERROR SAVING ATTRIBUTES]: $e');
+    Get.snackbar(
+      'خطأ', 
+      'حدث خطأ أثناء حفظ السمات',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
     );
   }
+}
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeAttributeListeners();
+    _loadAttributesFromApi();
+    _initializeSectionSearch();
+    _loadSections();
+  }
+
+
+
+  // === دوال إدارة الأقسام مع API ===
+  Future<void> _loadSections() async {
+    try {
+      if (!_isUserAuthenticated()) {
+        print('⚠️ المستخدم غير مسجل دخول');
+        return;
+      }
+
+      _isLoadingSections(true);
+      _sectionsErrorMessage('');
+      
+      final response = await ApiHelper.get(
+        path: '/merchants/sections',
+        withLoading: false,
+      );
+      
+      if (response != null && response['status'] == true) {
+        final List<dynamic> data = response['data'] ?? [];
+        _sections.assignAll(data.map((section) => Section.fromJson(section)).toList());
+        _filteredSections.assignAll(_sections);
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في تحميل الأقسام';
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في تحميل الأقسام: ${e.toString()}';
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+  // ✅ محدث: جلب السمات من API
+  Future<void> _loadAttributesFromApi() async {
+    try {
+      print('📡 [LOADING ATTRIBUTES FROM API - BOTTOM SHEET]');
+
+      final response = await ApiHelper.get(
+        path: '/merchants/attributes',
+        withLoading: false,
+      );
+
+      print('🎯 [ATTRIBUTES API RESPONSE - BOTTOM SHEET]: ${response?['status']}');
+
+      if (response != null && response['status'] == true) {
+        final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        
+        final loadedAttributes = attributesList.map((attributeJson) {
+          return ProductAttribute.fromApiJson(attributeJson);
+        }).toList();
+
+        _tempAttributes.assignAll(loadedAttributes);
+        print('✅ تم تحميل ${_tempAttributes.length} سمة في الـ BottomSheet بنجاح');
+      } else {
+        print('❌ فشل في تحميل السمات في الـ BottomSheet: ${response?['message']}');
+      }
+    } catch (e) {
+      print('❌ خطأ في تحميل السمات في الـ BottomSheet: $e');
+    }
+  }
+
+  // === دوال التهيئة ===
+  void _initializeAttributeListeners() {
+    _attributeSearchController.addListener(() {
+      _attributeSearchQuery.value = _attributeSearchController.text;
+    });
+    
+    _newAttributeController.addListener(() {
+      _newAttributeName.value = _newAttributeController.text;
+    });
+    
+    _newAttributeValueController.addListener(() {
+      _newAttributeValue.value = _newAttributeValueController.text;
+    });
+  }
+
+  void _initializeSectionSearch() {
+    _sectionSearchController.stream.listen((searchText) {
+      _filterSections(searchText);
+    });
+  }
+
+  void _filterSections(String searchText) {
+    if (searchText.isEmpty) {
+      _filteredSections.assignAll(_sections);
+    } else {
+      final filtered = _sections.where((section) => 
+        section.name.toLowerCase().contains(searchText.toLowerCase())
+      ).toList();
+      _filteredSections.assignAll(filtered);
+    }
+  }
+
+  // === دوال إدارة الأقسام مع API ===
+  Future<void> loadSections() async {
+    try {
+      if (!_isUserAuthenticated()) {
+        print('⚠️ المستخدم غير مسجل دخول');
+        return;
+      }
+
+      _isLoadingSections(true);
+      _sectionsErrorMessage('');
+      
+      final response = await ApiHelper.get(
+        path: '/merchants/sections',
+        withLoading: false,
+      );
+      
+      if (response != null && response['status'] == true) {
+        final List<dynamic> data = response['data'] ?? [];
+        _sections.assignAll(data.map((section) => Section.fromJson(section)).toList());
+        _filteredSections.assignAll(_sections);
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في تحميل الأقسام';
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في تحميل الأقسام: ${e.toString()}';
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+  // ✅ إضافة دالة getSections المطلوبة
+  List<Section> getSections() {
+    return _sections.toList();
+  }
+
+  Future<bool> addSection(String name) async {
+    try {
+      _isLoadingSections(true);
+      
+      final response = await ApiHelper.post(
+        path: '/merchants/sections',
+        body: {'name': name, 'status': 'active'},
+        withLoading: true,
+      );
+      
+      if (response != null && response['status'] == true) {
+        await loadSections();
+        return true;
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في إضافة القسم';
+        return false;
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
+      return false;
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+  Future<bool> deleteSection(int sectionId) async {
+    try {
+      _isLoadingSections(true);
+      
+      final response = await ApiHelper.delete(
+        path: '/merchants/sections/$sectionId',
+        withLoading: true,
+      );
+      
+      if (response != null && response['status'] == true) {
+        await loadSections();
+        if (_selectedSection.value?.id == sectionId) {
+          _selectedSection.value = null;
+          _selectedSectionName.value = '';
+        }
+        return true;
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
+        return false;
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
+      return false;
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+void selectSection(Section section) {
+  _selectedSection.value = section;
+  _selectedSectionName.value = section.name;
   
+  // ✅ نقل القسم المختار إلى ProductCentralController
+  final productController = Get.find<ProductCentralController>();
+  productController.updateSelectedSection(section);
+  
+  print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
+}
+
+
+  // ✅ تحديث دالة openAddProductScreen للتحقق من القسم
+void openAddProductScreen() {
+  if (!_isUserAuthenticated()) {
+    _showLoginRequiredMessage();
+    return;
+  }
+
+  if (!hasSelectedSection) {
+    Get.snackbar(
+      'قسم مطلوب',
+      'يجب اختيار قسم أولاً قبل إضافة المنتج',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+    
+    openManageSections();
+    return;
+  }
+
+  _navigateToAddProductStepper();
+}
+
+  void clearSectionSelection() {
+    _selectedSection.value = null;
+    _selectedSectionName.value = '';
+  }
+
+  bool get isSectionNameExists {
+    if (_newSectionName.value.isEmpty) return false;
+    return _sections.any((section) => 
+      section.name.toLowerCase() == _newSectionName.value.trim().toLowerCase()
+    );
+  }
+
+  bool _isUserAuthenticated() {
+    final userData = _myAppController.userData;
+    return userData.isNotEmpty && userData['token'] != null;
+  }
+
+  void _showLoginRequiredMessage() {
+    Get.snackbar(
+      'يجب تسجيل الدخول',
+      'يرجى تسجيل الدخول للوصول إلى هذه الميزة',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  // === دوال فتح الـ Bottom Sheets ===
+void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, ProductAttribute? attribute}) {
+  _currentType.value = type;
+  
+  if (attributes != null && type == BottomSheetType.manageAttributes) {
+    _tempAttributes.assignAll(attributes);
+    if (_selectedAttributes.isEmpty) {
+      _selectedAttributes.clear();
+    }
+    if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
+      _currentEditingAttribute.value = _selectedAttributes.first;
+    }
+  }
+  
+  if (attribute != null && type == BottomSheetType.addAttributeValue) {
+    _currentEditingAttribute.value = attribute;
+  }
+  
+  if (type == BottomSheetType.manageSections) {
+    loadSections();
+  }
+  
+  _resetFields();
+  
+  Get.bottomSheet(
+    _buildBottomSheetContent(),
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+      ),
+    ),
+    enableDrag: true,
+  ).then((_) {
+    // ✅ عند إغلاق البوتوم شيت، نلغي الاختيار دائماً
+    if (_currentType.value == BottomSheetType.manageSections) {
+      clearSectionSelection();
+    }
+    _resetFields();
+  });
+}
+  void _resetFields() {
+    _selectedOptions.clear();
+    _selectedOption.value = '';
+    _newSectionName.value = '';
+    _sectionSearchText.value = '';
+    _attributeSearchQuery.value = '';
+    _attributeSearchController.clear();
+    _newAttributeName.value = '';
+    _newAttributeController.clear();
+    _newAttributeValue.value = '';
+    _newAttributeValueController.clear();
+    _attributeTabIndex.value = 0;
+  }
+
+  // === دوال فتح النوافذ المنبثقة ===
+  void openManageAttributes(List<ProductAttribute> attributes) {
+    showBottomSheet(BottomSheetType.manageAttributes, attributes: attributes);
+  }
+
+  void openAddAttribute() {
+    showBottomSheet(BottomSheetType.addAttribute);
+  }
+
+  void openAddAttributeValue(ProductAttribute attribute) {
+    showBottomSheet(BottomSheetType.addAttributeValue, attribute: attribute);
+  }
+
+  void openSelectAttributeValue(ProductAttribute attribute, Function(String) onValueSelected) {
+    _currentEditingAttribute.value = attribute;
+    showBottomSheet(BottomSheetType.selectAttributeValue);
+  }
+
+  void openManageSections() {
+    if (!_isUserAuthenticated()) {
+      _showLoginRequiredMessage();
+      return;
+    }
+    showBottomSheet(BottomSheetType.manageSections);
+  }
+
+  void openAddNewSection() {
+    if (!_isUserAuthenticated()) {
+      _showLoginRequiredMessage();
+      return;
+    }
+    showBottomSheet(BottomSheetType.addNewSection);
+  }
+
+
+  void _navigateToAddProductStepper() {
+    Get.back(); // إغلاق أي BottomSheet مفتوح
+    Get.to(
+      () => DemoStepperScreen(),
+      transition: Transition.cupertino,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  void openFilter() => showBottomSheet(BottomSheetType.filter);
+  void openSort() => showBottomSheet(BottomSheetType.sort);
+  void openMultiSelect() => showBottomSheet(BottomSheetType.multiSelect);
+  void openSingleSelect() => showBottomSheet(BottomSheetType.singleSelect);
+
+  // === بناء واجهة الـ Bottom Sheet ===
   Widget _buildBottomSheetContent() {
-    return Container(
-      padding: EdgeInsets.all(20),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      constraints: BoxConstraints(maxHeight: Get.height * 0.9),
+      padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildHeader(),
-          SizedBox(height: 20),
-          _buildContent(),
-          if (currentType.value != BottomSheetType.manageSections && 
-              currentType.value != BottomSheetType.addNewSection) 
-            SizedBox(height: 20),
-          if (currentType.value != BottomSheetType.manageSections && 
-              currentType.value != BottomSheetType.addNewSection)
-            _buildActions(),
+          const SizedBox(height: 20),
+          Expanded(child: _buildContent()),
+          if (_shouldShowActions) const SizedBox(height: 20),
+          if (_shouldShowActions) _buildActions(),
         ],
       ),
     );
   }
-  
+  Widget _buildActions() {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () {
+              _selectedOptions.clear();
+              _selectedOption.value = '';
+              Get.back();
+            },
+            child: const Text('إلغاء'),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: _applySelection,
+            child: const Text('تطبيق'),
+          ),
+        ),
+      ],
+    );
+  }
+    void _applySelection() {
+    switch (_currentType.value) {
+      case BottomSheetType.filter:
+        print('تطبيق الفلاتر: ${_selectedOptions.join(', ')}');
+        break;
+      case BottomSheetType.sort:
+        print('تم الترتيب حسب: ${_selectedOption.value}');
+        break;
+      case BottomSheetType.multiSelect:
+        print('الخيارات المحددة: ${_selectedOptions.join(', ')}');
+        break;
+      case BottomSheetType.singleSelect:
+        print('الخيار المحدد: ${_selectedOption.value}');
+        break;
+      default:
+        break;
+    }
+    Get.back();
+  }
+  bool get _shouldShowActions {
+    return _currentType.value != BottomSheetType.manageSections && 
+           _currentType.value != BottomSheetType.addNewSection &&
+           _currentType.value != BottomSheetType.manageAttributes &&
+           _currentType.value != BottomSheetType.addAttribute &&
+           _currentType.value != BottomSheetType.addAttributeValue &&
+           _currentType.value != BottomSheetType.selectAttributeValue;
+  }
+
   Widget _buildHeader() {
     String title = '';
-    switch (currentType.value) {
+    switch (_currentType.value) {
       case BottomSheetType.filter:
         title = 'الفلاتر';
         break;
@@ -129,9 +546,18 @@ class BottomSheetController extends GetxController {
       case BottomSheetType.addNewSection:
         title = 'إضافة قسم جديد';
         break;
-        case BottomSheetType.addProduct:
-        title = 'إضافة منتج جديد';
-
+      case BottomSheetType.manageAttributes:
+        title = 'إدارة السمات والصفات';
+        break;
+      case BottomSheetType.addAttribute:
+        title = 'إضافة سمة جديدة';
+        break;
+      case BottomSheetType.addAttributeValue:
+        title = 'إضافة صفة جديدة';
+        break;
+      case BottomSheetType.selectAttributeValue:
+        title = 'اختيار الصفة';
+        break;
     }
     
     return Row(
@@ -139,22 +565,24 @@ class BottomSheetController extends GetxController {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
         ),
       ],
     );
   }
-  
+
   Widget _buildContent() {
     return Obx(() {
-      switch (currentType.value) {
+      switch (_currentType.value) {
         case BottomSheetType.filter:
           return _buildFilterContent();
         case BottomSheetType.sort:
@@ -164,19 +592,28 @@ class BottomSheetController extends GetxController {
         case BottomSheetType.singleSelect:
           return _buildSingleSelectContent();
         case BottomSheetType.manageSections:
-          return _buildManageSectionsContent();
+          return buildManageSectionsContent();
         case BottomSheetType.addNewSection:
           return _buildAddNewSectionContent();
-                  case BottomSheetType.addProduct: // أضف هذه الحالة
-          return _buildAddProductContent();
+        case BottomSheetType.manageAttributes:
+          return _buildManageAttributesContent();
+        case BottomSheetType.addAttribute:
+          return _buildAddAttributeContent();
+        case BottomSheetType.addAttributeValue:
+          return _buildAddAttributeValueContent();
+        case BottomSheetType.selectAttributeValue:
+          return _buildSelectAttributeValueContent();
       }
     });
   }
-  
-  // المحتوى الخاص بإدارة الأقسام - المحدث
-  Widget _buildManageSectionsContent() {
+
+Widget buildManageSectionsContent() {
+  return Obx(() {
+    final hasSections = _sections.isNotEmpty;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           'أضف وعدّل الأقسام الخاصة بمتجرك لترتيب منتجاتك بالطريقة التي تناسبك، هذه الأقسام لا تؤثر على التصنيفات الرئيسية للمنصة، بل تسهل على عملائك تصفح متجرك',
@@ -187,512 +624,247 @@ class BottomSheetController extends GetxController {
           ),
           textAlign: TextAlign.right,
         ),
-        SizedBox(height: 20),
-        
-        // إذا لم يكن هناك أقسام، نعرض زر الإضافة فقط
-        Obx(() {
-          if (storeSections.isEmpty) {
-            return AateneButton(
-              color: AppColors.primary300.withAlpha(50),
-              textColor: AppColors.primary400,
-              borderColor: Colors.transparent,
-              buttonText: isRTL ? 'إضافة قسم جديد' : 'Add a new section',
-              onTap: () {
-                openAddNewSection(); 
-                Get.back(); 
-              },
-            );
-          } else {
-            // إذا كان هناك أقسام، نعرض مربع البحث والأقسام والأزرار
-            return Column(
-              children: [
-                // مربع البحث
-                TextFiledAatene(
-                  heightTextFiled: 50,
-                  onChanged: (value) => sectionSearchText.value = value,
-                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                  isRTL: isRTL, 
-                  hintText: isRTL ? 'ابحث في الأقسام' : 'Search sections',
-                ),
-                SizedBox(height: 20),
-                
-                // قائمة الأقسام المصفاة
-                Container(
-                  constraints: BoxConstraints(
-                    maxHeight: 200, // ارتفاع أقصى للقائمة
-                  ),
-                  child: Obx(() {
-                    if (filteredSections.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'لا توجد أقسام تطابق البحث',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: filteredSections.length,
-                      itemBuilder: (context, index) {
-                        final section = filteredSections[index];
-                        return Obx(() => RadioListTile<String>(
-                          title: Text(section),
-                          value: section,
-                          groupValue: selectedSection.value,
-                          onChanged: (value) {
-                            selectedSection.value = value!;
-                          },
-                        ));
-                      },
-                    );
-                  }),
-                ),
-                SizedBox(height: 20),
-                
-                // زر التالي
-                AateneButton(
-                  color: AppColors.primary400,
-                  textColor: Colors.white,
-                  borderColor: Colors.transparent,
-                  buttonText: isRTL ? 'التالي' : 'Next',
-                 onTap: selectedSection.isNotEmpty ? () {
-                    // فتح شاشة إضافة المنتج مع القسم المختار
-                    Get.back(); // إغلاق شاشة إدارة الأقسام
-                   Get.to(() => AddProductScreen());
-                  
-                  } : null, // تعطيل الزر إذا لم يتم اختيار قسم
-                ),
-                SizedBox(height: 10),
-                
-                // زر إضافة قسم جديد مع التحقق من عدم تشابه النص
-                AateneButton(
-                  color: AppColors.primary300.withAlpha(50),
-                  textColor: AppColors.primary400,
-                  borderColor: Colors.transparent,
-                  buttonText: isRTL ? 'إضافة قسم جديد' : 'Add a new section',
-                  onTap: () {
-                    if (sectionSearchText.isNotEmpty && !isTextSimilarToExisting) {
-                      // إذا كان هناك نص في البحث ولا يشابه نص قديم، نضيفه مباشرة
-                      _addSectionFromSearch();
-                    } else {
-                      // وإلا نفتح شاشة إضافة قسم جديد
-                      openAddNewSection(); 
-                      Get.back(); 
-                    }
-                  },
-                ),
-                
-                // رسالة تحذير إذا كان النص يشابه نص موجود
-                Obx(() {
-                  if (sectionSearchText.isNotEmpty && isTextSimilarToExisting) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        'هذا الاسم مشابه لقسم موجود مسبقاً',
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 12,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-                  return SizedBox.shrink();
-                }),
-              ],
-            );
-          }
-        }),
-      ],
-    );
-  }
-    // دالة لفتح شاشة إضافة المنتج
-  void openAddProduct() {
-    showBottomSheet(BottomSheetType.addProduct);
-  }
+        const SizedBox(height: 20),
 
-  // بناء واجهة إضافة المنتج
-  Widget _buildAddProductContent() {
-    return Container(
-      height: Get.height * 0.8, // ارتفاع مناسب للشاشة
-      child: Column(
-        children: [
-          // الهيدر
-          _buildHeader(),
-          SizedBox(height: 10),
-          
-          // عرض القسم المختار مع إمكانية تغييره
-          _buildSelectedSectionCard(),
-          SizedBox(height: 20),
-          
-          // الـ Stepper
-          Expanded(
-            child: _buildProductStepper(),
+        // الحالة 1: لا توجد أقسام - عرض زر الإضافة فقط
+        if (!hasSections) ...[
+          AateneButton(
+            color: AppColors.primary400,
+            textColor: Colors.white,
+            borderColor: Colors.transparent,
+            buttonText: 'إضافة قسم جديد',
+            onTap: () {
+              Get.back();
+              openAddNewSection();
+            },
           ),
         ],
-      ),
-    );
-  }
-    // بطاقة عرض القسم المختار
-  Widget _buildSelectedSectionCard() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.primary100,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary200),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'سيتم إضافة المنتج إلى:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary500,
-            ),
+
+        // الحالة 2: توجد أقسام - عرض البحث والقائمة والزرين
+        if (hasSections) ...[
+          TextFiledAatene(
+            heightTextFiled: 50,
+            onChanged: (value) {
+              _sectionSearchText.value = value;
+              _sectionSearchController.add(value);
+            },
+            prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+            isRTL: isRTL,
+            hintText: 'ابحث في الأقسام',
           ),
+          const SizedBox(height: 20),
+
+          Container(
+            height: 200,
+            child: _buildSectionsList(),
+          ),
+          const SizedBox(height: 20),
+
           Row(
             children: [
-              Text(
-                selectedSection.value,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary400,
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Get.back();
+                    openAddNewSection();
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: AppColors.primary400),
+                  ),
+                  child: Text(
+                    'إضافة قسم جديد',
+                    style: TextStyle(color: AppColors.primary400),
+                  ),
                 ),
               ),
-              SizedBox(width: 8),
-              // زر تغيير القسم
-              InkWell(
-                onTap: () {
-                  Get.back(); // إغلاق شاشة إضافة المنتج
-                  openManageSections(); // فتح شاشة إدارة الأقسام من جديد
-                },
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary100,
-                    borderRadius: BorderRadius.circular(6),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Obx(() => ElevatedButton(
+                  onPressed: hasSelectedSection ? () {
+                    // ✅ حفظ القسم المختار مؤقتاً قبل الانتقال
+                    final selectedSection = _selectedSection.value;
+                    Get.back();
+                    
+                    // ✅ إلغاء الاختيار بعد الانتقال
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      clearSectionSelection();
+                      _navigateToAddProductStepper();
+                    });
+                  } : null,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: hasSelectedSection 
+                        ? AppColors.primary400 
+                        : Colors.grey[400],
                   ),
-                  child: Icon(
-                    Icons.edit,
-                    size: 16,
-                    color: AppColors.primary400,
+                  child: const Text(
+                    'التالي',
+                    style: TextStyle(color: Colors.white),
                   ),
-                ),
+                )),
               ),
             ],
           ),
         ],
-      ),
+      ],
     );
-  }
-  // بناء الـ Stepper
-  Widget _buildProductStepper() {
-    return Obx(() => Stepper(
-      type: StepperType.horizontal,
-      currentStep: currentStep.value,
-      onStepContinue: _nextStep,
-      onStepCancel: _previousStep,
-      onStepTapped: (step) => currentStep.value = step,
-      elevation: 0,
-      controlsBuilder: (context, details) {
-        return Row(
-          children: [
-            if (currentStep.value > 0)
-              OutlinedButton(
-                onPressed: details.onStepCancel,
-                child: Text('السابق'),
+  });
+}
+
+  Widget _buildSectionsList() {
+    return Obx(() {
+      if (_isLoadingSections.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      
+      if (_sectionsErrorMessage.value.isNotEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 60, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(
+                _sectionsErrorMessage.value,
+                style: TextStyle(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
               ),
-            SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: details.onStepContinue,
-              child: Text(currentStep.value == 2 ? 'إنهاء' : 'التالي'),
-            ),
-          ],
-        );
-      },
-      steps: [
-        Step(
-          title:SizedBox(),
-          content: _buildBasicInfoStep(),
-          isActive: currentStep.value >= 0,
-          state: currentStep.value > 0 ? StepState.complete : StepState.indexed,
-        ),
-        Step(
-          title: SizedBox(),
-          content: _buildImagesAndPriceStep(),
-          isActive: currentStep.value >= 1,
-          state: currentStep.value > 1 ? StepState.complete : StepState.indexed,
-        ),
-        Step(
-          title: SizedBox(),
-          content: _buildReviewStep(),
-          isActive: currentStep.value >= 2,
-        ),
-      ],
-    ));
-  }
-  // خطوة المعلومات الأساسية
-  Widget _buildBasicInfoStep() {
-    return Column(
-      children: [
-        TextFiledAatene(
-          heightTextFiled: 50,
-          onChanged: (value) => productName.value = value,
-          hintText: 'اسم المنتج',
-          isRTL: isRTL,
-        ),
-        SizedBox(height: 16),
-        TextFiledAatene(
-          heightTextFiled: 80,
-          onChanged: (value) => productDescription.value = value,
-          hintText: 'وصف المنتج',
-          // m: 3,
-          isRTL: isRTL,
-        ),
-        SizedBox(height: 16),
-        // اختيار الفئة
-        DropdownButtonFormField<String>(
-          value: selectedCategory.value.isEmpty ? null : selectedCategory.value,
-          items: productCategories.map((category) {
-            return DropdownMenuItem(
-              value: category,
-              child: Text(category),
-            );
-          }).toList(),
-          onChanged: (value) => selectedCategory.value = value!,
-          decoration: InputDecoration(
-            labelText: 'الفئة',
-            border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: loadSections,
+                child: const Text('إعادة المحاولة'),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
+        );
+      }
+      
+      if (_filteredSections.isEmpty) {
+        return const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.folder_open_rounded, size: 60, color: Colors.grey),
+              SizedBox(height: 16),
+              Text('لا توجد أقسام'),
+            ],
+          ),
+        );
+      }
+      
+      return ListView.builder(
+        itemCount: _filteredSections.length,
+        itemBuilder: (context, index) {
+          final section = _filteredSections[index];
+          return _buildSectionRadioItem(section);
+        },
+      );
+    });
   }
-  // خطوة الصور والسعر
-  Widget _buildImagesAndPriceStep() {
-    return Column(
-      children: [
-        // رفع الصور
-        Text(
-          'صور المنتج',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 10),
-        Obx(() => Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            // الصور المرفوعة
-            ...productImages.map((image) => Stack(
+
+  Widget _buildSectionRadioItem(Section section) {
+    return Obx(() {
+      final isSelected = _selectedSection.value?.id == section.id;
+      
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: Container(
+          decoration: BoxDecoration(
+            border: isSelected 
+                ? Border.all(color: AppColors.primary400, width: 2)
+                : null,
+            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? AppColors.primary100 : Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
               children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: NetworkImage(image), // أو AssetImage حسب مصدر الصورة
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                Obx(() => Radio<Section>(
+                  value: section,
+                  groupValue: _selectedSection.value,
+                  onChanged: (Section? value) {
+                    if (value != null) {
+                      selectSection(value);
+                    }
+                  },
+                  activeColor: AppColors.primary400,
+                )),
+                
+                Icon(
+                  Icons.folder_rounded,
+                  color: isSelected ? AppColors.primary400 : Colors.blue,
+                  size: 24,
                 ),
-                Positioned(
-                  top: -5,
-                  right: -5,
-                  child: IconButton(
-                    icon: Icon(Icons.close, size: 16),
-                    onPressed: () => productImages.remove(image),
-                  ),
-                ),
-              ],
-            )).toList(),
-            
-            // زر إضافة صورة
-            if (productImages.length < 5)
-              GestureDetector(
-                onTap: _addProductImage,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                const SizedBox(width: 12),
+                
+                Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.add_photo_alternate, color: Colors.grey),
-                      Text('إضافة', style: TextStyle(fontSize: 12)),
+                      Text(
+                        section.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isSelected ? AppColors.primary400 : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'ID: ${section.id}',
+                        style: TextStyle(
+                          color: isSelected ? AppColors.primary500 : Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-          ],
-        )),
-        SizedBox(height: 20),
-        
-        // السعر والكمية
-        Row(
-          children: [
-            Expanded(
-              child: TextFiledAatene(
-                heightTextFiled: 50,
-                onChanged: (value) => productPrice.value = double.tryParse(value) ?? 0.0,
-                hintText: 'السعر',
-                // keyboardType: TextInputType.number,
-                isRTL: isRTL,
-              ),
+                
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: Colors.red[400],
+                    size: 20,
+                  ),
+                  onPressed: () => _showDeleteSectionConfirmation(section),
+                ),
+              ],
             ),
-            SizedBox(width: 10),
-            Expanded(
-              child: TextFiledAatene(
-                heightTextFiled: 50,
-                onChanged: (value) => productQuantity.value = int.tryParse(value) ?? 0,
-                hintText: 'الكمية',
-                // keyboardType: TextInputType.number,
-                isRTL: isRTL,
-              ),
-            ),
-          ],
+          ),
         ),
-      ],
-    );
-  }
-  // خطوة المراجعة النهائية
-  Widget _buildReviewStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('مراجعة المعلومات:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        SizedBox(height: 16),
-        _buildReviewItem('القسم', selectedSection.value),
-        _buildReviewItem('اسم المنتج', productName.value),
-        _buildReviewItem('الوصف', productDescription.value),
-        _buildReviewItem('الفئة', selectedCategory.value),
-        _buildReviewItem('السعر', '${productPrice.value} ريال'),
-        _buildReviewItem('الكمية', productQuantity.value.toString()),
-        _buildReviewItem('عدد الصور', productImages.length.toString()),
-      ],
-    );
+      );
+    });
   }
 
-  Widget _buildReviewItem(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Text('$title: ', style: TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value.isEmpty ? 'غير محدد' : value)),
+  void _showDeleteSectionConfirmation(Section section) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('حذف القسم'),
+        content: Text('هل أنت متأكد من حذف قسم "${section.name}"؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              final success = await deleteSection(section.id);
+              if (success) {
+                Get.snackbar('نجاح', 'تم حذف القسم بنجاح');
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('حذف'),
+          ),
         ],
       ),
     );
   }
-  // دوال التنقل بين الخطوات
-  void _nextStep() {
-    if (currentStep.value < 2) {
-      currentStep.value++;
-    } else {
-      _submitProduct();
-    }
-  }
 
-  void _previousStep() {
-    if (currentStep.value > 0) {
-      currentStep.value--;
-    }
-  }
-    // دالة إضافة صورة (محاكاة)
-  void _addProductImage() {
-    // في التطبيق الحقيقي، هنا ستستخدم image_picker
-    // هذه مجرد محاكاة
-    if (productImages.length < 5) {
-      productImages.add('https://via.placeholder.com/150');
-      Get.snackbar(
-        'تمت الإضافة',
-        'تم إضافة صورة المنتج',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    }
-  }
-    // دالة إرسال المنتج
-  void _submitProduct() {
-    // التحقق من صحة البيانات
-    if (productName.isEmpty || selectedCategory.isEmpty || productPrice.value <= 0) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى ملء جميع الحقول المطلوبة',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
-    // هنا سيتم إرسال البيانات إلى الخادم
-    print('''
-    تم إضافة المنتج:
-    - القسم: ${selectedSection.value}
-    - الاسم: ${productName.value}
-    - الوصف: ${productDescription.value}
-    - الفئة: ${selectedCategory.value}
-    - السعر: ${productPrice.value}
-    - الكمية: ${productQuantity.value}
-    - عدد الصور: ${productImages.length}
-    ''');
-
-    Get.back(); // إغلاق الشاشة
-    
-    // إعادة تعيين البيانات
-    _resetProductData();
-    
-    Get.snackbar(
-      'نجح',
-      'تم إضافة المنتج بنجاح إلى قسم ${selectedSection.value}',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
-
-  // إعادة تعيين بيانات المنتج
-  void _resetProductData() {
-    currentStep.value = 0;
-    productName.value = '';
-    productDescription.value = '';
-    productPrice.value = 0.0;
-    productQuantity.value = 0;
-    productImages.clear();
-    selectedCategory.value = '';
-  }
-
-  // إضافة قسم من نص البحث
-  void _addSectionFromSearch() {
-    if (sectionSearchText.isNotEmpty && !isTextSimilarToExisting) {
-      storeSections.add(sectionSearchText.value);
-      
-      // تفريغ حقل البحث بعد الإضافة
-      sectionSearchText.value = '';
-      
-      Get.snackbar(
-        'تمت الإضافة',
-        'تم إضافة القسم الجديد بنجاح',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    }
-  }
-  
-  // المحتوى الخاص بإضافة قسم جديد
   Widget _buildAddNewSectionContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -704,58 +876,47 @@ class BottomSheetController extends GetxController {
             color: Colors.grey[600],
             height: 1.5,
           ),
-          textAlign: TextAlign.right,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         TextFiledAatene(
           heightTextFiled: 50,
-          onChanged: (value) => newSectionName.value = value,
-          prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-          isRTL: isRTL, 
-          hintText: isRTL ? 'أضف اسم القسم' : 'Add department name',
+          onChanged: (value) => _newSectionName.value = value,
+          prefixIcon: Icon(Icons.create_new_folder_rounded, color: Colors.grey[600]),
+          isRTL: isRTL,
+          hintText: 'أدخل اسم القسم الجديد',
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         
-        // رسالة تحذير إذا كان النص يشابه نص موجود
         Obx(() {
-          if (newSectionName.isNotEmpty && _isSectionNameExists(newSectionName.value)) {
+          if (_newSectionName.isNotEmpty && isSectionNameExists) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(
                 'هذا الاسم مشابه لقسم موجود مسبقاً',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.right,
+                style: TextStyle(color: Colors.orange, fontSize: 12),
               ),
             );
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }),
         
-        // زرين الإضافة والإلغاء
         Row(
           children: [
             Expanded(
               child: OutlinedButton(
                 onPressed: () => Get.back(),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: Text('إلغاء'),
+                style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+                child: const Text('إلغاء'),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: Obx(() => ElevatedButton(
-                onPressed: newSectionName.isNotEmpty && !_isSectionNameExists(newSectionName.value) 
+                onPressed: _newSectionName.isNotEmpty && !isSectionNameExists 
                     ? _addNewSection 
                     : null,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: Text('إضافة'),
+                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+                child: const Text('إضافة'),
               )),
             ),
           ],
@@ -763,152 +924,849 @@ class BottomSheetController extends GetxController {
       ],
     );
   }
-  
-  // التحقق من وجود قسم بنفس الاسم
-  bool _isSectionNameExists(String name) {
-    return storeSections.any((section) => 
-      section.toLowerCase() == name.toLowerCase()
-    );
-  }
-  
-  void _addNewSection() {
-    if (newSectionName.isNotEmpty && !_isSectionNameExists(newSectionName.value)) {
-      storeSections.add(newSectionName.value);
-      newSectionName.value = '';
+
+  Future<void> _addNewSection() async {
+    final success = await addSection(_newSectionName.value.trim());
+    if (success) {
+      _newSectionName.value = '';
       Get.back();
-      
-      // إظهار رسالة نجاح
-      Get.snackbar(
-        'تمت الإضافة',
-        'تم إضافة القسم الجديد بنجاح',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      Get.snackbar('تمت الإضافة', 'تم إضافة القسم الجديد بنجاح');
     }
   }
-  
-  // باقي الدوال الموجودة سابقاً...
-  Widget _buildFilterContent() {
+
+  // === واجهات إدارة السمات ===
+  Widget _buildManageAttributesContent() {
     return Column(
       children: [
-        _buildFilterOption('نطاق السعر', Icons.attach_money),
-        _buildFilterOption('الفئة', Icons.category),
-        _buildFilterOption('الماركة', Icons.branding_watermark),
-        _buildFilterOption('التقييم', Icons.star),
+        _buildAttributeTabs(),
+        const SizedBox(height: 16),
+        Expanded(
+          child: IndexedStack(
+            index: _attributeTabIndex.value,
+            children: [
+              _buildAttributesTab(),
+              _buildValuesTab(),
+            ],
+          ),
+        ),
+        // ✅ نقل زر الحفظ إلى هنا ليكون ظاهراً دائماً
+        _buildSaveButton(),
       ],
     );
   }
-  
-  Widget _buildFilterOption(String title, IconData icon) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {
-        print('فتح $title');
+
+  Widget _buildAttributeTabs() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildAttributeTabButton(
+              text: 'السمات',
+              isActive: _attributeTabIndex.value == 0,
+              onTap: () => _attributeTabIndex.value = 0,
+            ),
+          ),
+          Expanded(
+            child: _buildAttributeTabButton(
+              text: 'الصفات',
+              isActive: _attributeTabIndex.value == 1,
+              onTap: () {
+                if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
+                  _currentEditingAttribute.value = _selectedAttributes.first;
+                }
+                _attributeTabIndex.value = 1;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAttributeTabButton({
+    required String text,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.primary400 : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: isActive ? Colors.white : Colors.grey[700],
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttributesTab() {
+    return Column(
+      children: [
+        _buildAttributeSearchBar(),
+        const SizedBox(height: 16),
+        _buildAddAttributeSection(),
+        const SizedBox(height: 16),
+        Expanded(
+          child: _buildAttributesList(),
+        ),
+        _buildAttributesTabButton(),
+      ],
+    );
+  }
+
+  Widget _buildAttributeSearchBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextField(
+        controller: _attributeSearchController,
+        decoration: InputDecoration(
+          hintText: 'بحث في السمات...',
+          prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: const BorderSide(color: AppColors.primary400),
+          ),
+          filled: true,
+          fillColor: Colors.grey[50],
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddAttributeSection() {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'إضافة سمة جديدة',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _newAttributeController,
+                      decoration: const InputDecoration(
+                        hintText: 'أدخل اسم السمة الجديدة...',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InkWell(
+                      onTap: _newAttributeName.value.trim().isNotEmpty 
+                          ? _addNewAttribute
+                          : null,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: _newAttributeName.value.trim().isNotEmpty 
+                              ? AppColors.primary400 
+                              : Colors.grey[400],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttributesList() {
+    final filteredAttributes = _attributeSearchQuery.isEmpty 
+        ? _tempAttributes 
+        : _tempAttributes.where((attribute) => 
+            attribute.name.toLowerCase().contains(_attributeSearchQuery.value.toLowerCase())
+          ).toList();
+
+    if (filteredAttributes.isEmpty && _attributeSearchQuery.isNotEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 60, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('لا توجد نتائج للبحث'),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: filteredAttributes.length,
+      itemBuilder: (context, index) {
+        final attribute = filteredAttributes[index];
+        return _buildAttributeListItem(attribute);
       },
     );
   }
-  
-  Widget _buildSortContent() {
-    return Column(
-      children: sortOptions.map((option) {
-        return Obx(() => RadioListTile<String>(
-          title: Text(option),
-          value: option,
-          groupValue: selectedOption.value,
-          onChanged: (value) {
-            selectedOption.value = value!;
-          },
-        ));
-      }).toList(),
-    );
-  }
-  
-  Widget _buildMultiSelectContent() {
-    return Column(
-      children: multiSelectOptions.map((option) {
-        return Obx(() => CheckboxListTile(
-          title: Text(option),
-          value: selectedOptions.contains(option),
-          onChanged: (value) {
-            if (value == true) {
-              selectedOptions.add(option);
-            } else {
-              selectedOptions.remove(option);
-            }
-          },
-        ));
-      }).toList(),
-    );
-  }
-  
-  Widget _buildSingleSelectContent() {
-    return Column(
-      children: singleSelectOptions.map((option) {
-        return Obx(() => RadioListTile<String>(
-          title: Text(option),
-          value: option,
-          groupValue: selectedOption.value,
-          onChanged: (value) {
-            selectedOption.value = value!;
-          },
-        ));
-      }).toList(),
-    );
-  }
-  
-  Widget _buildActions() {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-              selectedOptions.clear();
-              selectedOption.value = '';
-              Get.back();
-            },
-            child: Text('إلغاء'),
+
+  Widget _buildAttributeListItem(ProductAttribute attribute) {
+    final isSelected = _selectedAttributes.any((attr) => attr.id == attribute.id);
+    
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListTile(
+        leading: Checkbox(
+          value: isSelected,
+          onChanged: (value) => _toggleAttributeSelection(attribute),
+          activeColor: AppColors.primary400,
+        ),
+        title: Text(
+          attribute.name,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: isSelected ? AppColors.primary400 : Colors.black87,
           ),
         ),
-        SizedBox(width: 10),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: _applySelection,
-            child: Text('تطبيق'),
+        subtitle: Text('${attribute.values.where((v) => v.isSelected.value).length}/${attribute.values.length} صفة'),
+        trailing: const Icon(Icons.category),
+      ),
+    );
+  }
+
+  Widget _buildAttributesTabButton() {
+    final hasSelectedAttributes = _selectedAttributes.isNotEmpty;
+    
+    if (hasSelectedAttributes) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: ElevatedButton(
+          onPressed: () {
+            if (_currentEditingAttribute.value == null) {
+              _currentEditingAttribute.value = _selectedAttributes.first;
+            }
+            _attributeTabIndex.value = 1;
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary400,
+            minimumSize: const Size(double.infinity, 50),
           ),
+          child: const Text(
+            'الانتقال إلى إضافة الصفات',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox();
+  }
+
+  Widget _buildValuesTab() {
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        _buildAttributeSelector(),
+        const SizedBox(height: 16),
+        _buildAddValueSection(),
+        const SizedBox(height: 16),
+        Expanded(
+          child: _buildAttributeValuesContent(),
+        ),
+        _buildValuesTabButtons(),
+      ],
+    );
+  }
+
+  Widget _buildAttributeSelector() {
+    if (_selectedAttributes.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('لم يتم اختيار أي سمات بعد'),
+        ),
+      );
+    }
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'اختر سمة لإضافة الصفات:',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          children: _selectedAttributes.map((attribute) {
+            final isActive = _currentEditingAttribute.value?.id == attribute.id;
+            return ChoiceChip(
+              label: Text(attribute.name),
+              selected: isActive,
+              onSelected: (selected) => _currentEditingAttribute.value = attribute,
+              selectedColor: AppColors.primary400,
+              labelStyle: TextStyle(
+                color: isActive ? Colors.white : Colors.black87,
+              ),
+            );
+          }).toList(),
         ),
       ],
     );
   }
-  
-  void _applySelection() {
-    switch (currentType.value) {
-      case BottomSheetType.filter:
-        print('تطبيق الفلاتر');
-        break;
-      case BottomSheetType.sort:
-        print('تم الترتيب حسب: ${selectedOption.value}');
-        break;
-      case BottomSheetType.multiSelect:
-        print('الخيارات المحددة: ${selectedOptions.join(', ')}');
-        break;
-      case BottomSheetType.singleSelect:
-        print('الخيار المحدد: ${selectedOption.value}');
-        break;
-      default:
-        break;
+
+  Widget _buildAddValueSection() {
+    final currentAttribute = _currentEditingAttribute.value;
+    if (currentAttribute == null) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.category_outlined, size: 60, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('اختر سمة لإضافة الصفات'),
+          ],
+        ),
+      );
     }
-    Get.back();
+    
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'إضافة صفة لـ ${currentAttribute.name}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _newAttributeValueController,
+                      decoration: InputDecoration(
+                        hintText: 'أدخل ${currentAttribute.name} جديد...',
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InkWell(
+                      onTap: _newAttributeValue.value.trim().isNotEmpty 
+                          ? _addNewAttributeValue
+                          : null,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: _newAttributeValue.value.trim().isNotEmpty 
+                              ? AppColors.primary400 
+                              : Colors.grey[400],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
-  
-  // دالة لفتح إدارة الأقسام
-  void openManageSections() {
-    showBottomSheet(BottomSheetType.manageSections);
+
+  Widget _buildAttributeValuesContent() {
+    final currentAttribute = _currentEditingAttribute.value;
+    if (currentAttribute == null) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.category_outlined, size: 60, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('اختر سمة لإضافة الصفات'),
+          ],
+        ),
+      );
+    }
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'صفات ${currentAttribute.name}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Obx(() {
+              final selectedCount = currentAttribute.values.where((v) => v.isSelected.value).length;
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.primary100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$selectedCount/${currentAttribute.values.length}',
+                  style: TextStyle(
+                    color: AppColors.primary400,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: _buildAttributeValuesList(currentAttribute),
+        ),
+      ],
+    );
   }
-  
-  // دالة لفتح إضافة قسم جديد مباشرة
-  void openAddNewSection() {
-    showBottomSheet(BottomSheetType.addNewSection);
+
+  Widget _buildAttributeValuesList(ProductAttribute attribute) {
+    if (attribute.values.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.list_alt_outlined, size: 60, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text('لا توجد صفات لـ ${attribute.name} بعد'),
+            const SizedBox(height: 8),
+            const Text('استخدم الحقل أعلاه لإضافة الصفات الأولى'),
+          ],
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      itemCount: attribute.values.length,
+      itemBuilder: (context, index) {
+        final value = attribute.values[index];
+        return _buildValueListItem(value);
+      },
+    );
+  }
+
+  Widget _buildValueListItem(AttributeValue value) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: Obx(() => ListTile(
+        leading: Checkbox(
+          value: value.isSelected.value,
+          onChanged: (val) => _toggleAttributeValueSelection(value),
+          activeColor: AppColors.primary400,
+        ),
+        title: Text(
+          value.value,
+          style: TextStyle(
+            fontWeight: value.isSelected.value ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        trailing: Icon(
+          value.isSelected.value ? Icons.check_circle : Icons.radio_button_unchecked,
+          color: value.isSelected.value ? AppColors.primary400 : Colors.grey,
+        ),
+      )),
+    );
+  }
+
+  Widget _buildValuesTabButtons() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () {
+                _attributeTabIndex.value = 0;
+              },
+              child: const Text('رجوع إلى السمات'),
+            ),
+          ),
+          const SizedBox(width: 10),
+          // ❌ إزالة زر الحفظ من هنا
+        ],
+      ),
+    );
+  }
+
+  // ✅ جديد: زر الحفظ الرئيسي
+  Widget _buildSaveButton() {
+    return Container(
+      padding: EdgeInsets.only(top: 16),
+      child: ElevatedButton(
+        onPressed: _saveAttributesAndClose,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary400,
+          minimumSize: Size(double.infinity, 50),
+        ),
+        child: Text(
+          'حفظ والتطبيق',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddAttributeContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'إضافة سمة جديدة',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 20),
+        TextFiledAatene(
+          heightTextFiled: 50,
+          controller: _newAttributeController,
+          onChanged: (value) => _newAttributeName.value = value,
+          isRTL: isRTL,
+          hintText: 'اسم السمة',
+        ),
+        const SizedBox(height: 20),
+        AateneButton(
+          buttonText: 'إضافة السمة',
+          color: AppColors.primary400,
+          textColor: Colors.white,
+          onTap: _addNewAttribute,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddAttributeValueContent() {
+    final currentAttribute = _currentEditingAttribute.value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'إضافة صفة جديدة لـ ${currentAttribute?.name ?? ""}',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 20),
+        TextFiledAatene(
+          heightTextFiled: 50,
+          controller: _newAttributeValueController,
+          onChanged: (value) => _newAttributeValue.value = value,
+          isRTL: isRTL,
+          hintText: 'قيمة الصفة',
+        ),
+        const SizedBox(height: 20),
+        AateneButton(
+          buttonText: 'إضافة الصفة',
+          color: AppColors.primary400,
+          textColor: Colors.white,
+          onTap: _addNewAttributeValue,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectAttributeValueContent() {
+    final currentAttribute = _currentEditingAttribute.value;
+    if (currentAttribute == null) {
+      return const Center(child: Text('لا توجد سمة محددة'));
+    }
+
+    final selectedValues = currentAttribute.values.where((v) => v.isSelected.value).toList();
+    
+    return Column(
+      children: [
+        Text(
+          'اختر قيمة لـ ${currentAttribute.name}',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: selectedValues.isEmpty
+              ? const Center(child: Text('لا توجد قيم متاحة'))
+              : ListView.builder(
+                  itemCount: selectedValues.length,
+                  itemBuilder: (context, index) {
+                    final value = selectedValues[index];
+                    return ListTile(
+                      title: Text(value.value),
+                      leading: const Icon(Icons.check_circle_outline),
+                      onTap: () {
+                        Get.back(result: value.value);
+                      },
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  // === دوال إدارة السمات ===
+  void _toggleAttributeSelection(ProductAttribute attribute) {
+    final isCurrentlySelected = _selectedAttributes.any((attr) => attr.id == attribute.id);
+    
+    if (isCurrentlySelected) {
+      _selectedAttributes.removeWhere((attr) => attr.id == attribute.id);
+      if (_currentEditingAttribute.value?.id == attribute.id) {
+        _currentEditingAttribute.value = _selectedAttributes.isNotEmpty ? _selectedAttributes.first : null;
+      }
+    } else {
+      final newAttribute = attribute.copyWith(
+        values: attribute.values.map((value) => value.copyWith(isSelected: true)).toList()
+      );
+      _selectedAttributes.add(newAttribute);
+      
+      if (_currentEditingAttribute.value == null) {
+        _currentEditingAttribute.value = newAttribute;
+      }
+    }
+  }
+
+  void _addNewAttribute() {
+    final name = _newAttributeName.value.trim();
+    if (name.isEmpty) {
+      Get.snackbar('تنبيه', 'يرجى إدخال اسم السمة');
+      return;
+    }
+
+    if (_tempAttributes.any((attr) => attr.name.toLowerCase() == name.toLowerCase())) {
+      Get.snackbar('تنبيه', 'اسم السمة موجود مسبقاً');
+      return;
+    }
+
+    final newAttribute = ProductAttribute(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
+      values: [],
+    );
+
+    _tempAttributes.add(newAttribute);
+    _newAttributeController.clear();
+    _newAttributeName.value = '';
+    
+    Get.snackbar('نجاح', 'تم إضافة السمة "$name" بنجاح');
+  }
+
+  void _addNewAttributeValue() {
+    final valueText = _newAttributeValue.value.trim();
+    final attribute = _currentEditingAttribute.value;
+    
+    if (attribute == null) {
+      Get.snackbar('تنبيه', 'يرجى اختيار سمة أولاً');
+      return;
+    }
+
+    if (valueText.isEmpty) {
+      Get.snackbar('تنبيه', 'يرجى إدخال قيمة السمة');
+      return;
+    }
+
+    if (attribute.values.any((v) => v.value.toLowerCase() == valueText.toLowerCase())) {
+      Get.snackbar('تنبيه', 'قيمة السمة موجودة مسبقاً');
+      return;
+    }
+
+    final newValue = AttributeValue(
+      id: '${attribute.id}-${DateTime.now().millisecondsSinceEpoch}',
+      value: valueText,
+      isSelected: true.obs,
+    );
+
+    attribute.values.add(newValue);
+    _newAttributeValueController.clear();
+    _newAttributeValue.value = '';
+    
+    Get.snackbar('نجاح', 'تم إضافة الصفة "$valueText" بنجاح');
+  }
+
+  void _toggleAttributeValueSelection(AttributeValue value) {
+    value.isSelected.toggle();
+  }
+// في BottomSheetController - إضافة هذه الدوال في النهاية قبل onClose()
+
+// === دوال بناء المحتوى للأنواع المختلفة ===
+Widget _buildFilterContent() {
+  return Column(
+    children: [
+      _buildFilterOption('نطاق السعر', Icons.attach_money),
+      _buildFilterOption('الفئة', Icons.category),
+      _buildFilterOption('الماركة', Icons.branding_watermark),
+      _buildFilterOption('التقييم', Icons.star),
+    ],
+  );
+}
+
+Widget _buildFilterOption(String title, IconData icon) {
+  return ListTile(
+    leading: Icon(icon),
+    title: Text(title),
+    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+    onTap: () {
+      print('فتح $title');
+    },
+  );
+}
+
+Widget _buildSortContent() {
+  final List<String> sortOptions = ['الأحدث', 'الأقدم', 'السعر من الأعلى', 'السعر من الأدنى'];
+  return Column(
+    children: sortOptions.map((option) {
+      return Obx(() => RadioListTile<String>(
+        title: Text(option),
+        value: option,
+        groupValue: _selectedOption.value,
+        onChanged: (value) {
+          _selectedOption.value = value!;
+        },
+      ));
+    }).toList(),
+  );
+}
+
+Widget _buildMultiSelectContent() {
+  final List<String> multiSelectOptions = ['خيار 1', 'خيار 2', 'خيار 3', 'خيار 4'];
+  return Column(
+    children: multiSelectOptions.map((option) {
+      return Obx(() => CheckboxListTile(
+        title: Text(option),
+        value: _selectedOptions.contains(option),
+        onChanged: (value) {
+          if (value == true) {
+            _selectedOptions.add(option);
+          } else {
+            _selectedOptions.remove(option);
+          }
+        },
+      ));
+    }).toList(),
+  );
+}
+
+Widget _buildSingleSelectContent() {
+  final List<String> singleSelectOptions = ['خيار أ', 'خيار ب', 'خيار ج', 'خيار د'];
+  return Column(
+    children: singleSelectOptions.map((option) {
+      return Obx(() => RadioListTile<String>(
+        title: Text(option),
+        value: option,
+        groupValue: _selectedOption.value,
+        onChanged: (value) {
+          _selectedOption.value = value!;
+        },
+      ));
+    }).toList(),
+  );
+}
+
+// ✅ إضافة getter لـ sectionsRx
+RxList<Section> get sectionsRx => _sections;
+  // ✅ محدث: دالة حفظ السمات والتطبيق
+
+  // === دوال الحصول على البيانات ===
+  List<ProductAttribute> getSelectedAttributes() {
+    return _selectedAttributes.toList();
+  }
+
+  List<ProductAttribute> getAllAttributes() {
+    return _tempAttributes.toList();
+  }
+
+  void updateAttributes(List<ProductAttribute> attributes) {
+    _tempAttributes.assignAll(attributes);
+  }
+
+  // === Getters ===
+  BottomSheetType get currentType => _currentType.value;
+  List<String> get selectedOptions => _selectedOptions.toList();
+  String get selectedOption => _selectedOption.value;
+  Section? get selectedSection => _selectedSection.value;
+  String get selectedSectionName => _selectedSectionName.value;
+  bool get hasSelectedSection => _selectedSection.value != null;
+  List<Section> get sections => _sections.toList();
+  List<Section> get filteredSections => _filteredSections.toList();
+  bool get isLoadingSections => _isLoadingSections.value;
+  String get sectionsErrorMessage => _sectionsErrorMessage.value;
+  List<ProductAttribute> get tempAttributes => _tempAttributes.toList();
+  List<ProductAttribute> get selectedAttributes => _selectedAttributes.toList();
+
+  @override
+  void onClose() {
+    _sectionSearchController.close();
+    _attributeSearchController.dispose();
+    _newAttributeController.dispose();
+    _newAttributeValueController.dispose();
+    super.onClose();
   }
 }

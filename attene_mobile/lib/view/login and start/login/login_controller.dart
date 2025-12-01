@@ -1,19 +1,67 @@
+import 'dart:async';
+
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  var email = ''.obs;
-  var password = ''.obs;
-  var isLoading = false.obs;
-  var obscurePassword = true.obs;
-  var emailError = RxString('');
-  var passwordError = RxString('');
+  // === متغيرات التفاعل ===
+  final RxString email = ''.obs;
+  final RxString password = ''.obs;
+  final RxBool isLoading = false.obs;
+  final RxBool obscurePassword = true.obs;
+  final RxString emailError = RxString('');
+  final RxString passwordError = RxString('');
+  final RxInt loginAttempts = 0.obs;
+  final RxBool isLoginDisabled = false.obs;
+  final Rx<DateTime?> lastLoginAttempt = Rx<DateTime?>(null);
 
+  // === التحكم بالنصوص ===
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // === الثوابت ===
+  static const int maxLoginAttempts = 5;
+  static const Duration loginTimeoutDuration = Duration(minutes: 15);
+  static const Duration snackbarDuration = Duration(seconds: 4);
+
+  @override
+  void onInit() {
+    super.onInit();
+    _setupListeners();
+    _checkLoginStatus();
+  }
+
+  void _setupListeners() {
+    // الاستماع لتغيرات الحقول
+    ever(email, (_) => _validateEmail());
+    ever(password, (_) => _validatePassword());
+    
+    // إعادة تعيين محاولات التسجيل بعد فترة
+    ever(lastLoginAttempt, (DateTime? timestamp) {
+      if (timestamp != null) {
+        final now = DateTime.now();
+        final difference = now.difference(timestamp);
+        if (difference > loginTimeoutDuration) {
+          _resetLoginAttempts();
+        }
+      }
+    });
+  }
+
+  void _checkLoginStatus() {
+    final MyAppController myAppController = Get.find<MyAppController>();
+    if (myAppController.isLoggedIn.value) {
+      _redirectToMainScreen();
+    }
+  }
+
+  // === دوال تحديث القيم ===
   void updateEmail(String value) {
-    email.value = value;
+    email.value = value.trim();
     emailError.value = '';
   }
 
@@ -26,192 +74,339 @@ class LoginController extends GetxController {
     obscurePassword.value = !obscurePassword.value;
   }
 
+  // === التحقق من الصحة ===
   bool validateFields() {
-    bool isValid = true;
+    final isEmailValid = _validateEmail();
+    final isPasswordValid = _validatePassword();
+    
+    return isEmailValid && isPasswordValid;
+  }
 
+  bool _validateEmail() {
     if (email.value.isEmpty) {
       emailError.value = 'يرجى إدخال البريد الإلكتروني أو رقم الجوال';
-      isValid = false;
-    } else {
-      // More flexible validation
-      if (!isValidEmail(email.value) && !isValidPhone(email.value)) {
-        emailError.value = 'يرجى إدخال بريد إلكتروني أو رقم جوال صحيح';
-        isValid = false;
-      } else {
-        emailError.value = '';
-      }
+      return false;
     }
 
+    if (!isValidEmail(email.value) && !isValidPhone(email.value)) {
+      emailError.value = 'يرجى إدخال بريد إلكتروني أو رقم جوال صحيح';
+      return false;
+    }
+
+    emailError.value = '';
+    return true;
+  }
+
+  bool _validatePassword() {
     if (password.value.isEmpty) {
       passwordError.value = 'يرجى إدخال كلمة المرور';
-      isValid = false;
-    } else if (password.value.length < 6) {
-      passwordError.value = 'كلمة المرور يجب أن تكون على الأقل 6 أحرف';
-      isValid = false;
-    } else {
-      passwordError.value = '';
+      return false;
     }
 
-    return isValid;
+    if (password.value.length < 6) {
+      passwordError.value = 'كلمة المرور يجب أن تكون على الأقل 6 أحرف';
+      return false;
+    }
+
+    passwordError.value = '';
+    return true;
   }
 
   bool isValidEmail(String email) {
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$'
+    );
     return emailRegex.hasMatch(email);
   }
 
   bool isValidPhone(String phone) {
-    // Allow various phone formats
     final phoneRegex = RegExp(r'^[0-9\+\(\)\-\s]{10,15}$');
     final cleanPhone = phone.replaceAll(RegExp(r'[\+\-\(\)\s]'), '');
-    return phoneRegex.hasMatch(phone) && cleanPhone.length >= 10;
+    return phoneRegex.hasMatch(phone) && 
+           cleanPhone.length >= 10 && 
+           cleanPhone.length <= 15;
   }
 
+  // === دوال تسجيل الدخول ===
   Future<void> login() async {
+    if (!_canAttemptLogin()) {
+      _showLoginDisabledMessage();
+      return;
+    }
+
     if (!validateFields()) {
       return;
     }
 
+    await _performLogin();
+  }
+
+  bool _canAttemptLogin() {
+    if (isLoginDisabled.value) {
+      final now = DateTime.now();
+      final lastAttempt = lastLoginAttempt.value;
+      if (lastAttempt != null) {
+        final difference = now.difference(lastAttempt);
+        if (difference > loginTimeoutDuration) {
+          _resetLoginAttempts();
+          return true;
+        }
+      }
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _performLogin() async {
     isLoading.value = true;
+    lastLoginAttempt.value = DateTime.now();
 
     try {
       print('🔑 محاولة تسجيل الدخول للمستخدم: ${email.value}');
-      print(
-        '📱 نوع المدخل: ${isEmail
-            ? "Email"
-            : isPhone
-            ? "Phone"
-            : "Unknown"}',
-      );
+      print('📱 نوع المدخل: ${_getInputType()}');
 
       final response = await ApiHelper.login(
         email: email.value,
         password: password.value,
         withLoading: false,
-      );
+      ).timeout(const Duration(seconds: 30));
 
-      print('📄 استجابة الخادم: $response');
-
-      if (response != null) {
-        // Handle different response structures
-        if (response['status'] == true || response['success'] == true) {
-          final userData = response['user'] ?? response['data'] ?? {};
-          final token =
-              response['token'] ??
-              response['access_token'] ??
-              userData['token'];
-
-          if (token != null) {
-            userData['token'] = token;
-            final MyAppController myAppController = Get.find<MyAppController>();
-            myAppController.updateUserData(userData);
-
-            Get.snackbar(
-              'نجاح',
-              response['message'] ?? 'تم تسجيل الدخول بنجاح',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM,
-            );
-            Get.offAllNamed('/mainScreen');
-          } else {
-            throw Exception('Token not found in response');
-          }
-        } else {
-          _handleApiError(response);
-        }
-      } else {
-        throw Exception('Null response from server');
-      }
+      await _handleLoginResponse(response);
     } catch (error) {
-      print('❌ خطأ في تسجيل الدخول: $error');
-      _handleGeneralError(error);
+      await _handleLoginError(error);
     } finally {
       isLoading.value = false;
     }
   }
 
+  String _getInputType() {
+    if (isEmail) return "Email";
+    if (isPhone) return "Phone";
+    return "Unknown";
+  }
+
+  Future<void> _handleLoginResponse(dynamic response) async {
+    print('📄 استجابة الخادم: $response');
+
+    if (response == null) {
+      throw Exception('لم يتم استلام استجابة من الخادم');
+    }
+
+    if (response['status'] == true || response['success'] == true) {
+      await _processSuccessfulLogin(response);
+    } else {
+      _handleFailedLogin(response);
+    }
+  }
+
+  Future<void> _processSuccessfulLogin(dynamic response) async {
+    final userData = response['user'] ?? response['data'] ?? {};
+    final token = response['token'] ?? 
+                 response['access_token'] ?? 
+                 userData['token'];
+
+    if (token == null) {
+      throw Exception('لم يتم العثور على رمز المصادقة في الاستجابة');
+    }
+
+    // تحديث بيانات المستخدم
+    final MyAppController myAppController = Get.find<MyAppController>();
+    final completeUserData = Map<String, dynamic>.from(userData)
+      ..['token'] = token
+      ..['login_time'] = DateTime.now().toString();
+
+    myAppController.updateUserData(completeUserData);
+
+    // إعادة تعيين المحاولات بعد تسجيل الدخول الناجح
+    _resetLoginAttempts();
+
+    // عرض رسالة النجاح
+    _showSuccessMessage(response['message'] ?? 'تم تسجيل الدخول بنجاح');
+
+    // التوجيه للشاشة الرئيسية
+    await _redirectToMainScreen();
+  }
+
+  void _handleFailedLogin(dynamic response) {
+    loginAttempts.value++;
+    
+    if (loginAttempts.value >= maxLoginAttempts) {
+      isLoginDisabled.value = true;
+      _showMaxAttemptsMessage();
+    } else {
+      _handleApiError(response);
+    }
+  }
+
+  Future<void> _handleLoginError(dynamic error) async {
+    print('❌ خطأ في تسجيل الدخول: $error');
+    
+    loginAttempts.value++;
+    
+    if (loginAttempts.value >= maxLoginAttempts) {
+      isLoginDisabled.value = true;
+      _showMaxAttemptsMessage();
+      return;
+    }
+
+    if (error is TimeoutException) {
+      _showErrorSnackbar('انتهت مهلة الاتصال', 'يرجى المحاولة مرة أخرى');
+    } else if (error is DioException) {
+      _handleDioError(error);
+    } else {
+      _showErrorSnackbar('خطأ غير متوقع', 'حدث خطأ أثناء تسجيل الدخول');
+    }
+  }
+
+  void _handleDioError(DioException error) {
+    final response = error.response;
+    final statusCode = response?.statusCode;
+
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        _showErrorSnackbar('انتهت مهلة الاتصال', 'يرجى التحقق من اتصال الإنترنت');
+        break;
+      
+      case DioExceptionType.badResponse:
+        if (statusCode == 401) {
+          _showErrorSnackbar('فشل التسجيل', 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+        } else if (statusCode == 422) {
+          _handleValidationErrors(response?.data);
+        } else if (statusCode == 500) {
+          _showErrorSnackbar('خطأ في الخادم', 'يرجى المحاولة لاحقاً');
+        } else {
+          _showErrorSnackbar('خطأ في الاستجابة', 'رمز الخطأ: $statusCode');
+        }
+        break;
+      
+      case DioExceptionType.cancel:
+        _showErrorSnackbar('تم الإلغاء', 'تم إلغاء عملية تسجيل الدخول');
+        break;
+      
+      case DioExceptionType.unknown:
+        _showErrorSnackbar('خطأ في الاتصال', 'لا يوجد اتصال بالإنترنت');
+        break;
+      
+      default:
+        _showErrorSnackbar('خطأ غير معروف', 'حدث خطأ أثناء الاتصال بالخادم');
+    }
+  }
+
+  void _handleValidationErrors(dynamic errorData) {
+    if (errorData is Map<String, dynamic>) {
+      final errors = errorData['errors'];
+      if (errors is Map<String, dynamic>) {
+        if (errors['email'] is List) {
+          emailError.value = errors['email'].first ?? 'بريد إلكتروني غير صالح';
+        }
+        if (errors['password'] is List) {
+          passwordError.value = errors['password'].first ?? 'كلمة مرور غير صالحة';
+        }
+      }
+      
+      if (errorData['message'] != null) {
+        _showErrorSnackbar('خطأ في البيانات', errorData['message']);
+      }
+    }
+  }
+
   void _handleApiError(dynamic response) {
     String errorMessage = 'فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.';
+    
     if (response != null) {
       if (response['message'] != null) {
         errorMessage = response['message'];
       }
-      if (response['errors'] != null) {
-        final errors = response['errors'];
-        if (errors['email'] != null) {
-          emailError.value = errors['email'][0];
-        }
-        if (errors['password'] != null) {
-          passwordError.value = errors['password'][0];
-        }
-      }
+      _handleValidationErrors(response);
     }
+    
+    _showErrorSnackbar('خطأ', errorMessage);
+  }
+
+  // === دوال المساعدة ===
+  void _resetLoginAttempts() {
+    loginAttempts.value = 0;
+    isLoginDisabled.value = false;
+    lastLoginAttempt.value = null;
+  }
+
+  void _showSuccessMessage(String message) {
     Get.snackbar(
-      'خطأ',
-      errorMessage,
-      backgroundColor: Colors.red,
+      'نجاح',
+      message,
+      backgroundColor: AppColors.success200,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
+      duration: snackbarDuration,
+      icon: const Icon(Icons.check_circle, color: Colors.white),
     );
   }
 
-  void _handleGeneralError(dynamic error) {
-    print('Login error: $error');
-    String errorMessage = 'حدث خطأ أثناء تسجيل الدخول. ';
-    if (error is DioException) {
-      switch (error.type) {
-        case DioExceptionType.connectionTimeout:
-        case DioExceptionType.sendTimeout:
-        case DioExceptionType.receiveTimeout:
-          errorMessage += 'انتهت مهلة الاتصال. يرجى التحقق من اتصال الإنترنت.';
-          break;
-        case DioExceptionType.badResponse:
-          if (error.response?.statusCode == 401) {
-            errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-          } else if (error.response?.statusCode == 422) {
-            errorMessage = 'بيانات الدخول غير صالحة.';
-          } else {
-            errorMessage += 'استجابة غير صالحة من الخادم.';
-          }
-          break;
-        case DioExceptionType.cancel:
-          errorMessage += 'تم إلغاء الطلب.';
-          break;
-        case DioExceptionType.unknown:
-          errorMessage += 'لا يوجد اتصال بالإنترنت.';
-          break;
-        default:
-          errorMessage += 'خطأ غير معروف.';
-      }
-    }
+  void _showErrorSnackbar(String title, String message) {
     Get.snackbar(
-      'خطأ',
-      errorMessage,
-      backgroundColor: Colors.red,
+      title,
+      message,
+      backgroundColor: AppColors.error200,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
+      duration: snackbarDuration,
+      icon: const Icon(Icons.error_outline, color: Colors.white),
     );
   }
 
-  Future<void> socialLogin(String provider) async {
-    isLoading.value = true;
-    try {
-      print('بدء تسجيل الدخول بواسطة: $provider');
-      await Future.delayed(Duration(seconds: 2));
-      Get.snackbar(
-        'نجاح',
-        'تم تسجيل الدخول بواسطة $provider',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+  void _showLoginDisabledMessage() {
+    final lastAttempt = lastLoginAttempt.value;
+    if (lastAttempt != null) {
+      final now = DateTime.now();
+      final difference = loginTimeoutDuration - now.difference(lastAttempt);
+      final minutesLeft = difference.inMinutes;
+      
+      _showErrorSnackbar(
+        'تم تعطيل التسجيل',
+        'يرجى الانتظار $minutesLeft دقيقة قبل المحاولة مرة أخرى'
       );
-      Get.offAllNamed('/mainScreen');
+    }
+  }
+
+  void _showMaxAttemptsMessage() {
+    _showErrorSnackbar(
+      'عدد محاولات متجاوز',
+      'تم تعطيل التسجيل مؤقتاً بسبب تجاوز عدد المحاولات المسموح بها'
+    );
+  }
+
+  Future<void> _redirectToMainScreen() async {
+    // تأخير بسيط لضمان اكتمال animations
+    await Future.delayed(const Duration(milliseconds: 500));
+    Get.offAllNamed('/mainScreen');
+  }
+
+  // === دوال إضافية ===
+  Future<void> socialLogin(String provider) async {
+    if (!_canAttemptLogin()) {
+      _showLoginDisabledMessage();
+      return;
+    }
+
+    isLoading.value = true;
+    
+    try {
+      print('🌐 بدء تسجيل الدخول بواسطة: $provider');
+      
+      // محاكاة عملية تسجيل الدخول الاجتماعية
+      await Future.delayed(const Duration(seconds: 2));
+      
+      // في التطبيق الحقيقي، هنا سيتم استدعاء API الخاص بالتسجيل الاجتماعي
+      _showSuccessMessage('تم تسجيل الدخول بواسطة $provider');
+      
+      _resetLoginAttempts();
+      await _redirectToMainScreen();
     } catch (error) {
-      Get.snackbar(
-        'خطأ',
-        'فشل تسجيل الدخول بواسطة $provider',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      _showErrorSnackbar(
+        'فشل التسجيل',
+        'فشل تسجيل الدخول بواسطة $provider'
       );
     } finally {
       isLoading.value = false;
@@ -226,37 +421,50 @@ class LoginController extends GetxController {
     Get.toNamed('/register');
   }
 
+  // === Getters ===
   bool get isEmail => isValidEmail(email.value);
-
   bool get isPhone => isValidPhone(email.value);
+  bool get canLogin => !isLoading.value && !isLoginDisabled.value;
+  int get remainingAttempts => maxLoginAttempts - loginAttempts.value;
+  String get inputType => _getInputType();
 
   Future<void> autoLogin() async {
     final MyAppController myAppController = Get.find<MyAppController>();
-    if (myAppController.isLoggedIn) {
-      print('🔑 محاولة تسجيل دخول تلقائي...');
-      Get.offAllNamed('/mainScreen');
+    if (myAppController.isLoggedIn.value) {
+      print('🔑 تحميل تسجيل الدخول التلقائي...');
+      await _redirectToMainScreen();
     }
   }
 
   Future<bool> validateToken() async {
     try {
       final MyAppController myAppController = Get.find<MyAppController>();
-      if (!myAppController.isLoggedIn) {
+      if (!myAppController.isLoggedIn.value) {
         return false;
       }
-      return true;
+      
+      // هنا يمكن إضافة تحقق إضافي من صحة الـ token
+      final token = myAppController.userData['token'];
+      return token != null && token is String && token.isNotEmpty;
     } catch (error) {
-      print('Token validation error: $error');
+      print('❌ خطأ في التحقق من رمز المصادقة: $error');
       return false;
     }
   }
 
-  @override
-  void onClose() {
+  void clearForm() {
     email.value = '';
     password.value = '';
     emailError.value = '';
     passwordError.value = '';
+    emailController.clear();
+    passwordController.clear();
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
     super.onClose();
   }
 }
