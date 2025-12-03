@@ -33,7 +33,7 @@ static Map<String, dynamic> _getBaseHeaders() {
     'Accept': 'application/json',
     'Device-Type': 'MOBILE',
     'Accept-Language': appLanguageController.appLocale.value,
-    'storeId':33
+    'storeId':37
   };
   
   // ✅ إضافة storeId إذا كان موجوداً
@@ -784,5 +784,130 @@ static Future<dynamic> deleteMedia({
 // دالة للحصول على الرابط الأساسي (للاستخدام في عرض الصور)
 static String getBaseUrl() {
   return _getBaseUrl().replaceAll('/api', '');
+}
+static Future<dynamic> getCities({Map<String, dynamic>? queryParameters}) async {
+  return await get(
+    path: '/merchants/cities',
+    queryParameters: queryParameters,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getCity(int id) async {
+  return await get(
+    path: '/merchants/cities/$id',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> createCity(Map<String, dynamic> data) async {
+  return await post(
+    path: '/merchants/cities',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> updateCity(int id, Map<String, dynamic> data) async {
+  return await put(
+    path: '/merchants/cities/$id',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> deleteCity(int id) async {
+  return await delete(
+    path: '/merchants/cities/$id',
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+// دوال المقاطعات (Districts)
+static Future<dynamic> getDistricts({Map<String, dynamic>? queryParameters}) async {
+  return await get(
+    path: '/merchants/districts',
+    queryParameters: queryParameters,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getDistrict(int id) async {
+  return await get(
+    path: '/merchants/districts/$id',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> createDistrict(Map<String, dynamic> data) async {
+  return await post(
+    path: '/merchants/districts',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> updateDistrict(int id, Map<String, dynamic> data) async {
+  return await put(
+    path: '/merchants/districts/$id',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> deleteDistrict(int id) async {
+  return await delete(
+    path: '/merchants/districts/$id',
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+// دوال العملات
+static Future<dynamic> getCurrencies({Map<String, dynamic>? queryParameters}) async {
+  return await get(
+    path: '/merchants/currencies',
+    queryParameters: queryParameters,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+// دالة الحصول على تفاصيل متجر
+// دالة الحصول على تفاصيل متجر
+static Future<dynamic> getStoreDetails(int storeId) async {
+  return await get(
+    path: '/merchants/stores/$storeId',
+    withLoading: false,
+    shouldShowMessage: true,
+  );
+}
+// دالة تحديث متجر (PUT)
+// دالة تحديث متجر (PUT)
+static Future<dynamic> updateStore(int storeId, Map<String, dynamic> data) async {
+  return await post(
+    path: '/merchants/mobile/stores/$storeId',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+// دالة حذف متجر
+static Future<dynamic> deleteStore(int storeId) async {
+  return await delete(
+    path: '/merchants/mobile/stores/$storeId',
+    withLoading: true,
+    shouldShowMessage: true,
+  );
 }
 }

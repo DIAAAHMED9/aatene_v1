@@ -36,6 +36,8 @@ class MediaLibraryController extends GetxController
   DateTime? _lastLoadTime;
   final RxBool _isInitialized = false.obs;
   final RxBool _isAuthChecked = false.obs;
+final RxInt maxSelection = 10.obs;
+
 
   @override
   void onInit() {
@@ -138,7 +140,12 @@ class MediaLibraryController extends GetxController
       _loadMediaWhenAppResumed();
     }
   }
-
+void setMaxSelection(int max) {
+  maxSelection.value = max;
+}
+bool get canSelectMore {
+  return selectedMediaIds.length < maxSelection.value;
+}
   // ========== التحديث التلقائي ==========
   void _startAutoRefresh() {
     _autoRefreshTimer = Timer.periodic(Duration(minutes: 2), (timer) {
@@ -235,9 +242,7 @@ class MediaLibraryController extends GetxController
   }
 
   // ========== دوال الوسائط الأساسية ==========
-  bool get canSelectMore {
-    return selectedMediaIds.length < 10;
-  }
+
 
   void toggleMediaSelection(String mediaId) {
     if (selectedMediaIds.contains(mediaId)) {
@@ -741,27 +746,71 @@ class MediaLibraryController extends GetxController
       );
     }
   }
-
+Future<void> deleteMediaItem(MediaItem media) async {
+  try {
+    isLoading.value = true;
+    
+    // إذا كان الملف محلياً، احذفه فقط من القائمة المؤقتة
+    if (media.isLocal == true) {
+      temporaryMediaItems.remove(media);
+      selectedMediaIds.remove(media.id);
+      print('🗑️ حذف الملف المحلي: ${media.name}');
+      return;
+    }
+    
+    // إذا كان الملف على الخادم، احذفه من الخادم
+    final response = await ApiHelper.deleteMedia(fileName: media.name);
+    
+    if (response != null && response['status'] == true) {
+      // حذف الملف من القائمة
+      uploadedMediaItems.removeWhere((item) => item.id == media.id);
+      selectedMediaIds.remove(media.id);
+      
+      // تحديث التخزين المحلي
+      await _saveMediaToLocalStorage();
+      
+      print('🗑️ حذف الملف من الخادم: ${media.name}');
+      
+      Get.snackbar(
+        'نجاح',
+        'تم حذف الملف بنجاح',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      throw Exception(response?['message'] ?? 'فشل في حذف الملف');
+    }
+  } catch (e) {
+    print('❌ خطأ في حذف الملف: $e');
+    Get.snackbar(
+      'خطأ',
+      'فشل في حذف الملف',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  } finally {
+    isLoading.value = false;
+  }
+}
   List<MediaItem> _getSelectedMediaItems() {
     final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
     return allMedia.where((item) => selectedMediaIds.contains(item.id)).toList();
   }
 
-  String getMediaDisplayUrl(MediaItem media) {
-    if (media.isLocal == true) {
+String getMediaDisplayUrl(MediaItem media) {
+  if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
+    return media.fileUrl!;
+  } else if (media.path.isNotEmpty) {
+    if (media.path.startsWith('http')) {
       return media.path;
-    } else if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
-      return media.fileUrl!;
-    } else if (media.path.isNotEmpty) {
-      if (media.path.startsWith('http')) {
-        return media.path;
-      } else {
-        return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
-      }
+    } else if (media.isLocal == true) {
+      return media.path;
     } else {
-      return '';
+      return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
     }
   }
+  return '';
+}
 
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {

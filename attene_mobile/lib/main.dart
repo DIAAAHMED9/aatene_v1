@@ -20,7 +20,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
+import 'controller/create_store_controller.dart';
 import 'view/Splash/splash.dart';
+import 'view/add new store/choose_type_store/manage_account_store_controller.dart';
 import 'view/login and start/forget_password/forget_password.dart';
 import 'view/login and start/login/login.dart';
 import 'view/login and start/start_page.dart';
@@ -44,7 +46,8 @@ class AppBindings extends Bindings {
     Get.put(LanguageController(), permanent: true);
     
     // ✅ الـ Controllers الرئيسية - بدون تحميل بيانات تلقائي
-    Get.put(BottomSheetController(), permanent: true);
+ Get.lazyPut(() => CreateStoreController(), fenix: true);
+  Get.lazyPut(() => ManageAccountStoreController(), fenix: true);    Get.put(BottomSheetController(), permanent: true);
     Get.put(ProductCentralController(), permanent: true);
     Get.put(ProductVariationController(), permanent: true);
     Get.put(KeywordController(), permanent: true);
