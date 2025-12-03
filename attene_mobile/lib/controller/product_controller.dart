@@ -10,7 +10,6 @@ import 'package:attene_mobile/utlis/sheet_controller.dart';
 class ProductCentralController extends GetxController {
   static ProductCentralController get to => Get.find();
 
-  // === بيانات الخطوة الأولى - المعلومات الأساسية ===
   var productName = ''.obs;
   var productDescription = ''.obs;
   var price = ''.obs;
@@ -18,28 +17,21 @@ class ProductCentralController extends GetxController {
   var selectedCondition = ''.obs;
   var selectedMedia = <MediaItem>[].obs;
 
-  // === بيانات الخطوة الثانية - الكلمات المفتاحية ===
   var keywords = <String>[].obs;
 
-  // === بيانات الخطوة الثالثة - المتغيرات ===
   var variations = <Map<String, dynamic>>[].obs;
 
-  // === بيانات الخطوة الرابعة - المنتجات المرتبطة ===
   var relatedProducts = <Map<String, dynamic>>[].obs;
 
-  // === قائمة الفئات ===
   var categories = <Map<String, dynamic>>[].obs;
   var isLoadingCategories = false.obs;
   var categoriesError = ''.obs;
 
-  // === حالة التحميل ===
   var isSubmitting = false.obs;
   var selectedStore = Rx<Map<String, dynamic>?>(null);
 
-  // ✅ إضافة متغير للقسم المختار
   var selectedSection = Rx<Section?>(null);
 
-  // ✅ إضافة متغير لمنع التكرار
   bool _isUpdatingSection = false;
 
   @override
@@ -48,7 +40,6 @@ class ProductCentralController extends GetxController {
     print('🔄 [PRODUCT CENTRAL CONTROLLER INITIALIZED]');
   }
 
-  // ✅ تحميل الفئات فقط عند الحاجة مع معالجة أفضل
   Future<void> loadCategoriesIfNeeded() async {
     if (categories.isNotEmpty || isLoadingCategories.value) {
       return;
@@ -56,7 +47,6 @@ class ProductCentralController extends GetxController {
     await loadCategories();
   }
 
-  // ✅ تحسين جلب الفئات مع التحقق من تسجيل الدخول
   Future<void> loadCategories() async {
     try {
       final MyAppController myAppController = Get.find<MyAppController>();
@@ -93,7 +83,6 @@ class ProductCentralController extends GetxController {
     }
   }
 
-  // ✅ إعادة تحميل الفئات
   Future<void> reloadCategories() async {
     categories.clear();
     await loadCategories();
@@ -105,7 +94,6 @@ class ProductCentralController extends GetxController {
     printDataSummary();
   }
 
-  // ✅ تحديث: إضافة معلمة section
   void updateBasicInfo({
     required String name,
     required String description,
@@ -152,7 +140,6 @@ class ProductCentralController extends GetxController {
     print('🔗 [RELATED PRODUCTS UPDATED]: ${products.length} منتج مرتبط');
   }
 
-  // ✅ محدث: التحقق من اكتمال المعلومات الأساسية بما فيها القسم
   bool isBasicInfoComplete() {
     return productName.isNotEmpty &&
         productDescription.isNotEmpty &&
@@ -162,7 +149,6 @@ class ProductCentralController extends GetxController {
         selectedSection.value != null;
   }
 
-  // ✅ **الحل النهائي**: دالة submitProduct مع إصلاحات كاملة
   Future<Map<String, dynamic>> submitProduct() async {
     try {
       isSubmitting(true);
@@ -178,29 +164,24 @@ class ProductCentralController extends GetxController {
    المنتجات المرتبطة: ${relatedProducts.length}
 ''');
 
-      // ✅ التحقق من وجود قسم مطلوب
       if (selectedSection.value == null) {
         return {
-          'success': false, 
+          'success': false,
           'message': 'يرجى اختيار قسم للمنتج'
         };
       }
 
-      // ✅ تحديث بيانات الاختلافات أولاً
       _updateVariationsData();
 
-      // ✅ الحصول على بيانات المتغيرات
       final variationController = Get.find<ProductVariationController>();
       final variationsData = variationController.prepareVariationsForApi();
 
       print('🎯 [VARIATIONS DATA PREPARED]: ${variationsData.length} متغير');
 
-      // ✅ تحضير البيانات للإرسال بالهيكل الصحيح
       final productData = await _prepareProductData(variationsData);
 
       print('📤 [PRODUCT DATA TO SEND - FINAL]: ${jsonEncode(productData)}');
 
-      // ✅ إرسال الطلب
       final response = await ApiHelper.post(
         path: '/merchants/products',
         body: productData,
@@ -213,7 +194,6 @@ class ProductCentralController extends GetxController {
         final product = response['data']?[0];
         print('✅ [PRODUCT CREATED SUCCESSFULLY]: ${product?['name']}');
         
-        // ✅ إعادة تعيين البيانات بعد النجاح
         _resetAfterSuccess(variationController);
         
         return {'success': true, 'data': response['data']};
@@ -230,9 +210,7 @@ class ProductCentralController extends GetxController {
     }
   }
 
-  // ✅ **الحل النهائي**: تحضير بيانات المنتج بدون مشاكل الصور
   Future<Map<String, dynamic>> _prepareProductData(List<Map<String, dynamic>> variationsData) async {
-    // ✅ الهيكل الأساسي للمنتج - بدون صور
     final productData = <String, dynamic>{
       'section_id': selectedSection.value!.id,
       'name': productName.value.trim(),
@@ -251,39 +229,24 @@ class ProductCentralController extends GetxController {
     "cross_sells_due_date": "2025-02-02"
     };
 
-    // ✅ **الحل: إرسال معرفات الوسائط فقط**
-    
     if (selectedMedia.isNotEmpty) {
-      /**
-       * 
-        "cover": "images/lAh7E2s8XMCP1VGghBWE0FMkXe5WTAOSCxmzvkKR.jpg",
-        "gallary": [
-            "gallery/Ffj4GWbIbgZOCJDNt9t4T93pGLvVdCTwrwyCYIoW.jpg",
-            "gallery/1Zl4RDER5a7BqxwkGmVCqDW4mrI6dHYSWsbO4BM5.jpg",
-            "gallery/QgHghJAVRR0It0eJTBSujhWCHp0mpeU8pooSNKDj.jpg"
-        ],
 
-       */
           final firstMedia = selectedMedia.first;
 
       print('media selctor :: ${selectedMedia.map((media) => media.fileUrl).toList()}');
       productData['cover'] = _getFilePath(firstMedia.fileUrl!);
-      // map((media) => media.path).toList();
     productData['gallary'] = selectedMedia.map((media) => _getFilePath(media.fileUrl!)).toList();
-      // productData['media'] = selectedMedia.map((media) => media.path).toList();
     }
    print('🖼️ [MEDIA PATHS FORMATTED]:');
     print('   Cover: ${productData['cover']}');
     print('   Gallary: ${productData['gallary']}');
   
-    // ✅ إضافة tags
     if (keywords.isNotEmpty) {
       productData['tags'] = keywords;
     } else {
       productData['tags'] = [];
     }
 
-    // ✅ إضافة نوع المنتج والاختلافات
     if (variationsData.isNotEmpty) {
       productData['type'] = 'variation';
       productData['variations'] = _prepareVariationsData(variationsData);
@@ -292,13 +255,12 @@ class ProductCentralController extends GetxController {
       productData['variations'] = [];
     }
 
-    // ✅ إضافة related_products
     if (relatedProducts.isNotEmpty) {
       productData['crossSells'] = relatedProducts.map((p) => p['id']).toList();
       productData['cross_sells_price'] = double.parse(price.value);
       
       final dueDate = DateTime.now().add(Duration(days: 30));
-      productData['cross_sells_due_date'] = 
+      productData['cross_sells_due_date'] =
           '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}';
     } else {
       productData['crossSells'] = [];
@@ -308,8 +270,6 @@ class ProductCentralController extends GetxController {
     return productData;
   }
 
-  // ✅ **الحل النهائي**: تحضير بيانات الاختلافات بدون صور
-// ✅ **الحل النهائي**: تحضير بيانات الاختلافات مع المسارات الصحيحة
 List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> variationsData) {
   return variationsData.map((variation) {
     final variationData = {
@@ -317,7 +277,6 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
       'attributeOptions': _prepareAttributeOptions(variation['attributeOptions'] ?? []),
     };
     
-    // ✅ إذا كانت هناك صورة للمتغير، أرسل مسارها فقط
     if (variation['image'] != null && variation['image'].toString().isNotEmpty) {
       variationData['image'] = _getFilePath(variation['image'].toString());
     }
@@ -326,7 +285,6 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
   }).toList();
 }
 
-  // ✅ **الحل النهائي**: تحضير attributeOptions
   List<Map<String, dynamic>> _prepareAttributeOptions(List<dynamic> attributeOptions) {
     final List<Map<String, dynamic>> result = [];
     
@@ -357,15 +315,12 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     return result;
   }
 
-  // ✅ تحديث بيانات الاختلافات
   void _updateVariationsData() {
     final variationController = Get.find<ProductVariationController>();
     
-    // ✅ تنظيف صور الاختلافات لتجنب الأخطاء
     for (final variation in variationController.variations) {
       if (variation.images.isNotEmpty) {
-        // إذا كانت الصورة مسار افتراضي، امسحها
-        if (variation.images.first.contains('variation_default.jpg') || 
+        if (variation.images.first.contains('variation_default.jpg') ||
             variation.images.first.isEmpty) {
           variation.images.clear();
         }
@@ -375,7 +330,6 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     print('✅ [VARIATIONS UPDATED]: Images cleaned for API');
   }
 
-  // ✅ تحليل رسالة الخطأ
   String _parseErrorMessage(Map<String, dynamic>? response) {
     if (response == null) {
       return 'فشل في الاتصال بالخادم';
@@ -393,7 +347,6 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     return response['message'] ?? 'فشل في إضافة المنتج';
   }
 
-  // ✅ إعادة التعيين بعد النجاح
   void _resetAfterSuccess(ProductVariationController variationController) {
     reset();
     variationController.toggleHasVariations(false);
@@ -401,13 +354,12 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     variationController.variations.clear();
   }
 
-  // ✅ دالة مساعدة لتصحيح صيغة condition
   String _formatCondition(String condition) {
     switch (condition) {
       case 'جديد':
         return 'new';
       case 'مستعمل':
-        return 'used'; 
+        return 'used';
       case 'مجدول':
         return 'refurbished';
       default:
@@ -428,7 +380,6 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     return '${productDescription.value.substring(0, 100)}...';
   }
 
-  // ✅ إعادة تعيين كافة البيانات
   void reset() {
     productName('');
     productDescription('');
@@ -444,7 +395,6 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     print('🔄 [PRODUCT DATA RESET]');
   }
 
-  // ✅ عرض ملخص البيانات مع القسم
   void printDataSummary() {
     final variationController = Get.find<ProductVariationController>();
     
@@ -464,14 +414,12 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
 ''');
   }
 
-  // ✅ إصلاح: دالة لتحديث القسم المختار مع منع التكرار
 void updateSelectedSection(Section section) {
   if (_isUpdatingSection) return;
   
   _isUpdatingSection = true;
   
   try {
-    // ✅ التحقق مما إذا كان القسم هو نفسه المحدد مسبقاً
     if (selectedSection.value?.id == section.id) {
       print('⚠️ [SECTION ALREADY UPDATED]: ${section.name} (ID: ${section.id})');
       return;
@@ -480,26 +428,21 @@ void updateSelectedSection(Section section) {
     selectedSection(section);
     print('✅ [SECTION UPDATED]: ${section.name} (ID: ${section.id})');
     
-    // ✅ تحديث BottomSheetController أيضاً
     final bottomSheetController = Get.find<BottomSheetController>();
     bottomSheetController.selectSection(section);
   } finally {
-    // ✅ استخدام تأخير بسيط لمنع التكرار السريع
     Future.delayed(Duration(milliseconds: 100), () {
       _isUpdatingSection = false;
     });
   }
 }
 
-  // ✅ دالة اختبار للبيانات الصحيحة
   Future<Map<String, dynamic>> testWithCorrectStructure() async {
     try {
       print('🧪 [TESTING WITH CORRECT STRUCTURE]');
       
-      // ✅ بيانات تجريبية تطابق الهيكل الصحيح تماماً
       final testData = {
         "section_id": 18,
-        // "sku": "TEST_SKU_${DateTime.now().millisecondsSinceEpoch}",
         "name": "منتج تجريبي",
         "price": 100.0,
         "condition": "new",
@@ -531,9 +474,6 @@ void updateSelectedSection(Section section) {
       return {'success': false, 'message': '❌ خطأ في الاختبار: $e'};
     }
   }
-  // ✅ استخراج مسار الملف فقط من URL الوسائط
-// ✅ تحويل مسارات التخزين إلى المسارات المتوقعة من الخادم
-// ✅ إزالة الجزء /storage/ من بداية المسار
 String _getFilePath(String url) {
   try {
     final uri = Uri.parse(url);
@@ -541,22 +481,20 @@ String _getFilePath(String url) {
     
     print('🔄 [PATH CONVERSION]: Original: $path');
     
-    // إزالة /storage/ من البداية إذا موجود
     if (path.startsWith('/storage/')) {
       final newPath = path.replaceFirst('/storage/', '');
       print('   → After removing /storage/: $newPath');
       return newPath;
     }
     
-    // إذا كان المسار يبدأ بـ /gallery/ أو /images/ أزل الـ /
     if (path.startsWith('/gallery/')) {
-      final newPath = path.substring(1); // إزالة أول /
+      final newPath = path.substring(1);
       print('   → After removing first slash: $newPath');
       return newPath;
     }
     
     if (path.startsWith('/images/')) {
-      final newPath = path.substring(1); // إزالة أول /
+      final newPath = path.substring(1);
       print('   → After removing first slash: $newPath');
       return newPath;
     }
@@ -568,13 +506,12 @@ String _getFilePath(String url) {
     return url;
   }
 }
-// ✅ استخراج اسم الملف فقط (بدون المسار الكامل)
 String _getFileName(String url) {
   try {
     final uri = Uri.parse(url);
     final pathSegments = uri.pathSegments;
     if (pathSegments.isNotEmpty) {
-      return pathSegments.last; // يعيد اسم الملف فقط مثل: xxx.jpg
+      return pathSegments.last;
     }
     return url;
   } catch (e) {

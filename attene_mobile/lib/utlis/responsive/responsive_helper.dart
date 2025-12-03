@@ -6,7 +6,7 @@ class VariationResponsive {
   static bool get isMobile => Get.width < 600;
   static bool get isTablet => Get.width >= 600 && Get.width < 1200;
   static bool get isDesktop => Get.width >= 1200;
-  static bool get isLandscape => Get.context != null ? 
+  static bool get isLandscape => Get.context != null ?
       MediaQuery.of(Get.context!).orientation == Orientation.landscape : false;
   
   static double get cardPadding {

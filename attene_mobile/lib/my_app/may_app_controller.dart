@@ -25,15 +25,12 @@ class MyAppController extends GetxController {
     print('🚀 Starting app initialization...');
     
     try {
-      // تهيئة Firebase أولاً
       print('📱 Initializing Firebase...');
       await Future.delayed(Duration(milliseconds: 500));
       
-      // تحميل التفضيلات المحلية
       print('💾 Loading user preferences...');
       await _loadUserPreferences();
       
-      // التحقق من حالة تسجيل الدخول
       print('🔐 Checking authentication...');
       _checkLoginStatus();
       
@@ -133,7 +130,13 @@ class MyAppController extends GetxController {
   String? get token => userData['token'];
   
   bool get isLoading => _isLoading.value;
-
+Future<void> checkAndRedirectIfLoggedIn() async {
+  if (isLoggedIn.value && !Get.currentRoute.contains('/mainScreen')) {
+    print('🔄 المستخدم مسجل دخول، التوجيه إلى الشاشة الرئيسية...');
+    await Future.delayed(const Duration(milliseconds: 500));
+    Get.offAllNamed('/mainScreen');
+  }
+}
   @override
   void onClose() {
     noInternetWaitingRequests.clear();

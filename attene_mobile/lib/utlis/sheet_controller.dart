@@ -37,7 +37,6 @@ class BottomSheetController extends GetxController {
   
   final bool isRTL = LanguageUtils.isRTL;
 
-  // === إدارة السمات ===
   final RxList<ProductAttribute> _tempAttributes = <ProductAttribute>[].obs;
   final Rx<ProductAttribute?> _currentEditingAttribute = Rx<ProductAttribute?>(null);
   final RxString _attributeSearchQuery = ''.obs;
@@ -49,37 +48,31 @@ class BottomSheetController extends GetxController {
   final RxInt _attributeTabIndex = 0.obs;
   final RxList<ProductAttribute> _selectedAttributes = <ProductAttribute>[].obs;
 
-  // === إدارة الأقسام ===
   final RxList<Section> _sections = <Section>[].obs;
   final RxBool _isLoadingSections = false.obs;
   final RxString _sectionsErrorMessage = ''.obs;
   final Rx<Section?> _selectedSection = Rx<Section?>(null);
   final RxList<Section> _filteredSections = <Section>[].obs;
 
-  // === Stream Controllers ===
   final _sectionSearchController = StreamController<String>.broadcast();
   final MyAppController _myAppController = Get.find<MyAppController>();
 final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
 RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributesRx;
-// ✅ تحديث دالة updateSelectedAttributes لتحديث الـ Rx أيضاً
 void updateSelectedAttributes(List<ProductAttribute> attributes) {
   _selectedAttributes.assignAll(attributes);
-  _selectedAttributesRx.assignAll(attributes); // ✅ تحديث الـ Rx أيضاً
+  _selectedAttributesRx.assignAll(attributes);
   print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
 }
 void _saveAttributesAndClose() {
   try {
     final productVariationController = Get.find<ProductVariationController>();
     
-    // ✅ نقل السمات المختارة إلى ProductVariationController
     productVariationController.updateSelectedAttributes(_selectedAttributes.toList());
     
-    // ✅ إغلاق الـ BottomSheet
     Get.back();
     
-    // ✅ إظهار رسالة نجاح
     Get.snackbar(
-      'نجاح', 
+      'نجاح',
       'تم حفظ السمات والصفات بنجاح',
       backgroundColor: Colors.green,
       colorText: Colors.white,
@@ -91,7 +84,7 @@ void _saveAttributesAndClose() {
   } catch (e) {
     print('❌ [ERROR SAVING ATTRIBUTES]: $e');
     Get.snackbar(
-      'خطأ', 
+      'خطأ',
       'حدث خطأ أثناء حفظ السمات',
       backgroundColor: Colors.red,
       colorText: Colors.white,
@@ -101,15 +94,15 @@ void _saveAttributesAndClose() {
   @override
   void onInit() {
     super.onInit();
-    _initializeAttributeListeners();
+init();
+  }
+void  init(){
+        _initializeAttributeListeners();
     _loadAttributesFromApi();
     _initializeSectionSearch();
     _loadSections();
   }
 
-
-
-  // === دوال إدارة الأقسام مع API ===
   Future<void> _loadSections() async {
     try {
       if (!_isUserAuthenticated()) {
@@ -139,7 +132,6 @@ void _saveAttributesAndClose() {
     }
   }
 
-  // ✅ محدث: جلب السمات من API
   Future<void> _loadAttributesFromApi() async {
     try {
       print('📡 [LOADING ATTRIBUTES FROM API - BOTTOM SHEET]');
@@ -168,7 +160,6 @@ void _saveAttributesAndClose() {
     }
   }
 
-  // === دوال التهيئة ===
   void _initializeAttributeListeners() {
     _attributeSearchController.addListener(() {
       _attributeSearchQuery.value = _attributeSearchController.text;
@@ -193,14 +184,13 @@ void _saveAttributesAndClose() {
     if (searchText.isEmpty) {
       _filteredSections.assignAll(_sections);
     } else {
-      final filtered = _sections.where((section) => 
+      final filtered = _sections.where((section) =>
         section.name.toLowerCase().contains(searchText.toLowerCase())
       ).toList();
       _filteredSections.assignAll(filtered);
     }
   }
 
-  // === دوال إدارة الأقسام مع API ===
   Future<void> loadSections() async {
     try {
       if (!_isUserAuthenticated()) {
@@ -230,7 +220,6 @@ void _saveAttributesAndClose() {
     }
   }
 
-  // ✅ إضافة دالة getSections المطلوبة
   List<Section> getSections() {
     return _sections.toList();
   }
@@ -292,15 +281,12 @@ void selectSection(Section section) {
   _selectedSection.value = section;
   _selectedSectionName.value = section.name;
   
-  // ✅ نقل القسم المختار إلى ProductCentralController
   final productController = Get.find<ProductCentralController>();
   productController.updateSelectedSection(section);
   
   print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
 }
 
-
-  // ✅ تحديث دالة openAddProductScreen للتحقق من القسم
 void openAddProductScreen() {
   if (!_isUserAuthenticated()) {
     _showLoginRequiredMessage();
@@ -330,7 +316,7 @@ void openAddProductScreen() {
 
   bool get isSectionNameExists {
     if (_newSectionName.value.isEmpty) return false;
-    return _sections.any((section) => 
+    return _sections.any((section) =>
       section.name.toLowerCase() == _newSectionName.value.trim().toLowerCase()
     );
   }
@@ -350,7 +336,6 @@ void openAddProductScreen() {
     );
   }
 
-  // === دوال فتح الـ Bottom Sheets ===
 void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, ProductAttribute? attribute}) {
   _currentType.value = type;
   
@@ -386,7 +371,6 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     ),
     enableDrag: true,
   ).then((_) {
-    // ✅ عند إغلاق البوتوم شيت، نلغي الاختيار دائماً
     if (_currentType.value == BottomSheetType.manageSections) {
       clearSectionSelection();
     }
@@ -407,7 +391,6 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     _attributeTabIndex.value = 0;
   }
 
-  // === دوال فتح النوافذ المنبثقة ===
   void openManageAttributes(List<ProductAttribute> attributes) {
     showBottomSheet(BottomSheetType.manageAttributes, attributes: attributes);
   }
@@ -441,9 +424,8 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     showBottomSheet(BottomSheetType.addNewSection);
   }
 
-
   void _navigateToAddProductStepper() {
-    Get.back(); // إغلاق أي BottomSheet مفتوح
+    Get.back();
     Get.to(
       () => DemoStepperScreen(),
       transition: Transition.cupertino,
@@ -456,7 +438,6 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
   void openMultiSelect() => showBottomSheet(BottomSheetType.multiSelect);
   void openSingleSelect() => showBottomSheet(BottomSheetType.singleSelect);
 
-  // === بناء واجهة الـ Bottom Sheet ===
   Widget _buildBottomSheetContent() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -517,7 +498,7 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     Get.back();
   }
   bool get _shouldShowActions {
-    return _currentType.value != BottomSheetType.manageSections && 
+    return _currentType.value != BottomSheetType.manageSections &&
            _currentType.value != BottomSheetType.addNewSection &&
            _currentType.value != BottomSheetType.manageAttributes &&
            _currentType.value != BottomSheetType.addAttribute &&
@@ -626,7 +607,6 @@ Widget buildManageSectionsContent() {
         ),
         const SizedBox(height: 20),
 
-        // الحالة 1: لا توجد أقسام - عرض زر الإضافة فقط
         if (!hasSections) ...[
           AateneButton(
             color: AppColors.primary400,
@@ -640,7 +620,6 @@ Widget buildManageSectionsContent() {
           ),
         ],
 
-        // الحالة 2: توجد أقسام - عرض البحث والقائمة والزرين
         if (hasSections) ...[
           TextFiledAatene(
             heightTextFiled: 50,
@@ -682,11 +661,9 @@ Widget buildManageSectionsContent() {
               Expanded(
                 child: Obx(() => ElevatedButton(
                   onPressed: hasSelectedSection ? () {
-                    // ✅ حفظ القسم المختار مؤقتاً قبل الانتقال
                     final selectedSection = _selectedSection.value;
                     Get.back();
                     
-                    // ✅ إلغاء الاختيار بعد الانتقال
                     Future.delayed(const Duration(milliseconds: 300), () {
                       clearSectionSelection();
                       _navigateToAddProductStepper();
@@ -694,8 +671,8 @@ Widget buildManageSectionsContent() {
                   } : null,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    backgroundColor: hasSelectedSection 
-                        ? AppColors.primary400 
+                    backgroundColor: hasSelectedSection
+                        ? AppColors.primary400
                         : Colors.grey[400],
                   ),
                   child: const Text(
@@ -771,7 +748,7 @@ Widget buildManageSectionsContent() {
         margin: const EdgeInsets.symmetric(vertical: 4),
         child: Container(
           decoration: BoxDecoration(
-            border: isSelected 
+            border: isSelected
                 ? Border.all(color: AppColors.primary400, width: 2)
                 : null,
             borderRadius: BorderRadius.circular(8),
@@ -912,8 +889,8 @@ Widget buildManageSectionsContent() {
             const SizedBox(width: 10),
             Expanded(
               child: Obx(() => ElevatedButton(
-                onPressed: _newSectionName.isNotEmpty && !isSectionNameExists 
-                    ? _addNewSection 
+                onPressed: _newSectionName.isNotEmpty && !isSectionNameExists
+                    ? _addNewSection
                     : null,
                 style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
                 child: const Text('إضافة'),
@@ -934,7 +911,6 @@ Widget buildManageSectionsContent() {
     }
   }
 
-  // === واجهات إدارة السمات ===
   Widget _buildManageAttributesContent() {
     return Column(
       children: [
@@ -949,7 +925,6 @@ Widget buildManageSectionsContent() {
             ],
           ),
         ),
-        // ✅ نقل زر الحفظ إلى هنا ليكون ظاهراً دائماً
         _buildSaveButton(),
       ],
     );
@@ -1089,7 +1064,7 @@ Widget buildManageSectionsContent() {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: InkWell(
-                      onTap: _newAttributeName.value.trim().isNotEmpty 
+                      onTap: _newAttributeName.value.trim().isNotEmpty
                           ? _addNewAttribute
                           : null,
                       borderRadius: BorderRadius.circular(20),
@@ -1097,8 +1072,8 @@ Widget buildManageSectionsContent() {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: _newAttributeName.value.trim().isNotEmpty 
-                              ? AppColors.primary400 
+                          color: _newAttributeName.value.trim().isNotEmpty
+                              ? AppColors.primary400
                               : Colors.grey[400],
                           shape: BoxShape.circle,
                         ),
@@ -1120,9 +1095,9 @@ Widget buildManageSectionsContent() {
   }
 
   Widget _buildAttributesList() {
-    final filteredAttributes = _attributeSearchQuery.isEmpty 
-        ? _tempAttributes 
-        : _tempAttributes.where((attribute) => 
+    final filteredAttributes = _attributeSearchQuery.isEmpty
+        ? _tempAttributes
+        : _tempAttributes.where((attribute) =>
             attribute.name.toLowerCase().contains(_attributeSearchQuery.value.toLowerCase())
           ).toList();
 
@@ -1306,7 +1281,7 @@ Widget buildManageSectionsContent() {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: InkWell(
-                      onTap: _newAttributeValue.value.trim().isNotEmpty 
+                      onTap: _newAttributeValue.value.trim().isNotEmpty
                           ? _addNewAttributeValue
                           : null,
                       borderRadius: BorderRadius.circular(20),
@@ -1314,8 +1289,8 @@ Widget buildManageSectionsContent() {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: _newAttributeValue.value.trim().isNotEmpty 
-                              ? AppColors.primary400 
+                          color: _newAttributeValue.value.trim().isNotEmpty
+                              ? AppColors.primary400
                               : Colors.grey[400],
                           shape: BoxShape.circle,
                         ),
@@ -1454,13 +1429,11 @@ Widget buildManageSectionsContent() {
             ),
           ),
           const SizedBox(width: 10),
-          // ❌ إزالة زر الحفظ من هنا
         ],
       ),
     );
   }
 
-  // ✅ جديد: زر الحفظ الرئيسي
   Widget _buildSaveButton() {
     return Container(
       padding: EdgeInsets.only(top: 16),
@@ -1573,7 +1546,6 @@ Widget buildManageSectionsContent() {
     );
   }
 
-  // === دوال إدارة السمات ===
   void _toggleAttributeSelection(ProductAttribute attribute) {
     final isCurrentlySelected = _selectedAttributes.any((attr) => attr.id == attribute.id);
     
@@ -1654,9 +1626,7 @@ Widget buildManageSectionsContent() {
   void _toggleAttributeValueSelection(AttributeValue value) {
     value.isSelected.toggle();
   }
-// في BottomSheetController - إضافة هذه الدوال في النهاية قبل onClose()
 
-// === دوال بناء المحتوى للأنواع المختلفة ===
 Widget _buildFilterContent() {
   return Column(
     children: [
@@ -1730,11 +1700,8 @@ Widget _buildSingleSelectContent() {
   );
 }
 
-// ✅ إضافة getter لـ sectionsRx
 RxList<Section> get sectionsRx => _sections;
-  // ✅ محدث: دالة حفظ السمات والتطبيق
 
-  // === دوال الحصول على البيانات ===
   List<ProductAttribute> getSelectedAttributes() {
     return _selectedAttributes.toList();
   }
@@ -1747,7 +1714,6 @@ RxList<Section> get sectionsRx => _sections;
     _tempAttributes.assignAll(attributes);
   }
 
-  // === Getters ===
   BottomSheetType get currentType => _currentType.value;
   List<String> get selectedOptions => _selectedOptions.toList();
   String get selectedOption => _selectedOption.value;

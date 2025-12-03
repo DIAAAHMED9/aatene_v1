@@ -1,217 +1,502 @@
-import 'package:attene_mobile/component/aatene_button/aatene_button_with_arrow_icon.dart';
-import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:attene_mobile/utlis/language/language_utils.dart';
 
-import '../../../utlis/colors/app_color.dart';
-import '../../../utlis/language/language_utils.dart';
+import '../../../controller/create_store_controller.dart';
 
-class AddShippingMethod extends StatefulWidget {
-  const AddShippingMethod({super.key});
+class ShippingPricingSettings extends StatefulWidget {
+  final String companyName;
+  final String companyPhone;
+  final List<Map<String, dynamic>> selectedCities;
+
+  const ShippingPricingSettings({
+    super.key,
+    required this.companyName,
+    required this.companyPhone,
+    required this.selectedCities,
+  });
 
   @override
-  State<AddShippingMethod> createState() => _AddShippingMethodState();
+  State<ShippingPricingSettings> createState() => _ShippingPricingSettingsState();
 }
 
-class _AddShippingMethodState extends State<AddShippingMethod> {
-  bool _isChecked = false;
+class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
+  final CreateStoreController controller = Get.find<CreateStoreController>();
+  late List<TextEditingController> daysControllers;
+  late List<TextEditingController> priceControllers;
+  
+  final List<String> citiesList = [
+    'القدس',
+    'رام الله',
+    'بيت لحم',
+    'الخليل',
+    'نابلس',
+    'أريحا',
+    'غزة',
+    'خان يونس',
+    'رفح',
+    'طولكرم',
+    'قلقيلية',
+    'سلفيت',
+    'طوباس',
+    'جنين',
+  ];
+  
+  String? selectedNewCity;
+  bool showAddCityField = false;
+  List<Map<String, dynamic>> workingCities = [];
+
+  @override
+  void initState() {
+    super.initState();
+    
+    workingCities = List.from(widget.selectedCities);
+    
+    daysControllers = List.generate(
+      workingCities.length,
+      (index) => TextEditingController(text: workingCities[index]['days']?.toString() ?? '')
+    );
+    
+    priceControllers = List.generate(
+      workingCities.length,
+      (index) => TextEditingController(text: workingCities[index]['price']?.toString() ?? '')
+    );
+  }
+
+  @override
+  void dispose() {
+    for (var controller in daysControllers) {
+      controller.dispose();
+    }
+    for (var controller in priceControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _addCity(String cityName) {
+    setState(() {
+      final newCity = {
+        'city_id': workingCities.length + 100,
+        'name': cityName,
+        'type': 'custom',
+        'days': 0,
+        'price': 0.0,
+      };
+      
+      workingCities.add(newCity);
+      daysControllers.add(TextEditingController(text: ''));
+      priceControllers.add(TextEditingController(text: ''));
+    });
+  }
+
+  void _removeCity(int index) {
+    setState(() {
+      workingCities.removeAt(index);
+      daysControllers.removeAt(index).dispose();
+      priceControllers.removeAt(index).dispose();
+    });
+  }
+
+  void _updateCityData(int index, String days, String price) {
+    setState(() {
+      workingCities[index]['days'] = int.tryParse(days) ?? 0;
+      workingCities[index]['price'] = double.tryParse(price) ?? 0.0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
         title: Text(
-          "إضافة شركة شحن جديدة",
+          "إعدادات التسعير",
           style: TextStyle(
-            color: AppColors.neutral100,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 18,
           ),
         ),
+        centerTitle: false,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () => Get.back(),
           icon: Container(
-            width: 50,
-            height: 50,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(25),
+              color: AppColors.neutral700,
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary500),
+            child: Icon(Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                color: Colors.black),
           ),
         ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
-            spacing: 16,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("اسم ملف الشحن"),
-              TextFiledAatene(isRTL: isRTL, hintText: "اكتب اسم الشركة هنا"),
-              Text("شركة الشحن"),
-              TextFiledAatene(isRTL: isRTL, hintText: "اسم شركة الشحن"),
-              Text("رقم الهاتف"),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "01289022985",
-                prefixIcon: Icon(Icons.phone_outlined),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Container(
-                    width: 60,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColors.primary100,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "المدن التي ترسل لها المنتجات؟",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
                     ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showAddCityField = !showAddCityField;
+                        if (!showAddCityField) {
+                          selectedNewCity = null;
+                        }
+                      });
+                    },
                     child: Row(
                       children: [
-                        Text(
-                          "(+970)",
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary400,
-                          ),
-                        ),
                         Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 24,
-                          color: AppColors.neutral100,
+                          showAddCityField ? Icons.remove : Icons.add,
+                          color: AppColors.primary500,
+                          size: 20,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          "إضافة منطقة جديدة",
+                          style: TextStyle(
+                            color: AppColors.primary500,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                ],
+              ),
+              SizedBox(height: 20),
+              if (showAddCityField) ...[
+                SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "المدينة",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.neutral300),
+                        borderRadius: BorderRadius.circular(25),
+                        color: Colors.white,
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedNewCity,
+                          isExpanded: true,
+                          hint: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              "اختر المدينة",
+                              style: TextStyle(
+                                color: AppColors.neutral400,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: Icon(Icons.arrow_drop_down,
+                                color: AppColors.primary500,
+                                size: 24),
+                          ),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedNewCity = newValue;
+                            });
+                          },
+                          items: citiesList.map<DropdownMenuItem<String>>((String city) {
+                            return DropdownMenuItem<String>(
+                              value: city,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(city),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              showAddCityField = false;
+                              selectedNewCity = null;
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          ),
+                          child: Text(
+                            "إلغاء",
+                            style: TextStyle(
+                              color: AppColors.neutral600,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: selectedNewCity != null ? () {
+                            _addCity(selectedNewCity!);
+                            setState(() {
+                              showAddCityField = false;
+                              selectedNewCity = null;
+                            });
+                          } : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary500,
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            "إضافة",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              Divider(color: AppColors.neutral900),
-              Text(
-                "المدن التي ترسل لها المنتجات؟",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isChecked,
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        _isChecked = newValue ?? false;
-                      });
-                    },
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateProperty.resolveWith<Color>((
-                      Set<MaterialState> states,
-                    ) {
-                      if (states.contains(MaterialState.selected)) {
-                        return AppColors
-                            .primary400; // Background color when selected
-                      }
-                      return Colors.white; // Background color when unselected
-                    }),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(3),
-                    ),
-                    side: BorderSide(
-                      color: Colors.grey, // Border color when unselected
-                      width: 1.0,
-                    ),
-                    // Color when focused
+                SizedBox(height: 16),
+              ],
+              
+              ...workingCities.asMap().entries.map((entry) {
+                int index = entry.key;
+                Map<String, dynamic> city = entry.value;
+                
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical:20 ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                color: AppColors.primary500,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                city['name'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _removeCity(index);
+                            },
+                            icon: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: Colors.red.shade500,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      SizedBox(height: 16),
+                      
+                      Text(
+                        "موعد التسليم",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      TextFiledAatene(
+                        isRTL: isRTL,
+                        hintText: "عدد الأيام",
+                        controller: daysControllers[index],
+                        onChanged: (value) {
+                          _updateCityData(index, value, priceControllers[index].text);
+                        },
+                      ),
+                      
+                      SizedBox(height: 16),
+                      
+                      Text(
+                        "سعر التوصيل",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      TextFiledAatene(
+                        isRTL: isRTL,
+                        hintText: "السعر",
+                        controller: priceControllers[index],
+                        prefixIcon: Icon(Icons.attach_money, color: AppColors.neutral500),
+                        onChanged: (value) {
+                          _updateCityData(index, daysControllers[index].text, value);
+                        },
+                      ),
+                    ],
                   ),
-                  Text(
-                    "القدس وضواحيها",
-                    style: TextStyle(fontSize: 16, ),
-                  ),
-                ],
+                );
+              }).toList(),
+              
+              SizedBox(height: 32),
+              AateneButton(
+                buttonText: 'حفظ ملف التوصيل',
+                textColor: Colors.white,
+                color: AppColors.primary500,
+                borderColor: AppColors.primary500,
+                raduis: 12,
+                onTap: () {
+                  _saveShippingData();
+                },
               ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isChecked,
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        _isChecked = newValue ?? false;
-                      });
-                    },
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateProperty.resolveWith<Color>((
-                      Set<MaterialState> states,
-                    ) {
-                      if (states.contains(MaterialState.selected)) {
-                        return AppColors
-                            .primary400; // Background color when selected
-                      }
-                      return Colors.white; // Background color when unselected
-                    }),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(3),
-                    ),
-                    side: BorderSide(
-                      color: Colors.grey, // Border color when unselected
-                      width: 1.0,
-                    ),
-                    // Color when focused
-                  ),
-                  Text(
-                    "القدس وضواحيها",
-                    style: TextStyle(fontSize: 16, ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isChecked,
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        _isChecked = newValue ?? false;
-                      });
-                    },
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateProperty.resolveWith<Color>((
-                      Set<MaterialState> states,
-                    ) {
-                      if (states.contains(MaterialState.selected)) {
-                        return AppColors
-                            .primary400; // Background color when selected
-                      }
-                      return Colors.white; // Background color when unselected
-                    }),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(3),
-                    ),
-                    side: BorderSide(
-                      color: Colors.grey, // Border color when unselected
-                      width: 1.0,
-                    ),
-                    // Color when focused
-                  ),
-                  Text(
-                    "القدس وضواحيها",
-                    style: TextStyle(fontSize: 16, ),
-                  ),
-                ],
-              ),
-              Row(
-                spacing: 5,
-                children: [
-                  Icon(Icons.add_box_outlined, color: AppColors.primary400,),
-                  Text("إضافة منطقة جديدة غير موجودة", style: TextStyle(
-                    color: AppColors.primary400,
-                    fontWeight: FontWeight.bold
-                  ),)
-                ],
-              ),
-              Text("المدينة"),
-              TextFiledAatene(isRTL: isRTL, hintText: "الشمال", suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30,),),
-
-              AateneButtonWithIcon(buttonText: "التالي"),
+              SizedBox(height: 20),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void _saveShippingData() {
+    for (int i = 0; i < workingCities.length; i++) {
+      if (daysControllers[i].text.isEmpty) {
+        Get.snackbar(
+          'خطأ',
+          'يرجى إدخال موعد التسليم لـ ${workingCities[i]['name']}',
+          backgroundColor: Colors.red.shade50,
+          colorText: Colors.red.shade500,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+      
+      if (priceControllers[i].text.isEmpty) {
+        Get.snackbar(
+          'خطأ',
+          'يرجى إدخال سعر التوصيل لـ ${workingCities[i]['name']}',
+          backgroundColor: Colors.red.shade50,
+          colorText: Colors.red.shade500,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+      
+      final days = int.tryParse(daysControllers[i].text);
+      final price = double.tryParse(priceControllers[i].text);
+      
+      if (days == null || days <= 0) {
+        Get.snackbar(
+          'خطأ',
+          'يرجى إدخال عدد أيام صحيح لـ ${workingCities[i]['name']}',
+          backgroundColor: Colors.red.shade50,
+          colorText: Colors.red.shade500,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+      
+      if (price == null || price <= 0) {
+        Get.snackbar(
+          'خطأ',
+          'يرجى إدخال سعر صحيح لـ ${workingCities[i]['name']}',
+          backgroundColor: Colors.red.shade50,
+          colorText: Colors.red.shade500,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+    }
+    
+    final List<Map<String, dynamic>> prices = [];
+    for (int i = 0; i < workingCities.length; i++) {
+      prices.add({
+        'city_id': workingCities[i]['city_id'],
+        'name': workingCities[i]['name'],
+        'days': int.parse(daysControllers[i].text),
+        'price': double.parse(priceControllers[i].text),
+      });
+    }
+    
+    final company = {
+      'name': widget.companyName,
+      'phone': widget.companyPhone,
+      'prices': prices,
+    };
+    
+    controller.addShippingCompany(company);
+    
+    Get.back();
+    Get.back();
+    Get.snackbar(
+      'نجاح',
+      'تم إضافة شركة الشحن بنجاح',
+      backgroundColor: Colors.green.shade50,
+      colorText: Colors.green.shade700,
+      snackPosition: SnackPosition.TOP,
     );
   }
 }

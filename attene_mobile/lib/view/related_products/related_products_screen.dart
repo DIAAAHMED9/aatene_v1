@@ -1,4 +1,5 @@
-// lib/view/related_products/related_products_screen.dart
+import 'package:attene_mobile/models/product_model.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -159,7 +160,7 @@ class RelatedProductsScreen extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                '${product.price.toStringAsFixed(2)} ريال',
+                '${double.parse(product.price??'0.0').toStringAsFixed(2)} ريال',
                 style: TextStyle(
                   color: Colors.green[600],
                   fontWeight: FontWeight.bold,
@@ -262,9 +263,9 @@ class RelatedProductsScreen extends StatelessWidget {
   }
 }
 
-// فصل الـ Bottom Sheets إلى فئات مستقلة
 class ProductSelectionBottomSheet extends StatelessWidget {
   final RelatedProductsController controller = Get.find<RelatedProductsController>();
+  final ProductController productController = Get.find<ProductController>();
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -353,33 +354,113 @@ class ProductSelectionBottomSheet extends StatelessWidget {
         itemCount: products.length,
         itemBuilder: (context, index) {
           final product = products[index];
-          return Obx(() => CheckboxListTile(
-            value: product.isSelected.value,
-            onChanged: (value) => controller.toggleProductSelection(product),
-            title: Text(product.name),
-            subtitle: Text('${product.price.toStringAsFixed(2)} ريال'),
-            secondary: CircleAvatar(
-              backgroundColor: Colors.grey[200],
-              child: Icon(Icons.shopping_bag, color: Colors.grey[600]),
-              radius: 20,
-            ),
-            activeColor: AppColors.primary400,
-          ));
+          return _buildProductItem(product);
         },
       );
     });
   }
 
-  Widget _buildAddButton() {
-    return AateneButton(
-      buttonText: 'إضافة',
-      color: AppColors.primary400,
-      textColor: Colors.white,
-      onTap: () => Get.back(),
+  Widget _buildProductItem(Product product) {
+    final isSelected = controller.isProductSelected(product);
+    
+    return Card(
+      margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(8)),
+      child: ListTile(
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.grey[200],
+          ),
+          child: product.coverUrl != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    product.coverUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.image, color: Colors.grey[400]);
+                    },
+                  ),
+                )
+              : Icon(Icons.image, color: Colors.grey[400]),
+        ),
+        title: Text(
+          product.name,
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'SKU: ${product.sku ?? "غير متوفر"}',
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+            SizedBox(height: 4),
+            Text(
+              '${product.price ?? "0.0"} ريال',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.green[600],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        trailing: Checkbox(
+          value: isSelected,
+          onChanged: (value) {
+            controller.toggleProductSelection(product);
+          },
+          activeColor: AppColors.primary400,
+        ),
+        onTap: () {
+          controller.toggleProductSelection(product);
+        },
+      ),
     );
   }
-}
 
+  Widget _buildAddButton() {
+    return Obx(() {
+      final hasSelected = controller.hasSelectedProducts;
+      
+      return Column(
+        children: [
+          if (hasSelected) ...[
+            Text(
+              'تم اختيار ${controller.selectedProductsCount} منتج',
+              style: TextStyle(
+                color: AppColors.primary400,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: ResponsiveDimensions.h(8)),
+          ],
+          AateneButton(
+            buttonText: hasSelected ? 'تأكيد الإضافة' : 'إغلاق',
+            color: hasSelected ? AppColors.primary400 : Colors.grey[400],
+            textColor: Colors.white,
+            onTap: () {
+              if (hasSelected) {
+                Get.back();
+                Get.snackbar(
+                  'تم الإضافة',
+                  'تمت إضافة ${controller.selectedProductsCount} منتج',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              } else {
+                Get.back();
+              }
+            },
+          ),
+        ],
+      );
+    });
+  }
+}
 class AddDiscountBottomSheet extends StatelessWidget {
   final RelatedProductsController controller = Get.find<RelatedProductsController>();
   final TextEditingController discountedPriceController = TextEditingController();
@@ -577,7 +658,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
         SizedBox(width: ResponsiveDimensions.w(12)),
         Expanded(
           child: Obx(() => ElevatedButton(
-            onPressed: controller.discountedPrice.value > 0 ? 
+            onPressed: controller.discountedPrice.value > 0 ?
                 () {
                   if (controller.validateDiscount()) {
                     controller.addDiscount();
@@ -702,7 +783,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
                   ),
                   SizedBox(height: ResponsiveDimensions.h(16)),
                   _buildPriceField(
-                    'السعر المخفض', 
+                    'السعر المخفض',
                     discount.discountedPrice.toStringAsFixed(2),
                     true,
                   ),

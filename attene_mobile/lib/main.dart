@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/BottomNavigationBar/main_screen.dart';
 import 'package:attene_mobile/controller/product_controller.dart';
+import 'package:attene_mobile/controller/section_controller.dart';
 import 'package:attene_mobile/demo_stepper_screen.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart'
     show MyAppController;
@@ -21,7 +22,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
+import 'controller/create_store_controller.dart';
 import 'view/Splash/splash.dart';
+import 'view/add new store/choose_type_store/manage_account_store_controller.dart';
 import 'view/login and start/forget_password/forget_password.dart';
 import 'view/login and start/login/login.dart';
 import 'view/login and start/start_page.dart';
@@ -33,24 +36,25 @@ void main() {
   runApp(const MyApp());
 }
 
-// في main.dart - التأكد من تسجيل الـ Controllers
 class AppBindings extends Bindings {
   @override
   void dependencies() {
     print('🔄 [APP BINDINGS] Registering controllers...');
     
-    // ✅ Services الأساسية
+    // المتحكمات الدائمة
     Get.put(ResponsiveService(), permanent: true);
     Get.put(MyAppController(), permanent: true);
     Get.put(LanguageController(), permanent: true);
-    
-    // ✅ الـ Controllers الرئيسية - بدون تحميل بيانات تلقائي
     Get.put(BottomSheetController(), permanent: true);
-    Get.put(ProductCentralController(), permanent: true);
-    Get.put(ProductVariationController(), permanent: true);
-    Get.put(KeywordController(), permanent: true);
-    Get.put(AddProductController(), permanent: true);
-    Get.put(MediaLibraryController(), permanent: true);
+    
+    // المتحكمات التي تحتاج إلى إعادة إنشاء
+    Get.lazyPut(() => CreateStoreController(), fenix: true);
+    Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
+    Get.lazyPut(() => ProductCentralController(), fenix: true);
+    Get.lazyPut(() => ProductVariationController(), fenix: true);
+    Get.lazyPut(() => KeywordController(), fenix: true);
+    Get.lazyPut(() => AddProductController(), fenix: true);
+    Get.lazyPut(() => MediaLibraryController(), fenix: true);
     
     print('✅ [APP BINDINGS] All controllers registered successfully');
   }

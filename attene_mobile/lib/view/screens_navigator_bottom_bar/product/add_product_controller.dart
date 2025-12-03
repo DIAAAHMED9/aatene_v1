@@ -1,4 +1,3 @@
-// lib/controllers/add_product_controller.dart
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
 import 'package:get/get.dart';

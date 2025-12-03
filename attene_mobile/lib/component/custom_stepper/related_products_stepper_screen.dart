@@ -1,4 +1,3 @@
-// في ملف related_products_screen.dart
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/custom_stepper/custom_stepper.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -36,7 +35,6 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
     ),
   ];
 
-
   void _previousStep() {
     if (_currentStep > 0) {
       setState(() {
@@ -44,8 +42,6 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
       });
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +112,6 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
           ),
           const SizedBox(height: 32),
           
-          // زر اختيار المنتجات
           Center(
             child: AateneButton(
               buttonText: 'اختر المنتجات',
@@ -127,7 +122,6 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
           ),
           const SizedBox(height: 24),
           
-          // المنتجات المختارة
           Expanded(
             child: Obx(() {
               if (controller.selectedProducts.isEmpty) {
@@ -291,7 +285,6 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
     );
   }
 
-  // باقي الدوال المساعدة (بنفس الطريقة السابقة)
   Widget _buildEmptyProductsState() {
     return Center(
       child: Column(
@@ -336,7 +329,7 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
             child: ListTile(
               leading: Icon(Icons.check_circle, color: AppColors.primary400),
               title: Text(product.name),
-              subtitle: Text('${product.price.toStringAsFixed(2)} ريال'),
+              subtitle: Text('${double.parse(product.price!).toStringAsFixed(2)} ريال'),
               trailing: IconButton(
                 icon: const Icon(Icons.close, color: Colors.red),
                 onPressed: () => controller.removeSelectedProduct(product),
@@ -428,7 +421,7 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
                     contentPadding: EdgeInsets.zero,
                     leading: Icon(Icons.check, color: AppColors.primary400),
                     title: Text(product.name),
-                    trailing: Text('${product.price.toStringAsFixed(2)} ريال'),
+                    trailing: Text('${double.parse(product.price!).toStringAsFixed(2)} ريال'),
                   );
                 }).toList(),
               );
@@ -510,7 +503,6 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
     );
   }
 
-// في ملف related_products_stepper_screen.dart
 void _showProductSelectionSheet() {
   Get.bottomSheet(
     Container(
@@ -522,7 +514,6 @@ void _showProductSelectionSheet() {
       ),
       child: Column(
         children: [
-          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -541,7 +532,6 @@ void _showProductSelectionSheet() {
           ),
           SizedBox(height: ResponsiveDimensions.h(16)),
           
-          // Search Bar
           TextField(
             onChanged: (value) => controller.searchQuery.value = value,
             decoration: InputDecoration(
@@ -562,7 +552,6 @@ void _showProductSelectionSheet() {
           ),
           SizedBox(height: ResponsiveDimensions.h(16)),
           
-          // Products List
           Expanded(
             child: Obx(() {
               final products = controller.filteredProducts;
@@ -597,7 +586,7 @@ void _showProductSelectionSheet() {
                       ),
                     ),
                     subtitle: Text(
-                      '${product.price.toStringAsFixed(2)} ريال',
+                      '${double.parse(product.price!).toStringAsFixed(2)} ريال',
                       style: TextStyle(
                         color: Colors.green[600],
                         fontWeight: FontWeight.bold,
@@ -624,7 +613,6 @@ void _showProductSelectionSheet() {
           ),
           SizedBox(height: ResponsiveDimensions.h(16)),
           
-          // Actions
           Row(
             children: [
               Expanded(
@@ -648,7 +636,6 @@ void _showProductSelectionSheet() {
                   textColor: Colors.white,
                   onTap: () {
                     Get.back();
-                    // تحديث الواجهة بعد اختيار المنتجات
                     setState(() {});
                   },
                 ),
@@ -663,7 +650,6 @@ void _showProductSelectionSheet() {
   );
 }
 
-// دالة لإظهار شاشة إضافة التخفيض
 void _showAddDiscountSheet() {
   Get.bottomSheet(
     Container(
@@ -675,7 +661,6 @@ void _showAddDiscountSheet() {
       ),
       child: Column(
         children: [
-          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -698,7 +683,6 @@ void _showAddDiscountSheet() {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // السعر الأصلي
                   _buildReadOnlyField(
                     'السعر الإجمالي الأصلي',
                     '${controller.originalPrice.value.toStringAsFixed(2)} ريال',
@@ -706,7 +690,6 @@ void _showAddDiscountSheet() {
                   ),
                   SizedBox(height: ResponsiveDimensions.h(16)),
                   
-                  // حقل السعر المخفض
                   TextField(
                     onChanged: (value) {
                       final parsed = double.tryParse(value) ?? 0.0;
@@ -732,7 +715,6 @@ void _showAddDiscountSheet() {
                   
                   SizedBox(height: ResponsiveDimensions.h(16)),
                   
-                  // ملاحظة التخفيض
                   TextField(
                     onChanged: (value) => controller.discountNote.value = value,
                     decoration: InputDecoration(
@@ -746,7 +728,6 @@ void _showAddDiscountSheet() {
                   
                   SizedBox(height: ResponsiveDimensions.h(16)),
                   
-                  // تاريخ التخفيض
                   TextField(
                     controller: controller.dateController,
                     readOnly: true,
@@ -762,7 +743,6 @@ void _showAddDiscountSheet() {
                   
                   SizedBox(height: ResponsiveDimensions.h(16)),
                   
-                  // عدد المنتجات المختارة
                   Obx(() => Container(
                     padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
                     decoration: BoxDecoration(
@@ -788,7 +768,6 @@ void _showAddDiscountSheet() {
           
           SizedBox(height: ResponsiveDimensions.h(16)),
           
-          // أزرار الإجراءات
           Row(
             children: [
               Expanded(
@@ -807,7 +786,7 @@ void _showAddDiscountSheet() {
               SizedBox(width: ResponsiveDimensions.w(12)),
               Expanded(
                 child: Obx(() => ElevatedButton(
-                  onPressed: controller.discountedPrice.value > 0 && 
+                  onPressed: controller.discountedPrice.value > 0 &&
                             controller.discountedPrice.value < controller.originalPrice.value
                       ? () {
                           if (_validateDiscount()) {
@@ -835,7 +814,6 @@ void _showAddDiscountSheet() {
   );
 }
 
-// دالة التحقق من صحة التخفيض
 bool _validateDiscount() {
   if (controller.discountedPrice.value >= controller.originalPrice.value) {
     _showErrorMessage('السعر المخفض يجب أن يكون أقل من السعر الأصلي');
@@ -850,7 +828,6 @@ bool _validateDiscount() {
   return true;
 }
 
-// دالة عرض منتقي التاريخ
 void _showDatePicker() async {
   final DateTime? picked = await showDatePicker(
     context: context,
@@ -908,7 +885,6 @@ void _showDatePicker() async {
   }
 }
 
-// دالة لحقل القراءة فقط
 Widget _buildReadOnlyField(String label, String value, IconData icon) {
   return TextField(
     readOnly: true,
@@ -921,7 +897,6 @@ Widget _buildReadOnlyField(String label, String value, IconData icon) {
   );
 }
 
-// دالة لعرض رسالة النجاح
 void _showSuccessMessage(String message) {
   Get.snackbar(
     'نجاح',
@@ -933,7 +908,6 @@ void _showSuccessMessage(String message) {
   );
 }
 
-// دالة لعرض رسالة الخطأ
 void _showErrorMessage(String message) {
   Get.snackbar(
     'خطأ',
@@ -945,21 +919,17 @@ void _showErrorMessage(String message) {
   );
 }
 
-// دالة لإكمال العملية
 void _completeProcess() {
-  // التحقق من وجود منتجات مختارة
   if (controller.selectedProducts.isEmpty) {
     _showErrorMessage('يرجى اختيار منتجات أولاً');
     return;
   }
   
-  // التحقق من وجود تخفيض إذا كان المستخدم في الخطوة الثانية أو الثالثة
   if (_currentStep >= 1 && controller.discountedPrice.value <= 0) {
     _showErrorMessage('يرجى إضافة تخفيض للمنتجات');
     return;
   }
   
-  // عرض تأكيد نهائي
   Get.dialog(
     AlertDialog(
       title: Row(
@@ -987,7 +957,7 @@ void _completeProcess() {
         TextButton(
           onPressed: () {
             Get.back();
-            Get.back(); // العودة للشاشة السابقة
+            Get.back();
           },
           child: Text('حسناً', style: TextStyle(color: AppColors.primary400)),
         ),
@@ -996,7 +966,6 @@ void _completeProcess() {
   );
 }
 
-// عنصر عرض في الملخص
 Widget _buildSummaryItem(String title, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1013,7 +982,6 @@ Widget _buildSummaryItem(String title, String value) {
   );
 }
 
-// دالة لمسح كل البيانات
 void _resetAllData() {
   controller.clearAllSelections();
   controller.discountedPrice.value = 0.0;
@@ -1024,13 +992,12 @@ void _resetAllData() {
   });
 }
 
-// دالة للتحقق مما إذا كان يمكن الانتقال للخطوة التالية
 bool _canProceedToNextStep() {
   switch (_currentStep) {
     case 0:
       return controller.selectedProducts.isNotEmpty;
     case 1:
-      return controller.discountedPrice.value > 0 && 
+      return controller.discountedPrice.value > 0 &&
              controller.discountedPrice.value < controller.originalPrice.value;
     case 2:
       return true;
@@ -1039,7 +1006,6 @@ bool _canProceedToNextStep() {
   }
 }
 
-// دالة معدلة للخطوة التالية مع التحقق
 void _nextStep() {
   if (!_canProceedToNextStep()) {
     _showCurrentStepErrorMessage();
@@ -1055,7 +1021,6 @@ void _nextStep() {
   }
 }
 
-// دالة لعرض رسالة خطأ حسب الخطوة الحالية
 void _showCurrentStepErrorMessage() {
   switch (_currentStep) {
     case 0:

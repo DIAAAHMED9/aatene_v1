@@ -10,7 +10,6 @@ class KeywordManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ تحميل المتاجر عند فتح الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadStoresOnOpen();
     });
@@ -88,9 +87,8 @@ Widget _buildStoreSelector() {
             ),
           ),
           Spacer(),
-          // ✅ زر إعادة التحميل مع معالجة الحالة
           Obx(() {
-            if (controller.storesError.isNotEmpty || 
+            if (controller.storesError.isNotEmpty ||
                 (controller.stores.isEmpty && !controller.isLoadingStores.value)) {
               return IconButton(
                 icon: Icon(Icons.refresh, size: 20),
@@ -286,7 +284,6 @@ Widget _buildStoreDropdown() {
   });
 }
 
-  // باقي الدوال تبقى كما هي...
   Widget _buildSearchBox() {
     return Container(
       decoration: BoxDecoration(
@@ -342,7 +339,7 @@ Widget _buildStoreDropdown() {
       child: Container(
         margin: EdgeInsets.only(left: 8, right: 8),
         child: InkWell(
-          onTap: hasText && canAddMore && !isDuplicate 
+          onTap: hasText && canAddMore && !isDuplicate
               ? () => controller.addCustomKeyword()
               : null,
           borderRadius: BorderRadius.circular(20),
@@ -467,8 +464,8 @@ Widget _buildStoreDropdown() {
               '${controller.selectedKeywords.length}/15',
               style: TextStyle(
                 fontSize: 14,
-                color: controller.selectedKeywords.length >= 15 
-                    ? Colors.red 
+                color: controller.selectedKeywords.length >= 15
+                    ? Colors.red
                     : Colors.grey[600],
               ),
             )),

@@ -33,17 +33,27 @@ static Map<String, dynamic> _getBaseHeaders() {
     'Accept': 'application/json',
     'Device-Type': 'MOBILE',
     'Accept-Language': appLanguageController.appLocale.value,
-    'storeId':33
+    'storeId':41
   };
   
-  // ✅ إضافة storeId إذا كان موجوداً
-  // if (myAppController.userData.isNotEmpty && myAppController.userData['store_id'] != null) {
-  //   headers['storeId'] = myAppController.userData['store_id'].toString();
-  // }
-
   return headers;
 }
-
+static Future<dynamic> getProducts({
+  int? sectionId,
+  Map<String, dynamic>? queryParameters,
+}) async {
+  String path = '/merchants/products';
+  if (sectionId != null) {
+    queryParameters ??= {};
+    queryParameters['section_id'] = sectionId;
+  }
+  
+  return await get(
+    path: path,
+    queryParameters: queryParameters,
+    withLoading: false,
+  );
+}
   static String _getBaseUrl() {
     switch (currentMode) {
       case AppMode.dev:
@@ -54,7 +64,6 @@ static Map<String, dynamic> _getBaseHeaders() {
         return 'https://api.aatene.com/api/v1';
     }
   }
-
 
   static Future<dynamic> get({
     required String path,
@@ -155,7 +164,6 @@ static Map<String, dynamic> _getBaseHeaders() {
     }
   }
 
-  // ✅ جديد: تحليل أخطاء 422
   static String _parse422Error(dynamic data) {
     try {
       if (data is Map<String, dynamic>) {
@@ -309,19 +317,16 @@ static Map<String, dynamic> _getBaseHeaders() {
     required String password,
     bool withLoading = true,
   }) async {
-    // Determine if the input is email or phone
     final bool isEmail = email.contains('@');
     final bool isPhone = RegExp(r'^[0-9]+$').hasMatch(email);
 
     Map<String, dynamic> body = {'password': password, 'device_name': 'mobile'};
     body['login'] = email;
-    // Add the appropriate field based on input type
     if (isEmail) {
       body['login'] = email;
     } else if (isPhone) {
       body['login'] = email;
     } else {
-      // If unsure, use login field as fallback
       body['login'] = email;
     }
 
@@ -632,12 +637,10 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
 
     switch (error.response?.statusCode) {
       case 401:
-        // غير مصرح - تسجيل الخروج
         myAppController.onSignOut();
         Get.offAllNamed('/login');
         break;
       case 403:
-        // ممنوع الوصول
         Get.snackbar(
           'ممنوع الوصول',
           'ليس لديك صلاحية للوصول إلى هذا المورد',
@@ -647,7 +650,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         );
         break;
       case 404:
-        // غير موجود
         Get.snackbar(
           'غير موجود',
           'المورد المطلوب غير موجود',
@@ -657,7 +659,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         );
         break;
       case 422:
-        // بيانات غير صالحة (يتم معالجتها في _showErrorMessage)
         break;
       case 500:
         Get.snackbar(
@@ -693,7 +694,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       return false;
     }
   }
-  // دالة لرفع الملفات إلى media-center
 static Future<dynamic> uploadMedia({
   required File file,
   required String type,
@@ -715,7 +715,6 @@ static Future<dynamic> uploadMedia({
     });
 
     final requestHeaders = _getBaseHeaders();
-    // إزالة Content-Type ليتيح Dio إضافة الصيغة المناسبة تلقائياً
     requestHeaders.remove('Content-Type');
 
     print('''
@@ -753,7 +752,6 @@ static Future<dynamic> uploadMedia({
   }
 }
 
-// دالة لجلب قائمة الملفات حسب النوع
 static Future<dynamic> getMediaList({
   required String type,
   bool withLoading = false,
@@ -767,7 +765,6 @@ static Future<dynamic> getMediaList({
   );
 }
 
-// دالة لحذف الملف
 static Future<dynamic> deleteMedia({
   required String fileName,
   bool withLoading = true,
@@ -781,8 +778,125 @@ static Future<dynamic> deleteMedia({
   );
 }
 
-// دالة للحصول على الرابط الأساسي (للاستخدام في عرض الصور)
 static String getBaseUrl() {
   return _getBaseUrl().replaceAll('/api', '');
+}
+static Future<dynamic> getCities({Map<String, dynamic>? queryParameters}) async {
+  return await get(
+    path: '/merchants/cities',
+    queryParameters: queryParameters,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getCity(int id) async {
+  return await get(
+    path: '/merchants/cities/$id',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> createCity(Map<String, dynamic> data) async {
+  return await post(
+    path: '/merchants/cities',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> updateCity(int id, Map<String, dynamic> data) async {
+  return await put(
+    path: '/merchants/cities/$id',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> deleteCity(int id) async {
+  return await delete(
+    path: '/merchants/cities/$id',
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> getDistricts({Map<String, dynamic>? queryParameters}) async {
+  return await get(
+    path: '/merchants/districts',
+    queryParameters: queryParameters,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getDistrict(int id) async {
+  return await get(
+    path: '/merchants/districts/$id',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> createDistrict(Map<String, dynamic> data) async {
+  return await post(
+    path: '/merchants/districts',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> updateDistrict(int id, Map<String, dynamic> data) async {
+  return await put(
+    path: '/merchants/districts/$id',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> deleteDistrict(int id) async {
+  return await delete(
+    path: '/merchants/districts/$id',
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> getCurrencies({Map<String, dynamic>? queryParameters}) async {
+  return await get(
+    path: '/merchants/currencies',
+    queryParameters: queryParameters,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getStoreDetails(int storeId) async {
+  return await get(
+    path: '/merchants/stores/$storeId',
+    withLoading: false,
+    shouldShowMessage: true,
+  );
+}
+static Future<dynamic> updateStore(int storeId, Map<String, dynamic> data) async {
+  return await post(
+    path: '/merchants/mobile/stores/$storeId',
+    body: data,
+    withLoading: true,
+    shouldShowMessage: true,
+  );
+}
+
+static Future<dynamic> deleteStore(int storeId) async {
+  return await delete(
+    path: '/merchants/mobile/stores/$storeId',
+    withLoading: true,
+    shouldShowMessage: true,
+  );
 }
 }

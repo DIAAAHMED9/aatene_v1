@@ -2,6 +2,7 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/models/product_model.dart';
+import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
@@ -120,36 +121,373 @@ class ProductScreen extends GetView<ProductController> {
     );
   }
 
-  Widget _buildTabContent(TabData tab, ProductController controller, bool isRTL) {
-    final MyAppController myAppController = Get.find<MyAppController>();
-    final BottomSheetController bottomSheetController = Get.find<BottomSheetController>();
-
-    if (!myAppController.isLoggedIn.value) {
-      return _buildEmptyTabContent(tab);
-    }
-
-    final hasSections = bottomSheetController.sections.isNotEmpty;
-
-    if (!hasSections) {
-      return _buildNoSectionsView(controller, isRTL);
-    }
-
-    if (controller.isLoadingProducts.value) {
-      return _buildLoadingView();
-    }
-
-    if (controller.productsErrorMessage.isNotEmpty) {
-      return _buildErrorView(controller);
-    }
-
-    final products = controller.getProductsForTab(controller.tabs.indexOf(tab));
-    
-    if (products.isEmpty) {
-      return _buildEmptyProductsView(controller, isRTL);
-    }
-
-    return _buildProductsListView(controller, products, isRTL);
+Widget _buildTabContent(TabData tab, ProductController controller, bool isRTL) {
+  final MyAppController myAppController = Get.find<MyAppController>();
+  
+  if (!myAppController.isLoggedIn.value) {
+    return _buildEmptyTabContent(tab);
   }
+
+  if (controller.isLoadingProducts.value) {
+    return _buildLoadingView();
+  }
+
+  if (controller.productsErrorMessage.isNotEmpty) {
+    return _buildErrorView(controller);
+  }
+
+  final tabIndex = controller.tabs.indexOf(tab);
+  final products = controller.getProductsForTab(tabIndex);
+  
+  print('🔍 [TAB CONTENT] Tab: ${tab.label}, Index: $tabIndex, Products: ${products.length}');
+  
+  if (products.isEmpty) {
+    return _buildEmptyProductsView(controller, isRTL, sectionName: tab.viewName);
+  }
+
+  if (tabIndex == 0) { // All products tab
+    return _buildAllProductsView(controller, isRTL);
+  } else {
+    // ✅ الآن سيتم عرض المنتجات الخاصة بكل قسم فقط
+    return _buildProductsListView(controller, products, isRTL, sectionName: tab.viewName);
+  }
+}
+
+Widget _buildAllProductsView(ProductController controller, bool isRTL) {
+  final displaySections = controller.getDisplaySections();
+  
+  print('🔍 [DEBUG] Display sections count: ${displaySections.length}');
+  print('🔍 [DEBUG] Total products count: ${controller.totalProductsCount}');
+  
+  if (controller.totalProductsCount == 0) {
+    return _buildEmptyProductsView(controller, isRTL);
+  }
+  
+  if (displaySections.isEmpty) {
+    // إذا لم يكن هناك أقسام، نعرض جميع المنتجات في قائمة واحدة
+    return _buildProductsListView(controller, controller.filteredProducts, isRTL);
+  }
+
+  return Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'إجمالي المنتجات: ${controller.totalProductsCount}',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: controller.openSort,
+              icon: Icon(Icons.sort, color: AppColors.primary400),
+            ),
+            IconButton(
+              onPressed: controller.openFilter,
+              icon: Icon(Icons.filter_list, color: AppColors.primary400),
+            ),
+          ],
+        ),
+      ),
+      
+      Expanded(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: displaySections.length,
+          itemBuilder: (context, index) {
+            final section = displaySections[index];
+            final sectionName = section['name'] as String;
+            final products = section['products'] as List<Product>;
+            final isUncategorized = section['isUncategorized'] as bool;
+            
+            print('🔍 [DEBUG] Section $sectionName has ${products.length} products');
+            
+            if (products.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            
+            return _buildSectionWithProducts(
+              sectionName,
+              products,
+              controller,
+              isRTL,
+              isUncategorized: isUncategorized,
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildSectionWithProducts(String sectionName, List<Product> products, ProductController controller, bool isRTL, {bool isUncategorized = false}) {
+  print('🎨 [DEBUG] Building section: $sectionName with ${products.length} products');
+  
+  return Card(
+    margin: const EdgeInsets.only(bottom: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isUncategorized ? Colors.grey[100] : AppColors.primary50,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  sectionName,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isUncategorized ? Colors.grey[600] : AppColors.primary500,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '${products.length} منتج',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isUncategorized ? Colors.grey[600] : AppColors.primary500,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        // Products List
+        ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16),
+          itemCount: products.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return _buildProductItem(product, controller, isRTL, showSection: false);
+          },
+        ),
+      ],
+    ),
+  );
+}
+// عدل دالة _buildProductsListView لإضافة معامل sectionName اختياري
+Widget _buildProductsListView(ProductController controller, List<Product> products, bool isRTL, {String? sectionName}) {
+  return Column(
+    children: [
+      // Padding(
+      //   padding: const EdgeInsets.all(16.0),
+      //   child: Row(
+      //     children: [
+      //       Expanded(
+      //         child: Text(
+      //           sectionName != null 
+      //             ? 'منتجات قسم $sectionName: ${products.length} منتج'
+      //             : 'عرض ${products.length} منتج',
+      //           style: TextStyle(
+      //             color: Colors.grey[600],
+      //             fontSize: 14,
+      //           ),
+      //         ),
+      //       ),
+      //       IconButton(
+      //         onPressed: controller.openSort,
+      //         icon: Icon(Icons.sort, color: AppColors.primary400),
+      //       ),
+      //       IconButton(
+      //         onPressed: controller.openFilter,
+      //         icon: Icon(Icons.filter_list, color: AppColors.primary400),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      
+      Expanded(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return _buildProductItem(product, controller, isRTL);
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildProductItem(Product product, ProductController controller, bool isRTL, {bool showSection = true}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Row(
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.grey[200],
+          ),
+          child: product.coverUrl != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    product.coverUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.image, color: Colors.grey[400]);
+                    },
+                  ),
+                )
+              : Icon(Icons.image, color: Colors.grey[400]),
+        ),
+        
+        const SizedBox(width: 12),
+        
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product.name,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              
+              const SizedBox(height: 4),
+              
+            
+                              if (showSection && product.sectionId != null && product.sectionId != '0')
+                   Row(
+                     children: [
+                      Icon(Icons.local_offer_outlined,color: Colors.grey[600],size: 18,),
+                      SizedBox(width: 5,),
+                       Text(
+                            controller.getSectionName(product.sectionId!),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                     ],
+                   ),
+                    
+            
+              
+              
+              const SizedBox(height: 8),
+              
+              // Row(
+              //   children: [
+              //     Container(
+              //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              //       decoration: BoxDecoration(
+              //         color: _getStatusColor(product.status),
+              //         borderRadius: BorderRadius.circular(12),
+              //       ),
+              //       child: Text(
+              //         _getStatusText(product.status),
+              //         style: TextStyle(
+              //           fontSize: 10,
+              //           color: Colors.white,
+              //           fontWeight: FontWeight.w500,
+              //         ),
+              //       ),
+              //     ),
+              //     const Spacer(),
+                  
+              //     if (product.viewCount != null) ...[
+              //       Icon(Icons.visibility, size: 14, color: Colors.grey[500]),
+              //       const SizedBox(width: 4),
+              //       Text(
+              //         product.viewCount!,
+              //         style: TextStyle(
+              //           fontSize: 12,
+              //           color: Colors.grey[600],
+              //         ),
+              //       ),
+                    
+              //       const SizedBox(width: 16),
+              //     ],
+                  
+              //     Icon(Icons.favorite, size: 14, color: Colors.grey[500]),
+              //     const SizedBox(width: 4),
+              //     Text(
+              //       product.favoritesCount,
+              //       style: TextStyle(
+              //         fontSize: 12,
+              //         color: Colors.grey[600],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+            ],
+          ),
+        ),
+        
+        Row(
+          children: [
+           Text(product.price??'0.0',style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700
+           ),),
+            // IconButton(
+            //   onPressed: () {
+            //     _deleteProduct(product, controller);
+            //   },
+            //   icon: Icon(Icons.delete, color: Colors.red),
+            // ),
+             IconButton(
+              onPressed: () {
+                _editProduct(product);
+              },
+              icon: Icon(Icons.more_horiz, color: AppColors.primary400),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
+  final products = controller.filteredProducts;
+  
+  if (products.isEmpty) {
+    return _buildEmptyProductsView(controller, isRTL);
+  }
+  
+  // الحل الأول: عرض جميع المنتجات في قائمة واحدة
+  return _buildProductsListView(controller, products, isRTL);
+}
+
 
   Widget _buildNoSectionsView(ProductController controller, bool isRTL) {
     return Container(
@@ -199,7 +537,7 @@ class ProductScreen extends GetView<ProductController> {
     );
   }
 
-  Widget _buildEmptyProductsView(ProductController controller, bool isRTL) {
+  Widget _buildEmptyProductsView(ProductController controller, bool isRTL, {String? sectionName}) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Center(
@@ -209,7 +547,7 @@ class ProductScreen extends GetView<ProductController> {
             Image(image: AssetImage('assets/images/png/empty_store.png')),
             const SizedBox(height: 24),
             Text(
-              'لا يوجد لديك أي منتجات',
+              sectionName != null ? 'لا يوجد منتجات في قسم $sectionName' : 'لا يوجد لديك أي منتجات',
               style: TextStyle(
                 fontSize: 22,
                 color: Color(0xFF555555),
@@ -220,7 +558,9 @@ class ProductScreen extends GetView<ProductController> {
             SizedBox(
               width: 280,
               child: Text(
-                'يمكنك البدء بإضافة منتجات جديدة إلى الأقسام التي قمت بإنشائها',
+                sectionName != null 
+                  ? 'يمكنك البدء بإضافة منتجات جديدة إلى هذا القسم'
+                  : 'يمكنك البدء بإضافة منتجات جديدة إلى الأقسام التي قمت بإنشائها',
                 style: TextStyle(
                   fontSize: 14,
                   color: Color(0xFFAAAAAA),
@@ -294,192 +634,7 @@ class ProductScreen extends GetView<ProductController> {
     );
   }
 
-  Widget _buildProductsListView(ProductController controller, List<Product> products, bool isRTL) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'عرض ${products.length} منتج',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: controller.openSort,
-                icon: Icon(Icons.sort, color: AppColors.primary400),
-              ),
-              IconButton(
-                onPressed: controller.openFilter,
-                icon: Icon(Icons.filter_list, color: AppColors.primary400),
-              ),
-            ],
-          ),
-        ),
-        
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return _buildProductItem(product, controller, isRTL);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProductItem(Product product, ProductController controller, bool isRTL) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[200],
-              ),
-              child: product.coverUrl != null 
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        product.coverUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.image, color: Colors.grey[400]);
-                        },
-                      ),
-                    )
-                  : Icon(Icons.image, color: Colors.grey[400]),
-            ),
-            
-            const SizedBox(width: 12),
-            
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  
-                  const SizedBox(height: 4),
-                  
-                  Row(
-                    children: [
-                      Text(
-                        'SKU: ${product.sku}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'قسم: ${product.sectionId ?? "غير محدد"}',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 8),
-                  
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(product.status),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _getStatusText(product.status),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      
-                      Icon(Icons.visibility, size: 14, color: Colors.grey[500]),
-                      const SizedBox(width: 4),
-                      Text(
-                        product.viewCount ?? '0',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      
-                      const SizedBox(width: 16),
-                      
-                      Icon(Icons.favorite, size: 14, color: Colors.grey[500]),
-                      const SizedBox(width: 4),
-                      Text(
-                        product.favoritesCount,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            
-            Column(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    _editProduct(product);
-                  },
-                  icon: Icon(Icons.edit, color: AppColors.primary400),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _deleteProduct(product, controller);
-                  },
-                  icon: Icon(Icons.delete, color: Colors.red),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+ 
   Color _getStatusColor(String? status) {
     switch (status) {
       case 'active':
@@ -577,7 +732,6 @@ class ProductScreen extends GetView<ProductController> {
 
   Future<void> _performDeleteProduct(Product product, ProductController controller) async {
     try {
-      // await ApiHelper.delete(path: '/merchants/products/${product.id}');
       await controller.reloadProducts();
       
       Get.snackbar(

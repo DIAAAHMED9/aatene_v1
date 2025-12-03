@@ -1,4 +1,3 @@
-// lib/models/section_model.dart
 class Section {
   final int id;
   final String name;

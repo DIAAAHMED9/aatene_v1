@@ -11,7 +11,6 @@ class ProductAttribute {
     required List<AttributeValue> values,
   }) : values = values.obs;
 
-  // تحويل من JSON الـ API
   factory ProductAttribute.fromApiJson(Map<String, dynamic> json) {
     final options = List<Map<String, dynamic>>.from(json['options'] ?? []);
     
@@ -28,7 +27,6 @@ class ProductAttribute {
     );
   }
 
-  // التحويل إلى JSON للتخزين
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -37,7 +35,6 @@ class ProductAttribute {
     };
   }
 
-  // تحميل من JSON المخزن
   factory ProductAttribute.fromJson(Map<String, dynamic> json) {
     return ProductAttribute(
       id: json['id'],
@@ -48,7 +45,6 @@ class ProductAttribute {
     );
   }
 
-  // نسخة من الكائن
   ProductAttribute copyWith({
     String? id,
     String? name,
@@ -73,7 +69,6 @@ class AttributeValue {
     required RxBool isSelected,
   }) : isSelected = isSelected;
 
-  // التحويل إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -82,7 +77,6 @@ class AttributeValue {
     };
   }
 
-  // تحميل من JSON
   factory AttributeValue.fromJson(Map<String, dynamic> json) {
     return AttributeValue(
       id: json['id'],
@@ -91,7 +85,6 @@ class AttributeValue {
     );
   }
 
-  // نسخة من الكائن
   AttributeValue copyWith({
     String? id,
     String? value,
@@ -129,7 +122,6 @@ class ProductVariation {
         isActive = isActive.obs,
         images = images.obs;
 
-  // التحويل إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -142,7 +134,6 @@ class ProductVariation {
     };
   }
 
-  // تحميل من JSON
   factory ProductVariation.fromJson(Map<String, dynamic> json) {
     return ProductVariation(
       id: json['id'],
@@ -155,7 +146,6 @@ class ProductVariation {
     );
   }
 
-  // نسخة من الكائن
   ProductVariation copyWith({
     String? id,
     Map<String, String>? attributes,

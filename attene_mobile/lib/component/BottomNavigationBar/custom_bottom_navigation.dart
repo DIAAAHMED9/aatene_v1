@@ -10,8 +10,8 @@ class CustomBottomNavigation extends StatefulWidget {
   final Color fabColor;
   final Color selectedColor;
   final Color unselectedColor;
-  final double notchWidthRatio; // متغير لعرض النوتش
-  final double notchDepthRatio; // متغير لعمق النوتش
+  final double notchWidthRatio;
+  final double notchDepthRatio;
 
   const CustomBottomNavigation({
     super.key,
@@ -23,8 +23,8 @@ class CustomBottomNavigation extends StatefulWidget {
     this.fabIcon = Icons.add,
     this.selectedColor = Colors.blue,
     this.unselectedColor = Colors.grey,
-    this.notchWidthRatio = 0.3, // القيمة الافتراضية
-    this.notchDepthRatio = 0.35, // القيمة الافتراضية
+    this.notchWidthRatio = 0.3,
+    this.notchDepthRatio = 0.35,
   }) : assert(pages.length == icons.length, 'Pages and icons must be the same length');
 
   @override
@@ -41,8 +41,8 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
 
     final double screenWidth = MediaQuery.of(context).size.width;
     final double containerWidth = screenWidth - 30;
-    final double notchWidth = containerWidth * widget.notchWidthRatio; // استخدام المتغير
-    final double notchDepth = 68 * widget.notchDepthRatio; // استخدام المتغير
+    final double notchWidth = containerWidth * widget.notchWidthRatio;
+    final double notchDepth = 68 * widget.notchDepthRatio;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -56,7 +56,6 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
               children: [
-                // الظل منفصل عن المحتوى
                 Container(
                   height: 68,
                   width: containerWidth,
@@ -64,14 +63,13 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0x26000000), // #00000026
+                        color: const Color(0x26000000),
                         offset: const Offset(0, 4),
                         blurRadius: 16,
                       ),
                     ],
                   ),
                 ),
-                // المحتوى مع القطع
                 ClipPath(
                   clipper: InwardTopNotchClipper(notchWidth, notchDepth),
                   child: Container(
@@ -81,11 +79,9 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: List.generate(widget.icons.length + 1, (i) {
-                        // Insert spacing in the middle
                         if (i == (widget.icons.length ~/ 2)) {
                           return const SizedBox(width: 10);
                         }
-                        // Adjust index to skip spacing index
                         final actualIndex = i > (widget.icons.length ~/ 2) ? i - 1 : i;
                         return navItem(icon: widget.icons[actualIndex], index: actualIndex,text: widget.pageName![actualIndex]);
                       }),
@@ -104,7 +100,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                         height: circleSize,
                         width: circleSize,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle, 
+                          shape: BoxShape.circle,
                           color: widget.fabColor,
                           boxShadow: [
                             BoxShadow(
@@ -135,8 +131,8 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            icon, 
-            size: 28, 
+            icon,
+            size: 28,
             color: isSelected ? widget.selectedColor : widget.unselectedColor
           ),
           const SizedBox(height: 4),
@@ -150,7 +146,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               width: 6,
               height: 6,
               decoration: BoxDecoration(
-                shape: BoxShape.circle, 
+                shape: BoxShape.circle,
                 color: widget.selectedColor
               ),
             ):SizedBox(),

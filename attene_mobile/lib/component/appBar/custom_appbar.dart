@@ -1,4 +1,3 @@
-// lib/component/appBar/custom_appbar.dart
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,7 +21,7 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
   Size get preferredSize => Size.fromHeight(_calculateHeight());
 
   double _calculateHeight() {
-    double height = 70; // الارتفاع الأساسي
+    double height = 70;
     if (config.showTabs && (config.tabs?.isNotEmpty ?? false)) height += 45;
     if (config.showSearch) height += 60;
     return height;
@@ -152,7 +151,6 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
   Widget _buildSearchBox() {
     return Row(
       children: [
-        // أيقونة الفلتر
         if (config.onFilterPressed != null)
           _buildFilterButton(
             assets: 'assets/images/png/filter_icon.png',
@@ -161,7 +159,6 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
         
         if (config.onFilterPressed != null) const SizedBox(width: 8),
         
-        // صندوق البحث
         Expanded(
           child: TextFiledAatene(
             heightTextFiled: 50,
@@ -183,7 +180,6 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
         
         if (config.onSortPressed != null) const SizedBox(width: 8),
         
-        // أيقونة الترتيب
         if (config.onSortPressed != null)
           _buildFilterButton(
             assets: 'assets/images/png/sort_icon.png',
@@ -262,8 +258,8 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
     } catch (e) {
       debugPrint('Image loading failed: $assetPath, Error: $e');
       return Icon(
-        Icons.error_outline, 
-        size: size, 
+        Icons.error_outline,
+        size: size,
         color: Colors.red,
       );
     }

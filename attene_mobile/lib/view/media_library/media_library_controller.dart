@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MediaLibraryController extends GetxController 
+class MediaLibraryController extends GetxController
     with SingleGetTickerProviderMixin, WidgetsBindingObserver {
   
   late TabController tabController;
@@ -36,6 +36,7 @@ class MediaLibraryController extends GetxController
   DateTime? _lastLoadTime;
   final RxBool _isInitialized = false.obs;
   final RxBool _isAuthChecked = false.obs;
+final RxInt maxSelection = 10.obs;
 
   @override
   void onInit() {
@@ -50,7 +51,7 @@ class MediaLibraryController extends GetxController
 
   void _initializeBasicControllers() {
     tabController = TabController(
-      length: tabs.length, 
+      length: tabs.length,
       vsync: this,
       initialIndex: currentTabIndex.value
     );
@@ -62,14 +63,12 @@ class MediaLibraryController extends GetxController
   void _setupAuthListener() {
     final MyAppController myAppController = Get.find<MyAppController>();
     
-    // الاستماع لتغير حالة التهيئة أولاً
     ever(myAppController.isAppInitialized, (bool initialized) {
       if (initialized) {
         _checkAndInitialize();
       }
     });
     
-    // الاستماع لتغير حالة تسجيل الدخول
     ever(myAppController.isLoggedIn, (bool isLoggedIn) {
       _isAuthChecked.value = true;
       if (isLoggedIn) {
@@ -79,7 +78,6 @@ class MediaLibraryController extends GetxController
       }
     });
     
-    // إذا كان التطبيق مهيأ بالفعل، نتحقق مباشرة
     if (myAppController.isAppInitialized.value) {
       _checkAndInitialize();
     }
@@ -138,8 +136,12 @@ class MediaLibraryController extends GetxController
       _loadMediaWhenAppResumed();
     }
   }
-
-  // ========== التحديث التلقائي ==========
+void setMaxSelection(int max) {
+  maxSelection.value = max;
+}
+bool get canSelectMore {
+  return selectedMediaIds.length < maxSelection.value;
+}
   void _startAutoRefresh() {
     _autoRefreshTimer = Timer.periodic(Duration(minutes: 2), (timer) {
       if (currentTabIndex.value == 1 && !isLoading.value && _isInitialized.value) {
@@ -173,7 +175,7 @@ class MediaLibraryController extends GetxController
       return;
     }
     
-    if (_lastLoadTime != null && 
+    if (_lastLoadTime != null &&
         DateTime.now().difference(_lastLoadTime!).inSeconds < 30) {
       print('⏱️ [TAB OPEN] Skipping auto-load, last load was recent');
       return;
@@ -184,7 +186,6 @@ class MediaLibraryController extends GetxController
     _lastLoadTime = DateTime.now();
   }
 
-  // ========== التخزين المحلي ==========
   Future<void> _saveMediaToLocalStorage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -234,11 +235,6 @@ class MediaLibraryController extends GetxController
     }
   }
 
-  // ========== دوال الوسائط الأساسية ==========
-  bool get canSelectMore {
-    return selectedMediaIds.length < 10;
-  }
-
   void toggleMediaSelection(String mediaId) {
     if (selectedMediaIds.contains(mediaId)) {
       selectedMediaIds.remove(mediaId);
@@ -263,9 +259,7 @@ class MediaLibraryController extends GetxController
     return myAppController.userData['id']?.toString() ?? 'unknown';
   }
 
-  // ========== جلب البيانات من API ==========
   Future<void> loadUploadedMediaFromAPI() async {
-    // التحقق من المصادقة أولاً
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [API LOAD] User not authenticated, skipping API call');
@@ -355,9 +349,7 @@ class MediaLibraryController extends GetxController
     }
   }
 
-  // ========== رفع الملفات ==========
   Future<void> _uploadFilesToAPI(List<File> files, List<MediaItem> mediaItems) async {
-    // التحقق من المصادقة أولاً
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [UPLOAD] User not authenticated, skipping upload');
@@ -451,7 +443,7 @@ class MediaLibraryController extends GetxController
           }
           
           Get.snackbar(
-            'نجاح', 
+            'نجاح',
             'تم رفع $successCount ملف بنجاح${failCount > 0 ? ' وفشل $failCount ملف' : ''}',
             backgroundColor: Colors.green,
             colorText: Colors.white,
@@ -513,7 +505,6 @@ class MediaLibraryController extends GetxController
     return false;
   }
 
-  // ========== دوال اختيار الملفات ==========
   Future<void> pickImages() async {
     try {
       print('🖼️ [PICKER] Opening image picker...');
@@ -598,7 +589,6 @@ class MediaLibraryController extends GetxController
   }
 
   Future<void> _processSelectedFiles(List<XFile> files, MediaType type) async {
-    // التحقق من المصادقة أولاً
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [PROCESS] User not authenticated, skipping file processing');
@@ -649,7 +639,6 @@ class MediaLibraryController extends GetxController
     }
   }
 
-  // ========== دوال مساعدة ==========
   Map<String, dynamic> _mediaItemToJson(MediaItem item) {
     return {
       'id': item.id,
@@ -709,7 +698,7 @@ class MediaLibraryController extends GetxController
     var filtered = displayedMedia;
     
     if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((item) => 
+      filtered = filtered.where((item) =>
         item.name.toLowerCase().contains(searchQuery.value.toLowerCase())
       ).toList();
       print('🔍 [SEARCH] Filtered ${displayedMedia.length} → ${filtered.length} items');
@@ -726,7 +715,7 @@ class MediaLibraryController extends GetxController
       
       Get.back(result: selectedMedia);
       Get.snackbar(
-        'تم الإدراج', 
+        'تم الإدراج',
         'تم إدراج ${selectedMediaIds.length} عنصر',
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -734,34 +723,74 @@ class MediaLibraryController extends GetxController
     } else {
       print('⚠️ [CONFIRM] No items selected');
       Get.snackbar(
-        'تنبيه', 
+        'تنبيه',
         'لم تقم باختيار أي ملفات',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
       );
     }
   }
-
+Future<void> deleteMediaItem(MediaItem media) async {
+  try {
+    isLoading.value = true;
+    
+    if (media.isLocal == true) {
+      temporaryMediaItems.remove(media);
+      selectedMediaIds.remove(media.id);
+      print('🗑️ حذف الملف المحلي: ${media.name}');
+      return;
+    }
+    
+    final response = await ApiHelper.deleteMedia(fileName: media.name);
+    
+    if (response != null && response['status'] == true) {
+      uploadedMediaItems.removeWhere((item) => item.id == media.id);
+      selectedMediaIds.remove(media.id);
+      
+      await _saveMediaToLocalStorage();
+      
+      print('🗑️ حذف الملف من الخادم: ${media.name}');
+      
+      Get.snackbar(
+        'نجاح',
+        'تم حذف الملف بنجاح',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      throw Exception(response?['message'] ?? 'فشل في حذف الملف');
+    }
+  } catch (e) {
+    print('❌ خطأ في حذف الملف: $e');
+    Get.snackbar(
+      'خطأ',
+      'فشل في حذف الملف',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  } finally {
+    isLoading.value = false;
+  }
+}
   List<MediaItem> _getSelectedMediaItems() {
     final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
     return allMedia.where((item) => selectedMediaIds.contains(item.id)).toList();
   }
 
-  String getMediaDisplayUrl(MediaItem media) {
-    if (media.isLocal == true) {
+String getMediaDisplayUrl(MediaItem media) {
+  if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
+    return media.fileUrl!;
+  } else if (media.path.isNotEmpty) {
+    if (media.path.startsWith('http')) {
       return media.path;
-    } else if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
-      return media.fileUrl!;
-    } else if (media.path.isNotEmpty) {
-      if (media.path.startsWith('http')) {
-        return media.path;
-      } else {
-        return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
-      }
+    } else if (media.isLocal == true) {
+      return media.path;
     } else {
-      return '';
+      return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
     }
   }
+  return '';
+}
 
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {
@@ -773,7 +802,6 @@ class MediaLibraryController extends GetxController
     searchQuery.value = searchTextController.text;
   }
   
-  // Getter للإطلاع على حالة التهيئة
   bool get isControllerInitialized => _isInitialized.value;
   bool get isAuthChecked => _isAuthChecked.value;
 }

@@ -24,7 +24,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
       subtitle: 'بيانات المنتج الأساسية',
     ),
     const StepperStep(
-      title: 'الكلمات المفتاحية', 
+      title: 'الكلمات المفتاحية',
       subtitle: 'إدارة الكلمات المفتاحية',
     ),
     const StepperStep(
@@ -40,7 +40,6 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
   @override
   void initState() {
     super.initState();
-    // ✅ التأكد من تسجيل الـ Controllers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!Get.isRegistered<ProductCentralController>()) {
         Get.put(ProductCentralController(), permanent: true);
@@ -64,7 +63,6 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
       ),
       body: Column(
         children: [
-          // الـ Stepper
            Padding(
              padding: const EdgeInsets.only(top: 25),
              child: CustomStepper(
@@ -83,12 +81,10 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
               ),
            ),
           
-          // محتوى الخطوة - هذا هو المكان الوحيد الذي يظهر فيه المحتوى
           Expanded(
             child: _buildStepBody(currentStep),
           ),
           
-          // أزرار التنقل
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -114,11 +110,10 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
     );
   }
 
-  // إزالة الدالة _buildStepContent نهائياً واستخدام _buildStepBody مباشرة
   Widget _buildStepBody(int stepIndex) {
     switch (stepIndex) {
       case 0:
-        return AddProductContent(); // فقط المحتوى بدون أي إضافات
+        return AddProductContent();
       case 1:
         return KeywordManagementScreen();
       case 2:
@@ -220,23 +215,22 @@ void _submitProduct() async {
 
   if (!productController.isBasicInfoComplete()) {
     Get.snackbar(
-      'خطأ', 
-      'يرجى إكمال المعلومات الأساسية أولاً', 
-      backgroundColor: Colors.red, 
+      'خطأ',
+      'يرجى إكمال المعلومات الأساسية أولاً',
+      backgroundColor: Colors.red,
       colorText: Colors.white
     );
     return;
   }
 
-  // التحقق من صحة المتغيرات إذا كانت موجودة
   final variationController = Get.find<ProductVariationController>();
   if (variationController.hasVariations.value) {
     final validation = variationController.validateVariations();
     if (!validation.isValid) {
       Get.snackbar(
-        'خطأ', 
-        validation.errorMessage, 
-        backgroundColor: Colors.red, 
+        'خطأ',
+        validation.errorMessage,
+        backgroundColor: Colors.red,
         colorText: Colors.white
       );
       return;
@@ -314,9 +308,9 @@ void _submitProduct() async {
     );
   } else {
     Get.snackbar(
-      'خطأ', 
-      result['message'] ?? 'فشل في إضافة المنتج', 
-      backgroundColor: Colors.red, 
+      'خطأ',
+      result['message'] ?? 'فشل في إضافة المنتج',
+      backgroundColor: Colors.red,
       colorText: Colors.white,
       duration: const Duration(seconds: 5),
     );

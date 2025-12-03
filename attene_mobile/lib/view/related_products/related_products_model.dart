@@ -1,4 +1,3 @@
-// lib/view/related_products/related_products_model.dart
 import 'package:get/get.dart';
 
 class RelatedProduct {

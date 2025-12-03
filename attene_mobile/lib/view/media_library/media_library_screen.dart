@@ -1,4 +1,3 @@
-// lib/view/media_library/media_library_screen.dart
 import 'dart:io';
 import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
@@ -32,7 +31,7 @@ class MediaLibraryScreen extends StatelessWidget {
           title: 'مكتبة الوسائط',
           actionText: isSelectionMode ? 'ادراج' : '',
           onActionPressed: isSelectionMode ? controller.confirmSelection : null,
-          tabs: controller.tabs, 
+          tabs: controller.tabs,
           searchController: controller.searchTextController,
           onSearchChanged: (value) => controller.searchQuery.value = value,
           tabController: controller.tabController,
@@ -52,8 +51,8 @@ class MediaLibraryScreen extends StatelessWidget {
         return _buildLoadingState();
       }
       
-      return controller.currentTabIndex.value == 0 
-          ? _buildUploadTab() 
+      return controller.currentTabIndex.value == 0
+          ? _buildUploadTab()
           : _buildMediaGrid();
     });
   }
@@ -184,11 +183,11 @@ class MediaLibraryScreen extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isUploading ? Colors.blue : 
+              color: isUploading ? Colors.blue :
                     isSelected ? AppColors.primary400 : Colors.grey[300]!,
               width: isUploading ? 2 : (isSelected ? 2 : 1),
             ),
-            color: isUploading ? Colors.blue.withOpacity(0.1) : 
+            color: isUploading ? Colors.blue.withOpacity(0.1) :
                   isSelected ? AppColors.primary400.withOpacity(0.1) : Colors.white,
             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
           ),
@@ -206,13 +205,13 @@ class MediaLibraryScreen extends StatelessWidget {
 
   void _handleMediaTap(MediaItem media, bool isUploading, bool isMaxSelected, bool isSelected) {
     if (isUploading) {
-      Get.snackbar('جاري الرفع', 'الملف قيد الرفع إلى السيرفر', 
+      Get.snackbar('جاري الرفع', 'الملف قيد الرفع إلى السيرفر',
           backgroundColor: Colors.blue, colorText: Colors.white);
       return;
     }
     
     if (isMaxSelected) {
-      Get.snackbar('تنبيه', 'يمكن اختيار 10 ملفات كحد أقصى', 
+      Get.snackbar('تنبيه', 'يمكن اختيار 10 ملفات كحد أقصى',
           backgroundColor: Colors.orange, colorText: Colors.white);
       return;
     }
@@ -348,7 +347,7 @@ class MediaLibraryScreen extends StatelessWidget {
 
   Widget _buildFloatingActionButton() {
     return Obx(() {
-      return controller.currentTabIndex.value == 0 
+      return controller.currentTabIndex.value == 0
           ? FloatingActionButton(
               onPressed: _showUploadOptions,
               backgroundColor: AppColors.primary400,
@@ -426,7 +425,7 @@ class MediaLibraryScreen extends StatelessWidget {
           Text('لا توجد ملفات', style: TextStyle(fontSize: 18, color: Colors.grey[500], fontWeight: FontWeight.w500)),
           SizedBox(height: 8),
           Text(
-            controller.currentTabIndex.value == 0 
+            controller.currentTabIndex.value == 0
                 ? 'انقر على زر "+" لإضافة الملفات الأولى'
                 : 'انقر على زر "تحميل" لإضافة الملفات الأولى',
             style: TextStyle(fontSize: 14, color: Colors.grey[400]),
@@ -478,7 +477,6 @@ class MediaLibraryScreen extends StatelessWidget {
     _showDeleteDialog(media);
   }
 
- // في ملف media_library_screen.dart - تأكد من أن دالة الحذف موجودة
 void _showDeleteDialog(MediaItem media) {
   Get.dialog(
     AlertDialog(
@@ -486,13 +484,12 @@ void _showDeleteDialog(MediaItem media) {
       content: Text('هل أنت متأكد من حذف هذا الملف؟'),
       actions: [
         TextButton(
-          onPressed: () => Get.back(), 
+          onPressed: () => Get.back(),
           child: Text('إلغاء')
         ),
         TextButton(
           onPressed: () {
             Get.back();
-            // controller.deleteMediaItem(media); // ✅ تأكد من استدعاء الدالة الصحيحة
           },
           child: Text('حذف', style: TextStyle(color: Colors.red)),
         ),

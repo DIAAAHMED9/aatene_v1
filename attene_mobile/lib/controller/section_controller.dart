@@ -1,8 +1,5 @@
-// lib/controller/section_controller.dart
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:get/get.dart';
-// إضافة هذه النماذج في أعلى الملف بعد الاستيرادات
-// إضافة هذه النماذج في أعلى الملف بعد الاستيرادات
 class Section {
   final int id;
   final String name;
@@ -134,7 +131,7 @@ class SectionController extends GetxController {
       );
       
       if (response != null && response['status'] == true) {
-        await loadSections(); // إعادة تحميل القائمة
+        await loadSections();
         return true;
       }
       return false;
@@ -156,7 +153,7 @@ class SectionController extends GetxController {
       );
       
       if (response != null && response['status'] == true) {
-        await loadSections(); // إعادة تحميل القائمة
+        await loadSections();
         return true;
       }
       return false;

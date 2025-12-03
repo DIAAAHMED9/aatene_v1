@@ -26,7 +26,6 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
   @override
   void initState() {
     super.initState();
-    // ✅ تحميل السمات عند فتح الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadAttributesOnOpen();
     });
@@ -273,7 +272,6 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
           color: AppColors.primary400,
           textColor: Colors.white,
           onTap: () {
-            // ✅ استخدام الـ BottomSheetController مباشرة
             bottomSheetController.openManageAttributes(controller.allAttributes);
           },
         ),
@@ -293,8 +291,8 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
     return GetBuilder<ProductVariationController>(
       id: ProductVariationController.attributesUpdateId,
       builder: (controller) {
-        return controller.selectedAttributes.isNotEmpty 
-            ? _buildSelectedAttributes() 
+        return controller.selectedAttributes.isNotEmpty
+            ? _buildSelectedAttributes()
             : _buildNoAttributesSelected();
       },
     );
@@ -304,8 +302,8 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
     return GetBuilder<ProductVariationController>(
       id: ProductVariationController.attributesUpdateId,
       builder: (controller) {
-        return controller.selectedAttributes.isNotEmpty 
-            ? _buildVariationsSection() 
+        return controller.selectedAttributes.isNotEmpty
+            ? _buildVariationsSection()
             : const SizedBox();
       },
     );
@@ -433,7 +431,7 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
           builder: (context, constraints) {
             final isWide = constraints.maxWidth > 500;
             
-            return isWide 
+            return isWide
                 ? _buildWideVariationsHeader()
                 : _buildNarrowVariationsHeader();
           },
@@ -530,8 +528,8 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
     return GetBuilder<ProductVariationController>(
       id: ProductVariationController.variationsUpdateId,
       builder: (controller) {
-        return controller.variations.isNotEmpty 
-            ? _buildVariationsList() 
+        return controller.variations.isNotEmpty
+            ? _buildVariationsList()
             : _buildNoVariations();
       },
     );
@@ -641,9 +639,7 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
     );
   }
 
-// في lib/view/product_variations/product_variations_screen.dart - تحديث هذه الدالة فقط
 void _saveVariationsAndContinue() {
-  // ✅ التحقق من وجود قسم مختار
   final productCentralController = Get.find<ProductCentralController>();
   if (productCentralController.selectedSection.value == null) {
     Get.snackbar(
@@ -668,7 +664,6 @@ void _saveVariationsAndContinue() {
     return;
   }
   
-  // ✅ حفظ البيانات في ProductCentralController
   final variationsData = controller.getVariationsData();
   final variationsList = variationsData['variations']?.map((v) => v as Map<String, dynamic>).toList() ?? [];
   productCentralController.addVariations(variationsList);

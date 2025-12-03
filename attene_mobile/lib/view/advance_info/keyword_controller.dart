@@ -39,23 +39,19 @@ class Keyword {
 }
 
 class KeywordController extends GetxController {
-  // === إدارة المتاجر ===
   var stores = <Store>[].obs;
   var selectedStore = Rx<Store?>(null);
   var isLoadingStores = false.obs;
   var storesError = ''.obs;
   var hasAttemptedLoad = false.obs;
 
-  // === إدارة الكلمات المفتاحية ===
   var availableKeywords = <Keyword>[].obs;
   var selectedKeywords = <Keyword>[].obs;
   var filteredAvailableKeywords = <Keyword>[].obs;
 
-  // === البحث ===
   final searchController = TextEditingController();
   var isSearchInputEmpty = true.obs;
 
-  // === الحد الأقصى ===
   final int maxKeywords = 15;
 
   @override
@@ -66,7 +62,6 @@ class KeywordController extends GetxController {
     searchController.addListener(_onSearchChanged);
     _loadDefaultKeywords();
     
-    // لا نحمل المتاجر تلقائياً، سننتظر حتى يفتح المستخدم الشاشة
   }
 
   @override
@@ -75,18 +70,15 @@ class KeywordController extends GetxController {
     super.onClose();
   }
 
-  // ✅ جديد: تحميل المتاجر فقط عند فتح الشاشة
   Future<void> loadStoresOnOpen() async {
     if (hasAttemptedLoad.value && stores.isNotEmpty) {
-      return; // لا نحمل إذا كانت محملة مسبقاً
+      return;
     }
     await loadStores();
   }
 
-  // ✅ محدث: تحسين جلب المتاجر مع معالجة أفضل
   Future<void> loadStores() async {
     try {
-      // التحقق من تسجيل الدخول أولاً
       final MyAppController myAppController = Get.find<MyAppController>();
       if (!myAppController.isLoggedIn.value) {
         storesError('يجب تسجيل الدخول أولاً');
@@ -137,7 +129,6 @@ class KeywordController extends GetxController {
     }
   }
 
-  // ✅ جديد: إعادة تحميل المتاجر
   Future<void> reloadStores() async {
     stores.clear();
     await loadStores();

@@ -1,15 +1,17 @@
-// lib/models/tab_model.dart
 import 'package:flutter/material.dart';
+
 
 class TabData {
   final String label;
   final String viewName;
   final IconData? icon;
+  final int? sectionId; // إضافة هذا الحقل
 
   TabData({
     required this.label,
     required this.viewName,
     this.icon,
+    this.sectionId, // إضافة هذا الباراميتر
   });
 
   @override
@@ -18,12 +20,12 @@ class TabData {
       other is TabData &&
           runtimeType == other.runtimeType &&
           label == other.label &&
-          viewName == other.viewName;
+          viewName == other.viewName &&
+          sectionId == other.sectionId;
 
   @override
-  int get hashCode => label.hashCode ^ viewName.hashCode;
+  int get hashCode => label.hashCode ^ viewName.hashCode ^ (sectionId?.hashCode ?? 0);
 }
-
 class AppBarConfig {
   final String title;
   final String actionText;
