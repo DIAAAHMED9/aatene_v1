@@ -329,7 +329,7 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
             child: ListTile(
               leading: Icon(Icons.check_circle, color: AppColors.primary400),
               title: Text(product.name),
-              subtitle: Text('${product.price.toStringAsFixed(2)} ريال'),
+              subtitle: Text('${double.parse(product.price!).toStringAsFixed(2)} ريال'),
               trailing: IconButton(
                 icon: const Icon(Icons.close, color: Colors.red),
                 onPressed: () => controller.removeSelectedProduct(product),
@@ -421,7 +421,7 @@ class _RelatedProductsStepperScreenState extends State<RelatedProductsStepperScr
                     contentPadding: EdgeInsets.zero,
                     leading: Icon(Icons.check, color: AppColors.primary400),
                     title: Text(product.name),
-                    trailing: Text('${product.price.toStringAsFixed(2)} ريال'),
+                    trailing: Text('${double.parse(product.price!).toStringAsFixed(2)} ريال'),
                   );
                 }).toList(),
               );
@@ -586,7 +586,7 @@ void _showProductSelectionSheet() {
                       ),
                     ),
                     subtitle: Text(
-                      '${product.price.toStringAsFixed(2)} ريال',
+                      '${double.parse(product.price!).toStringAsFixed(2)} ريال',
                       style: TextStyle(
                         color: Colors.green[600],
                         fontWeight: FontWeight.bold,

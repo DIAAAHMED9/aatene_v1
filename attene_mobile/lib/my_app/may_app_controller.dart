@@ -130,7 +130,13 @@ class MyAppController extends GetxController {
   String? get token => userData['token'];
   
   bool get isLoading => _isLoading.value;
-
+Future<void> checkAndRedirectIfLoggedIn() async {
+  if (isLoggedIn.value && !Get.currentRoute.contains('/mainScreen')) {
+    print('🔄 المستخدم مسجل دخول، التوجيه إلى الشاشة الرئيسية...');
+    await Future.delayed(const Duration(milliseconds: 500));
+    Get.offAllNamed('/mainScreen');
+  }
+}
   @override
   void onClose() {
     noInternetWaitingRequests.clear();

@@ -94,7 +94,10 @@ void _saveAttributesAndClose() {
   @override
   void onInit() {
     super.onInit();
-    _initializeAttributeListeners();
+init();
+  }
+void  init(){
+        _initializeAttributeListeners();
     _loadAttributesFromApi();
     _initializeSectionSearch();
     _loadSections();

@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class Product {
   final int id;
   final String sku;
@@ -17,6 +19,8 @@ class Product {
   final Map<String, dynamic>? section;
   final String? price;
   final String? sectionName;
+  // أضف هذا
+  final RxBool isSelected;
 
   Product({
     required this.id,
@@ -37,36 +41,41 @@ class Product {
     this.section,
     this.price,
     this.sectionName,
-  });
+    // أضف هذا
+    bool isSelected = false,
+  }) : isSelected = RxBool(isSelected);
 
-factory Product.fromJson(Map<String, dynamic> json) {
-  print('🔄 [PARSING PRODUCT] JSON: $json');
-  
-  return Product(
-    id: json['id'] ?? 0,
-    sku: json['sku'] ?? '',
-    name: json['name'] ?? '',
-    slug: json['slug'],
-    shortDescription: json['short_description'],
-    description: json['description'],
-    cover: json['cover'],
-    coverUrl: json['cover_url'],
-    endDate: json['end_date'],
-    shown: json['shown'] ?? false,
-    favoritesCount: json['favorites_count']?.toString() ?? '0',
-    messagesCount: json['messages_count']?.toString() ?? '0',
-    viewCount: json['view_count']?.toString(),
-    sectionId: json['section_id']?.toString(),
-    status: json['status'],
-    section: json['section'] != null 
-        ? Map<String, dynamic>.from(json['section']) 
-        : null,
-    price: json['price']?.toString(),
-    sectionName: json['section'] != null 
-        ? json['section']['name']?.toString() 
-        : null,
-  );
-}
+  factory Product.fromJson(Map<String, dynamic> json) {
+    print('🔄 [PARSING PRODUCT] JSON: $json');
+    
+    return Product(
+      id: json['id'] ?? 0,
+      sku: json['sku'] ?? '',
+      name: json['name'] ?? '',
+      slug: json['slug'],
+      shortDescription: json['short_description'],
+      description: json['description'],
+      cover: json['cover'],
+      coverUrl: json['cover_url'],
+      endDate: json['end_date'],
+      shown: json['shown'] ?? false,
+      favoritesCount: json['favorites_count']?.toString() ?? '0',
+      messagesCount: json['messages_count']?.toString() ?? '0',
+      viewCount: json['view_count']?.toString(),
+      sectionId: json['section_id']?.toString(),
+      status: json['status'],
+      section: json['section'] != null 
+          ? Map<String, dynamic>.from(json['section']) 
+          : null,
+      price: json['price']?.toString(),
+      sectionName: json['section'] != null 
+          ? json['section']['name']?.toString() 
+          : null,
+      // أضف هذا
+      isSelected: false,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
