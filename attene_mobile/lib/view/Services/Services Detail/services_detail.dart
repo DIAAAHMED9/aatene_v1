@@ -430,11 +430,313 @@ class _ServicesDetailState extends State<ServicesDetail> {
                         ],
                       ),
                       children: [
-                       Container(
-                         width: double.infinity,
-                         height: 100,
-                       ),
+                        MaterialButton(
+                          onPressed: () {},
+                          child: Container(
+                            width: double.infinity,
+                            height: 130,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColors.primary50,
+                                width: 2,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                spacing: 10,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      CircleAvatar(),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            "محمد علي",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Icon(
+                                                Icons.location_on,
+                                                color: AppColors.primary400,
+                                                size: 15,
+                                              ),
+                                              Text(
+                                                "فلسطين, الخليل",
+                                                style: TextStyle(
+                                                  color: AppColors.primary400,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      MaterialButton(
+                                        onPressed: () {},
+                                        child: Container(
+                                          width: 60,
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary400,
+                                            borderRadius: BorderRadius.circular(
+                                              50,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            spacing: 5,
+                                            children: [
+                                              Icon(
+                                                Icons.person_add_alt,
+                                                color: AppColors.light1000,
+                                                size: 15,
+                                              ),
+                                              Text(
+                                                "متابعة",
+                                                style: TextStyle(
+                                                  color: AppColors.light1000,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      MaterialButton(
+                                        onPressed: () {},
+                                        child: Container(
+                                          width: 100,
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.error200,
+                                            borderRadius: BorderRadius.circular(
+                                              50,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            spacing: 5,
+                                            children: [
+                                              Icon(
+                                                Icons.flag_outlined,
+                                                color: AppColors.light1000,
+                                                size: 15,
+                                              ),
+                                              Text(
+                                                "بلغ عن إساءة",
+                                                style: TextStyle(
+                                                  color: AppColors.light1000,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    color: AppColors.primary50,
+                                    height: 2,
+                                  ),
+                                  Row(
+                                    spacing: 5,
+                                    children: [
+                                      Icon(Icons.timer_sharp),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+
+                                        children: [
+                                          Text("عضو منذ "),
+                                          Text(" 19-03-2025 "),
+                                        ],
+                                      ),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.star_border_rounded),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(" تقيم التاجر"),
+                                          Text("5.0"),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
+                    ),
+                    ExpansionTile(
+                      maintainState: true,
+                      title: Row(
+                        spacing: 10,
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(100),
+                                topLeft: Radius.circular(100),
+                              ),
+                              color: AppColors.primary50,
+                            ),
+                            child: Icon(
+                              Icons.location_on_outlined,
+                              color: AppColors.primary400,
+                            ),
+                          ),
+                          Text("المدن التي يمكنه العمل بها"),
+                        ],
+                      ),
+                      children: [
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: MaterialButton(
+                              onPressed: () {},
+                              child: Container(
+                                width: double.infinity,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: AppColors.neutral900,
+                                  ),
+                                  color: AppColors.primary50,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text(
+                                    "الناصرة",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 0),
+                          itemCount: 3,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 20),
+                          child: MaterialButton(
+                            onPressed: () {},
+                            child: Container(
+                              width: double.infinity,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: AppColors.neutral900),
+                                color: AppColors.primary50,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  "الناصرة",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ExpansionTile(
+                      maintainState: true,
+                      title: Row(
+                        spacing: 10,
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(100),
+                                topLeft: Radius.circular(100),
+                              ),
+                              color: AppColors.primary50,
+                            ),
+                            child: Icon(
+                              Icons.star_border_rounded,
+                              color: AppColors.primary400,
+                            ),
+                          ),
+                          Text("تقييمات ومراجعات"),
+                        ],
+                      ),
+                      children: [],
+                    ),
+                    ExpansionTile(
+                      maintainState: true,
+                      title: Row(
+                        spacing: 10,
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(100),
+                                topLeft: Radius.circular(100),
+                              ),
+                              color: AppColors.primary50,
+                            ),
+                            child: Icon(
+                              Icons.contact_support_outlined,
+                              color: AppColors.primary400,
+                            ),
+                          ),
+                          Text("الأسئلة الشائعة"),
+                        ],
+                      ),
+                      children: [],
+                    ),
+                    ExpansionTile(
+                      maintainState: true,
+                      title: Row(
+                        spacing: 10,
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(100),
+                                topLeft: Radius.circular(100),
+                              ),
+                              color: AppColors.primary50,
+                            ),
+                            child: Icon(
+                              Icons.message_outlined,
+                              color: AppColors.primary400,
+                            ),
+                          ),
+                          Text("أسئلة وأجوبة"),
+                        ],
+                      ),
+                      children: [],
                     ),
                   ],
                 ),

@@ -7,6 +7,7 @@ import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/Control_Panal_Vendor/controler_vindor.dart';
+import 'package:attene_mobile/view/Services/Services%20Detail/services_detail.dart';
 import 'package:attene_mobile/view/advance_info/keyword_controller.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register.dart';
 import 'package:attene_mobile/view/login%20and%20start/set_newPassword/set_new_password.dart';
@@ -70,23 +71,24 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       theme: ThemeData(
+
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
-        GetPage(name: '/onboarding', page: () => const Onbording()),
-        GetPage(name: '/start_login', page: () => const StartLogin()),
-        GetPage(name: '/login', page: () => Login()),
-        GetPage(name: '/register', page: () => Register()),
-        GetPage(name: '/forget_password', page: () => ForgetPassword()),
-        GetPage(name: '/verification', page: () => Verification()),
-        GetPage(name: '/set_new_password', page: () => SetNewPassword()),
-        GetPage(name: '/mainScreen', page: () => MainScreen()),
-        GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
-        GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
-        GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
+        GetPage(name: '/', page: () => const ServicesDetail()),
+        // GetPage(name: '/onboarding', page: () => const Onbording()),
+        // GetPage(name: '/start_login', page: () => const StartLogin()),
+        // GetPage(name: '/login', page: () => Login()),
+        // GetPage(name: '/register', page: () => Register()),
+        // GetPage(name: '/forget_password', page: () => ForgetPassword()),
+        // GetPage(name: '/verification', page: () => Verification()),
+        // GetPage(name: '/set_new_password', page: () => SetNewPassword()),
+        // GetPage(name: '/mainScreen', page: () => MainScreen()),
+        // GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
+        // GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
+        // GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
       ],
       debugShowCheckedModeBanner: false,
     );
