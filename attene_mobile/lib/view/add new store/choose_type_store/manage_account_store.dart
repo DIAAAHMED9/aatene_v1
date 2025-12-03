@@ -1,4 +1,3 @@
-// lib/view/add new store/choose_type_store/manage_account_store.dart
 import 'package:attene_mobile/view/add%20new%20store/choose_type_store/type_store.dart' show TypeStore;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,28 +34,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
         )),
         centerTitle: false,
  
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 16),
-        //     child: GestureDetector(
-        //       onTap: controller.addNewStore,
-        //       child: Row(
-        //         children: [
-        //           Icon(Icons.add, color: AppColors.primary400, size: 20),
-        //           SizedBox(width: 4),
-        //           Text(
-        //             'إضافة حساب',
-        //             style: TextStyle(
-        //               color: AppColors.primary400,
-        //               fontSize: 14,
-        //               fontWeight: FontWeight.w600,
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ],
       ),
       body: Obx(() => _buildBody(controller, isRTL, myAppController)),
     );
@@ -184,7 +161,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
   }
 
   Widget _buildAccountsListView(ManageAccountStoreController controller) {
-    // فلترة المتاجر بناءً على البحث
     List<Store> filteredStores = controller.stores.where((store) {
       if (controller.searchQuery.value.isNotEmpty) {
         final query = controller.searchQuery.value.toLowerCase();
@@ -197,7 +173,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
 
     return Column(
       children: [
-        // شريط البحث
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Container(
@@ -220,7 +195,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
           ),
         ),
         
-        // رأس الجدول
         Container(
           margin: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
           padding: const EdgeInsets.all(16.0),
@@ -253,7 +227,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
           ),
         ),
         
-        // قائمة المتاجر
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -265,7 +238,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
           ),
         ),
         
-        // زر إضافة متجر جديد
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: AateneButton(
@@ -282,30 +254,23 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     );
   }
 
-// في lib/view/add new store/choose_type_store/manage_account_store.dart
-
-// في lib/view/add new store/choose_type_store/manage_account_store.dart
-
 Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
   return Padding(
     padding: const EdgeInsets.all(16.0),
     child: Container(
-      width: double.infinity, // 🔥 إضافة هذا السطر
+      width: double.infinity,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // صورة المتجر
           _buildStoreLogo(store),
           
           SizedBox(width: 16),
           
-          // تفاصيل المتجر
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // اسم المتجر
                 Text(
                   store.name,
                   style: TextStyle(
@@ -319,10 +284,9 @@ Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
                 
                 SizedBox(height: 6),
                 
-                // العنوان والحالة
                 Row(
                   children: [
-                    Expanded( // 🔥 إضافة Expanded هنا
+                    Expanded(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -346,7 +310,7 @@ Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
                               ),
                             ),
                             SizedBox(width: 6),
-                            Expanded( // 🔥 إضافة Expanded هنا أيضاً
+                            Expanded(
                               child: Text(
                                 store.address,
                                 style: TextStyle(
@@ -364,7 +328,6 @@ Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
                     
                     SizedBox(width: 8),
                     
-                    // الحالة
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
@@ -402,11 +365,9 @@ Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
           
           SizedBox(width: 16),
           
-          // أزرار الإجراءات
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // زر التعديل
               GestureDetector(
                 onTap: () => controller.editStore(store),
                 child: Container(
@@ -426,7 +387,6 @@ Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
               
               SizedBox(width: 12),
               
-              // زر الحذف
               GestureDetector(
                 onTap: () => controller.deleteStore(store),
                 child: Container(
@@ -459,7 +419,6 @@ Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
         
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          // borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey[200]!,),
           
         ),

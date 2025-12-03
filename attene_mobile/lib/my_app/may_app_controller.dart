@@ -25,15 +25,12 @@ class MyAppController extends GetxController {
     print('🚀 Starting app initialization...');
     
     try {
-      // تهيئة Firebase أولاً
       print('📱 Initializing Firebase...');
       await Future.delayed(Duration(milliseconds: 500));
       
-      // تحميل التفضيلات المحلية
       print('💾 Loading user preferences...');
       await _loadUserPreferences();
       
-      // التحقق من حالة تسجيل الدخول
       print('🔐 Checking authentication...');
       _checkLoginStatus();
       

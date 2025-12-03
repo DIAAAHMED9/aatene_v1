@@ -45,7 +45,6 @@ class _AddProductContentState extends State<AddProductContent> {
     _loadStoredData();
     print('🔴 [ADD PRODUCT CONTENT INITIALIZED]');
     
-    // ✅ تحميل الفئات عند فتح الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       productController.loadCategoriesIfNeeded();
     });
@@ -119,7 +118,7 @@ class _AddProductContentState extends State<AddProductContent> {
           _buildProductConditionSection(),
           const SizedBox(height: 20),
 
-          _buildCategoriesSection(), // ✅ محدث: مع معالجة التحميل
+          _buildCategoriesSection(),
           const SizedBox(height: 20),
           
           _buildProductDescriptionSection(),
@@ -232,7 +231,7 @@ class _AddProductContentState extends State<AddProductContent> {
         ),
         const SizedBox(height: 16),
         
-        if (productController.selectedMedia.isNotEmpty) 
+        if (productController.selectedMedia.isNotEmpty)
           _buildSelectedMediaPreview(),
         
         Container(
@@ -537,7 +536,6 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-// ✅ محدث: تحسين قسم الفئات مع معالجة التحميل والأخطاء
 Widget _buildCategoriesSection() {
   return Obx(() {
     final isLoading = productController.isLoadingCategories.value;
@@ -561,7 +559,6 @@ Widget _buildCategoriesSection() {
               ),
             ),
             Spacer(),
-            // زر إعادة التحميل
             if (hasError || (categories.isEmpty && !isLoading))
               IconButton(
                 icon: Icon(Icons.refresh, size: 20),
@@ -588,7 +585,6 @@ Widget _buildCategoriesSection() {
   });
 }
 
-// ✅ جديد: بناء dropdown التحميل
 Widget _buildLoadingDropdown(String text) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -613,7 +609,6 @@ Widget _buildLoadingDropdown(String text) {
   );
 }
 
-// ✅ جديد: بناء dropdown الخطأ
 Widget _buildErrorDropdown(String error) {
   return Column(
     children: [
@@ -650,7 +645,6 @@ Widget _buildErrorDropdown(String error) {
   );
 }
 
-// ✅ جديد: بناء dropdown فارغ
 Widget _buildEmptyDropdown(String text) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -671,7 +665,6 @@ Widget _buildEmptyDropdown(String text) {
   );
 }
 
-// ✅ محدث: بناء dropdown الفئات العادي
 Widget _buildCategoriesDropdown() {
   return Obx(() {
     final categories = productController.categories;

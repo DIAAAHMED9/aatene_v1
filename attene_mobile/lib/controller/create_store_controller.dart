@@ -13,10 +13,8 @@ import '../utlis/colors/app_color.dart';
 class CreateStoreController extends GetxController {
   final MyAppController myAppController = Get.find<MyAppController>();
   
-  // Step 1: Store Type
   RxString storeType = 'products'.obs;
   
-  // Step 2: Basic Information
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -36,42 +34,35 @@ class CreateStoreController extends GetxController {
   TextEditingController latController = TextEditingController();
   TextEditingController lngController = TextEditingController();
   
-  // قوائم المدن والمقاطعات والعملات
   RxList<Map<String, dynamic>> cities = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> districts = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> currencies = <Map<String, dynamic>>[].obs;
   
-  // متغيرات لعرض الأسماء
   RxString selectedCityName = 'اختر المدينة'.obs;
   RxString selectedDistrictName = 'اختر الحي'.obs;
   RxString selectedCurrencyName = 'اختر العملة'.obs;
   
   RxBool hidePhone = false.obs;
   
-  // Step 3: Shipping
   RxString deliveryType = 'free'.obs;
   RxList<Map<String, dynamic>> shippingCompanies = <Map<String, dynamic>>[].obs;
   RxList<int> locationCities = <int>[].obs;
   RxList<int> serviceCities = <int>[].obs;
   
-  // نظام الصور
   RxList<MediaItem> selectedLogoMedia = <MediaItem>[].obs;
   Rx<MediaItem?> primaryLogo = Rx<MediaItem?>(null);
   RxList<MediaItem> selectedCoverMedia = <MediaItem>[].obs;
   Rx<MediaItem?> primaryCover = Rx<MediaItem?>(null);
   
-  // حالات الرفع
   RxBool isUploadingLogo = false.obs;
   RxBool isUploadingCover = false.obs;
   RxMap<String, bool> logoUploadingStates = <String, bool>{}.obs;
   RxMap<String, bool> coverUploadingStates = <String, bool>{}.obs;
   
-  // States
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
   RxBool createStoreLoading = false.obs;
   
-  // متغيرات للتعديل
   RxInt editingStoreId = 0.obs;
   RxBool isEditMode = false.obs;
   
@@ -80,16 +71,13 @@ class CreateStoreController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // تعيين القيم الافتراضية
     storeType.value = 'products';
     deliveryType.value = 'shipping';
     
-    // تعيين القيم الافتراضية للحقول
     if (cityIdController.text.isEmpty) cityIdController.text = "1";
     if (districtIdController.text.isEmpty) districtIdController.text = "1";
     if (currencyIdController.text.isEmpty) currencyIdController.text = "2";
     
-    // تحميل البيانات الأولية
     loadInitialData();
   }
 
@@ -98,7 +86,6 @@ Future<void> loadInitialData() async {
     isLoading.value = true;
     print('🔄 تحميل البيانات الأولية...');
     
-    // جلب المدن
     print('🏙️ جلب قائمة المدن...');
     final citiesResponse = await ApiHelper.getCities();
     if (citiesResponse != null && citiesResponse['status'] == true) {
@@ -106,7 +93,6 @@ Future<void> loadInitialData() async {
       cities.assignAll(citiesList);
       print('✅ تم تحميل ${cities.length} مدينة');
       
-      // تحديث أسماء المدن إذا كانت هناك قيمة محفوظة
       if (cityIdController.text.isNotEmpty) {
         selectedCityName.value = getCityName(cityIdController.text);
       }
@@ -114,7 +100,6 @@ Future<void> loadInitialData() async {
       print('⚠️ فشل تحميل المدن: ${citiesResponse?['message']}');
     }
     
-    // جلب المقاطعات
     print('📍 جلب قائمة المقاطعات...');
     final districtsResponse = await ApiHelper.getDistricts();
     if (districtsResponse != null && districtsResponse['status'] == true) {
@@ -122,7 +107,6 @@ Future<void> loadInitialData() async {
       districts.assignAll(districtsList);
       print('✅ تم تحميل ${districts.length} مقاطعة');
       
-      // تحديث أسماء الأحياء إذا كانت هناك قيمة محفوظة
       if (districtIdController.text.isNotEmpty) {
         selectedDistrictName.value = getDistrictName(districtIdController.text);
       }
@@ -130,7 +114,6 @@ Future<void> loadInitialData() async {
       print('⚠️ فشل تحميل المقاطعات: ${districtsResponse?['message']}');
     }
     
-    // جلب العملات
     print('💰 جلب قائمة العملات...');
     final currenciesResponse = await ApiHelper.getCurrencies();
     if (currenciesResponse != null && currenciesResponse['status'] == true) {
@@ -138,7 +121,6 @@ Future<void> loadInitialData() async {
       currencies.assignAll(currenciesList);
       print('✅ تم تحميل ${currencies.length} عملة');
       
-      // تحديث أسماء العملات إذا كانت هناك قيمة محفوظة
       if (currencyIdController.text.isNotEmpty) {
         selectedCurrencyName.value = getCurrencyName(currencyIdController.text);
       }
@@ -150,23 +132,20 @@ Future<void> loadInitialData() async {
   } finally {
     isLoading.value = false;
     print('✅ انتهى تحميل البيانات الأولية');
-    update(); // تحديث الواجهة
+    update();
   }
 }
-// دالة لتحديث البيانات الأساسية فقط (بدون شركات الشحن)
 Future<bool> updateStoreBasicInfo() async {
   try {
     createStoreLoading.value = true;
     
-    // التحقق الأساسي
-    if (nameController.text.isEmpty || emailController.text.isEmpty || 
-        phoneController.text.isEmpty || selectedLogoMedia.isEmpty || 
+    if (nameController.text.isEmpty || emailController.text.isEmpty ||
+        phoneController.text.isEmpty || selectedLogoMedia.isEmpty ||
         selectedCoverMedia.isEmpty) {
       Get.snackbar('خطأ', 'يرجى تعبئة جميع الحقول الإلزامية');
       return false;
     }
     
-    // رفع الصور المحلية إن وجدت
     bool hasLocalImages = selectedLogoMedia.any((m) => m.isLocal == true) ||
                         selectedCoverMedia.any((m) => m.isLocal == true);
     
@@ -178,7 +157,6 @@ Future<bool> updateStoreBasicInfo() async {
       }
     }
     
-    // تجهيز البيانات الأساسية فقط
     Map<String, dynamic> data = {
       'type': storeType.value,
       'name': nameController.text.trim(),
@@ -189,25 +167,21 @@ Future<bool> updateStoreBasicInfo() async {
       'delivery_type': deliveryType.value,
     };
     
-    // إضافة الشعار
     final primaryLogoPath = getPrimaryLogoPath();
     if (primaryLogoPath != null && primaryLogoPath.isNotEmpty) {
       data['logo'] = primaryLogoPath;
     }
     
-    // إضافة الغلاف
     final coverPaths = getAllCoverPaths();
     if (coverPaths.isNotEmpty) {
       data['cover'] = coverPaths;
     }
     
-    // إضافة الحقول الإلزامية
     data['city_id'] = int.tryParse(cityIdController.text.trim()) ?? 1;
     data['district_id'] = int.tryParse(districtIdController.text.trim()) ?? 1;
     data['address'] = addressController.text.trim().isEmpty ? "العنوان" : addressController.text.trim();
     data['currency_id'] = int.tryParse(currencyIdController.text.trim()) ?? 2;
     
-    // إزالة القيم الفارغة
     data.removeWhere((key, value) {
       if (value == null) return true;
       if (value is String && value.isEmpty) return true;
@@ -219,16 +193,16 @@ Future<bool> updateStoreBasicInfo() async {
     final response = await ApiHelper.updateStore(editingStoreId.value, data);
     
     if (response != null && response['status'] == true) {
-      Get.snackbar('نجاح', 'تم تحديث البيانات الأساسية', 
+      Get.snackbar('نجاح', 'تم تحديث البيانات الأساسية',
           backgroundColor: Colors.green, colorText: Colors.white);
       return true;
     } else {
-      Get.snackbar('خطأ', response?['message'] ?? 'فشل التحديث', 
+      Get.snackbar('خطأ', response?['message'] ?? 'فشل التحديث',
           backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
   } catch (e) {
-    Get.snackbar('خطأ', 'حدث خطأ أثناء التحديث: $e', 
+    Get.snackbar('خطأ', 'حدث خطأ أثناء التحديث: $e',
         backgroundColor: Colors.red, colorText: Colors.white);
     return false;
   } finally {
@@ -236,32 +210,28 @@ Future<bool> updateStoreBasicInfo() async {
   }
 }
 
-// دالة لحفظ المتجر النهائي (البيانات الأساسية + الشحن)
 Future<bool> saveCompleteStore() async {
   try {
     createStoreLoading.value = true;
     
-    // 🔥 **التحقق من شركات الشحن إذا كان النوع "shipping"**
     if (deliveryType.value == 'shipping') {
       if (shippingCompanies.isEmpty) {
-        Get.snackbar('خطأ', 'يرجى إضافة شركة شحن واحدة على الأقل', 
+        Get.snackbar('خطأ', 'يرجى إضافة شركة شحن واحدة على الأقل',
             backgroundColor: Colors.red, colorText: Colors.white);
         return false;
       }
       
-      // التحقق من أن كل شركة لها أسعار
       for (int i = 0; i < shippingCompanies.length; i++) {
         final company = shippingCompanies[i];
-        if (company['prices'] == null || 
+        if (company['prices'] == null ||
             (company['prices'] is List && company['prices'].isEmpty)) {
-          Get.snackbar('خطأ', 'يرجى تعبئة أسعار التوصيل لشركة ${company['name']}', 
+          Get.snackbar('خطأ', 'يرجى تعبئة أسعار التوصيل لشركة ${company['name']}',
               backgroundColor: Colors.red, colorText: Colors.white);
           return false;
         }
       }
     }
     
-    // 🔥 **تجهيز البيانات النهائية - حسب تنسيق الـ API**
     Map<String, dynamic> data = {
       'type': storeType.value,
       'name': nameController.text.trim(),
@@ -276,26 +246,21 @@ Future<bool> saveCompleteStore() async {
       'delivery_type': deliveryType.value == 'free' ? 'hand' : deliveryType.value,
     };
     
-    // إضافة بيانات المالك في حالة الإنشاء الجديد
     if (!isEditMode.value) {
       data['owner_id'] = myAppController.userData['id']?.toString() ?? '41';
     }
     
-    // إضافة الشعار
     final primaryLogoPath = getPrimaryLogoPath();
     if (primaryLogoPath != null && primaryLogoPath.isNotEmpty) {
       data['logo'] = primaryLogoPath;
     }
     
-    // إضافة الغلاف
     final coverPaths = getAllCoverPaths();
     if (coverPaths.isNotEmpty) {
       data['cover'] = coverPaths;
     }
     
-    // 🔥 **إضافة شركات الشحن بالشكل المطلوب**
     if (deliveryType.value == 'shipping' && shippingCompanies.isNotEmpty) {
-      // تحويل الشركات إلى التنسيق المطلوب
       List<Map<String, dynamic>> formattedCompanies = [];
       
       for (var company in shippingCompanies) {
@@ -319,7 +284,6 @@ Future<bool> saveCompleteStore() async {
       
       data['shippingCompanies'] = formattedCompanies;
       
-      // 🔥 **جمع المدن من جميع الشركات**
       Set<dynamic> allCities = {};
       for (var company in shippingCompanies) {
         if (company['prices'] != null && company['prices'] is List) {
@@ -338,18 +302,14 @@ Future<bool> saveCompleteStore() async {
       print('🔥 المدن المجمعة: $allCities');
     }
     
-    // 🔥 **طباعة البيانات المرسلة للتحقق**
     print('📤 البيانات النهائية المرسلة للخادم:');
     print(jsonEncode(data));
     
-    // 🔥 **استدعاء الـ API المناسب**
     dynamic response;
     
     if (isEditMode.value && editingStoreId.value > 0) {
-      // تحديث المتجر
       response = await ApiHelper.updateStore(editingStoreId.value, data);
     } else {
-      // إنشاء متجر جديد
       response = await ApiHelper.post(
         path: '/merchants/mobile/stores',
         body: data,
@@ -358,11 +318,9 @@ Future<bool> saveCompleteStore() async {
       );
     }
     
-    // 🔥 **معالجة الاستجابة**
     if (response != null && response['status'] == true) {
       print('✅ استجابة الخادم: ${jsonEncode(response)}');
       
-      // التحقق من حفظ شركات الشحن
       if (response['data'] != null) {
         final savedData = response['data'];
         if (savedData['shipping_companies'] != null || savedData['shippingCompanies'] != null) {
@@ -382,21 +340,20 @@ Future<bool> saveCompleteStore() async {
       return true;
     } else {
       final errorMsg = response?['message'] ?? 'فشل العملية';
-      Get.snackbar('❌ خطأ', errorMsg, 
+      Get.snackbar('❌ خطأ', errorMsg,
           backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
   } catch (e, stackTrace) {
     print('❌ خطأ في حفظ المتجر: $e');
     print('📜 Stack trace: $stackTrace');
-    Get.snackbar('❌ خطأ', 'حدث خطأ أثناء الحفظ: $e', 
+    Get.snackbar('❌ خطأ', 'حدث خطأ أثناء الحفظ: $e',
         backgroundColor: Colors.red, colorText: Colors.white);
     return false;
   } finally {
     createStoreLoading.value = false;
   }
 }
-  // دالة فتح Bottom Sheet لاختيار المدينة
 Future<void> openCitySelection() async {
   try {
     if (cities.isEmpty) {
@@ -419,7 +376,6 @@ Future<void> openCitySelection() async {
         ),
         child: Column(
           children: [
-            // Header
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -448,7 +404,6 @@ Future<void> openCitySelection() async {
               ),
             ),
             
-            // Cities List
             Expanded(
               child: ListView.builder(
                 itemCount: cities.length,
@@ -471,7 +426,7 @@ Future<void> openCitySelection() async {
                       cityIdController.text = city['id'].toString();
                       selectedCityName.value = city['name']?.toString() ?? 'اختر المدينة';
                       Get.back();
-                      update(); // تحديث الواجهة
+                      update();
                     },
                   );
                 },
@@ -487,7 +442,6 @@ Future<void> openCitySelection() async {
   }
 }
 
-  // دالة فتح Bottom Sheet لاختيار الحي
   Future<void> openDistrictSelection() async {
     try {
       if (districts.isEmpty) {
@@ -511,7 +465,6 @@ Future<void> openCitySelection() async {
           ),
           child: Column(
             children: [
-              // Header
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -540,7 +493,6 @@ Future<void> openCitySelection() async {
                 ),
               ),
               
-              // Districts List
               Expanded(
                 child: ListView.builder(
                   itemCount: districts.length,
@@ -566,14 +518,11 @@ Future<void> openCitySelection() async {
                           ? Icon(Icons.check_circle, color: AppColors.primary400)
                           : null,
                       onTap: () {
-                        // تحديث القيم مباشرة
                         districtIdController.text = district['id'].toString();
                         selectedDistrictName.value = district['name']?.toString() ?? 'اختر الحي';
                         
-                        // إغلاق البوتوم شيت مباشرة
                         Get.back();
                         
-                        // تحديث الواجهة
                         update();
                       },
                     );
@@ -589,10 +538,7 @@ Future<void> openCitySelection() async {
       print('❌ خطأ في فتح قائمة الأحياء: $e');
     }
   }
-  // دالة فتح Bottom Sheet لاختيار الحي
 
-
-  // دالة فتح Bottom Sheet لاختيار العملة
   Future<void> openCurrencySelection() async {
     try {
       if (currencies.isEmpty) {
@@ -616,7 +562,6 @@ Future<void> openCitySelection() async {
           ),
           child: Column(
             children: [
-              // Header
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -645,7 +590,6 @@ Future<void> openCitySelection() async {
                 ),
               ),
               
-              // Currencies List
               Expanded(
                 child: ListView.builder(
                   itemCount: currencies.length,
@@ -691,14 +635,11 @@ Future<void> openCitySelection() async {
                           ? Icon(Icons.check_circle, color: AppColors.primary400)
                           : null,
                       onTap: () {
-                        // تحديث القيم مباشرة
                         currencyIdController.text = currency['id'].toString();
                         selectedCurrencyName.value = currency['name']?.toString() ?? 'اختر العملة';
                         
-                        // إغلاق البوتوم شيت مباشرة
                         Get.back();
                         
-                        // تحديث الواجهة
                         update();
                       },
                     );
@@ -714,7 +655,6 @@ Future<void> openCitySelection() async {
       print('❌ خطأ في فتح قائمة العملات: $e');
     }
   }
-  // دالة للحصول على اسم المدينة بناءً على الـ ID
 String getCityName(String cityId) {
   if (cityId.isEmpty) return 'اختر المدينة';
   
@@ -728,7 +668,6 @@ String getCityName(String cityId) {
     return 'اختر المدينة';
   }
 }
-
 
 String getDistrictName(String districtId) {
   if (districtId.isEmpty) return 'اختر الحي';
@@ -744,7 +683,6 @@ String getDistrictName(String districtId) {
   }
 }
 
-  // دالة للحصول على اسم العملة بناءً على الـ ID
 String getCurrencyName(String currencyId) {
   if (currencyId.isEmpty) return 'اختر العملة';
   
@@ -766,7 +704,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     
     print('🔄 تحميل بيانات المتجر للتعديل - ID: $storeId');
     
-    // 🔥 **تحميل البيانات الأولية أولاً**
     await loadInitialData();
     
     final response = await ApiHelper.getStoreDetails(storeId);
@@ -787,20 +724,17 @@ Future<void> loadStoreForEdit(int storeId) async {
       
       print('📝 اسم المتجر: ${storeData['name']}');
       
-      // تعبئة الحقول الأساسية
       storeType.value = storeData['type']?.toString() ?? 'products';
       nameController.text = storeData['name']?.toString() ?? '';
       descriptionController.text = storeData['description']?.toString() ?? '';
       emailController.text = storeData['email']?.toString() ?? '';
       
-      // معالجة المدينة
       if (storeData['city_id'] != null) {
         final cityId = storeData['city_id'].toString();
         cityIdController.text = cityId;
         selectedCityName.value = getCityName(cityId);
       }
       
-      // معالجة الحي
       if (storeData['district_id'] != null) {
         final districtId = storeData['district_id'].toString();
         districtIdController.text = districtId;
@@ -809,7 +743,6 @@ Future<void> loadStoreForEdit(int storeId) async {
       
       addressController.text = storeData['address']?.toString() ?? '';
       
-      // معالجة العملة
       if (storeData['currency_id'] != null) {
         final currencyId = storeData['currency_id'].toString();
         currencyIdController.text = currencyId;
@@ -817,20 +750,17 @@ Future<void> loadStoreForEdit(int storeId) async {
       }
       
       phoneController.text = storeData['phone']?.toString() ?? '';
-      hidePhone.value = storeData['hide_phone'] == "1" || 
-                        storeData['hide_phone'] == 1 || 
+      hidePhone.value = storeData['hide_phone'] == "1" ||
+                        storeData['hide_phone'] == 1 ||
                         storeData['hide_phone'] == true;
       
-      // معالجة delivery_type
       final deliveryTypeValue = storeData['delivery_type']?.toString() ?? 'free';
       deliveryType.value = deliveryTypeValue == 'hand_delivery' ? 'hand' : deliveryTypeValue;
       
       print('✅ تم تحميل بيانات المتجر بنجاح');
       
-      // 🔥 **تحميل الصور**
       await _loadStoreImages(storeData);
       
-      // تحديث الواجهة
       update();
     } else {
       final errorMsg = response?['message'] ?? 'فشل تحميل بيانات المتجر';
@@ -843,12 +773,10 @@ Future<void> loadStoreForEdit(int storeId) async {
     isLoading.value = false;
   }
 }
-  // Store Type Methods
   void setStoreType(String type) {
     storeType.value = type;
   }
   
-  // Delivery Type Methods
   void setDeliveryType(String type) {
     deliveryType.value = type;
   }
@@ -866,12 +794,8 @@ Future<void> loadStoreForEdit(int storeId) async {
     }
   }
   
-  
-
-
   Future<void> _loadStoreImages(Map<String, dynamic> storeData) async {
     try {
-      // 🔥 **تحميل صورة الشعار**
       final logoUrl = storeData['logo_url']?.toString();
       final logoPath = storeData['logo']?.toString();
       
@@ -902,7 +826,6 @@ Future<void> loadStoreForEdit(int storeId) async {
         print('⚠️ لا توجد صورة شعار');
       }
       
-      // 🔥 **تحميل صور الغلاف**
       final coverUrls = storeData['cover_urls'];
       final coverPaths = storeData['cover'];
       
@@ -914,8 +837,8 @@ Future<void> loadStoreForEdit(int storeId) async {
         
         for (int i = 0; i < coverUrls.length; i++) {
           final coverUrl = coverUrls[i]?.toString();
-          final coverPath = (coverPaths is List && i < coverPaths.length) 
-              ? coverPaths[i]?.toString() 
+          final coverPath = (coverPaths is List && i < coverPaths.length)
+              ? coverPaths[i]?.toString()
               : null;
           
           if (coverUrl != null && coverUrl.isNotEmpty) {
@@ -952,11 +875,9 @@ Future<void> loadStoreForEdit(int storeId) async {
     }
   }
   
-  // Shipping Companies Methods
   void addShippingCompany(Map<String, dynamic> company) {
     shippingCompanies.add(company);
     
-    // إضافة المدن من شركة الشحن إلى locationCities و serviceCities
     if (company['prices'] != null && company['prices'] is List) {
       for (var price in company['prices']) {
         if (price['city_id'] != null && !locationCities.contains(price['city_id'])) {
@@ -973,7 +894,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     shippingCompanies.removeAt(index);
   }
   
-  // دوال المدينة
   void addLocationCity(int cityId) {
     if (!locationCities.contains(cityId)) {
       locationCities.add(cityId);
@@ -998,7 +918,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     return [...selectedLogoMedia, ...selectedCoverMedia];
   }
   
-  // دوال مساعدة للواجهة
   bool isLogoUploading(String mediaId) => logoUploadingStates[mediaId] ?? false;
   bool isCoverUploading(String mediaId) => coverUploadingStates[mediaId] ?? false;
   
@@ -1051,7 +970,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     }
   }
   
-  // دالة فتح مكتبة الوسائط للغلاف
   Future<void> openMediaLibraryForCover() async {
     try {
       if (selectedCoverMedia.length >= 10) {
@@ -1185,17 +1103,14 @@ Future<void> loadStoreForEdit(int storeId) async {
     }
   }
   
-  // 🔥 **الإصلاح: استخراج المسار النسبي من الـ URL**
   String? _extractRelativePath(String? url) {
     if (url == null || url.isEmpty) return null;
     
-    // إذا كان المسار يحتوي على 'storage/'، نأخذ الجزء بعدها
     if (url.contains('/storage/')) {
       final parts = url.split('/storage/');
       return parts.length > 1 ? parts[1] : null;
     }
     
-    // إذا كان المسار يحتوي على 'images/' أو 'gallery/' مباشرة، نأخذه كما هو
     if (url.contains('images/') || url.contains('gallery/') || url.contains('avatar/')) {
       return url;
     }
@@ -1203,14 +1118,12 @@ Future<void> loadStoreForEdit(int storeId) async {
     return url;
   }
   
-  // 🔥 **الحصول على مسار الشعار النسبي**
   String? getPrimaryLogoPath() {
     if (primaryLogo.value != null) {
       final media = primaryLogo.value!;
       final path = media.fileName ?? media.path;
       final relativePath = _extractRelativePath(path);
       
-      // 🔥 **التأكد من أن المسار لا يحتوي على URL كامل**
       if (relativePath != null && relativePath.startsWith('http')) {
         return _extractRelativePath(relativePath);
       }
@@ -1220,7 +1133,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     return null;
   }
   
-  // 🔥 **الحصول على جميع مسارات الشعار النسبية**
   List<String> getAllLogoPaths() {
     final List<String> paths = [];
     
@@ -1228,7 +1140,6 @@ Future<void> loadStoreForEdit(int storeId) async {
       final path = media.fileName ?? media.path;
       final relativePath = _extractRelativePath(path);
       
-      // 🔥 **التأكد من أن المسار لا يحتوي على URL كامل**
       String? finalPath = relativePath;
       if (finalPath != null && finalPath.startsWith('http')) {
         finalPath = _extractRelativePath(finalPath);
@@ -1242,7 +1153,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     return paths;
   }
   
-  // 🔥 **الحصول على جميع مسارات الغلاف النسبية**
   List<String> getAllCoverPaths() {
     final List<String> paths = [];
     
@@ -1250,7 +1160,6 @@ Future<void> loadStoreForEdit(int storeId) async {
       final path = media.fileName ?? media.path;
       final relativePath = _extractRelativePath(path);
       
-      // 🔥 **التأكد من أن المسار لا يحتوي على URL كامل**
       String? finalPath = relativePath;
       if (finalPath != null && finalPath.startsWith('http')) {
         finalPath = _extractRelativePath(finalPath);
@@ -1264,7 +1173,6 @@ Future<void> loadStoreForEdit(int storeId) async {
     return paths;
   }
   
-  // 🔥 **دالة رفع الصور المحلية (إذا كان هناك أي صور محلية)**
   Future<bool> uploadLocalImages() async {
     try {
       isUploadingLogo.value = true;
@@ -1272,7 +1180,6 @@ Future<void> loadStoreForEdit(int storeId) async {
       
       bool hasLocalImages = false;
       
-      // التحقق من وجود صور محلية للشعار
       for (int i = 0; i < selectedLogoMedia.length; i++) {
         final media = selectedLogoMedia[i];
         if (media.isLocal == true && media.path.isNotEmpty) {
@@ -1281,7 +1188,6 @@ Future<void> loadStoreForEdit(int storeId) async {
         }
       }
       
-      // التحقق من وجود صور محلية للغلاف
       for (int i = 0; i < selectedCoverMedia.length; i++) {
         final media = selectedCoverMedia[i];
         if (media.isLocal == true && media.path.isNotEmpty) {
@@ -1315,7 +1221,6 @@ Future<void> loadStoreForEdit(int storeId) async {
       if (response != null && response['status'] == true) {
         final path = response['path'];
         
-        // تحديث MediaItem بالمسار المرفوع
         selectedLogoMedia[index] = MediaItem(
           id: media.id,
           path: path,
@@ -1351,7 +1256,6 @@ Future<void> loadStoreForEdit(int storeId) async {
       if (response != null && response['status'] == true) {
         final path = response['path'];
         
-        // تحديث MediaItem بالمسار المرفوع
         selectedCoverMedia[index] = MediaItem(
           id: media.id,
           path: path,
@@ -1372,13 +1276,10 @@ Future<void> loadStoreForEdit(int storeId) async {
     }
   }
   
-  // ========== إنشاء أو تحديث المتجر ==========
-  
 Future<bool> createOrUpdateStore() async {
   try {
     createStoreLoading.value = true;
     
-    // 🔥 **التحقق من شركات الشحن قبل الإرسال**
     print('🔥🔥🔥 التحقق من شركات الشحن قبل الإرسال 🔥🔥🔥');
     print('📦 عدد شركات الشحن: ${shippingCompanies.length}');
     
@@ -1391,17 +1292,15 @@ Future<bool> createOrUpdateStore() async {
           backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
-        // نستمر رغم التحذير، قد يكون للمستخدم سبب
       } else {
         print('✅ تمت إضافة ${shippingCompanies.length} شركة شحن');
         
-        // طباعة تفاصيل كل شركة شحن
         for (int i = 0; i < shippingCompanies.length; i++) {
           print('--- شركة الشحن ${i + 1} ---');
           print('الاسم: ${shippingCompanies[i]['name']}');
           print('الهاتف: ${shippingCompanies[i]['phone']}');
           
-          if (shippingCompanies[i]['prices'] != null && 
+          if (shippingCompanies[i]['prices'] != null &&
               shippingCompanies[i]['prices'] is List) {
             final prices = shippingCompanies[i]['prices'] as List;
             print('عدد المدن: ${prices.length}');
@@ -1420,7 +1319,6 @@ Future<bool> createOrUpdateStore() async {
       print('📦 نوع التوصيل: ${deliveryType.value} (لا يتطلب شركات شحن)');
     }
     
-    // 🔥 **تجهيز البيانات النهائية**
     Map<String, dynamic> data = {
       'type': storeType.value,
       'name': nameController.text.trim(),
@@ -1431,38 +1329,32 @@ Future<bool> createOrUpdateStore() async {
       'delivery_type': deliveryType.value == 'free' ? 'hand' : deliveryType.value,
     };
     
-    // إضافة بيانات المالك في حالة الإنشاء فقط
     if (!isEditMode.value) {
       data['owner_id'] = myAppController.userData['id']?.toString() ?? '41';
     }
     
-    // 🔥 **إضافة الشعار كمسار نسبي**
     final primaryLogoPath = getPrimaryLogoPath();
     if (primaryLogoPath != null && primaryLogoPath.isNotEmpty) {
       data['logo'] = primaryLogoPath;
       print('✅ logo path: $primaryLogoPath');
     }
     
-    // 🔥 **إضافة الغلاف كمصفوفة من المسارات النسبية**
     final coverPaths = getAllCoverPaths();
     if (coverPaths.isNotEmpty) {
       data['cover'] = coverPaths;
       print('✅ cover paths: $coverPaths');
     }
     
-    // 🔥 **إضافة حقول إلزامية بناءً على التنسيق**
     data['city_id'] = int.tryParse(cityIdController.text.trim()) ?? 1;
     data['district_id'] = int.tryParse(districtIdController.text.trim()) ?? 1;
     data['address'] = addressController.text.trim().isEmpty ? "العنوان" : addressController.text.trim();
     data['currency_id'] = int.tryParse(currencyIdController.text.trim()) ?? 2;
     
-    // إضافة الإحداثيات إذا كانت موجودة
     if (latController.text.isNotEmpty && lngController.text.isNotEmpty) {
       data['lat'] = latController.text.trim();
       data['lng'] = lngController.text.trim();
     }
     
-    // إضافة روابط التواصل الاجتماعي
     if (whatsappController.text.isNotEmpty) {
       data['whats_app'] = whatsappController.text.trim();
     }
@@ -1495,16 +1387,13 @@ Future<bool> createOrUpdateStore() async {
       data['pinterest'] = pinterestController.text.trim();
     }
     
-    // 🔥 **إضافة صور الشعار الإضافية (للمعرض) - كمصفوفة**
     final allLogoPaths = getAllLogoPaths();
     if (allLogoPaths.isNotEmpty) {
       data['logo_images'] = allLogoPaths;
       print('✅ logo_images: $allLogoPaths');
     }
     
-    // 🔥 **إضافة شركات الشحن إذا كانت موجودة**
     if (deliveryType.value == 'shipping' && shippingCompanies.isNotEmpty) {
-      // تأكد من تنسيق البيانات بشكل صحيح للخادم
       final formattedCompanies = shippingCompanies.map((company) {
         Map<String, dynamic> formattedCompany = {
           'name': company['name']?.toString() ?? '',
@@ -1531,18 +1420,14 @@ Future<bool> createOrUpdateStore() async {
       print('📤 شركات الشحن المرسلة: ${jsonEncode(formattedCompanies)}');
     }
     
-    // 🔥 **طباعة جميع البيانات المرسلة**
     print('📤 جميع البيانات المرسلة للخادم:');
     print(jsonEncode(data));
     
-    // استدعاء الـ API
     dynamic response;
     
     if (isEditMode.value && editingStoreId.value > 0) {
-      // حالة التعديل
       response = await ApiHelper.updateStore(editingStoreId.value, data);
     } else {
-      // حالة الإنشاء
       response = await ApiHelper.post(
         path: '/merchants/mobile/stores',
         body: data,
@@ -1551,13 +1436,11 @@ Future<bool> createOrUpdateStore() async {
       );
     }
     
-    // 🔥 **التحقق من الاستجابة**
     if (response != null) {
       print('📥 استجابة الخادم:');
       print(jsonEncode(response));
       
       if (response['status'] == true) {
-        // 🔥 **التحقق من أن البيانات تم حفظها**
         if (response['data'] != null) {
           final savedData = response['data'];
           if (savedData['shipping_companies'] != null) {
@@ -1579,7 +1462,6 @@ Future<bool> createOrUpdateStore() async {
         resetData();
         return true;
       } else {
-        // 🔥 **عرض أخطاء الخادم**
         final errorMsg = response['message'] ?? 'فشل العملية';
         final errors = response['errors'] ?? {};
         
@@ -1611,7 +1493,6 @@ Future<bool> createOrUpdateStore() async {
         return false;
       }
     } else {
-      // حالة عدم وجود استجابة
       Get.snackbar(
         '❌ خطأ',
         'لم يتم الحصول على استجابة من الخادم',
@@ -1677,7 +1558,6 @@ void resetData() {
     isEditMode.value = false;
     editingStoreId.value = 0;
     
-    // إعادة تعيين القيم الافتراضية
     cityIdController.text = "1";
     districtIdController.text = "1";
     currencyIdController.text = "2";

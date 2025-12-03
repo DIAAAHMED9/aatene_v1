@@ -108,7 +108,6 @@ class _CustomStepperState extends State<CustomStepper> with SingleTickerProvider
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Step Circle
           _AnimatedStepCircle(
             step: widget.steps[index],
             stepNumber: index + 1,
@@ -119,7 +118,6 @@ class _CustomStepperState extends State<CustomStepper> with SingleTickerProvider
             animation: _animationController,
             onTap: () => widget.onStepTapped?.call(index),
           ),
-          // Connector Line (except for the last step)
           if (!isLast)
             Container(
               width: 20,
@@ -173,7 +171,7 @@ class _AnimatedStepCircle extends StatelessWidget {
         child: AnimatedBuilder(
           animation: animation,
           builder: (context, child) {
-            final scale = isActive || isNext 
+            final scale = isActive || isNext
                 ? Tween<double>(begin: 0.8, end: 1.0).animate(
                     CurvedAnimation(
                       parent: animation,
@@ -187,7 +185,6 @@ class _AnimatedStepCircle extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Outer circle border with shadow
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 500),
                     width: 40,
@@ -196,8 +193,8 @@ class _AnimatedStepCircle extends StatelessWidget {
                       color: Colors.white,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isCompleted || isActive 
-                            ? Colors.blue 
+                        color: isCompleted || isActive
+                            ? Colors.blue
                             : Colors.grey[300]!,
                         width: 2.5,
                       ),
@@ -212,7 +209,6 @@ class _AnimatedStepCircle extends StatelessWidget {
                     ),
                   ),
                   
-                  // Progress fill animation
                   if (isCompleted || isActive)
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 600),
@@ -220,14 +216,13 @@ class _AnimatedStepCircle extends StatelessWidget {
                       height: isActive ? 32 : 34,
                       curve: Curves.fastOutSlowIn,
                       decoration: BoxDecoration(
-                        color: isCompleted 
+                        color: isCompleted
                             ? Colors.blue.withOpacity(0.9)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
                     ),
                   
-                  // Icon or number with bounce animation
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 400),
                     switchInCurve: Curves.elasticOut,
@@ -296,7 +291,7 @@ class _AnimatedStepConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool shouldAnimate = (isPrevious && stepIndex == currentStep - 1) || 
+    final bool shouldAnimate = (isPrevious && stepIndex == currentStep - 1) ||
                               (isNext && stepIndex == currentStep);
 
     return AnimatedBuilder(
@@ -347,14 +342,12 @@ class _StepConnectorPainter extends CustomPainter {
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
 
-    // رسم الخط الخلفي
     canvas.drawLine(
       Offset(0, size.height / 2),
       Offset(size.width, size.height / 2),
       backgroundPaint,
     );
 
-    // رسم الخط المتحرك
     if (isActive) {
       final double animatedWidth = size.width * progress;
       canvas.drawLine(
@@ -363,7 +356,6 @@ class _StepConnectorPainter extends CustomPainter {
         progressPaint,
       );
 
-      // إضافة تأثير النبض للنهاية
       if (progress > 0 && progress < 1) {
         final pulsePaint = Paint()
           ..color = Colors.blue.withOpacity(0.5 * (1 - progress))

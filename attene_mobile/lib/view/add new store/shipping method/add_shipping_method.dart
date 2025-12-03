@@ -1,4 +1,3 @@
-// lib/view/add new store/shipping method/shipping_pricing_settings.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -29,7 +28,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
   late List<TextEditingController> daysControllers;
   late List<TextEditingController> priceControllers;
   
-  // قائمة المدن المضافة يدوياً
   final List<String> citiesList = [
     'القدس',
     'رام الله',
@@ -55,24 +53,21 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
   void initState() {
     super.initState();
     
-    // نسخ المدن المختارة إلى القائمة العاملة
     workingCities = List.from(widget.selectedCities);
     
-    // تهيئة المتحكمات بناءً على عدد المدن المختارة
     daysControllers = List.generate(
-      workingCities.length, 
+      workingCities.length,
       (index) => TextEditingController(text: workingCities[index]['days']?.toString() ?? '')
     );
     
     priceControllers = List.generate(
-      workingCities.length, 
+      workingCities.length,
       (index) => TextEditingController(text: workingCities[index]['price']?.toString() ?? '')
     );
   }
 
   @override
   void dispose() {
-    // التخلص من جميع المتحكمات
     for (var controller in daysControllers) {
       controller.dispose();
     }
@@ -140,8 +135,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
               borderRadius: BorderRadius.circular(25),
               color: AppColors.neutral700,
             ),
-            child: Icon(Icons.arrow_back_ios_new_rounded, 
-                size: 18, 
+            child: Icon(Icons.arrow_back_ios_new_rounded,
+                size: 18,
                 color: Colors.black),
           ),
         ),
@@ -152,7 +147,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // صف النص والزر
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -195,7 +189,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                 ],
               ),
               SizedBox(height: 20),
-              // حقل إضافة مدينة جديدة
               if (showAddCityField) ...[
                 SizedBox(height: 16),
                 Column(
@@ -313,7 +306,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                 SizedBox(height: 16),
               ],
               
-              // قائمة المدن مع حقول التسعير
               ...workingCities.asMap().entries.map((entry) {
                 int index = entry.key;
                 Map<String, dynamic> city = entry.value;
@@ -323,7 +315,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // صف اسم المدينة وزر الحذف
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -368,7 +359,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                       
                       SizedBox(height: 16),
                       
-                      // موعد التسليم
                       Text(
                         "موعد التسليم",
                         style: TextStyle(
@@ -382,7 +372,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                         isRTL: isRTL,
                         hintText: "عدد الأيام",
                         controller: daysControllers[index],
-                        // keyboardType: TextInputType.number,
                         onChanged: (value) {
                           _updateCityData(index, value, priceControllers[index].text);
                         },
@@ -390,7 +379,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                       
                       SizedBox(height: 16),
                       
-                      // سعر التوصيل
                       Text(
                         "سعر التوصيل",
                         style: TextStyle(
@@ -404,7 +392,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                         isRTL: isRTL,
                         hintText: "السعر",
                         controller: priceControllers[index],
-                        // keyboardType: TextInputType.number,
                         prefixIcon: Icon(Icons.attach_money, color: AppColors.neutral500),
                         onChanged: (value) {
                           _updateCityData(index, daysControllers[index].text, value);
@@ -435,7 +422,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
   }
 
   void _saveShippingData() {
-    // التحقق من تعبئة جميع الحقول
     for (int i = 0; i < workingCities.length; i++) {
       if (daysControllers[i].text.isEmpty) {
         Get.snackbar(
@@ -459,7 +445,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         return;
       }
       
-      // التحقق من أن القيم رقمية
       final days = int.tryParse(daysControllers[i].text);
       final price = double.tryParse(priceControllers[i].text);
       
@@ -486,7 +471,6 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
       }
     }
     
-    // تجهيز بيانات التسعير
     final List<Map<String, dynamic>> prices = [];
     for (int i = 0; i < workingCities.length; i++) {
       prices.add({
@@ -497,19 +481,16 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
       });
     }
     
-    // إنشاء بيانات شركة الشحن النهائية
     final company = {
       'name': widget.companyName,
       'phone': widget.companyPhone,
       'prices': prices,
     };
     
-    // إرسال البيانات إلى الـ Controller
     controller.addShippingCompany(company);
     
-    // العودة إلى الشاشة السابقة مع رسالة نجاح
-    Get.back(); // العودة من شاشة التسعير
-    Get.back(); // العودة من شاشة إضافة شركة الشحن
+    Get.back();
+    Get.back();
     Get.snackbar(
       'نجاح',
       'تم إضافة شركة الشحن بنجاح',

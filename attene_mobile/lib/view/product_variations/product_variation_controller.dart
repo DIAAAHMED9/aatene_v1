@@ -1,4 +1,3 @@
-// lib/view/product_variations/product_variation_controller.dart
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/my_app/may_app_controller.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
@@ -8,20 +7,16 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
 
 class ProductVariationController extends GetxController {
-  // === الحالة الأساسية ===
   final RxBool hasVariations = false.obs;
   final RxList<ProductAttribute> selectedAttributes = <ProductAttribute>[].obs;
   final RxList<ProductAttribute> allAttributes = <ProductAttribute>[].obs;
   
-  // === متغيرات الاختلافات ===
   final RxList<ProductVariation> variations = <ProductVariation>[].obs;
   
-  // === حالة التحميل ===
   final RxBool isLoadingAttributes = false.obs;
   final RxString attributesError = ''.obs;
   final RxBool hasAttemptedLoad = false.obs;
 
-  // === IDs للتحديث المحدد ===
   static const String attributesUpdateId = 'attributes';
   static const String variationsUpdateId = 'variations';
 
@@ -30,7 +25,6 @@ class ProductVariationController extends GetxController {
     super.onInit();
   }
 
-  // ✅ تحميل السمات فقط عند فتح الشاشة
   Future<void> loadAttributesOnOpen() async {
     if (hasAttemptedLoad.value && allAttributes.isNotEmpty) {
       return;
@@ -38,7 +32,6 @@ class ProductVariationController extends GetxController {
     await _loadAttributesFromApi();
   }
 
-  // ✅ محسّن: جلب السمات من API مع معالجة أفضل للأخطاء
   Future<void> _loadAttributesFromApi() async {
     try {
       final MyAppController myAppController = Get.find<MyAppController>();
@@ -81,14 +74,11 @@ class ProductVariationController extends GetxController {
     }
   }
 
-  // ✅ إعادة تحميل السمات
   Future<void> reloadAttributes() async {
     allAttributes.clear();
     await _loadAttributesFromApi();
   }
 
-  // === دوال التحكم الرئيسية ===
-  
   void toggleHasVariations(bool value) {
     hasVariations.value = value;
     if (!value) {
@@ -157,7 +147,6 @@ class ProductVariationController extends GetxController {
     update([attributesUpdateId, variationsUpdateId]);
   }
 
-  // ✅ إنشاء اختلاف مع التحقق من السمات
   void generateSingleVariation() {
     if (selectedAttributes.isEmpty) {
       Get.snackbar('تنبيه', 'يرجى اختيار السمات أولاً');
@@ -176,14 +165,14 @@ class ProductVariationController extends GetxController {
       stock: 0,
       sku: 'SKU_${variations.length + 1}',
       isActive: true,
-      images: [], // ✅ صور فارغة لتجنب المشاكل
+      images: [],
     );
 
     variations.add(newVariation);
     update([variationsUpdateId]);
     
     Get.snackbar(
-      'نجاح', 
+      'نجاح',
       'تم إنشاء بطاقة اختلاف جديدة',
       backgroundColor: Colors.green,
       colorText: Colors.white,
@@ -276,7 +265,6 @@ class ProductVariationController extends GetxController {
   void addImageToVariation(ProductVariation variation, String imageUrl) {
     final index = variations.indexWhere((v) => v.id == variation.id);
     if (index != -1) {
-      // ✅ التحقق من أن الصورة ليست افتراضية
       if (!imageUrl.contains('variation_default.jpg') && imageUrl.isNotEmpty) {
         variations[index].images.add(imageUrl);
       }
@@ -357,7 +345,6 @@ class ProductVariationController extends GetxController {
     update([attributesUpdateId, variationsUpdateId]);
   }
 
-  // ✅ **الحل النهائي**: تحضير بيانات الاختلافات بدون صور
   List<Map<String, dynamic>> prepareVariationsForApi() {
     return variations.map((variation) {
       final attributeOptions = <Map<String, dynamic>>[];
@@ -383,7 +370,6 @@ class ProductVariationController extends GetxController {
         }
       }
       
-      // ✅ **الحل: إرجاع البيانات بدون صور**
       return {
         'price': variation.price.value,
         'attributeOptions': attributeOptions,

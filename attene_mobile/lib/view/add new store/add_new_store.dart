@@ -21,7 +21,6 @@ class AddNewStore extends StatelessWidget {
     final arguments = Get.arguments;
     final int? storeId = arguments != null ? arguments['storeId'] : null;
 
-    // تحميل بيانات المتجر إذا كان في وضع التعديل
     if (storeId != null && !controller.isEditMode.value) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.loadStoreForEdit(storeId);
@@ -70,7 +69,6 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 15),
 
-              // نوع المتجر
               Obx(
                 () => Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -96,7 +94,6 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 15),
 
-              // 🔥 **شعار المتجر**
               Text(
                 "شعار المتجر *",
                 style: TextStyle(
@@ -112,12 +109,10 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 10),
 
-              // قائمة الشعارات
               _buildLogoImagesList(controller),
 
               SizedBox(height: 20),
 
-              // 🔥 **صور الغلاف**
               Text(
                 "صور الغلاف *",
                 style: TextStyle(
@@ -133,12 +128,10 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 10),
 
-              // قائمة الأغلفة
               _buildCoverImagesList(controller),
 
               SizedBox(height: 20),
 
-              // وصف المتجر
               TextWithStar(text: "وصف المتجر"),
               SizedBox(height: 5),
               TextFiledAatene(
@@ -149,7 +142,6 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 15),
 
-              // البريد الإلكتروني
               TextWithStar(text: "البريد الالكتروني *"),
               SizedBox(height: 5),
               TextFiledAatene(
@@ -157,11 +149,9 @@ class AddNewStore extends StatelessWidget {
                 isRTL: isRTL,
                 hintText: "example@email.com",
                 controller: controller.emailController,
-                // keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 15),
 
-             // المدينة
 TextWithStar(text: "المدينة"),
 SizedBox(height: 5),
 GestureDetector(
@@ -199,7 +189,6 @@ GestureDetector(
 ),
 SizedBox(height: 15),
 
-// الحي
 TextWithStar(text: "الحي"),
 SizedBox(height: 5),
 GestureDetector(
@@ -237,7 +226,6 @@ GestureDetector(
 ),
 SizedBox(height: 15),
 
-// العملة
 TextWithStar(text: "العملة"),
 SizedBox(height: 5),
 GestureDetector(
@@ -274,7 +262,6 @@ GestureDetector(
   ),
 ),       SizedBox(height: 15),
 
-              // الهاتف
               TextWithStar(text: "الهاتف المحمول *"),
               SizedBox(height: 5),
               TextFiledAatene(
@@ -282,11 +269,9 @@ GestureDetector(
                 isRTL: isRTL,
                 hintText: "أدخل رقم الهاتف",
                 controller: controller.phoneController,
-                // keyboardType: TextInputType.phone,
               ),
               SizedBox(height: 15),
 
-              // إخفاء الهاتف
               Obx(
                 () => Container(
                   padding: EdgeInsets.all(12),
@@ -329,7 +314,6 @@ GestureDetector(
 
               SizedBox(height: 20),
 
-              // 🔥 **ملاحظة مهمة**
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -353,7 +337,6 @@ GestureDetector(
 
               SizedBox(height: 20),
 
-              // 🔥 **حالة التحميل والزر النهائي**
               _buildCreateButton(controller),
 
               SizedBox(height: 30),
@@ -364,7 +347,6 @@ GestureDetector(
     );
   }
 
-  // بقية الدوال تبقى كما هي بدون تغيير...
   Widget _buildLogoImagesList(CreateStoreController controller) {
     return Obx(() {
       final logoCount = controller.selectedLogoMedia.length;
@@ -957,7 +939,6 @@ Widget _buildCreateButton(CreateStoreController controller) {
       raduis: 10,
       onTap: () async {
         if (await _validateForm(controller)) {
-          // ✅ **إذا كان في وضع التعديل، نحدث البيانات أولاً ثم ننتقل**
           if (controller.isEditMode.value) {
             bool hasLocalImages =
                 controller.selectedLogoMedia.any((m) => m.isLocal == true) ||
@@ -986,13 +967,11 @@ Widget _buildCreateButton(CreateStoreController controller) {
               }
             }
 
-            // ✅ **نحدث المتجر فقط (بدون شركات الشحن) ثم ننتقل**
             final success = await controller.updateStoreBasicInfo();
             if (success) {
               Get.to(() => AddShippingMethod());
             }
           } else {
-            // ✅ **إذا كان إنشاء جديد، ننتقل مباشرة دون إنشاء المتجر**
             Get.to(() => AddShippingMethod());
           }
         }

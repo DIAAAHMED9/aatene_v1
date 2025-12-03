@@ -50,7 +50,6 @@ class ForgetPasswordController extends GetxController {
 
       print('📄 استجابة الخادم: $response');
 
-      // معالجة الاستجابة بنجاح
       if (response != null && (response['status'] == true || response['success'] == true)) {
         Get.snackbar(
           'نجاح',
@@ -61,7 +60,6 @@ class ForgetPasswordController extends GetxController {
           duration: const Duration(seconds: 5),
         );
         
-        // الانتقال إلى صفحة التحقق مع تمرير البيانات
         Get.toNamed('/verification', arguments: {
           'email': email.value,
           'isForgetPassword': true,
@@ -87,7 +85,6 @@ class ForgetPasswordController extends GetxController {
         errorMessage = response['message'];
       }
       
-      // معالجة الأخطاء التفصيلية من API
       if (response['errors'] != null) {
         final errors = response['errors'];
         if (errors['identifier'] != null) {
@@ -168,7 +165,6 @@ class ForgetPasswordController extends GetxController {
     Get.back();
   }
 
-  // دالة مساعدة لتنظيف الحقول
   void clearForm() {
     email.value = '';
     emailError.value = '';

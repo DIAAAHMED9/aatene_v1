@@ -34,18 +34,15 @@ void main() {
   runApp(const MyApp());
 }
 
-// في main.dart - التأكد من تسجيل الـ Controllers
 class AppBindings extends Bindings {
   @override
   void dependencies() {
     print('🔄 [APP BINDINGS] Registering controllers...');
     
-    // ✅ Services الأساسية
     Get.put(ResponsiveService(), permanent: true);
     Get.put(MyAppController(), permanent: true);
     Get.put(LanguageController(), permanent: true);
     
-    // ✅ الـ Controllers الرئيسية - بدون تحميل بيانات تلقائي
  Get.lazyPut(() => CreateStoreController(), fenix: true);
   Get.lazyPut(() => ManageAccountStoreController(), fenix: true);    Get.put(BottomSheetController(), permanent: true);
     Get.put(ProductCentralController(), permanent: true);

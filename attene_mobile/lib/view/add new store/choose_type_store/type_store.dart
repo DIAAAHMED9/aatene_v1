@@ -1,4 +1,3 @@
-// lib/view/add new store/choose_type_store/type_store.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -125,7 +124,6 @@ class TypeStore extends GetView<CreateStoreController> {
             color: isSelected ? AppColors.primary400 : Color(0XFFAAAAAA),
             width: isSelected ? 2 : 1,
           ),
-          // color: isSelected ? AppColors.primary50 : Colors.white,
         ),
         child: Row(
           children: [
@@ -144,12 +142,6 @@ class TypeStore extends GetView<CreateStoreController> {
                       color: isSelected ? AppColors.primary400 : Color(0XFF393939),
                     ),
                   ),
-            // if (isSelected)
-            //   Icon(
-            //     Icons.check_circle,
-            //     color: AppColors.primary400,
-            //     size: 24,
-            //   ),
           ],
         ),
       ),

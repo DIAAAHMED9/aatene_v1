@@ -43,19 +43,16 @@ class AddShippingMethod extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // الجزء العلوي: اختيار طريقة الشحن
           _buildShippingMethodSection(),
           
-          // خط فاصل
           Container(
             height: 1,
             color: Colors.grey[300],
             margin: EdgeInsets.symmetric(vertical: 20),
           ),
           
-          // الجزء السفلي: شركات الشحن (يظهر فقط عند اختيار "من خلال شركة التوصيل")
           _buildShippingCompaniesSection(),
-          if (true) 
+          if (true)
            Padding(
     padding: const EdgeInsets.all(20.0),
     child: ElevatedButton(
@@ -86,14 +83,12 @@ class AddShippingMethod extends StatelessWidget {
     
   }
 
-  // بناء قسم اختيار طريقة الشحن
   Widget _buildShippingMethodSection() {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // العنوان
           Text(
             "كيف توجد شحن المنتجات؟",
             style: TextStyle(
@@ -104,10 +99,8 @@ class AddShippingMethod extends StatelessWidget {
           ),
           SizedBox(height: 15),
           
-          // خيارات طريقة الشحن
           Obx(() => Column(
             children: [
-              // خيار: مجاني
               _buildShippingOption(
                 value: 'free',
                 title: 'مجاني',
@@ -117,7 +110,6 @@ class AddShippingMethod extends StatelessWidget {
               
               SizedBox(height: 12),
               
-              // خيار: من خلال شركة التوصيل
               _buildShippingOption(
                 value: 'shipping',
                 title: 'من خلال شركة التوصيل',
@@ -127,7 +119,6 @@ class AddShippingMethod extends StatelessWidget {
               
               SizedBox(height: 12),
               
-              // خيار: من يد ليد
               _buildShippingOption(
                 value: 'hand',
                 title: 'من يد ليد',
@@ -141,7 +132,6 @@ class AddShippingMethod extends StatelessWidget {
     );
   }
 
-  // بناء خيار طريقة الشحن
   Widget _buildShippingOption({
     required String value,
     required String title,
@@ -156,7 +146,6 @@ class AddShippingMethod extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            // أيقونة
             Container(
               width: 24,
               height: 24,
@@ -182,7 +171,6 @@ class AddShippingMethod extends StatelessWidget {
             ),
             SizedBox(width: 12),
             
-            // النص
             Text(
               title,
               style: TextStyle(
@@ -192,18 +180,14 @@ class AddShippingMethod extends StatelessWidget {
               ),
             ),
             
-            // زر الاختيار
-         
           ],
         ),
       ),
     );
   }
 
-  // بناء قسم شركات الشحن
   Widget _buildShippingCompaniesSection() {
     return Obx(() {
-      // إظهار هذا القسم فقط إذا تم اختيار "من خلال شركة التوصيل"
       if (controller.deliveryType.value != 'shipping') {
         return SizedBox();
       }
@@ -211,7 +195,6 @@ class AddShippingMethod extends StatelessWidget {
       return Expanded(
         child: Column(
           children: [
-            // رأس قسم شركات الشحن
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
@@ -226,7 +209,6 @@ class AddShippingMethod extends StatelessWidget {
                     ),
                   ),
                   
-                  // زر إضافة شركة شحن
                   GestureDetector(
                     onTap: () {
                       Get.to(() => AddNewShippingCompany());
@@ -251,7 +233,6 @@ class AddShippingMethod extends StatelessWidget {
               ),
             ),
             
-            // قائمة شركات الشحن
             Expanded(
               child: controller.shippingCompanies.isEmpty
                   ? Center(
@@ -300,7 +281,6 @@ class AddShippingMethod extends StatelessWidget {
     });
   }
 
-  // بناء بطاقة شركة الشحن
   Widget _buildShippingCompanyCard(Map<String, dynamic> company, int index) {
     final isPrimary = company['is_primary'] == true || index == 0;
     
@@ -324,7 +304,6 @@ class AddShippingMethod extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // مؤشر الأساسي/الثانوي
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
@@ -343,12 +322,10 @@ class AddShippingMethod extends StatelessWidget {
           
           SizedBox(width: 12),
           
-          // معلومات الشركة
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // اسم الشركة
                 Text(
                   company['name']?.toString() ?? 'شركة شحن',
                   style: TextStyle(
@@ -360,7 +337,6 @@ class AddShippingMethod extends StatelessWidget {
                 
                 SizedBox(height: 4),
                 
-                // المدن المغطاة
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
@@ -370,7 +346,6 @@ class AddShippingMethod extends StatelessWidget {
                     ),
                   ),
                 
-                // تاريخ الإضافة (إذا كان موجوداً)
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
@@ -383,10 +358,8 @@ class AddShippingMethod extends StatelessWidget {
             ),
           ),
           
-          // أزرار الإجراءات
           Row(
             children: [
-              // زر التعديل
               GestureDetector(
                 onTap: () {
                   _editShippingCompany(company, index);
@@ -408,7 +381,6 @@ class AddShippingMethod extends StatelessWidget {
               
               SizedBox(width: 8),
               
-              // زر الحذف
               GestureDetector(
                 onTap: () {
                   _deleteShippingCompany(index);
@@ -434,17 +406,13 @@ class AddShippingMethod extends StatelessWidget {
     );
   }
 
-  // دالة تعديل شركة الشحن
   void _editShippingCompany(Map<String, dynamic> company, int index) {
     Get.to(
       () => AddNewShippingCompany(
-        // companyToEdit: company,
-        // companyIndex: index,
       ),
     );
   }
 
-  // دالة حذف شركة الشحن
   void _deleteShippingCompany(int index) {
     Get.defaultDialog(
       title: 'تأكيد الحذف',
@@ -470,7 +438,6 @@ class AddShippingMethod extends StatelessWidget {
     );
   }
 
-  // بناء زر الحفظ
   Widget _buildSaveButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -487,9 +454,7 @@ class AddShippingMethod extends StatelessWidget {
     );
   }
 
-  // التحقق من البيانات والمتابعة
 void _validateAndProceed() {
-  // التحقق من اختيار طريقة الشحن
   if (controller.deliveryType.value.isEmpty) {
     Get.snackbar(
       'خطأ',
@@ -500,8 +465,7 @@ void _validateAndProceed() {
     return;
   }
   
-  // إذا كانت طريقة الشحن هي "من خلال شركة التوصيل"، يجب أن تكون هناك شركات شحن مضافة
-  if (controller.deliveryType.value == 'shipping' && 
+  if (controller.deliveryType.value == 'shipping' &&
       controller.shippingCompanies.isEmpty) {
     Get.snackbar(
       'خطأ',
@@ -512,10 +476,9 @@ void _validateAndProceed() {
     return;
   }
   
-  // 🔥 **حفظ المتجر النهائي**
   Get.defaultDialog(
     title: 'حفظ المتجر',
-    middleText: controller.isEditMode.value 
+    middleText: controller.isEditMode.value
         ? 'هل تريد تحديث المتجر بالبيانات الجديدة؟'
         : 'هل تريد إنشاء المتجر الآن؟',
     textConfirm: 'نعم',
@@ -526,7 +489,6 @@ void _validateAndProceed() {
     onConfirm: () async {
       Get.back();
       
-      // رفع الصور المحلية إن وجدت
       bool hasLocalImages = controller.selectedLogoMedia.any((m) => m.isLocal == true) ||
                           controller.selectedCoverMedia.any((m) => m.isLocal == true);
       
@@ -553,10 +515,8 @@ void _validateAndProceed() {
         }
       }
       
-      // حفظ المتجر النهائي
       final success = await controller.saveCompleteStore();
       if (success) {
-        // العودة إلى القائمة الرئيسية
         Get.until((route) => route.isFirst);
       }
     },

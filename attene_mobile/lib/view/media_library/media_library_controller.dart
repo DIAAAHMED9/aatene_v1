@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MediaLibraryController extends GetxController 
+class MediaLibraryController extends GetxController
     with SingleGetTickerProviderMixin, WidgetsBindingObserver {
   
   late TabController tabController;
@@ -38,7 +38,6 @@ class MediaLibraryController extends GetxController
   final RxBool _isAuthChecked = false.obs;
 final RxInt maxSelection = 10.obs;
 
-
   @override
   void onInit() {
     super.onInit();
@@ -52,7 +51,7 @@ final RxInt maxSelection = 10.obs;
 
   void _initializeBasicControllers() {
     tabController = TabController(
-      length: tabs.length, 
+      length: tabs.length,
       vsync: this,
       initialIndex: currentTabIndex.value
     );
@@ -64,14 +63,12 @@ final RxInt maxSelection = 10.obs;
   void _setupAuthListener() {
     final MyAppController myAppController = Get.find<MyAppController>();
     
-    // الاستماع لتغير حالة التهيئة أولاً
     ever(myAppController.isAppInitialized, (bool initialized) {
       if (initialized) {
         _checkAndInitialize();
       }
     });
     
-    // الاستماع لتغير حالة تسجيل الدخول
     ever(myAppController.isLoggedIn, (bool isLoggedIn) {
       _isAuthChecked.value = true;
       if (isLoggedIn) {
@@ -81,7 +78,6 @@ final RxInt maxSelection = 10.obs;
       }
     });
     
-    // إذا كان التطبيق مهيأ بالفعل، نتحقق مباشرة
     if (myAppController.isAppInitialized.value) {
       _checkAndInitialize();
     }
@@ -146,7 +142,6 @@ void setMaxSelection(int max) {
 bool get canSelectMore {
   return selectedMediaIds.length < maxSelection.value;
 }
-  // ========== التحديث التلقائي ==========
   void _startAutoRefresh() {
     _autoRefreshTimer = Timer.periodic(Duration(minutes: 2), (timer) {
       if (currentTabIndex.value == 1 && !isLoading.value && _isInitialized.value) {
@@ -180,7 +175,7 @@ bool get canSelectMore {
       return;
     }
     
-    if (_lastLoadTime != null && 
+    if (_lastLoadTime != null &&
         DateTime.now().difference(_lastLoadTime!).inSeconds < 30) {
       print('⏱️ [TAB OPEN] Skipping auto-load, last load was recent');
       return;
@@ -191,7 +186,6 @@ bool get canSelectMore {
     _lastLoadTime = DateTime.now();
   }
 
-  // ========== التخزين المحلي ==========
   Future<void> _saveMediaToLocalStorage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -241,9 +235,6 @@ bool get canSelectMore {
     }
   }
 
-  // ========== دوال الوسائط الأساسية ==========
-
-
   void toggleMediaSelection(String mediaId) {
     if (selectedMediaIds.contains(mediaId)) {
       selectedMediaIds.remove(mediaId);
@@ -268,9 +259,7 @@ bool get canSelectMore {
     return myAppController.userData['id']?.toString() ?? 'unknown';
   }
 
-  // ========== جلب البيانات من API ==========
   Future<void> loadUploadedMediaFromAPI() async {
-    // التحقق من المصادقة أولاً
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [API LOAD] User not authenticated, skipping API call');
@@ -360,9 +349,7 @@ bool get canSelectMore {
     }
   }
 
-  // ========== رفع الملفات ==========
   Future<void> _uploadFilesToAPI(List<File> files, List<MediaItem> mediaItems) async {
-    // التحقق من المصادقة أولاً
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [UPLOAD] User not authenticated, skipping upload');
@@ -456,7 +443,7 @@ bool get canSelectMore {
           }
           
           Get.snackbar(
-            'نجاح', 
+            'نجاح',
             'تم رفع $successCount ملف بنجاح${failCount > 0 ? ' وفشل $failCount ملف' : ''}',
             backgroundColor: Colors.green,
             colorText: Colors.white,
@@ -518,7 +505,6 @@ bool get canSelectMore {
     return false;
   }
 
-  // ========== دوال اختيار الملفات ==========
   Future<void> pickImages() async {
     try {
       print('🖼️ [PICKER] Opening image picker...');
@@ -603,7 +589,6 @@ bool get canSelectMore {
   }
 
   Future<void> _processSelectedFiles(List<XFile> files, MediaType type) async {
-    // التحقق من المصادقة أولاً
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [PROCESS] User not authenticated, skipping file processing');
@@ -654,7 +639,6 @@ bool get canSelectMore {
     }
   }
 
-  // ========== دوال مساعدة ==========
   Map<String, dynamic> _mediaItemToJson(MediaItem item) {
     return {
       'id': item.id,
@@ -714,7 +698,7 @@ bool get canSelectMore {
     var filtered = displayedMedia;
     
     if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((item) => 
+      filtered = filtered.where((item) =>
         item.name.toLowerCase().contains(searchQuery.value.toLowerCase())
       ).toList();
       print('🔍 [SEARCH] Filtered ${displayedMedia.length} → ${filtered.length} items');
@@ -731,7 +715,7 @@ bool get canSelectMore {
       
       Get.back(result: selectedMedia);
       Get.snackbar(
-        'تم الإدراج', 
+        'تم الإدراج',
         'تم إدراج ${selectedMediaIds.length} عنصر',
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -739,7 +723,7 @@ bool get canSelectMore {
     } else {
       print('⚠️ [CONFIRM] No items selected');
       Get.snackbar(
-        'تنبيه', 
+        'تنبيه',
         'لم تقم باختيار أي ملفات',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -750,7 +734,6 @@ Future<void> deleteMediaItem(MediaItem media) async {
   try {
     isLoading.value = true;
     
-    // إذا كان الملف محلياً، احذفه فقط من القائمة المؤقتة
     if (media.isLocal == true) {
       temporaryMediaItems.remove(media);
       selectedMediaIds.remove(media.id);
@@ -758,15 +741,12 @@ Future<void> deleteMediaItem(MediaItem media) async {
       return;
     }
     
-    // إذا كان الملف على الخادم، احذفه من الخادم
     final response = await ApiHelper.deleteMedia(fileName: media.name);
     
     if (response != null && response['status'] == true) {
-      // حذف الملف من القائمة
       uploadedMediaItems.removeWhere((item) => item.id == media.id);
       selectedMediaIds.remove(media.id);
       
-      // تحديث التخزين المحلي
       await _saveMediaToLocalStorage();
       
       print('🗑️ حذف الملف من الخادم: ${media.name}');
@@ -822,7 +802,6 @@ String getMediaDisplayUrl(MediaItem media) {
     searchQuery.value = searchTextController.text;
   }
   
-  // Getter للإطلاع على حالة التهيئة
   bool get isControllerInitialized => _isInitialized.value;
   bool get isAuthChecked => _isAuthChecked.value;
 }

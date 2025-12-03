@@ -1,4 +1,3 @@
-// lib/models/keyword_model.dart
 class Keyword {
   final String id;
   final String text;

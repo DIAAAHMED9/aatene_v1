@@ -1,4 +1,3 @@
-// lib/models/store_model.dart
 class Store {
   final String id;
   final String name;
@@ -27,14 +26,12 @@ class Store {
   });
 
   factory Store.fromJson(Map<String, dynamic> json) {
-    // معالجة صورة الشعار
     String? logoUrl;
     if (json['logo_url'] != null && json['logo_url'].toString().isNotEmpty) {
       final url = json['logo_url'].toString();
       logoUrl = url.startsWith('http') ? url : 'https://aatene.dev/storage/$url';
     }
 
-    // معالجة صور الغلاف
     List<String>? coverUrls;
     if (json['cover_urls'] != null) {
       coverUrls = (json['cover_urls'] as List)
@@ -46,7 +43,6 @@ class Store {
           .toList();
     }
 
-    // معالجة العنوان
     String address = 'غير محدد';
     if (json['address'] != null && json['address'].toString().isNotEmpty) {
       address = json['address'].toString();
@@ -55,7 +51,6 @@ class Store {
       address = 'مدينة $city';
     }
 
-    // معالجة نوع المتجر
     String type = 'متجر منتجات';
     if (json['type'] != null) {
       if (json['type'] == 'services') {
@@ -75,11 +70,11 @@ class Store {
       address: address,
       email: json['email']?.toString(),
       phone: json['phone']?.toString(),
-      currency: json['currency'] != null 
+      currency: json['currency'] != null
           ? json['currency']['name']?.toString()
           : json['currency_id']?.toString(),
-      ownerName: json['owner'] != null ? 
-          '${json['owner']['first_name'] ?? ''} ${json['owner']['last_name'] ?? ''}' 
+      ownerName: json['owner'] != null ?
+          '${json['owner']['first_name'] ?? ''} ${json['owner']['last_name'] ?? ''}'
           : json['owner_id']?.toString(),
     );
   }

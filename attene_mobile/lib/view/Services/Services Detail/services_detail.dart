@@ -347,10 +347,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                             MaterialState.selected,
                                           )) {
                                             return AppColors
-                                                .primary400; // Background color when selected
+                                                .primary400;
                                           }
                                           return Colors
-                                              .white; // Background color when unselected
+                                              .white;
                                         }),
                                     shape: RoundedRectangleBorder(
                                       borderRadius:
@@ -358,10 +358,8 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                     ),
                                     side: BorderSide(
                                       color: Colors.grey,
-                                      // Border color when unselected
                                       width: 1.0,
                                     ),
-                                    // Color when focused
                                   ),
                                   Column(
                                     crossAxisAlignment:

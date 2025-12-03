@@ -46,7 +46,6 @@ class VariationCard extends StatelessWidget {
   Widget _buildVariationHeader() {
     return Obx(() => Row(
       children: [
-        // حالة التنشيط مع تصميم محسن
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveDimensions.w(12),
@@ -83,7 +82,6 @@ class VariationCard extends StatelessWidget {
         
         SizedBox(width: ResponsiveDimensions.w(8)),
         
-        // زر التبديل
         Switch(
           value: variation.isActive.value,
           onChanged: (value) => controller.toggleVariationActive(variation),
@@ -93,11 +91,10 @@ class VariationCard extends StatelessWidget {
         
         Spacer(),
         
-        // زر الحذف
         IconButton(
           icon: Icon(
-            Icons.delete_outline, 
-            color: Colors.red, 
+            Icons.delete_outline,
+            color: Colors.red,
             size: ResponsiveDimensions.w(24)
           ),
           onPressed: _showDeleteConfirmation,
@@ -107,13 +104,10 @@ class VariationCard extends StatelessWidget {
     ));
   }
 
-// في VariationCard - تحديث _buildVariationAttributes
-// في VariationCard - تحديث _buildVariationAttributes لتحسين الواجهة
 Widget _buildVariationAttributes() {
   return GetBuilder<ProductVariationController>(
     id: ProductVariationController.attributesUpdateId,
     builder: (controller) {
-      // ✅ استخدام selectedAttributes من الـ Controller مباشرة
       if (controller.selectedAttributes.isEmpty) {
         return _buildNoAttributes();
       }
@@ -152,7 +146,6 @@ Widget _buildVariationAttributes() {
                 ),
               ),
               Spacer(),
-              // ✅ زر لإدارة السمات من داخل البطاقة
               IconButton(
                 icon: Icon(
                   Icons.settings,
@@ -166,7 +159,6 @@ Widget _buildVariationAttributes() {
           ),
           SizedBox(height: ResponsiveDimensions.h(12)),
           
-          // ✅ استخدام السمات من الـ Controller
           GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -197,7 +189,6 @@ Widget _buildVariationAttributes() {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // اسم السمة مع مؤشر الإكمال
           Row(
             children: [
               Expanded(
@@ -226,7 +217,6 @@ Widget _buildVariationAttributes() {
           ),
           SizedBox(height: ResponsiveDimensions.h(6)),
           
-          // حقل اختيار قيمة السمة
           GestureDetector(
             onTap: () => _showAttributeSelectionSheet(attribute),
             child: Container(
@@ -340,7 +330,7 @@ Widget _buildVariationAttributes() {
           decoration: InputDecoration(
             hintText: '0.00',
             prefixIcon: Icon(
-              Icons.attach_money, 
+              Icons.attach_money,
               size: ResponsiveDimensions.w(20),
               color: Colors.grey[600],
             ),
@@ -366,7 +356,6 @@ Widget _buildVariationAttributes() {
   Widget _buildStockAndSkuSection() {
     return Row(
       children: [
-        // حقل المخزون
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,7 +381,7 @@ Widget _buildVariationAttributes() {
                 decoration: InputDecoration(
                   hintText: '0',
                   prefixIcon: Icon(
-                    Icons.inventory_2_outlined, 
+                    Icons.inventory_2_outlined,
                     size: ResponsiveDimensions.w(18),
                     color: Colors.grey[600],
                   ),
@@ -416,7 +405,6 @@ Widget _buildVariationAttributes() {
         
         SizedBox(width: ResponsiveDimensions.w(12)),
         
-        // حقل SKU
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,7 +427,7 @@ Widget _buildVariationAttributes() {
                 decoration: InputDecoration(
                   hintText: 'SKU_001',
                   prefixIcon: Icon(
-                    Icons.code, 
+                    Icons.code,
                     size: ResponsiveDimensions.w(18),
                     color: Colors.grey[600],
                   ),
@@ -659,7 +647,6 @@ Widget _buildVariationAttributes() {
         ),
         child: Column(
           children: [
-            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -678,7 +665,6 @@ Widget _buildVariationAttributes() {
             ),
             SizedBox(height: ResponsiveDimensions.h(16)),
             
-            // List of values
             Expanded(
               child: ListView.builder(
                 itemCount: selectedValues.length,

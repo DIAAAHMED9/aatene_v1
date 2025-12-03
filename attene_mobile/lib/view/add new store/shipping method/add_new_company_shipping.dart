@@ -20,7 +20,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  // قائمة رموز الدول
   final List<Map<String, String>> countryCodes = [
     {'code': '+970', 'country': 'فلسطين'},
     {'code': '+966', 'country': 'السعودية'},
@@ -34,14 +33,12 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
     {'code': '+20', 'country': 'مصر'},
   ];
 
-  // المدن المحددة مسبقاً
   final List<Map<String, dynamic>> predefinedCities = [
     {'id': 1, 'name': 'القدس وضواحيها', 'selected': false},
     {'id': 2, 'name': 'مناطق الداخل', 'selected': false},
     {'id': 3, 'name': 'الضفة الغربية', 'selected': false},
   ];
 
-  // قائمة المدن للقائمة المنسدلة
   final List<String> citiesList = [
     'القدس',
     'رام الله',
@@ -91,8 +88,8 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               borderRadius: BorderRadius.circular(12),
               color: AppColors.neutral100,
             ),
-            child: Icon(Icons.arrow_back_ios_new_rounded, 
-                size: 18, 
+            child: Icon(Icons.arrow_back_ios_new_rounded,
+                size: 18,
                 color: AppColors.neutral700),
           ),
         ),
@@ -103,7 +100,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // اسم شركة الشحن
               Text(
                 "اسم شركة الشحن",
                 style: TextStyle(
@@ -120,7 +116,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               ),
               SizedBox(height: 20),
               
-              // رقم الهاتف
               Text(
                 "رقم الهاتف",
                 style: TextStyle(
@@ -140,8 +135,8 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Icon(Icons.phone_outlined, 
-                          size: 20, 
+                      child: Icon(Icons.phone_outlined,
+                          size: 20,
                           color: AppColors.neutral500),
                     ),
                     Expanded(
@@ -163,7 +158,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                         ),
                       ),
                     ),
-                    // رمز الدولة
                     Container(
                       width: 110,
                       padding: EdgeInsets.symmetric(horizontal: 12),
@@ -175,7 +169,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: selectedCountryCode,
-                          icon: Icon(Icons.arrow_drop_down, 
+                          icon: Icon(Icons.arrow_drop_down,
                               color: AppColors.primary500,
                               size: 24),
                           isExpanded: true,
@@ -197,7 +191,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                                 children: [
                                   Text(code['code']!),
                                   SizedBox(width: 4),
-                                  Icon(Icons.flag, size: 16, 
+                                  Icon(Icons.flag, size: 16,
                                       color: AppColors.primary400),
                                 ],
                               ),
@@ -214,7 +208,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               Divider(color: AppColors.neutral800, height: 1),
               SizedBox(height: 24),
               
-              // المدن التي ترسل لها المنتجات
               Text(
                 "المدن التي ترسل لها المنتجات",
                 style: TextStyle(
@@ -225,7 +218,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               ),
               SizedBox(height: 16),
               
-              // خيارات المدن المحددة مسبقاً
               Column(
                 children: predefinedCities.map((city) {
                   return Row(
@@ -244,8 +236,8 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                                   'type': 'predefined',
                                 });
                               } else {
-                                selectedCities.removeWhere((c) => 
-                                    c['city_id'] == city['id'] && 
+                                selectedCities.removeWhere((c) =>
+                                    c['city_id'] == city['id'] &&
                                     c['type'] == 'predefined');
                               }
                             });
@@ -263,8 +255,8 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.black,
-                            fontWeight: city['selected'] 
-                                ? FontWeight.w600 
+                            fontWeight: city['selected']
+                                ? FontWeight.w600
                                 : FontWeight.w500,
                           ),
                         ),
@@ -274,7 +266,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 }).toList(),
               ),
               
-              // زر إضافة منطقة جديدة
               SizedBox(height: 16),
               GestureDetector(
                 onTap: () {
@@ -305,7 +296,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 ),
               ),
               
-              // حقل إضافة المدينة الجديدة
               if (showAddCityField) ...[
                 SizedBox(height: 16),
                 Column(
@@ -395,7 +385,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                         ElevatedButton(
                           onPressed: selectedCity != null
                               ? () {
-                                  if (!selectedCities.any((c) => 
+                                  if (!selectedCities.any((c) =>
                                       c['name'] == selectedCity)) {
                                     setState(() {
                                       selectedCities.add({
@@ -433,7 +423,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 ),
               ],
               
-              // عرض المدن المختارة
               if (selectedCities.isNotEmpty) ...[
                 SizedBox(height: 24),
                 Text(
@@ -560,7 +549,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
       return;
     }
     
-    // الانتقال إلى شاشة إعدادات التسعير
     Get.to(() => ShippingPricingSettings(
       companyName: nameController.text,
       companyPhone: '$selectedCountryCode${phoneController.text}',

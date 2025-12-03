@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  // === متغيرات التفاعل ===
   final RxString email = ''.obs;
   final RxString password = ''.obs;
   final RxBool isLoading = false.obs;
@@ -19,11 +18,9 @@ class LoginController extends GetxController {
   final RxBool isLoginDisabled = false.obs;
   final Rx<DateTime?> lastLoginAttempt = Rx<DateTime?>(null);
 
-  // === التحكم بالنصوص ===
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // === الثوابت ===
   static const int maxLoginAttempts = 5;
   static const Duration loginTimeoutDuration = Duration(minutes: 15);
   static const Duration snackbarDuration = Duration(seconds: 4);
@@ -36,11 +33,9 @@ class LoginController extends GetxController {
   }
 
   void _setupListeners() {
-    // الاستماع لتغيرات الحقول
     ever(email, (_) => _validateEmail());
     ever(password, (_) => _validatePassword());
     
-    // إعادة تعيين محاولات التسجيل بعد فترة
     ever(lastLoginAttempt, (DateTime? timestamp) {
       if (timestamp != null) {
         final now = DateTime.now();
@@ -59,7 +54,6 @@ class LoginController extends GetxController {
     }
   }
 
-  // === دوال تحديث القيم ===
   void updateEmail(String value) {
     email.value = value.trim();
     emailError.value = '';
@@ -74,7 +68,6 @@ class LoginController extends GetxController {
     obscurePassword.value = !obscurePassword.value;
   }
 
-  // === التحقق من الصحة ===
   bool validateFields() {
     final isEmailValid = _validateEmail();
     final isPasswordValid = _validatePassword();
@@ -122,12 +115,11 @@ class LoginController extends GetxController {
   bool isValidPhone(String phone) {
     final phoneRegex = RegExp(r'^[0-9\+\(\)\-\s]{10,15}$');
     final cleanPhone = phone.replaceAll(RegExp(r'[\+\-\(\)\s]'), '');
-    return phoneRegex.hasMatch(phone) && 
-           cleanPhone.length >= 10 && 
+    return phoneRegex.hasMatch(phone) &&
+           cleanPhone.length >= 10 &&
            cleanPhone.length <= 15;
   }
 
-  // === دوال تسجيل الدخول ===
   Future<void> login() async {
     if (!_canAttemptLogin()) {
       _showLoginDisabledMessage();
@@ -201,15 +193,14 @@ class LoginController extends GetxController {
 
   Future<void> _processSuccessfulLogin(dynamic response) async {
     final userData = response['user'] ?? response['data'] ?? {};
-    final token = response['token'] ?? 
-                 response['access_token'] ?? 
+    final token = response['token'] ??
+                 response['access_token'] ??
                  userData['token'];
 
     if (token == null) {
       throw Exception('لم يتم العثور على رمز المصادقة في الاستجابة');
     }
 
-    // تحديث بيانات المستخدم
     final MyAppController myAppController = Get.find<MyAppController>();
     final completeUserData = Map<String, dynamic>.from(userData)
       ..['token'] = token
@@ -217,13 +208,10 @@ class LoginController extends GetxController {
 
     myAppController.updateUserData(completeUserData);
 
-    // إعادة تعيين المحاولات بعد تسجيل الدخول الناجح
     _resetLoginAttempts();
 
-    // عرض رسالة النجاح
     _showSuccessMessage(response['message'] ?? 'تم تسجيل الدخول بنجاح');
 
-    // التوجيه للشاشة الرئيسية
     await _redirectToMainScreen();
   }
 
@@ -325,7 +313,6 @@ class LoginController extends GetxController {
     _showErrorSnackbar('خطأ', errorMessage);
   }
 
-  // === دوال المساعدة ===
   void _resetLoginAttempts() {
     loginAttempts.value = 0;
     isLoginDisabled.value = false;
@@ -378,12 +365,10 @@ class LoginController extends GetxController {
   }
 
   Future<void> _redirectToMainScreen() async {
-    // تأخير بسيط لضمان اكتمال animations
     await Future.delayed(const Duration(milliseconds: 500));
     Get.offAllNamed('/mainScreen');
   }
 
-  // === دوال إضافية ===
   Future<void> socialLogin(String provider) async {
     if (!_canAttemptLogin()) {
       _showLoginDisabledMessage();
@@ -395,10 +380,8 @@ class LoginController extends GetxController {
     try {
       print('🌐 بدء تسجيل الدخول بواسطة: $provider');
       
-      // محاكاة عملية تسجيل الدخول الاجتماعية
       await Future.delayed(const Duration(seconds: 2));
       
-      // في التطبيق الحقيقي، هنا سيتم استدعاء API الخاص بالتسجيل الاجتماعي
       _showSuccessMessage('تم تسجيل الدخول بواسطة $provider');
       
       _resetLoginAttempts();
@@ -421,7 +404,6 @@ class LoginController extends GetxController {
     Get.toNamed('/register');
   }
 
-  // === Getters ===
   bool get isEmail => isValidEmail(email.value);
   bool get isPhone => isValidPhone(email.value);
   bool get canLogin => !isLoading.value && !isLoginDisabled.value;
@@ -443,7 +425,6 @@ class LoginController extends GetxController {
         return false;
       }
       
-      // هنا يمكن إضافة تحقق إضافي من صحة الـ token
       final token = myAppController.userData['token'];
       return token != null && token is String && token.isNotEmpty;
     } catch (error) {

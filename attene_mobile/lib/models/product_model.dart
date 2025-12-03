@@ -1,4 +1,3 @@
-// lib/model/product_model.dart
 class Product {
   final int id;
   final String sku;
@@ -13,9 +12,11 @@ class Product {
   final String favoritesCount;
   final String messagesCount;
   final String? viewCount;
-  final String? sectionId; // ✅ تحديث: من String وليس int
+  final String? sectionId;
   final String? status;
-  final Map<String, dynamic>? section; // ✅ إضافة حقل section
+  final Map<String, dynamic>? section;
+  final String? price;
+  final String? sectionName;
 
   Product({
     required this.id,
@@ -31,32 +32,41 @@ class Product {
     required this.favoritesCount,
     required this.messagesCount,
     this.viewCount,
-    this.sectionId, // ✅ تحديث
+    this.sectionId,
     this.status,
-    this.section, // ✅ جديد
+    this.section,
+    this.price,
+    this.sectionName,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'] ?? 0,
-      sku: json['sku'] ?? '',
-      name: json['name'] ?? '',
-      slug: json['slug'],
-      shortDescription: json['short_description'],
-      description: json['description'],
-      cover: json['cover'],
-      coverUrl: json['cover_url'],
-      endDate: json['end_date'],
-      shown: json['shown'] ?? false,
-      favoritesCount: json['favorites_count']?.toString() ?? '0',
-      messagesCount: json['messages_count']?.toString() ?? '0',
-      viewCount: json['view_count']?.toString(),
-      sectionId: json['section_id']?.toString(), // ✅ تحويل إلى String
-      status: json['status'],
-      section: json['section'] != null ? Map<String, dynamic>.from(json['section']) : null,
-    );
-  }
-
+factory Product.fromJson(Map<String, dynamic> json) {
+  print('🔄 [PARSING PRODUCT] JSON: $json');
+  
+  return Product(
+    id: json['id'] ?? 0,
+    sku: json['sku'] ?? '',
+    name: json['name'] ?? '',
+    slug: json['slug'],
+    shortDescription: json['short_description'],
+    description: json['description'],
+    cover: json['cover'],
+    coverUrl: json['cover_url'],
+    endDate: json['end_date'],
+    shown: json['shown'] ?? false,
+    favoritesCount: json['favorites_count']?.toString() ?? '0',
+    messagesCount: json['messages_count']?.toString() ?? '0',
+    viewCount: json['view_count']?.toString(),
+    sectionId: json['section_id']?.toString(),
+    status: json['status'],
+    section: json['section'] != null 
+        ? Map<String, dynamic>.from(json['section']) 
+        : null,
+    price: json['price']?.toString(),
+    sectionName: json['section'] != null 
+        ? json['section']['name']?.toString() 
+        : null,
+  );
+}
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -72,13 +82,14 @@ class Product {
       'favorites_count': favoritesCount,
       'messages_count': messagesCount,
       'view_count': viewCount,
-      'section_id': sectionId, // ✅ تحديث
+      'section_id': sectionId,
       'status': status,
       'section': section,
+      'price': price,
+      'section_name': sectionName,
     };
   }
 
-  // ✅ دالة مساعدة للحصول على sectionId كـ int (إذا احتجنا)
   int? get sectionIdAsInt {
     if (sectionId == null) return null;
     return int.tryParse(sectionId!);

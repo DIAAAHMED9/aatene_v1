@@ -1,7 +1,6 @@
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/chat/chat_all.dart';
 import 'package:flutter/material.dart';
 
-
 import 'Chat_Unread.dart';
 import 'chat_massege.dart';
 
