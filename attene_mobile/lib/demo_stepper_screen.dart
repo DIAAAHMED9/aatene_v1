@@ -120,74 +120,73 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         return ProductVariationsScreen();
       case 3:
         return RelatedProductsScreen();
-
       default:
         return const SizedBox();
     }
   }
 
-Widget _buildStepNavigation() {
-  return Row(
-    children: [
-      if (currentStep > 0)
+  Widget _buildStepNavigation() {
+    return Row(
+      children: [
+        if (currentStep > 0)
+          Expanded(
+            child: OutlinedButton(
+              onPressed: _previousStep,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: const BorderSide(color: Colors.blue, width: 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'رجوع',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ),
+        if (currentStep > 0) const SizedBox(width: 16),
         Expanded(
-          child: OutlinedButton(
-            onPressed: _previousStep,
-            style: OutlinedButton.styleFrom(
+          child: ElevatedButton(
+            onPressed: currentStep == steps.length - 1 ? _submitProduct : _nextStep,
+            style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: Colors.blue, width: 2),
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
+              elevation: 3,
+              shadowColor: Colors.blue.withOpacity(0.3),
             ),
-            child: const Text(
-              'رجوع',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.blue,
-              ),
-            ),
+            child: Obx(() {
+              final productController = Get.find<ProductCentralController>();
+              return productController.isSubmitting.isTrue
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text(
+                      currentStep == steps.length - 1 ? 'إنهاء وإرسال' : 'التالي',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+            }),
           ),
         ),
-      if (currentStep > 0) const SizedBox(width: 16),
-      Expanded(
-        child: ElevatedButton(
-          onPressed: currentStep == steps.length - 1 ? _submitProduct : _nextStep,
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 3,
-            shadowColor: Colors.blue.withOpacity(0.3),
-          ),
-          child: Obx(() {
-            final productController = Get.find<ProductCentralController>();
-            return productController.isSubmitting.isTrue
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : Text(
-                    currentStep == steps.length - 1 ? 'إنهاء وإرسال' : 'التالي',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  );
-          }),
-        ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   void _nextStep() {
     if (currentStep < steps.length - 1) {
@@ -207,113 +206,138 @@ Widget _buildStepNavigation() {
     }
   }
 
-void _submitProduct() async {
-  final ProductCentralController productController = Get.find<ProductCentralController>();
-  
-  print('🚀 [FINAL SUBMISSION STARTED]');
-  productController.printDataSummary();
+  Future<void> _submitProduct() async {
+    final ProductCentralController productController = Get.find<ProductCentralController>();
+    
+    print('🚀 [FINAL SUBMISSION STARTED]');
+    productController.printDataSummary();
 
-  if (!productController.isBasicInfoComplete()) {
-    Get.snackbar(
-      'خطأ',
-      'يرجى إكمال المعلومات الأساسية أولاً',
-      backgroundColor: Colors.red,
-      colorText: Colors.white
-    );
-    return;
-  }
-
-  final variationController = Get.find<ProductVariationController>();
-  if (variationController.hasVariations.value) {
-    final validation = variationController.validateVariations();
-    if (!validation.isValid) {
+    if (!productController.isBasicInfoComplete()) {
       Get.snackbar(
         'خطأ',
-        validation.errorMessage,
+        'يرجى إكمال المعلومات الأساسية أولاً',
         backgroundColor: Colors.red,
         colorText: Colors.white
       );
       return;
     }
-  }
 
-  final result = await productController.submitProduct();
-  
-  if (result['success'] == true) {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 12),
-            Text(
-              'تمت العملية بنجاح!',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.green,
-              ),
+    final variationController = Get.find<ProductVariationController>();
+    if (variationController.hasVariations.value) {
+      final validation = variationController.validateVariations();
+      if (!validation.isValid) {
+        Get.snackbar(
+          'خطأ',
+          validation.errorMessage,
+          backgroundColor: Colors.red,
+          colorText: Colors.white
+        );
+        return;
+      }
+    }
+
+    try {
+      final Map<String, dynamic>? result = await productController.submitProduct();
+      
+      if (result == null) {
+        Get.snackbar(
+          'خطأ',
+          'فشل في إضافة المنتج: النتيجة فارغة',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 5),
+        );
+        return;
+      }
+      
+      final bool success = result['success'] == true;
+      
+      if (success) {
+        Get.dialog(
+          AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.shopping_bag_rounded, size: 60, color: Colors.green),
-            const SizedBox(height: 20),
-            const Text(
-              'تم إضافة المنتج بنجاح',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-              textAlign: TextAlign.center,
+            title: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 28),
+                SizedBox(width: 12),
+                Text(
+                  'تمت العملية بنجاح!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            if (result['data'] != null && result['data'].isNotEmpty)
-              Text(
-                'رقم المنتج: ${result['data'][0]['sku'] ?? 'N/A'}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.shopping_bag_rounded, size: 60, color: Colors.green),
+                const SizedBox(height: 20),
+                const Text(
+                  'تم إضافة المنتج بنجاح',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                if (result['data'] != null && result['data'] is List && (result['data'] as List).isNotEmpty)
+                  Text(
+                    'رقم المنتج: ${(result['data'][0] as Map<String, dynamic>)['sku'] ?? 'N/A'}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  productController.reset();
+                  setState(() {
+                    currentStep = 0;
+                  });
+                },
+                child: const Text(
+                  'حسناً',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.back();
-              productController.reset();
-              setState(() {
-                currentStep = 0;
-              });
-            },
-            child: const Text(
-              'حسناً',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.blue,
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
-  } else {
-    Get.snackbar(
-      'خطأ',
-      result['message'] ?? 'فشل في إضافة المنتج',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 5),
-    );
+        );
+      } else {
+        final String errorMessage = result['message']?.toString() ?? 'فشل في إضافة المنتج';
+        Get.snackbar(
+          'خطأ',
+          errorMessage,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 5),
+        );
+      }
+    } catch (e) {
+      print('❌ [SUBMIT] خطأ في إرسال المنتج: $e');
+      Get.snackbar(
+        'خطأ',
+        'حدث خطأ غير متوقع: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 5),
+      );
+    }
   }
-}
 }

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

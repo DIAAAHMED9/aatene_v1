@@ -1,15 +1,15 @@
-import 'package:attene_mobile/view/add%20new%20store/choose_type_store/type_store.dart' show TypeStore;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/models/store_model.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
-import 'package:attene_mobile/view/add%20new%20store/shipping%20method/add_new_company_shipping.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
 import 'manage_account_store_controller.dart';
 
@@ -18,25 +18,25 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
 
   @override
   Widget build(BuildContext context) {
-    final ManageAccountStoreController controller = Get.put(ManageAccountStoreController());
-    final isRTL = LanguageUtils.isRTL;
-    final MyAppController myAppController = Get.find<MyAppController>();
+  final ManageAccountStoreController controller = Get.put(ManageAccountStoreController());
+  final isRTL = LanguageUtils.isRTL;
+  final MyAppController myAppController = Get.find<MyAppController>();
+  final DataInitializerService dataService = Get.find<DataInitializerService>();
 
-    return Scaffold(
+ return Scaffold(
+    backgroundColor: Colors.white,
+    appBar: AppBar(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text('إدارة الحسابات', style: TextStyle(
-          fontWeight: FontWeight.w500,
-          color: Colors.black,
-          fontSize: 20,
-        )),
-        centerTitle: false,
- 
-      ),
-      body: Obx(() => _buildBody(controller, isRTL, myAppController)),
-    );
+      elevation: 0,
+      title: Text('إدارة الحسابات', style: TextStyle(
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
+        fontSize: 20,
+      )),
+      centerTitle: false,
+    ),
+    body: Obx(() => _buildBody(controller, isRTL, myAppController)),
+  );
   }
 
   Widget _buildBody(ManageAccountStoreController controller, bool isRTL, MyAppController myAppController) {
@@ -254,173 +254,171 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     );
   }
 
-Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Container(
-      width: double.infinity,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _buildStoreLogo(store),
-          
-          SizedBox(width: 16),
-          
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  store.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+  Widget _buildStoreItem(Store store, ManageAccountStoreController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        width: double.infinity,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildStoreLogo(store),
+            
+            SizedBox(width: 16),
+            
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    store.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                
-                SizedBox(height: 6),
-                
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
+                  
+                  SizedBox(height: 6),
+                  
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF7F4F8),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: Color(0XFF1BB532),
+                                ),
+                                child: Icon(
+                                  Icons.location_on_outlined,
+                                  size: 10,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  store.address,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(width: 8),
+                      
+                      Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Color(0xFFF7F4F8),
-                          borderRadius: BorderRadius.circular(25),
+                          color: _getStatusColor(store.status).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              width: 20,
-                              height: 20,
+                              width: 8,
+                              height: 8,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Color(0XFF1BB532),
-                              ),
-                              child: Icon(
-                                Icons.location_on_outlined,
-                                size: 10,
-                                color: Colors.white,
+                                color: _getStatusColor(store.status),
+                                shape: BoxShape.circle,
                               ),
                             ),
-                            SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                store.address,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                            SizedBox(width: 4),
+                            Text(
+                              _getStatusText(store.status),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: _getStatusColor(store.status),
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                       ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            
+            SizedBox(width: 16),
+            
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () => controller.editStore(store),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.primary100,
                     ),
-                    
-                    SizedBox(width: 8),
-                    
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(store.status).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(store.status),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            _getStatusText(store.status),
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: _getStatusColor(store.status),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: Icon(
+                      Icons.edit,
+                      size: 20,
+                      color: AppColors.primary400,
                     ),
-                  ],
+                  ),
+                ),
+                
+                SizedBox(width: 12),
+                
+                GestureDetector(
+                  onTap: () => controller.deleteStore(store),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.error100,
+                    ),
+                    child: Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: AppColors.error200,
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
-          
-          SizedBox(width: 16),
-          
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () => controller.editStore(store),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.primary100,
-                  ),
-                  child: Icon(
-                    Icons.edit,
-                    size: 20,
-                    color: AppColors.primary400,
-                  ),
-                ),
-              ),
-              
-              SizedBox(width: 12),
-              
-              GestureDetector(
-                onTap: () => controller.deleteStore(store),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.error100,
-                  ),
-                  child: Icon(
-                    Icons.delete_outline,
-                    size: 20,
-                    color: AppColors.error200,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildStoreLogo(Store store) {
     if (store.logoUrl != null && store.logoUrl!.isNotEmpty) {
       return Container(
         width: 60,
         height: 60,
-        
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey[200]!,),
-          
+          border: Border.all(color: Colors.grey[200]!),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(25),

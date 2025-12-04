@@ -3,10 +3,13 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../controller/create_store_controller.dart';
 
@@ -18,22 +21,25 @@ class TypeStore extends GetView<CreateStoreController> {
     final CreateStoreController controller = Get.put(CreateStoreController());
     final isRTL = LanguageUtils.isRTL;
     final MyAppController myAppController = Get.find<MyAppController>();
+    final DataInitializerService dataService = Get.find<DataInitializerService>();
 
     return Scaffold(
-  backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('نوع المتجر',style: TextStyle(fontWeight: FontWeight.w500,
-        color: Colors.black),),
+        title: Text('نوع المتجر', style: TextStyle(
+          fontWeight: FontWeight.w500,
+          color: Colors.black
+        )),
         centerTitle: false,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
-            onTap: ()=>Get.back(),
+            onTap: () => Get.back(),
             child: CircleAvatar(
               backgroundColor: Color(0XFF1F29370D),
-              child: Icon(Icons.arrow_back,color: Colors.black,),
+              child: Icon(Icons.arrow_back, color: Colors.black),
             ),
           ),
         ),
@@ -68,7 +74,6 @@ class TypeStore extends GetView<CreateStoreController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-  
         Text(
           'قم باختيار نوع المتجر الذي تريده (تقديم خدمات / بيع منتجات)',
           style: TextStyle(
@@ -117,7 +122,7 @@ class TypeStore extends GetView<CreateStoreController> {
       onTap: () => controller.setStoreType(type),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 13),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -127,21 +132,20 @@ class TypeStore extends GetView<CreateStoreController> {
         ),
         child: Row(
           children: [
-        Icon(
-                icon,
-                color: isSelected ? AppColors.primary400 : Color(0XFF393939),
-                size: 30,
-              ),
-            
+            Icon(
+              icon,
+              color: isSelected ? AppColors.primary400 : Color(0XFF393939),
+              size: 30,
+            ),
             const SizedBox(width: 16),
-             Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: isSelected ? AppColors.primary400 : Color(0XFF393939),
-                    ),
-                  ),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+                color: isSelected ? AppColors.primary400 : Color(0XFF393939),
+              ),
+            ),
           ],
         ),
       ),

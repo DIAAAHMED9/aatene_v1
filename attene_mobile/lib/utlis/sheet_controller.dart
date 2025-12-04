@@ -4,7 +4,7 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:attene_mobile/demo_stepper_screen.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
@@ -55,7 +55,7 @@ class BottomSheetController extends GetxController {
   final RxList<Section> _filteredSections = <Section>[].obs;
 
   final _sectionSearchController = StreamController<String>.broadcast();
-  final MyAppController _myAppController = Get.find<MyAppController>();
+  late MyAppController myAppController; // تأجيل التهيئة
 final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
 RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributesRx;
 void updateSelectedAttributes(List<ProductAttribute> attributes) {
@@ -105,6 +105,8 @@ void  init(){
 
   Future<void> _loadSections() async {
     try {
+            myAppController = Get.find<MyAppController>();
+
       if (!_isUserAuthenticated()) {
         print('⚠️ المستخدم غير مسجل دخول');
         return;
@@ -132,33 +134,53 @@ void  init(){
     }
   }
 
-  Future<void> _loadAttributesFromApi() async {
-    try {
-      print('📡 [LOADING ATTRIBUTES FROM API - BOTTOM SHEET]');
-
-      final response = await ApiHelper.get(
-        path: '/merchants/attributes',
-        withLoading: false,
-      );
-
-      print('🎯 [ATTRIBUTES API RESPONSE - BOTTOM SHEET]: ${response?['status']}');
-
-      if (response != null && response['status'] == true) {
-        final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
-        
-        final loadedAttributes = attributesList.map((attributeJson) {
-          return ProductAttribute.fromApiJson(attributeJson);
-        }).toList();
-
-        _tempAttributes.assignAll(loadedAttributes);
-        print('✅ تم تحميل ${_tempAttributes.length} سمة في الـ BottomSheet بنجاح');
-      } else {
-        print('❌ فشل في تحميل السمات في الـ BottomSheet: ${response?['message']}');
-      }
-    } catch (e) {
-      print('❌ خطأ في تحميل السمات في الـ BottomSheet: $e');
+Future<void> _loadAttributesFromApi() async {
+  try {
+    print('📡 [BOTTOM SHEET] محاولة تحميل السمات...');
+    
+    // التحقق من تسجيل الدخول أولاً
+    if (!_isUserAuthenticated()) {
+      print('⚠️ [BOTTOM SHEET] المستخدم غير مسجل دخول، تخطي تحميل السمات');
+      return;
     }
+
+    print('📡 [LOADING ATTRIBUTES FROM API - BOTTOM SHEET]');
+
+    final response = await ApiHelper.get(
+      path: '/merchants/attributes',
+      withLoading: false,
+    );
+
+    print('🎯 [ATTRIBUTES API RESPONSE - BOTTOM SHEET]: ${response?['status']}');
+
+    if (response != null && response['status'] == true) {
+      final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+      
+      final loadedAttributes = attributesList.map((attributeJson) {
+        return ProductAttribute.fromApiJson(attributeJson);
+      }).toList();
+
+      _tempAttributes.assignAll(loadedAttributes);
+      print('✅ تم تحميل ${_tempAttributes.length} سمة في الـ BottomSheet بنجاح');
+    } else {
+      print('❌ فشل في تحميل السمات في الـ BottomSheet: ${response?['message']}');
+    }
+  } catch (e) {
+    print('❌ خطأ في تحميل السمات في الـ BottomSheet: $e');
   }
+}
+
+bool _isUserAuthenticated() {
+  try {
+    if (Get.isRegistered<MyAppController>()) {
+      final myAppController = Get.find<MyAppController>();
+      return myAppController.isLoggedIn.value;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
 
   void _initializeAttributeListeners() {
     _attributeSearchController.addListener(() {
@@ -321,10 +343,7 @@ void openAddProductScreen() {
     );
   }
 
-  bool _isUserAuthenticated() {
-    final userData = _myAppController.userData;
-    return userData.isNotEmpty && userData['token'] != null;
-  }
+
 
   void _showLoginRequiredMessage() {
     Get.snackbar(
@@ -1556,7 +1575,7 @@ Widget buildManageSectionsContent() {
       }
     } else {
       final newAttribute = attribute.copyWith(
-        values: attribute.values.map((value) => value.copyWith(isSelected: true)).toList()
+        values: attribute.values.map((value) => value.copyWith(isSelected: true.obs)).toList()
       );
       _selectedAttributes.add(newAttribute);
       

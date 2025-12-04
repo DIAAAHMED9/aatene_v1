@@ -1,99 +1,123 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/models/section_model.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
-import 'package:get/get.dart';
-import 'package:attene_mobile/view/media_library/media_model.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
+import 'package:attene_mobile/view/media_library/media_model.dart';
+import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
+
+import '../my_app/my_app_controller.dart';
+import '../view/Services/data_lnitializer_service.dart';
+import '../view/Services/unified_loading_screen.dart';
 
 class ProductCentralController extends GetxController {
   static ProductCentralController get to => Get.find();
-
-  var productName = ''.obs;
-  var productDescription = ''.obs;
-  var price = ''.obs;
-  var selectedCategoryId = 0.obs;
-  var selectedCondition = ''.obs;
-  var selectedMedia = <MediaItem>[].obs;
-
-  var keywords = <String>[].obs;
-
-  var variations = <Map<String, dynamic>>[].obs;
-
-  var relatedProducts = <Map<String, dynamic>>[].obs;
-
-  var categories = <Map<String, dynamic>>[].obs;
-  var isLoadingCategories = false.obs;
-  var categoriesError = ''.obs;
-
-  var isSubmitting = false.obs;
-  var selectedStore = Rx<Map<String, dynamic>?>(null);
-
-  var selectedSection = Rx<Section?>(null);
-
-  bool _isUpdatingSection = false;
-
+  
+  final DataInitializerService dataService = Get.find<DataInitializerService>();
+  final GetStorage storage = GetStorage();
+  final MyAppController myAppController = Get.find<MyAppController>();
+  
+  final RxString productName = ''.obs;
+  final RxString productDescription = ''.obs;
+  final RxString price = ''.obs;
+  final RxInt selectedCategoryId = 0.obs;
+  final RxString selectedCondition = ''.obs;
+  final RxList<MediaItem> selectedMedia = <MediaItem>[].obs;
+  final Rx<Section?> selectedSection = Rx<Section?>(null);
+  
+  final RxList<String> keywords = <String>[].obs;
+  final RxList<Map<String, dynamic>> variations = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> relatedProducts = <Map<String, dynamic>>[].obs;
+  final Rx<Map<String, dynamic>?> selectedStore = Rx<Map<String, dynamic>?>(null);
+  
+  final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
+  final RxBool isLoadingCategories = false.obs;
+  final RxString categoriesError = ''.obs;
+  
+  final RxBool isSubmitting = false.obs;
+  final RxBool _isUpdatingSection = false.obs;
+  
   @override
   void onInit() {
     super.onInit();
-    print('🔄 [PRODUCT CENTRAL CONTROLLER INITIALIZED]');
+    print('🔄 [PRODUCT CENTRAL] تهيئة متحكم المنتجات المركزي');
+    _loadCachedCategories();
   }
-
+  
+  Future<void> _loadCachedCategories() async {
+    try {
+      final cachedCategories = dataService.getCategories();
+      if (cachedCategories.isNotEmpty) {
+        categories.assignAll(List<Map<String, dynamic>>.from(cachedCategories));
+        print('✅ [PRODUCT] تم تحميل ${categories.length} فئة من التخزين المحلي');
+      }
+    } catch (e) {
+      print('⚠️ [PRODUCT] خطأ في تحميل الفئات المخزنة: $e');
+    }
+  }
+  
   Future<void> loadCategoriesIfNeeded() async {
     if (categories.isNotEmpty || isLoadingCategories.value) {
       return;
     }
     await loadCategories();
   }
-
+  
   Future<void> loadCategories() async {
+    return UnifiedLoadingScreen.showWithFuture<void>(
+      _performLoadCategories(),
+      message: 'جاري تحميل الفئات...',
+    );
+  }
+  
+  Future<void> _performLoadCategories() async {
     try {
-      final MyAppController myAppController = Get.find<MyAppController>();
       if (!myAppController.isLoggedIn.value) {
         categoriesError('يجب تسجيل الدخول أولاً');
-        print('⚠️ [CATEGORIES] User not logged in');
+        print('⚠️ [PRODUCT] المستخدم غير مسجل دخول');
         return;
       }
-
+  
       isLoadingCategories(true);
       categoriesError('');
-      print('📡 [LOADING CATEGORIES FROM API]');
+      print('📡 [PRODUCT] جلب الفئات من API');
       
       final response = await ApiHelper.get(
         path: '/merchants/categories/select',
         withLoading: false,
       );
-
+  
       if (response != null && response['status'] == true) {
         final categoriesList = List<Map<String, dynamic>>.from(response['categories'] ?? []);
         categories.assignAll(categoriesList);
-        print('✅ تم تحميل ${categories.length} فئة بنجاح');
+        print('✅ [PRODUCT] تم تحميل ${categories.length} فئة بنجاح');
       } else {
         final errorMessage = response?['message'] ?? 'فشل في تحميل الفئات';
         categoriesError(errorMessage);
-        print('❌ فشل في تحميل الفئات: $errorMessage');
+        print('❌ [PRODUCT] فشل في تحميل الفئات: $errorMessage');
       }
     } catch (e) {
       final error = 'حدث خطأ أثناء تحميل الفئات: $e';
       categoriesError(error);
-      print('❌ خطأ في تحميل الفئات: $e');
+      print('❌ [PRODUCT] خطأ في تحميل الفئات: $e');
     } finally {
       isLoadingCategories(false);
     }
   }
-
+  
   Future<void> reloadCategories() async {
     categories.clear();
     await loadCategories();
   }
-
+  
   void updateSelectedStore(Map<String, dynamic> store) {
     selectedStore(store);
-    print('🏪 [STORE UPDATED]: ${store['name']} (ID: ${store['id']})');
+    print('🏪 [PRODUCT] تم تحديث المتجر: ${store['name']} (ID: ${store['id']})');
     printDataSummary();
   }
-
+  
   void updateBasicInfo({
     required String name,
     required String description,
@@ -109,12 +133,13 @@ class ProductCentralController extends GetxController {
     selectedCategoryId(categoryId);
     selectedCondition(condition);
     selectedMedia.assignAll(media);
+    
     if (section != null) {
-      selectedSection(section);
+      updateSelectedSection(section);
     }
-
+  
     print('''
-📦 [BASIC INFO UPDATED]:
+📦 [PRODUCT] تحديث المعلومات الأساسية:
    الاسم: $name
    الوصف: ${description.length} حرف
    السعر: $productPrice
@@ -124,22 +149,22 @@ class ProductCentralController extends GetxController {
    الوسائط: ${media.length} عنصر
 ''');
   }
-
+  
   void addKeywords(List<String> newKeywords) {
     keywords.assignAll(newKeywords);
-    print('🔤 [KEYWORDS UPDATED]: ${newKeywords.length} كلمة مفتاحية');
+    print('🔤 [PRODUCT] تحديث الكلمات المفتاحية: ${newKeywords.length} كلمة');
   }
-
+  
   void addVariations(List<Map<String, dynamic>> newVariations) {
     variations.assignAll(newVariations);
-    print('🎨 [VARIATIONS UPDATED]: ${newVariations.length} متغير');
+    print('🎨 [PRODUCT] تحديث المتغيرات: ${newVariations.length} متغير');
   }
-
+  
   void addRelatedProducts(List<Map<String, dynamic>> products) {
     relatedProducts.assignAll(products);
-    print('🔗 [RELATED PRODUCTS UPDATED]: ${products.length} منتج مرتبط');
+    print('🔗 [PRODUCT] تحديط المنتجات المرتبطة: ${products.length} منتج');
   }
-
+  
   bool isBasicInfoComplete() {
     return productName.isNotEmpty &&
         productDescription.isNotEmpty &&
@@ -148,105 +173,101 @@ class ProductCentralController extends GetxController {
         selectedCondition.isNotEmpty &&
         selectedSection.value != null;
   }
-
-  Future<Map<String, dynamic>> submitProduct() async {
+  
+  Future<Map<String, dynamic>?> submitProduct() async {
+    return UnifiedLoadingScreen.showWithFuture<Map<String, dynamic>>(
+      _performSubmitProduct(),
+      message: 'جاري إضافة المنتج...',
+    );
+  }
+  
+  Future<Map<String, dynamic>> _performSubmitProduct() async {
     try {
       isSubmitting(true);
       
       print('''
-🚀 [SUBMITTING PRODUCT - FINAL SOLUTION]:
+🚀 [PRODUCT] إرسال المنتج - الحل النهائي:
    الاسم: ${productName.value}
    الفئة: ${selectedCategoryId.value}
    السعر: ${price.value}
    القسم: ${selectedSection.value?.name ?? 'غير محدد'} (ID: ${selectedSection.value?.id})
-   الوسائط: ${selectedMedia.length} (IDs: ${selectedMedia.map((m) => m.id).toList()})
+   الوسائط: ${selectedMedia.length}
    الكلمات المفتاحية: ${keywords.length}
    المنتجات المرتبطة: ${relatedProducts.length}
 ''');
-
+  
       if (selectedSection.value == null) {
         return {
           'success': false,
           'message': 'يرجى اختيار قسم للمنتج'
         };
       }
-
+  
       _updateVariationsData();
-
+  
       final variationController = Get.find<ProductVariationController>();
       final variationsData = variationController.prepareVariationsForApi();
-
-      print('🎯 [VARIATIONS DATA PREPARED]: ${variationsData.length} متغير');
-
+  
+      print('🎯 [PRODUCT] بيانات المتغيرات المعدة: ${variationsData.length} متغير');
+  
       final productData = await _prepareProductData(variationsData);
-
-      print('📤 [PRODUCT DATA TO SEND - FINAL]: ${jsonEncode(productData)}');
-
+  
+      print('📤 [PRODUCT] بيانات المنتج المرسلة: ${jsonEncode(productData)}');
+  
       final response = await ApiHelper.post(
         path: '/merchants/products',
         body: productData,
-        withLoading: true,
+        withLoading: false,
       );
-
-      print('📥 [PRODUCT API RESPONSE]: ${jsonEncode(response)}');
-
+  
+      print('📥 [PRODUCT] استجابة API: ${jsonEncode(response)}');
+  
       if (response != null && response['status'] == true) {
         final product = response['data']?[0];
-        print('✅ [PRODUCT CREATED SUCCESSFULLY]: ${product?['name']}');
+        print('✅ [PRODUCT] تم إنشاء المنتج بنجاح: ${product?['name']}');
+        
+        await dataService.refreshProducts();
         
         _resetAfterSuccess(variationController);
         
         return {'success': true, 'data': response['data']};
       } else {
         final errorMessage = _parseErrorMessage(response);
-        print('❌ [PRODUCT CREATION FAILED]: $errorMessage');
+        print('❌ [PRODUCT] فشل إنشاء المنتج: $errorMessage');
         return {'success': false, 'message': errorMessage};
       }
     } catch (e) {
-      print('❌ [PRODUCT SUBMISSION ERROR]: $e');
+      print('❌ [PRODUCT] خطأ في إرسال المنتج: $e');
       return {'success': false, 'message': 'حدث خطأ أثناء إضافة المنتج: $e'};
     } finally {
       isSubmitting(false);
     }
   }
-
+  
   Future<Map<String, dynamic>> _prepareProductData(List<Map<String, dynamic>> variationsData) async {
     final productData = <String, dynamic>{
       'section_id': selectedSection.value!.id,
       'name': productName.value.trim(),
       'description': productDescription.value.trim(),
-      'price': double.parse(price.value),
+      'price': double.tryParse(price.value) ?? 0.0,
       'category_id': selectedCategoryId.value,
       'condition': _formatCondition(selectedCondition.value),
       'short_description': _getShortDescription(),
       'sku': _generateSku(),
-
-          "crossSells": [
-        14,
-        13
-    ],
-    "cross_sells_price": 1400,
-    "cross_sells_due_date": "2025-02-02"
     };
-
+  
     if (selectedMedia.isNotEmpty) {
-
-          final firstMedia = selectedMedia.first;
-
-      print('media selctor :: ${selectedMedia.map((media) => media.fileUrl).toList()}');
-      productData['cover'] = _getFilePath(firstMedia.fileUrl!);
-    productData['gallary'] = selectedMedia.map((media) => _getFilePath(media.fileUrl!)).toList();
+      final firstMedia = selectedMedia.first;
+      productData['cover'] = _getFilePath(firstMedia.fileUrl);
+      productData['gallary'] = selectedMedia.map((media) => _getFilePath(media.fileUrl)).toList();
     }
-   print('🖼️ [MEDIA PATHS FORMATTED]:');
-    print('   Cover: ${productData['cover']}');
-    print('   Gallary: ${productData['gallary']}');
   
     if (keywords.isNotEmpty) {
       productData['tags'] = keywords;
     } else {
       productData['tags'] = [];
     }
-
+  
     if (variationsData.isNotEmpty) {
       productData['type'] = 'variation';
       productData['variations'] = _prepareVariationsData(variationsData);
@@ -254,37 +275,37 @@ class ProductCentralController extends GetxController {
       productData['type'] = 'simple';
       productData['variations'] = [];
     }
-
+  
     if (relatedProducts.isNotEmpty) {
       productData['crossSells'] = relatedProducts.map((p) => p['id']).toList();
-      productData['cross_sells_price'] = double.parse(price.value);
+      productData['cross_sells_price'] = double.tryParse(price.value) ?? 0.0;
       
-      final dueDate = DateTime.now().add(Duration(days: 30));
+      final dueDate = DateTime.now().add(const Duration(days: 30));
       productData['cross_sells_due_date'] =
           '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}';
     } else {
       productData['crossSells'] = [];
     }
-
-    print('✅ [FINAL PRODUCT DATA - SAFE]: ${jsonEncode(productData)}');
+  
+    print('✅ [PRODUCT] بيانات المنتج النهائية: ${jsonEncode(productData)}');
     return productData;
   }
-
-List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> variationsData) {
-  return variationsData.map((variation) {
-    final variationData = {
-      'price': variation['price'],
-      'attributeOptions': _prepareAttributeOptions(variation['attributeOptions'] ?? []),
-    };
-    
-    if (variation['image'] != null && variation['image'].toString().isNotEmpty) {
-      variationData['image'] = _getFilePath(variation['image'].toString());
-    }
-    
-    return variationData;
-  }).toList();
-}
-
+  
+  List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> variationsData) {
+    return variationsData.map((variation) {
+      final variationData = {
+        'price': variation['price'],
+        'attributeOptions': _prepareAttributeOptions(variation['attributeOptions'] ?? []),
+      };
+      
+      if (variation['image'] != null && variation['image'].toString().isNotEmpty) {
+        variationData['image'] = _getFilePath(variation['image'].toString());
+      }
+      
+      return variationData;
+    }).toList();
+  }
+  
   List<Map<String, dynamic>> _prepareAttributeOptions(List<dynamic> attributeOptions) {
     final List<Map<String, dynamic>> result = [];
     
@@ -314,7 +335,7 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     
     return result;
   }
-
+  
   void _updateVariationsData() {
     final variationController = Get.find<ProductVariationController>();
     
@@ -327,14 +348,14 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
       }
     }
     
-    print('✅ [VARIATIONS UPDATED]: Images cleaned for API');
+    print('✅ [PRODUCT] تحديث بيانات المتغيرات: تم تنظيف الصور لـ API');
   }
-
+  
   String _parseErrorMessage(Map<String, dynamic>? response) {
     if (response == null) {
       return 'فشل في الاتصال بالخادم';
     }
-
+  
     if (response['errors'] != null && response['errors'] is Map) {
       final errors = Map<String, dynamic>.from(response['errors']);
       if (errors.isNotEmpty) {
@@ -343,17 +364,17 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
         return errorMessages.isNotEmpty ? errorMessages.first : 'حدث خطأ غير معروف';
       }
     }
-
+  
     return response['message'] ?? 'فشل في إضافة المنتج';
   }
-
+  
   void _resetAfterSuccess(ProductVariationController variationController) {
     reset();
     variationController.toggleHasVariations(false);
     variationController.selectedAttributes.clear();
     variationController.variations.clear();
   }
-
+  
   String _formatCondition(String condition) {
     switch (condition) {
       case 'جديد':
@@ -366,20 +387,49 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
         return 'new';
     }
   }
-
+  
   String _generateSku() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = timestamp % 10000;
     return 'SKU${productName.value.replaceAll(' ', '_').toUpperCase()}_$random';
   }
-
+  
   String _getShortDescription() {
     if (productDescription.value.length <= 100) {
       return productDescription.value;
     }
     return '${productDescription.value.substring(0, 100)}...';
   }
-
+  
+  String _getFilePath(String? url) {
+    if (url == null || url.isEmpty) return '';
+    
+    try {
+      final uri = Uri.parse(url);
+      String path = uri.path;
+      
+      if (path.startsWith('/storage/')) {
+        final newPath = path.replaceFirst('/storage/', '');
+        return newPath;
+      }
+      
+      if (path.startsWith('/gallery/')) {
+        final newPath = path.substring(1);
+        return newPath;
+      }
+      
+      if (path.startsWith('/images/')) {
+        final newPath = path.substring(1);
+        return newPath;
+      }
+      
+      return path;
+    } catch (e) {
+      print('❌ [PRODUCT] خطأ في تحويل المسار: $e');
+      return url;
+    }
+  }
+  
   void reset() {
     productName('');
     productDescription('');
@@ -392,14 +442,14 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
     relatedProducts.clear();
     selectedSection(null);
     
-    print('🔄 [PRODUCT DATA RESET]');
+    print('🔄 [PRODUCT] إعادة تعيين بيانات المنتج');
   }
-
+  
   void printDataSummary() {
     final variationController = Get.find<ProductVariationController>();
     
     print('''
-📊 [PRODUCT DATA SUMMARY]:
+📊 [PRODUCT SUMMARY]:
    الاسم: ${productName.value}
    الوصف: ${productDescription.value.length} حرف
    السعر: ${price.value}
@@ -413,33 +463,33 @@ List<Map<String, dynamic>> _prepareVariationsData(List<Map<String, dynamic>> var
    المنتجات المرتبطة: ${relatedProducts.length}
 ''');
   }
-
-void updateSelectedSection(Section section) {
-  if (_isUpdatingSection) return;
   
-  _isUpdatingSection = true;
-  
-  try {
-    if (selectedSection.value?.id == section.id) {
-      print('⚠️ [SECTION ALREADY UPDATED]: ${section.name} (ID: ${section.id})');
-      return;
+  void updateSelectedSection(Section section) {
+    if (_isUpdatingSection.value) return;
+    
+    _isUpdatingSection.value = true;
+    
+    try {
+      if (selectedSection.value?.id == section.id) {
+        print('⚠️ [PRODUCT] القسم محدث بالفعل: ${section.name} (ID: ${section.id})');
+        return;
+      }
+      
+      selectedSection(section);
+      print('✅ [PRODUCT] تحديث القسم: ${section.name} (ID: ${section.id})');
+      
+      final bottomSheetController = Get.find<BottomSheetController>();
+      bottomSheetController.selectSection(section);
+    } finally {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _isUpdatingSection.value = false;
+      });
     }
-    
-    selectedSection(section);
-    print('✅ [SECTION UPDATED]: ${section.name} (ID: ${section.id})');
-    
-    final bottomSheetController = Get.find<BottomSheetController>();
-    bottomSheetController.selectSection(section);
-  } finally {
-    Future.delayed(Duration(milliseconds: 100), () {
-      _isUpdatingSection = false;
-    });
   }
-}
-
+  
   Future<Map<String, dynamic>> testWithCorrectStructure() async {
     try {
-      print('🧪 [TESTING WITH CORRECT STRUCTURE]');
+      print('🧪 [PRODUCT] اختبار الهيكل الصحيح');
       
       final testData = {
         "section_id": 18,
@@ -454,17 +504,17 @@ void updateSelectedSection(Section section) {
         "variations": [],
         "crossSells": [],
       };
-
-      print('🧪 [TEST DATA WITH CORRECT STRUCTURE]: ${jsonEncode(testData)}');
-
+  
+      print('🧪 [PRODUCT] بيانات الاختبار: ${jsonEncode(testData)}');
+  
       final response = await ApiHelper.post(
         path: '/merchants/products',
         body: testData,
-        withLoading: true,
+        withLoading: false,
       );
-
-      print('🧪 [TEST RESPONSE]: ${jsonEncode(response)}');
-
+  
+      print('🧪 [PRODUCT] استجابة الاختبار: ${jsonEncode(response)}');
+  
       if (response != null && response['status'] == true) {
         return {'success': true, 'message': '✅ الاختبار نجح - الهيكل صحيح'};
       } else {
@@ -474,48 +524,22 @@ void updateSelectedSection(Section section) {
       return {'success': false, 'message': '❌ خطأ في الاختبار: $e'};
     }
   }
-String _getFilePath(String url) {
-  try {
-    final uri = Uri.parse(url);
-    String path = uri.path;
-    
-    print('🔄 [PATH CONVERSION]: Original: $path');
-    
-    if (path.startsWith('/storage/')) {
-      final newPath = path.replaceFirst('/storage/', '');
-      print('   → After removing /storage/: $newPath');
-      return newPath;
-    }
-    
-    if (path.startsWith('/gallery/')) {
-      final newPath = path.substring(1);
-      print('   → After removing first slash: $newPath');
-      return newPath;
-    }
-    
-    if (path.startsWith('/images/')) {
-      final newPath = path.substring(1);
-      print('   → After removing first slash: $newPath');
-      return newPath;
-    }
-    
-    print('   → No conversion needed: $path');
-    return path;
-  } catch (e) {
-    print('❌ [PATH CONVERSION ERROR]: $e');
-    return url;
+  
+  Map<String, dynamic> getCategoryById(int id) {
+    return categories.firstWhere(
+      (category) => category['id'] == id,
+      orElse: () => {'name': 'غير محدد'},
+    );
   }
-}
-String _getFileName(String url) {
-  try {
-    final uri = Uri.parse(url);
-    final pathSegments = uri.pathSegments;
-    if (pathSegments.isNotEmpty) {
-      return pathSegments.last;
-    }
-    return url;
-  } catch (e) {
-    return url;
+  
+  String getCategoryName(int id) {
+    final category = getCategoryById(id);
+    return category['name']?.toString() ?? 'غير محدد';
   }
-}
+  
+  @override
+  void onClose() {
+    print('🔚 [PRODUCT] إغلاق متحكم المنتجات المركزي');
+    super.onClose();
+  }
 }

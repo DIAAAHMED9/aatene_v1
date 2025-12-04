@@ -1,5 +1,5 @@
 import 'package:attene_mobile/models/product_model.dart';
-import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -11,18 +11,39 @@ import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:attene_mobile/view/related_products/related_products_controller.dart';
 import 'package:attene_mobile/view/related_products/related_products_model.dart';
 
-class RelatedProductsScreen extends StatelessWidget {
+class RelatedProductsScreen extends StatefulWidget {
+  const RelatedProductsScreen({super.key});
+
+  @override
+  State<RelatedProductsScreen> createState() => _RelatedProductsScreenState();
+}
+
+class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
   final RelatedProductsController controller = Get.put(RelatedProductsController());
 
-  RelatedProductsScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    // تحميل البيانات عند بدء الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.refreshProducts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  _buildContent();
-    
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
+          child: _buildContent(),
+        ),
+      ),
+    );
   }
 
-  Widget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return CustomAppBarWithTabs(
       isRTL: LanguageUtils.isRTL,
       config: AppBarConfig(
@@ -35,17 +56,19 @@ class RelatedProductsScreen extends StatelessWidget {
   }
 
   Widget _buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildHeader(),
-        SizedBox(height: ResponsiveDimensions.h(32)),
-        _buildChooseProductsButton(),
-        SizedBox(height: ResponsiveDimensions.h(24)),
-        _buildSelectedProductsSection(),
-        SizedBox(height: ResponsiveDimensions.h(32)),
-        _buildBottomActions(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          SizedBox(height: ResponsiveDimensions.h(32)),
+          _buildChooseProductsButton(),
+          SizedBox(height: ResponsiveDimensions.h(24)),
+          _buildSelectedProductsSection(),
+          SizedBox(height: ResponsiveDimensions.h(32)),
+          _buildBottomActions(),
+        ],
+      ),
     );
   }
 
@@ -94,7 +117,7 @@ class RelatedProductsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'المنتجات المختارة',
+            'المنتجات المختارة (${controller.selectedProductsCount})',
             style: TextStyle(
               fontSize: ResponsiveDimensions.f(18),
               fontWeight: FontWeight.bold,
@@ -147,68 +170,92 @@ class RelatedProductsScreen extends StatelessWidget {
 
   Widget _buildSelectedProductsList() {
     return Obx(() {
-      return Column(
-        children: controller.selectedProducts.map((product) {
-          return Card(
-            margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(8)),
-            child: ListTile(
-              leading: Icon(Icons.check_circle, color: AppColors.primary400),
-              title: Text(
-                product.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              subtitle: Text(
-                '${double.parse(product.price??'0.0').toStringAsFixed(2)} ريال',
-                style: TextStyle(
-                  color: Colors.green[600],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: Colors.red,
-                  size: ResponsiveDimensions.w(20),
-                ),
-                onPressed: () => controller.removeSelectedProduct(product),
-              ),
-            ),
-          );
-        }).toList(),
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.selectedProducts.length,
+        itemBuilder: (context, index) {
+          final product = controller.selectedProducts[index];
+          return _buildProductCard(product);
+        },
       );
     });
   }
 
+  Widget _buildProductCard(Product product) {
+    return Card(
+      margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(8)),
+      child: ListTile(
+        leading: Icon(Icons.check_circle, color: AppColors.primary400),
+        title: Text(
+          product.name,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          '${double.tryParse(product.price ?? '0')?.toStringAsFixed(2) ?? '0.00'} ريال',
+          style: TextStyle(
+            color: Colors.green[600],
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(
+            Icons.close,
+            color: Colors.red,
+            size: ResponsiveDimensions.w(20),
+          ),
+          onPressed: () => controller.removeSelectedProduct(product),
+        ),
+      ),
+    );
+  }
+
   Widget _buildBottomActions() {
     return Obx(() {
-      if (!controller.hasSelectedProducts) return SizedBox();
+      if (!controller.hasSelectedProducts) return const SizedBox();
       
       return Container(
-        padding: EdgeInsets.symmetric(vertical: ResponsiveDimensions.h(16)),
+        padding: EdgeInsets.symmetric(
+          vertical: ResponsiveDimensions.h(16),
+          horizontal: ResponsiveDimensions.w(8),
+        ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey[200]!),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
+        child: Column(
           children: [
-            Expanded(
-              child: AateneButton(
-                buttonText: 'تخفيض على المنتجات المختارة',
-                color: AppColors.primary300,
-                textColor: Colors.white,
-                onTap: _showAddDiscountSheet,
+            Text(
+              'السعر الإجمالي: ${controller.originalPrice.value.toStringAsFixed(2)} ريال',
+              style: TextStyle(
+                fontSize: ResponsiveDimensions.f(16),
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary400,
               ),
             ),
-            SizedBox(width: ResponsiveDimensions.w(12)),
-            Expanded(
-              child: AateneButton(
-                buttonText: 'التالي',
-                color: AppColors.primary400,
-                textColor: Colors.white,
-                onTap: _showSuccessSheet,
-              ),
+            SizedBox(height: ResponsiveDimensions.h(16)),
+            Row(
+              children: [
+                Expanded(
+                  child: AateneButton(
+                    buttonText: 'تخفيض على المنتجات المختارة',
+                    color: AppColors.primary300,
+                    textColor: Colors.white,
+                    onTap: _showAddDiscountSheet,
+                  ),
+                ),
+                SizedBox(width: ResponsiveDimensions.w(12)),
+                Expanded(
+                  child: AateneButton(
+                    buttonText: 'التالي',
+                    color: AppColors.primary400,
+                    textColor: Colors.white,
+                    onTap: _showSuccessSheet,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -218,10 +265,10 @@ class RelatedProductsScreen extends StatelessWidget {
 
   void _showProductSelectionSheet() {
     Get.bottomSheet(
-      ProductSelectionBottomSheet(),
+      ProductSelectionBottomSheet(controller: controller),
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       enableDrag: true,
@@ -230,10 +277,10 @@ class RelatedProductsScreen extends StatelessWidget {
 
   void _showAddDiscountSheet() {
     Get.bottomSheet(
-      AddDiscountBottomSheet(),
+      AddDiscountBottomSheet(controller: controller),
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       enableDrag: true,
@@ -252,10 +299,10 @@ class RelatedProductsScreen extends StatelessWidget {
     }
     
     Get.bottomSheet(
-      SuccessBottomSheet(),
+      SuccessBottomSheet(controller: controller),
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       enableDrag: true,
@@ -263,10 +310,23 @@ class RelatedProductsScreen extends StatelessWidget {
   }
 }
 
-class ProductSelectionBottomSheet extends StatelessWidget {
-  final RelatedProductsController controller = Get.find<RelatedProductsController>();
-  final ProductController productController = Get.find<ProductController>();
+class ProductSelectionBottomSheet extends StatefulWidget {
+  final RelatedProductsController controller;
+  
+  const ProductSelectionBottomSheet({super.key, required this.controller});
+
+  @override
+  State<ProductSelectionBottomSheet> createState() => _ProductSelectionBottomSheetState();
+}
+
+class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomSheet> {
   final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.refreshProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -302,7 +362,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
         ),
         IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
         ),
       ],
     );
@@ -311,7 +371,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
   Widget _buildSearchBar() {
     return TextField(
       controller: searchController,
-      onChanged: (value) => controller.searchQuery.value = value,
+      onChanged: (value) => widget.controller.searchQuery.value = value,
       decoration: InputDecoration(
         hintText: 'ابحث عن المنتجات...',
         prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
@@ -325,14 +385,14 @@ class ProductSelectionBottomSheet extends StatelessWidget {
         ),
         filled: true,
         fillColor: Colors.grey[50],
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
     );
   }
 
   Widget _buildProductsList() {
     return Obx(() {
-      final products = controller.filteredProducts;
+      final products = widget.controller.filteredProducts;
       
       if (products.isEmpty) {
         return Center(
@@ -340,7 +400,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.search_off, size: 60, color: Colors.grey[400]),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 'لا توجد منتجات تطابق البحث',
                 style: TextStyle(color: Colors.grey[600]),
@@ -361,7 +421,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
   }
 
   Widget _buildProductItem(Product product) {
-    final isSelected = controller.isProductSelected(product);
+    final isSelected = widget.controller.isProductSelected(product);
     
     return Card(
       margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(8)),
@@ -373,7 +433,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             color: Colors.grey[200],
           ),
-          child: product.coverUrl != null
+          child: product.coverUrl != null && product.coverUrl!.isNotEmpty
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
@@ -388,7 +448,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
         ),
         title: Text(
           product.name,
-          style: TextStyle(fontWeight: FontWeight.w500),
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,9 +457,9 @@ class ProductSelectionBottomSheet extends StatelessWidget {
               'SKU: ${product.sku ?? "غير متوفر"}',
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
-              '${product.price ?? "0.0"} ريال',
+              '${double.tryParse(product.price ?? '0')?.toStringAsFixed(2) ?? '0.00'} ريال',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.green[600],
@@ -411,12 +471,12 @@ class ProductSelectionBottomSheet extends StatelessWidget {
         trailing: Checkbox(
           value: isSelected,
           onChanged: (value) {
-            controller.toggleProductSelection(product);
+            widget.controller.toggleProductSelection(product);
           },
           activeColor: AppColors.primary400,
         ),
         onTap: () {
-          controller.toggleProductSelection(product);
+          widget.controller.toggleProductSelection(product);
         },
       ),
     );
@@ -424,13 +484,13 @@ class ProductSelectionBottomSheet extends StatelessWidget {
 
   Widget _buildAddButton() {
     return Obx(() {
-      final hasSelected = controller.hasSelectedProducts;
+      final hasSelected = widget.controller.hasSelectedProducts;
       
       return Column(
         children: [
           if (hasSelected) ...[
             Text(
-              'تم اختيار ${controller.selectedProductsCount} منتج',
+              'تم اختيار ${widget.controller.selectedProductsCount} منتج',
               style: TextStyle(
                 color: AppColors.primary400,
                 fontWeight: FontWeight.bold,
@@ -447,7 +507,7 @@ class ProductSelectionBottomSheet extends StatelessWidget {
                 Get.back();
                 Get.snackbar(
                   'تم الإضافة',
-                  'تمت إضافة ${controller.selectedProductsCount} منتج',
+                  'تمت إضافة ${widget.controller.selectedProductsCount} منتج',
                   backgroundColor: Colors.green,
                   colorText: Colors.white,
                 );
@@ -461,10 +521,39 @@ class ProductSelectionBottomSheet extends StatelessWidget {
     });
   }
 }
-class AddDiscountBottomSheet extends StatelessWidget {
-  final RelatedProductsController controller = Get.find<RelatedProductsController>();
+
+class AddDiscountBottomSheet extends StatefulWidget {
+  final RelatedProductsController controller;
+  
+  const AddDiscountBottomSheet({super.key, required this.controller});
+
+  @override
+  State<AddDiscountBottomSheet> createState() => _AddDiscountBottomSheetState();
+}
+
+class _AddDiscountBottomSheetState extends State<AddDiscountBottomSheet> {
   final TextEditingController discountedPriceController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    discountedPriceController.addListener(() {
+      final value = double.tryParse(discountedPriceController.text) ?? 0.0;
+      widget.controller.discountedPrice.value = value;
+    });
+    
+    noteController.addListener(() {
+      widget.controller.discountNote.value = noteController.text;
+    });
+  }
+
+  @override
+  void dispose() {
+    discountedPriceController.dispose();
+    noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -481,7 +570,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
                 children: [
                   _buildPriceField(
                     'السعر الاصلي',
-                    controller.originalPrice.value.toStringAsFixed(2),
+                    widget.controller.originalPrice.value.toStringAsFixed(2),
                     true,
                   ),
                   SizedBox(height: ResponsiveDimensions.h(16)),
@@ -516,7 +605,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
         ),
         IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
         ),
       ],
     );
@@ -528,9 +617,9 @@ class AddDiscountBottomSheet extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: value,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         suffixText: 'ريال',
-        prefixIcon: Icon(Icons.attach_money),
+        prefixIcon: const Icon(Icons.attach_money),
       ),
     );
   }
@@ -541,12 +630,8 @@ class AddDiscountBottomSheet extends StatelessWidget {
       children: [
         TextField(
           controller: discountedPriceController,
-          onChanged: (value) {
-            final parsed = double.tryParse(value) ?? 0.0;
-            controller.discountedPrice.value = parsed;
-          },
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
             labelText: 'السعر المخفض',
             hintText: 'أدخل السعر المخفض',
             border: OutlineInputBorder(),
@@ -555,11 +640,11 @@ class AddDiscountBottomSheet extends StatelessWidget {
           ),
         ),
         SizedBox(height: ResponsiveDimensions.h(8)),
-        Text(
+        const Text(
           'يجب أن يكون أقل من السعر الاصلي',
           style: TextStyle(
-            fontSize: ResponsiveDimensions.f(12),
-            color: Colors.orange[700],
+            fontSize: 12,
+            color: Colors.orange,
           ),
         ),
       ],
@@ -569,8 +654,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
   Widget _buildDiscountNote() {
     return TextField(
       controller: noteController,
-      onChanged: (value) => controller.discountNote.value = value,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'ملاحظة',
         hintText: 'أضف ملاحظة عن التخفيض',
         border: OutlineInputBorder(),
@@ -582,12 +666,12 @@ class AddDiscountBottomSheet extends StatelessWidget {
 
   Widget _buildDateField() {
     return TextField(
-      controller: controller.dateController,
+      controller: widget.controller.dateController,
       readOnly: true,
       onTap: () => _showDatePicker(),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'التاريخ',
-        hintText: 'مايو 25, 2025 12:00 م',
+        hintText: 'اختر التاريخ',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.calendar_today),
         suffixIcon: Icon(Icons.arrow_drop_down),
@@ -595,18 +679,18 @@ class AddDiscountBottomSheet extends StatelessWidget {
     );
   }
 
-  void _showDatePicker() async {
+  Future<void> _showDatePicker() async {
     final DateTime? picked = await showDatePicker(
-      context: Get.context!,
-      initialDate: controller.discountDate.value,
+      context: context,
+      initialDate: widget.controller.discountDate.value,
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
     
     if (picked != null) {
       final TimeOfDay? time = await showTimePicker(
-        context: Get.context!,
-        initialTime: TimeOfDay.fromDateTime(controller.discountDate.value),
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(widget.controller.discountDate.value),
       );
       
       if (time != null) {
@@ -617,7 +701,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
           time.hour,
           time.minute,
         );
-        controller.setDiscountDate(selectedDateTime);
+        widget.controller.setDiscountDate(selectedDateTime);
       }
     }
   }
@@ -632,7 +716,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          'الخصم على ${controller.selectedProducts.length} من عدد المنتجات',
+          'الخصم على ${widget.controller.selectedProducts.length} من عدد المنتجات',
           style: TextStyle(
             fontSize: ResponsiveDimensions.f(16),
             fontWeight: FontWeight.bold,
@@ -652,19 +736,19 @@ class AddDiscountBottomSheet extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12),
             ),
-            child: Text('إلغاء'),
+            child: const Text('إلغاء'),
           ),
         ),
         SizedBox(width: ResponsiveDimensions.w(12)),
         Expanded(
           child: Obx(() => ElevatedButton(
-            onPressed: controller.discountedPrice.value > 0 ?
+            onPressed: widget.controller.discountedPrice.value > 0 ?
                 () {
-                  if (controller.validateDiscount()) {
-                    controller.addDiscount();
+                  if (widget.controller.validateDiscount()) {
+                    widget.controller.addDiscount();
                     Get.back();
                     Get.bottomSheet(
-                      SuccessBottomSheet(),
+                      SuccessBottomSheet(controller: widget.controller),
                       isScrollControlled: true,
                       backgroundColor: Colors.white,
                     );
@@ -674,7 +758,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 12),
               backgroundColor: AppColors.primary400,
             ),
-            child: Text('تأكيد', style: TextStyle(color: Colors.white)),
+            child: const Text('تأكيد', style: TextStyle(color: Colors.white)),
           )),
         ),
       ],
@@ -683,6 +767,10 @@ class AddDiscountBottomSheet extends StatelessWidget {
 }
 
 class SuccessBottomSheet extends StatelessWidget {
+  final RelatedProductsController controller;
+  
+  const SuccessBottomSheet({super.key, required this.controller});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -697,20 +785,20 @@ class SuccessBottomSheet extends StatelessWidget {
             size: ResponsiveDimensions.w(60),
           ),
           SizedBox(height: ResponsiveDimensions.h(16)),
-          Text(
+          const Text(
             'تم الإضافة بنجاح',
             style: TextStyle(
-              fontSize: ResponsiveDimensions.f(18),
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.h(8)),
-          Text(
+          const Text(
             'تم حفظ المنتجات المرتبطة والتخفيض بنجاح',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey[600],
+              fontSize: 14,
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.h(24)),
@@ -718,11 +806,14 @@ class SuccessBottomSheet extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () {
+                    Get.back();
+                    controller.clearAllSelections();
+                  },
                   style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: Text('قائمة المنتجات المرتبطة'),
+                  child: const Text('قائمة المنتجات المرتبطة'),
                 ),
               ),
               SizedBox(width: ResponsiveDimensions.w(12)),
@@ -731,16 +822,16 @@ class SuccessBottomSheet extends StatelessWidget {
                   onPressed: () {
                     Get.back();
                     Get.bottomSheet(
-                      DiscountDetailsBottomSheet(),
+                      DiscountDetailsBottomSheet(controller: controller),
                       isScrollControlled: true,
                       backgroundColor: Colors.white,
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     backgroundColor: AppColors.primary400,
                   ),
-                  child: Text('عرض التخفيض', style: TextStyle(color: Colors.white)),
+                  child: const Text('عرض التخفيض', style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],
@@ -752,54 +843,58 @@ class SuccessBottomSheet extends StatelessWidget {
 }
 
 class DiscountDetailsBottomSheet extends StatelessWidget {
-  final RelatedProductsController controller = Get.find<RelatedProductsController>();
+  final RelatedProductsController controller;
+  
+  const DiscountDetailsBottomSheet({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final discount = controller.discounts.isNotEmpty ? controller.discounts.last : null;
-    
-    if (discount == null) {
-      return Container(
-        height: Get.height * 0.3,
-        child: Center(child: Text('لا توجد تفاصيل تخفيض')),
-      );
-    }
+    return Obx(() {
+      final discount = controller.discounts.isNotEmpty ? controller.discounts.last : null;
+      
+      if (discount == null) {
+        return Container(
+          height: Get.height * 0.3,
+          child: const Center(child: Text('لا توجد تفاصيل تخفيض')),
+        );
+      }
 
-    return Container(
-      height: Get.height * 0.7,
-      padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
-      child: Column(
-        children: [
-          _buildHeader('تفاصيل التخفيض'),
-          SizedBox(height: ResponsiveDimensions.h(16)),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildPriceField(
-                    'السعر الاصلي',
-                    discount.originalPrice.toStringAsFixed(2),
-                    true,
-                  ),
-                  SizedBox(height: ResponsiveDimensions.h(16)),
-                  _buildPriceField(
-                    'السعر المخفض',
-                    discount.discountedPrice.toStringAsFixed(2),
-                    true,
-                  ),
-                  SizedBox(height: ResponsiveDimensions.h(16)),
-                  _buildDiscountInfo(discount),
-                  SizedBox(height: ResponsiveDimensions.h(16)),
-                  _buildProductCountInfo(discount),
-                ],
+      return Container(
+        height: Get.height * 0.7,
+        padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
+        child: Column(
+          children: [
+            _buildHeader('تفاصيل التخفيض'),
+            SizedBox(height: ResponsiveDimensions.h(16)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildPriceField(
+                      'السعر الاصلي',
+                      discount.originalPrice.toStringAsFixed(2),
+                      true,
+                    ),
+                    SizedBox(height: ResponsiveDimensions.h(16)),
+                    _buildPriceField(
+                      'السعر المخفض',
+                      discount.discountedPrice.toStringAsFixed(2),
+                      true,
+                    ),
+                    SizedBox(height: ResponsiveDimensions.h(16)),
+                    _buildDiscountInfo(discount),
+                    SizedBox(height: ResponsiveDimensions.h(16)),
+                    _buildProductCountInfo(discount),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(height: ResponsiveDimensions.h(16)),
-          _buildDetailActions(discount),
-        ],
-      ),
-    );
+            SizedBox(height: ResponsiveDimensions.h(16)),
+            _buildDetailActions(discount),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildHeader(String title) {
@@ -815,7 +910,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
         ),
         IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
         ),
       ],
     );
@@ -827,9 +922,9 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: value,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         suffixText: 'ريال',
-        prefixIcon: Icon(Icons.attach_money),
+        prefixIcon: const Icon(Icons.attach_money),
       ),
     );
   }
@@ -844,18 +939,18 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'معلومات التخفيض',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.green[800],
+              color: Colors.green,
             ),
           ),
-          SizedBox(height: ResponsiveDimensions.h(8)),
+          const SizedBox(height: 8),
           Text('قيمة التخفيض: ${discount.discountAmount.toStringAsFixed(2)} ريال'),
           Text('نسبة التخفيض: ${discount.discountPercentage.toStringAsFixed(1)}%'),
           if (discount.note.isNotEmpty) ...[
-            SizedBox(height: ResponsiveDimensions.h(8)),
+            const SizedBox(height: 8),
             Text('ملاحظة: ${discount.note}'),
           ],
         ],
@@ -890,10 +985,10 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () => _showDeleteConfirmation(discount),
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              side: BorderSide(color: Colors.red),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              side: const BorderSide(color: Colors.red),
             ),
-            child: Text(
+            child: const Text(
               'حذف الخصم',
               style: TextStyle(color: Colors.red),
             ),
@@ -905,16 +1000,16 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
             onPressed: () {
               Get.back();
               Get.bottomSheet(
-                AddDiscountBottomSheet(),
+                AddDiscountBottomSheet(controller: controller),
                 isScrollControlled: true,
                 backgroundColor: Colors.white,
               );
             },
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               backgroundColor: AppColors.primary400,
             ),
-            child: Text('تعديل الخصم', style: TextStyle(color: Colors.white)),
+            child: const Text('تعديل الخصم', style: TextStyle(color: Colors.white)),
           ),
         ),
       ],
@@ -924,12 +1019,12 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
   void _showDeleteConfirmation(ProductDiscount discount) {
     Get.dialog(
       AlertDialog(
-        title: Text('تأكيد الحذف'),
-        content: Text('هل أنت متأكد من حذف هذا الخصم؟'),
+        title: const Text('تأكيد الحذف'),
+        content: const Text('هل أنت متأكد من حذف هذا الخصم؟'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('إلغاء'),
+            child: const Text('إلغاء'),
           ),
           TextButton(
             onPressed: () {
@@ -937,7 +1032,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
               Get.back();
               Get.back();
             },
-            child: Text(
+            child: const Text(
               'حذف',
               style: TextStyle(color: Colors.red),
             ),

@@ -2,11 +2,9 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/models/product_model.dart';
-import 'package:attene_mobile/models/section_model.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
-import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart';
 import 'package:flutter/material.dart';
@@ -145,11 +143,10 @@ Widget _buildTabContent(TabData tab, ProductController controller, bool isRTL) {
     return _buildEmptyProductsView(controller, isRTL, sectionName: tab.viewName);
   }
 
-  if (tabIndex == 0) { // All products tab
+  if (tabIndex == 0) {
     return _buildAllProductsView(controller, isRTL);
   } else {
-    // ✅ الآن سيتم عرض المنتجات الخاصة بكل قسم فقط
-    return _buildProductsListView(controller, products, isRTL, sectionName: tab.viewName);
+    return _buildProductsListView(controller, products as List<Product>, isRTL, sectionName: tab.viewName);
   }
 }
 
@@ -164,8 +161,7 @@ Widget _buildAllProductsView(ProductController controller, bool isRTL) {
   }
   
   if (displaySections.isEmpty) {
-    // إذا لم يكن هناك أقسام، نعرض جميع المنتجات في قائمة واحدة
-    return _buildProductsListView(controller, controller.filteredProducts, isRTL);
+    return _buildProductsListView(controller, controller.filteredProducts as List<Product>, isRTL);
   }
 
   return Column(
@@ -236,7 +232,6 @@ Widget _buildSectionWithProducts(String sectionName, List<Product> products, Pro
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -277,7 +272,6 @@ Widget _buildSectionWithProducts(String sectionName, List<Product> products, Pro
           ),
         ),
         
-        // Products List
         ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -293,37 +287,10 @@ Widget _buildSectionWithProducts(String sectionName, List<Product> products, Pro
     ),
   );
 }
-// عدل دالة _buildProductsListView لإضافة معامل sectionName اختياري
+
 Widget _buildProductsListView(ProductController controller, List<Product> products, bool isRTL, {String? sectionName}) {
   return Column(
     children: [
-      // Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Row(
-      //     children: [
-      //       Expanded(
-      //         child: Text(
-      //           sectionName != null 
-      //             ? 'منتجات قسم $sectionName: ${products.length} منتج'
-      //             : 'عرض ${products.length} منتج',
-      //           style: TextStyle(
-      //             color: Colors.grey[600],
-      //             fontSize: 14,
-      //           ),
-      //         ),
-      //       ),
-      //       IconButton(
-      //         onPressed: controller.openSort,
-      //         icon: Icon(Icons.sort, color: AppColors.primary400),
-      //       ),
-      //       IconButton(
-      //         onPressed: controller.openFilter,
-      //         icon: Icon(Icons.filter_list, color: AppColors.primary400),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      
       Expanded(
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -383,7 +350,6 @@ Widget _buildProductItem(Product product, ProductController controller, bool isR
               
               const SizedBox(height: 4),
               
-            
                               if (showSection && product.sectionId != null && product.sectionId != '0')
                    Row(
                      children: [
@@ -399,55 +365,8 @@ Widget _buildProductItem(Product product, ProductController controller, bool isR
                      ],
                    ),
                     
-            
-              
               
               const SizedBox(height: 8),
-              
-              // Row(
-              //   children: [
-              //     Container(
-              //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              //       decoration: BoxDecoration(
-              //         color: _getStatusColor(product.status),
-              //         borderRadius: BorderRadius.circular(12),
-              //       ),
-              //       child: Text(
-              //         _getStatusText(product.status),
-              //         style: TextStyle(
-              //           fontSize: 10,
-              //           color: Colors.white,
-              //           fontWeight: FontWeight.w500,
-              //         ),
-              //       ),
-              //     ),
-              //     const Spacer(),
-                  
-              //     if (product.viewCount != null) ...[
-              //       Icon(Icons.visibility, size: 14, color: Colors.grey[500]),
-              //       const SizedBox(width: 4),
-              //       Text(
-              //         product.viewCount!,
-              //         style: TextStyle(
-              //           fontSize: 12,
-              //           color: Colors.grey[600],
-              //         ),
-              //       ),
-                    
-              //       const SizedBox(width: 16),
-              //     ],
-                  
-              //     Icon(Icons.favorite, size: 14, color: Colors.grey[500]),
-              //     const SizedBox(width: 4),
-              //     Text(
-              //       product.favoritesCount,
-              //       style: TextStyle(
-              //         fontSize: 12,
-              //         color: Colors.grey[600],
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),
@@ -458,12 +377,6 @@ Widget _buildProductItem(Product product, ProductController controller, bool isR
             fontSize: 15,
             fontWeight: FontWeight.w700
            ),),
-            // IconButton(
-            //   onPressed: () {
-            //     _deleteProduct(product, controller);
-            //   },
-            //   icon: Icon(Icons.delete, color: Colors.red),
-            // ),
              IconButton(
               onPressed: () {
                 _editProduct(product);
@@ -484,8 +397,7 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
     return _buildEmptyProductsView(controller, isRTL);
   }
   
-  // الحل الأول: عرض جميع المنتجات في قائمة واحدة
-  return _buildProductsListView(controller, products, isRTL);
+  return _buildProductsListView(controller, products as List<Product> , isRTL);
 }
 
 

@@ -8,6 +8,8 @@ import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/controller/create_store_controller.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
 import 'shipping method/shipping_methode.dart';
 
@@ -17,6 +19,7 @@ class AddNewStore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CreateStoreController controller = Get.find<CreateStoreController>();
+    final DataInitializerService dataService = Get.find<DataInitializerService>();
     final isRTL = LanguageUtils.isRTL;
     final arguments = Get.arguments;
     final int? storeId = arguments != null ? arguments['storeId'] : null;
@@ -152,115 +155,116 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 15),
 
-TextWithStar(text: "المدينة"),
-SizedBox(height: 5),
-GestureDetector(
-  onTap: () => controller.openCitySelection(),
-  child: AbsorbPointer(
-    child: Container(
-      height: 50,
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Obx(() {
-              final cityName = controller.selectedCityName.value;
-              return Text(
-                cityName,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: cityName != 'اختر المدينة'
-                      ? AppColors.neutral900
-                      : Colors.grey[600],
+              TextWithStar(text: "المدينة"),
+              SizedBox(height: 5),
+              GestureDetector(
+                onTap: () => controller.openCitySelection(),
+                child: AbsorbPointer(
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Obx(() {
+                            final cityName = controller.selectedCityName.value;
+                            return Text(
+                              cityName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: cityName != 'اختر المدينة'
+                                    ? AppColors.neutral900
+                                    : Colors.grey[600],
+                              ),
+                            );
+                          }),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      ],
+                    ),
+                  ),
                 ),
-              );
-            }),
-          ),
-          Icon(Icons.arrow_drop_down, color: Colors.grey),
-        ],
-      ),
-    ),
-  ),
-),
-SizedBox(height: 15),
+              ),
+              SizedBox(height: 15),
 
-TextWithStar(text: "الحي"),
-SizedBox(height: 5),
-GestureDetector(
-  onTap: () => controller.openDistrictSelection(),
-  child: AbsorbPointer(
-    child: Container(
-      height: 50,
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Obx(() {
-              final districtName = controller.selectedDistrictName.value;
-              return Text(
-                districtName,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: districtName != 'اختر الحي'
-                      ? AppColors.neutral900
-                      : Colors.grey[600],
+              TextWithStar(text: "الحي"),
+              SizedBox(height: 5),
+              GestureDetector(
+                onTap: () => controller.openDistrictSelection(),
+                child: AbsorbPointer(
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Obx(() {
+                            final districtName = controller.selectedDistrictName.value;
+                            return Text(
+                              districtName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: districtName != 'اختر الحي'
+                                    ? AppColors.neutral900
+                                    : Colors.grey[600],
+                              ),
+                            );
+                          }),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      ],
+                    ),
+                  ),
                 ),
-              );
-            }),
-          ),
-          Icon(Icons.arrow_drop_down, color: Colors.grey),
-        ],
-      ),
-    ),
-  ),
-),
-SizedBox(height: 15),
+              ),
+              SizedBox(height: 15),
 
-TextWithStar(text: "العملة"),
-SizedBox(height: 5),
-GestureDetector(
-  onTap: () => controller.openCurrencySelection(),
-  child: AbsorbPointer(
-    child: Container(
-      height: 50,
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Obx(() {
-              final currencyName = controller.selectedCurrencyName.value;
-              return Text(
-                currencyName,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: currencyName != 'اختر العملة'
-                      ? AppColors.neutral900
-                      : Colors.grey[600],
+              TextWithStar(text: "العملة"),
+              SizedBox(height: 5),
+              GestureDetector(
+                onTap: () => controller.openCurrencySelection(),
+                child: AbsorbPointer(
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Obx(() {
+                            final currencyName = controller.selectedCurrencyName.value;
+                            return Text(
+                              currencyName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: currencyName != 'اختر العملة'
+                                    ? AppColors.neutral900
+                                    : Colors.grey[600],
+                              ),
+                            );
+                          }),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      ],
+                    ),
+                  ),
                 ),
-              );
-            }),
-          ),
-          Icon(Icons.arrow_drop_down, color: Colors.grey),
-        ],
-      ),
-    ),
-  ),
-),       SizedBox(height: 15),
+              ),
+              SizedBox(height: 15),
 
               TextWithStar(text: "الهاتف المحمول *"),
               SizedBox(height: 5),
@@ -914,71 +918,44 @@ GestureDetector(
     }
   }
 
-Widget _buildCreateButton(CreateStoreController controller) {
-  return Obx(() {
-    if (controller.createStoreLoading.value) {
-      return Center(
-        child: Column(
-          children: [
-            CircularProgressIndicator(color: AppColors.primary400),
-            SizedBox(height: 10),
-            Text(
-              'جاري التحقق من البيانات...',
-              style: TextStyle(color: AppColors.primary400),
-            ),
-          ],
-        ),
-      );
-    }
+  Widget _buildCreateButton(CreateStoreController controller) {
+    return Obx(() {
+      if (controller.createStoreLoading.value) {
+        return Center(
+          child: Column(
+            children: [
+              CircularProgressIndicator(color: AppColors.primary400),
+              SizedBox(height: 10),
+              Text(
+                'جاري التحقق من البيانات...',
+                style: TextStyle(color: AppColors.primary400),
+              ),
+            ],
+          ),
+        );
+      }
 
-    return AateneButton(
-      buttonText: controller.isEditMode.value ? 'تحديث المتجر' : 'التالي',
-      textColor: Colors.white,
-      color: AppColors.primary400,
-      borderColor: AppColors.primary400,
-      raduis: 10,
-      onTap: () async {
-        if (await _validateForm(controller)) {
-          if (controller.isEditMode.value) {
-            bool hasLocalImages =
-                controller.selectedLogoMedia.any((m) => m.isLocal == true) ||
-                controller.selectedCoverMedia.any((m) => m.isLocal == true);
-
-            if (hasLocalImages) {
-              Get.snackbar(
-                'جاري الرفع',
-                'جاري رفع الصور المحلية...',
-                backgroundColor: Colors.blue,
-                colorText: Colors.white,
-              );
-
-              controller.createStoreLoading.value = true;
-              final uploadSuccess = await controller.uploadLocalImages();
-              controller.createStoreLoading.value = false;
-
-              if (!uploadSuccess) {
-                Get.snackbar(
-                  'تنبيه',
-                  'فشل في رفع بعض الصور. يرجى اختيار صور من المكتبة بدلاً من رفع صور جديدة',
-                  backgroundColor: Colors.orange,
-                  colorText: Colors.white,
-                );
-                return;
+      return AateneButton(
+        buttonText: controller.isEditMode.value ? 'تحديث المتجر' : 'التالي',
+        textColor: Colors.white,
+        color: AppColors.primary400,
+        borderColor: AppColors.primary400,
+        raduis: 10,
+        onTap: () async {
+          if (await _validateForm(controller)) {
+            if (controller.isEditMode.value) {
+              final success = await controller.updateStoreBasicInfo();
+              if (success??false) {
+                Get.to(() => AddShippingMethod());
               }
-            }
-
-            final success = await controller.updateStoreBasicInfo();
-            if (success) {
+            } else {
               Get.to(() => AddShippingMethod());
             }
-          } else {
-            Get.to(() => AddShippingMethod());
           }
-        }
-      },
-    );
-  });
-}
+        },
+      );
+    });
+  }
 
   Future<bool> _validateForm(CreateStoreController controller) async {
     if (controller.nameController.text.isEmpty) {

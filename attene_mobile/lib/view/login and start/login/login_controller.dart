@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:attene_mobile/api/api_request.dart';
-import 'package:attene_mobile/my_app/may_app_controller.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -105,20 +105,27 @@ class LoginController extends GetxController {
     return true;
   }
 
-  bool isValidEmail(String email) {
-    final emailRegex = RegExp(
-      r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$'
-    );
-    return emailRegex.hasMatch(email);
-  }
+bool isValidEmail(String email) {
+  if (email.isEmpty) return false;
+  
+  // تعبير نمطي بسيط وفعال
+  return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+}
 
-  bool isValidPhone(String phone) {
-    final phoneRegex = RegExp(r'^[0-9\+\(\)\-\s]{10,15}$');
-    final cleanPhone = phone.replaceAll(RegExp(r'[\+\-\(\)\s]'), '');
-    return phoneRegex.hasMatch(phone) &&
-           cleanPhone.length >= 10 &&
-           cleanPhone.length <= 15;
-  }
+bool isValidPhone(String phone) {
+  if (phone.isEmpty) return false;
+  
+  // إزالة المسافات والرموز
+  final cleanPhone = phone.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
+  
+  // يجب أن يكون طول الرقم بين 10 و15 رقماً
+  if (cleanPhone.length < 10 || cleanPhone.length > 15) return false;
+  
+  // يجب أن يحتوي على أرقام فقط
+  return RegExp(r'^[0-9]+$').hasMatch(cleanPhone);
+}
+
+
 
   Future<void> login() async {
     if (!_canAttemptLogin()) {
@@ -206,7 +213,11 @@ class LoginController extends GetxController {
       ..['token'] = token
       ..['login_time'] = DateTime.now().toString();
 
+    // تحديث بيانات المستخدم وتحميل بيانات التطبيق
     myAppController.updateUserData(completeUserData);
+    
+    // تحميل بيانات التطبيق بعد تسجيل الدخول
+    await myAppController.onLoginSuccess(completeUserData);
 
     _resetLoginAttempts();
 
@@ -320,27 +331,37 @@ class LoginController extends GetxController {
   }
 
   void _showSuccessMessage(String message) {
-    Get.snackbar(
-      'نجاح',
-      message,
-      backgroundColor: AppColors.success200,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: snackbarDuration,
-      icon: const Icon(Icons.check_circle, color: Colors.white),
-    );
+    // التحقق من وجود Get.context قبل عرض snackbar
+    if (Get.context != null) {
+      Get.snackbar(
+        'نجاح',
+        message,
+        backgroundColor: AppColors.success200,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: snackbarDuration,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      );
+    } else {
+      print('✅ نجاح: $message');
+    }
   }
 
   void _showErrorSnackbar(String title, String message) {
-    Get.snackbar(
-      title,
-      message,
-      backgroundColor: AppColors.error200,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: snackbarDuration,
-      icon: const Icon(Icons.error_outline, color: Colors.white),
-    );
+    // التحقق من وجود Get.context قبل عرض snackbar
+    if (Get.context != null) {
+      Get.snackbar(
+        title,
+        message,
+        backgroundColor: AppColors.error200,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: snackbarDuration,
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+      );
+    } else {
+      print('❌ $title: $message');
+    }
   }
 
   void _showLoginDisabledMessage() {
@@ -366,7 +387,19 @@ class LoginController extends GetxController {
 
   Future<void> _redirectToMainScreen() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    Get.offAllNamed('/mainScreen');
+    
+    // التحقق من وجود Get.context قبل التنقل
+    if (Get.context != null) {
+      Get.offAllNamed('/mainScreen');
+    } else {
+      print('⚠️ لا يمكن التنقل إلى الشاشة الرئيسية: Get.context غير متوفر');
+      
+      // محاولة التنقل بعد تأخير إضافي
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (Get.context != null) {
+        Get.offAllNamed('/mainScreen');
+      }
+    }
   }
 
   Future<void> socialLogin(String provider) async {
@@ -397,11 +430,15 @@ class LoginController extends GetxController {
   }
 
   void forgotPassword() {
-    Get.toNamed('/forget_password');
+    if (Get.context != null) {
+      Get.toNamed('/forget_password');
+    }
   }
 
   void createNewAccount() {
-    Get.toNamed('/register');
+    if (Get.context != null) {
+      Get.toNamed('/register');
+    }
   }
 
   bool get isEmail => isValidEmail(email.value);

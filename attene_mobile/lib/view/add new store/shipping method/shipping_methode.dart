@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/controller/create_store_controller.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
 import 'add_new_company_shipping.dart';
 
@@ -12,6 +14,7 @@ class AddShippingMethod extends StatelessWidget {
   AddShippingMethod({super.key});
 
   final CreateStoreController controller = Get.find<CreateStoreController>();
+  final DataInitializerService dataService = Get.find<DataInitializerService>();
 
   @override
   Widget build(BuildContext context) {
@@ -52,35 +55,12 @@ class AddShippingMethod extends StatelessWidget {
           ),
           
           _buildShippingCompaniesSection(),
-          if (true)
-           Padding(
-    padding: const EdgeInsets.all(20.0),
-    child: ElevatedButton(
-      onPressed: () {
-        print('=== 🔍 التحقق من شركات الشحن ===');
-        print('عدد الشركات: ${controller.shippingCompanies.length}');
-        for (int i = 0; i < controller.shippingCompanies.length; i++) {
-          print('--- الشركة ${i + 1} ---');
-          print('الاسم: ${controller.shippingCompanies[i]['name']}');
-          print('الهاتف: ${controller.shippingCompanies[i]['phone']}');
-          if (controller.shippingCompanies[i]['prices'] != null) {
-            print('الأسعار: ${jsonEncode(controller.shippingCompanies[i]['prices'])}');
-          }
-        }
-        print('نوع التوصيل: ${controller.deliveryType.value}');
-        print('===============================');
-      },
-      child: Text('تحقق من البيانات'),
-    ),
-  ),
-    
+          
           _buildSaveButton(),
           SizedBox(height: 20),
-        
         ],
       ),
     );
-    
   }
 
   Widget _buildShippingMethodSection() {
@@ -179,7 +159,6 @@ class AddShippingMethod extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            
           ],
         ),
       ),
@@ -215,8 +194,7 @@ class AddShippingMethod extends StatelessWidget {
                     },
                     child: Row(
                       children: [
-                        Icon(Icons.add,                          color: AppColors.primary400
-, size: 18),
+                        Icon(Icons.add, color: AppColors.primary400, size: 18),
                         SizedBox(width: 6),
                         Text(
                           "إضافة شركة شحن",
@@ -407,10 +385,7 @@ class AddShippingMethod extends StatelessWidget {
   }
 
   void _editShippingCompany(Map<String, dynamic> company, int index) {
-    Get.to(
-      () => AddNewShippingCompany(
-      ),
-    );
+    Get.to(() => AddNewShippingCompany());
   }
 
   void _deleteShippingCompany(int index) {
@@ -454,75 +429,49 @@ class AddShippingMethod extends StatelessWidget {
     );
   }
 
-void _validateAndProceed() {
-  if (controller.deliveryType.value.isEmpty) {
-    Get.snackbar(
-      'خطأ',
-      'يرجى اختيار طريقة الشحن',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-    return;
-  }
-  
-  if (controller.deliveryType.value == 'shipping' &&
-      controller.shippingCompanies.isEmpty) {
-    Get.snackbar(
-      'خطأ',
-      'يرجى إضافة شركة شحن واحدة على الأقل',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-    return;
-  }
-  
-  Get.defaultDialog(
-    title: 'حفظ المتجر',
-    middleText: controller.isEditMode.value
-        ? 'هل تريد تحديث المتجر بالبيانات الجديدة؟'
-        : 'هل تريد إنشاء المتجر الآن؟',
-    textConfirm: 'نعم',
-    textCancel: 'لا',
-    confirmTextColor: Colors.white,
-    cancelTextColor: AppColors.primary400,
-    buttonColor: AppColors.primary400,
-    onConfirm: () async {
-      Get.back();
-      
-      bool hasLocalImages = controller.selectedLogoMedia.any((m) => m.isLocal == true) ||
-                          controller.selectedCoverMedia.any((m) => m.isLocal == true);
-      
-      if (hasLocalImages) {
-        Get.snackbar(
-          'جاري الرفع',
-          'جاري رفع الصور المحلية...',
-          backgroundColor: Colors.blue,
-          colorText: Colors.white,
-        );
+  void _validateAndProceed() {
+    if (controller.deliveryType.value.isEmpty) {
+      Get.snackbar(
+        'خطأ',
+        'يرجى اختيار طريقة الشحن',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    if (controller.deliveryType.value == 'shipping' &&
+        controller.shippingCompanies.isEmpty) {
+      Get.snackbar(
+        'خطأ',
+        'يرجى إضافة شركة شحن واحدة على الأقل',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    Get.defaultDialog(
+      title: 'حفظ المتجر',
+      middleText: controller.isEditMode.value
+          ? 'هل تريد تحديث المتجر بالبيانات الجديدة؟'
+          : 'هل تريد إنشاء المتجر الآن؟',
+      textConfirm: 'نعم',
+      textCancel: 'لا',
+      confirmTextColor: Colors.white,
+      cancelTextColor: AppColors.primary400,
+      buttonColor: AppColors.primary400,
+      onConfirm: () async {
+        Get.back();
         
-        controller.createStoreLoading.value = true;
-        final uploadSuccess = await controller.uploadLocalImages();
-        controller.createStoreLoading.value = false;
-        
-        if (!uploadSuccess) {
-          Get.snackbar(
-            'تنبيه',
-            'فشل في رفع بعض الصور',
-            backgroundColor: Colors.orange,
-            colorText: Colors.white,
-          );
-          return;
+        final success = await controller.saveCompleteStore();
+        if (success??false) {
+          Get.until((route) => route.isFirst);
         }
-      }
-      
-      final success = await controller.saveCompleteStore();
-      if (success) {
-        Get.until((route) => route.isFirst);
-      }
-    },
-    onCancel: () {
-      Get.back();
-    },
-  );
-}
+      },
+      onCancel: () {
+        Get.back();
+      },
+    );
+  }
 }

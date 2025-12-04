@@ -4,6 +4,8 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
 import '../../../controller/create_store_controller.dart';
 
@@ -25,6 +27,7 @@ class ShippingPricingSettings extends StatefulWidget {
 
 class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
   final CreateStoreController controller = Get.find<CreateStoreController>();
+  final DataInitializerService dataService = Get.find<DataInitializerService>();
   late List<TextEditingController> daysControllers;
   late List<TextEditingController> priceControllers;
   
@@ -421,7 +424,14 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
     );
   }
 
-  void _saveShippingData() {
+  Future<void> _saveShippingData() {
+    return UnifiedLoadingScreen.showWithFuture<void>(
+      _saveShippingDataInternal(),
+      message: 'جاري حفظ بيانات الشحن...',
+    );
+  }
+
+  Future<void> _saveShippingDataInternal() async {
     for (int i = 0; i < workingCities.length; i++) {
       if (daysControllers[i].text.isEmpty) {
         Get.snackbar(

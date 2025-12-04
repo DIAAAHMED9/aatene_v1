@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 
+import '../../models/store_model.dart';
+
 class KeywordManagementScreen extends StatelessWidget {
   final KeywordController controller = Get.put(KeywordController());
 
@@ -262,10 +264,10 @@ Widget _buildStoreDropdown() {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      controller.getStoreStatusText(store.status),
+                      controller.getStoreStatusText(store.status??''),
                       style: TextStyle(
                         fontSize: 12,
-                        color: controller.getStoreStatusColor(store.status),
+                        color: controller.getStoreStatusColor(store.status??''),
                       ),
                     ),
                   ],
@@ -316,8 +318,9 @@ Widget _buildStoreDropdown() {
   Widget _buildAddButton() {
     final hasText = !controller.isSearchInputEmpty.value;
     final canAddMore = controller.canAddMoreKeywords;
-    final isDuplicate = controller.isDuplicateKeyword;
-    
+final isDuplicate = controller.searchController.text.isNotEmpty
+    ? controller.isDuplicateKeyword(controller.searchController.text.trim())
+    : false;    
     String tooltipMessage = '';
     Color buttonColor = Colors.grey[300]!;
     
@@ -363,7 +366,7 @@ Widget _buildStoreDropdown() {
 
   Widget _buildAvailableKeywords() {
     return Obx(() {
-      final keywords = controller.filteredAvailableKeywords;
+    final keywords = controller.filteredKeywords; // ✅ Use filteredKeywords
       
       if (keywords.isEmpty) {
         return _buildEmptyAvailableKeywords();
@@ -388,7 +391,7 @@ Widget _buildStoreDropdown() {
               return InkWell(
                 onTap: () => controller.addKeyword(keyword),
                 child: Container(
-                  child: Text(keyword.text,
+                child: Text(keyword, // ✅ Just use keyword (it's a String)
                   style: TextStyle(
                     color: AppColors.primary400,
                     fontWeight: FontWeight.w500,
@@ -541,10 +544,10 @@ Widget _buildStoreDropdown() {
           runSpacing: 8,
           children: controller.selectedKeywords.map((keyword) {
             return Chip(
-              label: Text(keyword.text),
+              label: Text(keyword),
               backgroundColor: AppColors.primary100,
               deleteIconColor: AppColors.primary400,
-              onDeleted: () => controller.removeKeyword(keyword.id),
+              onDeleted: () => controller.removeKeyword(keyword),
               labelStyle: TextStyle(
                 color: AppColors.primary500,
                 fontWeight: FontWeight.w500,

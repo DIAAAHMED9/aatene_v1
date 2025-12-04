@@ -4,6 +4,8 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
 import '../../../controller/create_store_controller.dart';
 import 'add_shipping_method.dart';
@@ -17,6 +19,7 @@ class AddNewShippingCompany extends StatefulWidget {
 
 class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
   final CreateStoreController controller = Get.find<CreateStoreController>();
+  final DataInitializerService dataService = Get.find<DataInitializerService>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
@@ -60,6 +63,20 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
   String? selectedCity;
   List<Map<String, dynamic>> selectedCities = [];
   bool showAddCityField = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // تحميل المدن من التخزين المحلي
+    _loadCitiesFromCache();
+  }
+
+  void _loadCitiesFromCache() {
+    final cachedCities = dataService.getCities();
+    if (cachedCities.isNotEmpty) {
+      // يمكن استخدام البيانات المخزنة هنا
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
