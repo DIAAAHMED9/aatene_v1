@@ -4,8 +4,12 @@ import 'package:attene_mobile/view/related_products/related_products_model.dart'
 import 'package:attene_mobile/models/product_model.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
 
+import '../../controller/product_controller.dart';
+
 class RelatedProductsController extends GetxController {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
+  final ProductCentralController productController = Get.find<ProductCentralController>();
+  
   final RxList<Product> allProducts = <Product>[].obs;
   final RxList<Product> selectedProducts = <Product>[].obs;
   final RxList<ProductDiscount> discounts = <ProductDiscount>[].obs;
@@ -22,6 +26,7 @@ class RelatedProductsController extends GetxController {
     super.onInit();
     _initializeDateController();
     _loadProducts();
+    _loadSelectedProductsFromCentral();
   }
 
   void _initializeDateController() {
@@ -39,6 +44,23 @@ class RelatedProductsController extends GetxController {
     final displayHour = hour <= 12 ? hour : hour - 12;
     
     return '${months[date.month - 1]} ${date.day}, ${date.year} $displayHour:${date.minute.toString().padLeft(2, '0')} $period';
+  }
+
+  void _loadSelectedProductsFromCentral() {
+    try {
+      final relatedProducts = productController.relatedProducts;
+      if (relatedProducts.isNotEmpty) {
+        // تحويل المنتجات المختارة إلى قائمة Product
+        final products = relatedProducts.map((productData) {
+          return Product.fromJson(productData);
+        }).toList();
+        
+        selectedProducts.assignAll(products);
+        print('✅ [RELATED] تم تحميل ${selectedProducts.length} منتج من Central Controller');
+      }
+    } catch (e) {
+      print('❌ [RELATED] خطأ في تحميل المنتجات المختارة: $e');
+    }
   }
 
   void _loadProducts() {
@@ -97,6 +119,7 @@ class RelatedProductsController extends GetxController {
     }
     
     _calculateTotalPrice();
+    _saveToCentralController();
   }
 
   bool isProductSelected(Product product) {
@@ -106,6 +129,7 @@ class RelatedProductsController extends GetxController {
   void removeSelectedProduct(Product product) {
     selectedProducts.removeWhere((p) => p.id == product.id);
     _calculateTotalPrice();
+    _saveToCentralController();
     print('🗑️ [RELATED] تم حذف المنتج المختار: ${product.name}');
   }
 
@@ -114,7 +138,34 @@ class RelatedProductsController extends GetxController {
     originalPrice.value = 0.0;
     discountedPrice.value = 0.0;
     discountNote.value = '';
+    _saveToCentralController();
     print('🔄 [RELATED] تم مسح جميع الاختيارات');
+  }
+
+  void _saveToCentralController() {
+    try {
+      // تحويل المنتجات المختارة إلى قائمة Map
+      final productsData = selectedProducts.map((product) {
+        return product.toJson();
+      }).toList();
+      
+      // تحديث الـ ProductCentralController
+      productController.addRelatedProducts(productsData);
+      
+    } catch (e) {
+      print('❌ [RELATED] خطأ في حفظ البيانات إلى Central Controller: $e');
+    }
+  }
+
+  void skipAndContinue() {
+    productController.skipRelatedProductsStep();
+    Get.back();
+    Get.snackbar(
+      'تم التخطي',
+      'تم تخطي خطوة المنتجات المرتبطة بنجاح',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
   }
 
   void _calculateTotalPrice() {

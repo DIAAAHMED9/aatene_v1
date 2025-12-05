@@ -6,6 +6,10 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../controller/product_controller.dart';
+import '../utlis/sheet_controller.dart';
+import '../view/screens_navigator_bottom_bar/product/product_controller.dart';
+
 class MyAppController extends GetxController with WidgetsBindingObserver {
   static MyAppController get to => Get.find();
   
@@ -23,6 +27,9 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   // إحصائيات التطبيق
   final RxInt _appLaunchCount = 0.obs;
   final RxString _appVersion = '1.0.0'.obs;
+  
+  // إعدادات المتجر
+  final RxInt _selectedStoreId = 0.obs;
   
   // متغير للتحقق من الاتصال
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
@@ -57,6 +64,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       
       print('✅ تم تهيئة التطبيق بنجاح');
       print('👤 حالة المستخدم: ${_isLoggedIn.value ? 'مسجل دخول' : 'غير مسجل'}');
+      print('🏪 المتجر المحدد: ${_selectedStoreId.value}');
       
     } catch (e) {
       print('❌ خطأ في تهيئة التطبيق: $e');
@@ -99,7 +107,6 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   
   void _onInternetRestored() {
     print('🌐 استعادة الاتصال بالإنترنت');
-    // يمكن إضافة إشعارات أو تنفيذ مهام متأخرة
     Get.snackbar(
       'تم استعادة الاتصال',
       'تمت استعادة الاتصال بالإنترنت',
@@ -125,6 +132,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   RxBool get isLoggedIn => _isLoggedIn;
   RxBool get isAppInitialized => _isAppInitialized;
   RxBool get isInternetConnect => _isInternetConnect;
+  RxInt get selectedStoreId => _selectedStoreId;
   
   Map<String, dynamic> get userData => _userData;
   bool get isLoading => _isLoading.value;
@@ -141,7 +149,6 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
     _saveUserData();
     
     print('✅ تم تحديث بيانات المستخدم');
-    print('📊 البيانات: ${newData.keys.join(', ')}');
   }
   
   // معالجة نجاح تسجيل الدخول
@@ -154,9 +161,6 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       // تحديث بيانات المستخدم
       updateUserData(userData);
       
-      // تحميل البيانات الإضافية
-      await _loadAdditionalUserData();
-      
       // حفظ وقت التسجيل الأخير
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('last_login_time', DateTime.now().toIso8601String());
@@ -166,36 +170,11 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       
       print('✅ تم تسجيل الدخول بنجاح للمستخدم: ${userData['email'] ?? userId}');
       
-      // إشعار المتحكمات الأخرى بتسجيل الدخول
-      _notifyLoginSuccess();
-      
     } catch (e) {
       print('❌ خطأ في معالجة تسجيل الدخول: $e');
       rethrow;
     } finally {
       _isLoading.value = false;
-    }
-  }
-  
-  // إشعار المتحكمات الأخرى بتسجيل الدخول
-  void _notifyLoginSuccess() {
-    // يمكن إضافة منطق لإشعار المتحكمات الأخرى هنا
-    print('📢 إشعار تسجيل الدخول للمتحكمات الأخرى');
-  }
-  
-  // تحميل بيانات إضافية للمستخدم
-  Future<void> _loadAdditionalUserData() async {
-    try {
-      print('🔄 جاري تحميل البيانات الإضافية للمستخدم...');
-      
-      // هنا يمكنك إضافة طلبات API لتحميل بيانات إضافية
-      // مثل الملف الشخصي، الإشعارات، الإعدادات، إلخ.
-      
-      await Future.delayed(const Duration(milliseconds: 500));
-      
-      print('✅ تم تحميل البيانات الإضافية');
-    } catch (e) {
-      print('⚠️ خطأ في تحميل البيانات الإضافية: $e');
     }
   }
   
@@ -234,6 +213,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_data', json.encode(_userData));
       await prefs.setBool('is_logged_in', _isLoggedIn.value);
+      await prefs.setInt('selected_store_id', _selectedStoreId.value);
       
       print('💾 تم حفظ بيانات المستخدم في التخزين المحلي');
     } catch (e) {
@@ -254,20 +234,19 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
         _userData.value = decodedData;
         _isLoggedIn.value = isLoggedIn;
         
-        // التحقق من صلاحية التوكن
-        final bool isTokenValid = await _validateToken();
-        if (!isTokenValid) {
-          await onSignOut();
-        } else {
-          print('✅ تم تحميل بيانات المستخدم من التخزين المحلي');
-          print('👤 المستخدم: ${_userData['email'] ?? _userData['phone']}');
-        }
+        // تحميل المتجر المحدد
+        final savedStoreId = prefs.getInt('selected_store_id') ?? 0;
+        _selectedStoreId.value = savedStoreId;
+        
+        print('✅ تم تحميل بيانات المستخدم من التخزين المحلي');
+        print('👤 المستخدم: ${_userData['email'] ?? _userData['phone']}');
+        print('🏪 المتجر المحدد: $_selectedStoreId');
       } else {
         print('ℹ️ لا توجد بيانات مستخدم محفوظة');
       }
     } catch (e) {
       print('❌ خطأ في تحميل بيانات المستخدم: $e');
-      await onSignOut(); // تسجيل الخروج في حالة وجود خطأ
+      await onSignOut();
     }
   }
   
@@ -328,21 +307,16 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       
       print('🔄 بدء عملية تسجيل الخروج...');
       
-      // إرسال طلب تسجيل الخروج للخادم (اختياري)
-      try {
-        // await ApiHelper.logout();
-      } catch (e) {
-        print('⚠️ خطأ في طلب تسجيل الخروج للخادم: $e');
-      }
-      
       // مسح البيانات المحلية
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('user_data');
       await prefs.setBool('is_logged_in', false);
+      await prefs.remove('selected_store_id');
       
       // مسح بيانات الذاكرة
       _userData.clear();
       _isLoggedIn.value = false;
+      _selectedStoreId.value = 0;
       
       print('✅ تم تسجيل الخروج بنجاح');
       
@@ -375,22 +349,52 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
     }
   }
   
-  // ==================== وظائف مساعدة ====================
+  // ==================== وظائف المتجر ====================
   
-  // التحقق من صلاحية التوكن
-  Future<bool> _validateToken() async {
-    try {
-      final token = _userData['token'];
-      if (token == null || token.isEmpty) return false;
+  // تحديث المتجر المحدد
+  void updateSelectedStore(int storeId) {
+    if (storeId != _selectedStoreId.value) {
+      _selectedStoreId.value = storeId;
+      _saveUserData();
+      print('🏪 تحديث المتجر المحدد إلى: $storeId');
       
-      // هنا يمكنك إضافة منطق للتحقق من صلاحية التوكن مع الخادم
-      // مؤقتاً: نعتبر التوكن صالحاً إذا كان موجوداً
-      return true;
-    } catch (e) {
-      print('⚠️ خطأ في التحقق من صلاحية التوكن: $e');
-      return false;
+      // إشعار المتحكمات الأخرى بتغير المتجر
+      _notifyControllersAboutStoreChange(storeId);
+      
+      Get.snackbar(
+        'تم تغيير المتجر',
+        'تم تغيير المتجر النشط',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
     }
   }
+    void _notifyControllersAboutStoreChange(int storeId) {
+    try {
+      // إشعار BottomSheetController بتحميل أقسام المتجر الجديد
+      if (Get.isRegistered<BottomSheetController>()) {
+        final bottomSheetController = Get.find<BottomSheetController>();
+        bottomSheetController.loadSectionsByStore(storeId);
+      }
+      
+      // إشعار ProductCentralController
+      if (Get.isRegistered<ProductCentralController>()) {
+        final productCentralController = Get.find<ProductCentralController>();
+        productCentralController.selectedStore.value = {'id': storeId};
+      }
+      
+      // إشعار ProductController لإعادة تحميل المنتجات
+      if (Get.isRegistered<ProductController>()) {
+        final productController = Get.find<ProductController>();
+        productController.reloadProducts();
+      }
+    } catch (e) {
+      print('⚠️ خطأ في إشعار المتحكمات بتغير المتجر: $e');
+    }
+  }
+
+  // ==================== وظائف مساعدة ====================
   
   // تبديل الوضع المظلم
   Future<void> toggleDarkMode() async {
@@ -415,7 +419,6 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
         
         print('🌍 تغيير اللغة إلى: $languageCode');
         
-        // يمكن إضافة إعادة تحميل التطبيق هنا
         Get.updateLocale(Locale(languageCode));
       }
     } catch (e) {
@@ -423,28 +426,16 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
     }
   }
   
-  // التحقق مما إذا كان المستخدم لديه صلاحية معينة
-  bool hasPermission(String permission) {
-    final permissions = _userData['permissions'] as List<dynamic>?;
-    return permissions?.contains(permission) ?? false;
-  }
-  
-  // التحقق مما إذا كان المستخدم لديه دور معين
-  bool hasRole(String role) {
-    final roles = _userData['roles'] as List<dynamic>?;
-    return roles?.contains(role) ?? false;
+  // الحصول على بيانات محددة
+  dynamic getData(String key) {
+    return _userData[key];
   }
   
   // تحديث بيانات محددة
-  void updateSpecificData(String key, dynamic value) {
+  void updateData(String key, dynamic value) {
     _userData[key] = value;
     _saveUserData();
     print('📝 تم تحديث $key: $value');
-  }
-  
-  // الحصول على بيانات محددة
-  dynamic getUserData(String key) {
-    return _userData[key];
   }
   
   // الحصول على الاسم الكامل
@@ -474,6 +465,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       'is_online': _isInternetConnect.value,
       'user_logged_in': _isLoggedIn.value,
       'user_id': userId,
+      'selected_store_id': _selectedStoreId.value,
     };
   }
   
@@ -504,13 +496,11 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   
   void _onAppResumed() {
     print('📱 استئناف التطبيق');
-    // تحديث حالة الاتصال
     _checkConnectivity();
   }
   
   void _onAppPaused() {
     print('⏸️ إيقاف التطبيق مؤقتاً');
-    // حفظ البيانات قبل الإيقاف
     saveUserPreferences();
   }
   
@@ -534,13 +524,8 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   
   @override
   void onClose() {
-    // إيقاف مراقبة الاتصال
     _connectivitySubscription.cancel();
-    
-    // إزالة مراقب دورة الحياة
     WidgetsBinding.instance.removeObserver(this);
-    
-    // حفظ البيانات قبل الإغلاق
     saveUserPreferences();
     
     print('🔚 إغلاق MyAppController');

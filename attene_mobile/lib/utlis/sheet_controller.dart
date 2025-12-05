@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/section_model.dart';
+import '../view/screens_navigator_bottom_bar/product/product_controller.dart';
 
 enum BottomSheetType {
   filter,
@@ -55,68 +57,106 @@ class BottomSheetController extends GetxController {
   final RxList<Section> _filteredSections = <Section>[].obs;
 
   final _sectionSearchController = StreamController<String>.broadcast();
-  late MyAppController myAppController; // تأجيل التهيئة
-final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
-RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributesRx;
-void updateSelectedAttributes(List<ProductAttribute> attributes) {
-  _selectedAttributes.assignAll(attributes);
-  _selectedAttributesRx.assignAll(attributes);
-  print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
-}
-void _saveAttributesAndClose() {
-  try {
-    final productVariationController = Get.find<ProductVariationController>();
-    
-    productVariationController.updateSelectedAttributes(_selectedAttributes.toList());
-    
-    Get.back();
-    
-    Get.snackbar(
-      'نجاح',
-      'تم حفظ السمات والصفات بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-      duration: Duration(seconds: 2),
-    );
-    
-    print('✅ [ATTRIBUTES SAVED]: ${_selectedAttributes.length} سمات محفوظة');
-    
-  } catch (e) {
-    print('❌ [ERROR SAVING ATTRIBUTES]: $e');
-    Get.snackbar(
-      'خطأ',
-      'حدث خطأ أثناء حفظ السمات',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  }
-}
+  late MyAppController myAppController;
+  
+  // إضافة متغير لتتبع المتجر الحالي
+  final RxInt _currentStoreId = 0.obs;
+  
+  // إضافة متغير لتتبع إذا كانت الأقسام محملة لهذا المتجر
+  final RxMap<int, bool> _sectionsLoadedForStores = <int, bool>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
-init();
+    init();
   }
-void  init(){
-        _initializeAttributeListeners();
+  
+  void init() {
+    _initializeAttributeListeners();
     _loadAttributesFromApi();
     _initializeSectionSearch();
-    _loadSections();
+    
+    // الاستماع لتغيرات المتجر في MyAppController
+    if (Get.isRegistered<MyAppController>()) {
+      myAppController = Get.find<MyAppController>();
+      ever(myAppController.selectedStoreId, (int storeId) {
+        if (storeId > 0) {
+          _currentStoreId.value = storeId;
+          _loadSectionsForStore(storeId, forceRefresh: false);
+        }
+      });
+    }
   }
 
-  Future<void> _loadSections() async {
-    try {
-            myAppController = Get.find<MyAppController>();
+  void onSectionsUpdated(List<Section> sections) {
+    _sections.assignAll(sections);
+    _filteredSections.assignAll(sections);
+    print('✅ [BOTTOM SHEET] تم تحديث الأقسام: ${sections.length} قسم');
+  }
 
-      if (!_isUserAuthenticated()) {
-        print('⚠️ المستخدم غير مسجل دخول');
+  // دالة تحديث السمات المختارة
+  void updateSelectedAttributes(List<ProductAttribute> attributes) {
+    _selectedAttributes.assignAll(attributes);
+    print('✅ [BOTTOM SHEET] تم تحديث السمات المختارة: ${attributes.length} سمة');
+  }
+
+  // Getter للسمات المختارة كـ RxList
+  RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributes;
+
+  // دالة حفظ السمات وإغلاق الشيت
+  void _saveAttributesAndClose() {
+    print('💾 [BOTTOM SHEET] حفظ السمات المختارة وإغلاق الشيت');
+    
+    // إشعار ProductVariationController بالسمات المختارة
+    if (Get.isRegistered<ProductVariationController>()) {
+      final variationController = Get.find<ProductVariationController>();
+      variationController.updateSelectedAttributes(_selectedAttributes.toList());
+    }
+    
+    Get.back();
+  }
+
+  // دالة تحميل أقسام متجر معين
+  Future<void> _loadSectionsForStore(int storeId, {bool forceRefresh = false}) async {
+    await loadSectionsByStore(storeId, forceRefresh: forceRefresh);
+  }
+
+  // ============ الوظائف المساعدة الجديدة ============
+
+  // دالة للحصول على السمات المختارة
+  List<ProductAttribute> getSelectedAttributes() {
+    return _selectedAttributes.toList();
+  }
+
+  // دالة لمسح السمات المختارة
+  void clearSelectedAttributes() {
+    _selectedAttributes.clear();
+    print('🗑️ [BOTTOM SHEET] تم مسح السمات المختارة');
+  }
+
+  // دالة للتحقق من إذا كانت سمة محددة مختارة
+  bool isAttributeSelected(String attributeId) {
+    return _selectedAttributes.any((attr) => attr.id == attributeId);
+  }
+
+  // ============ الوظائف الجديدة والمحدثة ============
+
+  Future<void> loadSectionsByStore(int storeId, {bool forceRefresh = false}) async {
+    try {
+      // التحقق إذا كانت الأقسام محملة مسبقاً لهذا المتجر
+      if (!forceRefresh && _sectionsLoadedForStores[storeId] == true && _sections.isNotEmpty) {
+        print('📂 [SECTIONS] استخدام الأقسام المخزنة للمتجر: $storeId');
         return;
       }
 
       _isLoadingSections(true);
       _sectionsErrorMessage('');
       
+      print('🏪 [SECTIONS] جلب أقسام المتجر: $storeId');
+      
       final response = await ApiHelper.get(
         path: '/merchants/sections',
+        queryParameters: {'store_id': storeId},
         withLoading: false,
       );
       
@@ -124,6 +164,16 @@ void  init(){
         final List<dynamic> data = response['data'] ?? [];
         _sections.assignAll(data.map((section) => Section.fromJson(section)).toList());
         _filteredSections.assignAll(_sections);
+        
+        // تحديث حالة التحميل لهذا المتجر
+        _sectionsLoadedForStores[storeId] = true;
+        _currentStoreId.value = storeId;
+        
+        print('✅ [SECTIONS] تم تحميل ${_sections.length} قسم للمتجر $storeId');
+        
+        // تحديث التاب بار في ProductController
+        _notifyProductController();
+        
       } else {
         _sectionsErrorMessage.value = response?['message'] ?? 'فشل في تحميل الأقسام';
       }
@@ -134,53 +184,239 @@ void  init(){
     }
   }
 
-Future<void> _loadAttributesFromApi() async {
-  try {
-    print('📡 [BOTTOM SHEET] محاولة تحميل السمات...');
-    
-    // التحقق من تسجيل الدخول أولاً
-    if (!_isUserAuthenticated()) {
-      print('⚠️ [BOTTOM SHEET] المستخدم غير مسجل دخول، تخطي تحميل السمات');
-      return;
-    }
+  Future<void> refreshSectionsImmediately({bool forceRefresh = true}) async {
+    try {
+      if (!_isUserAuthenticated()) {
+        print('⚠️ [SECTIONS] المستخدم غير مسجل دخول');
+        return;
+      }
 
-    print('📡 [LOADING ATTRIBUTES FROM API - BOTTOM SHEET]');
-
-    final response = await ApiHelper.get(
-      path: '/merchants/attributes',
-      withLoading: false,
-    );
-
-    print('🎯 [ATTRIBUTES API RESPONSE - BOTTOM SHEET]: ${response?['status']}');
-
-    if (response != null && response['status'] == true) {
-      final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+      _isLoadingSections(true);
+      print('🔄 [SECTIONS] تحديث الأقسام فورياً');
       
-      final loadedAttributes = attributesList.map((attributeJson) {
-        return ProductAttribute.fromApiJson(attributeJson);
-      }).toList();
-
-      _tempAttributes.assignAll(loadedAttributes);
-      print('✅ تم تحميل ${_tempAttributes.length} سمة في الـ BottomSheet بنجاح');
-    } else {
-      print('❌ فشل في تحميل السمات في الـ BottomSheet: ${response?['message']}');
+      final storeId = _currentStoreId.value > 0 ? _currentStoreId.value : myAppController.selectedStoreId.value;
+      
+      if (storeId > 0) {
+        await loadSectionsByStore(storeId, forceRefresh: forceRefresh);
+      } else {
+        // جلب جميع الأقسام إذا لم يكن هناك متجر محدد
+        await _loadAllSections();
+      }
+      
+      print('✅ [SECTIONS] تم تحديث الأقسام فورياً: ${_sections.length} قسم');
+    } catch (e) {
+      print('❌ [SECTIONS] خطأ في تحديث الأقسام: $e');
+    } finally {
+      _isLoadingSections(false);
     }
-  } catch (e) {
-    print('❌ خطأ في تحميل السمات في الـ BottomSheet: $e');
   }
-}
 
-bool _isUserAuthenticated() {
-  try {
-    if (Get.isRegistered<MyAppController>()) {
-      final myAppController = Get.find<MyAppController>();
-      return myAppController.isLoggedIn.value;
+  Future<void> _loadAllSections() async {
+    try {
+      final response = await ApiHelper.get(
+        path: '/merchants/sections',
+        withLoading: false,
+      );
+      
+      if (response != null && response['status'] == true) {
+        final List<dynamic> data = response['data'] ?? [];
+        _sections.assignAll(data.map((section) => Section.fromJson(section)).toList());
+        _filteredSections.assignAll(_sections);
+      }
+    } catch (e) {
+      print('❌ [SECTIONS] خطأ في تحميل جميع الأقسام: $e');
     }
-    return false;
-  } catch (e) {
-    return false;
   }
-}
+
+  // تحديث دالة addSection لتعمل بشكل فوري
+  Future<bool> addSection(String name) async {
+    try {
+      _isLoadingSections(true);
+      
+      final storeId = _currentStoreId.value > 0 ? _currentStoreId.value : myAppController.selectedStoreId.value;
+      
+      if (storeId <= 0) {
+        _sectionsErrorMessage.value = 'يرجى اختيار متجر      أولاً';
+        return false;
+      }
+      
+      final response = await ApiHelper.post(
+        path: '/merchants/sections',
+        body: {
+          'name': name, 
+          'status': 'active',
+          'store_id': storeId,
+        },
+        withLoading: true,
+      );
+      
+      if (response != null && response['status'] == true) {
+        // تحديث فوري
+        final newSectionData = response['data'] ?? {};
+        final newSection = Section.fromJson(newSectionData);
+        
+        // إضافة للقائمة المحلية
+        _sections.add(newSection);
+        _filteredSections.add(newSection);
+        
+        // تحديث المراقبين فوراً
+        sectionsRx.assignAll(_sections);
+        _filteredSections.refresh();
+        
+        // إشعار ProductController
+        _notifyProductControllerImmediately();
+        
+        print('✅ [SECTIONS] تم إضافة قسم جديد: $name');
+        
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('❌ [SECTIONS] خطأ في إضافة القسم: $e');
+      return false;
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+  // دالة جديدة للإشعار الفوري
+  void _notifyProductControllerImmediately() {
+    try {
+      if (Get.isRegistered<ProductController>()) {
+        final productController = Get.find<ProductController>();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // استخدم onSectionsUpdated أو refreshSectionsImmediately
+          productController.onSectionsUpdated(_sections.toList());
+        });
+      }
+    } catch (e) {
+      print('⚠️ [BOTTOM SHEET] خطأ في الإشعار الفوري: $e');
+    }
+  }
+
+  Future<bool> deleteSection(int sectionId) async {
+    try {
+      _isLoadingSections(true);
+      
+      final response = await ApiHelper.delete(
+        path: '/merchants/sections/$sectionId',
+        withLoading: true,
+      );
+      
+      if (response != null && response['status'] == true) {
+        // حذف فوري من القائمة
+        _sections.removeWhere((section) => section.id == sectionId);
+        _filteredSections.removeWhere((section) => section.id == sectionId);
+        
+        if (_selectedSection.value?.id == sectionId) {
+          _selectedSection.value = null;
+          _selectedSectionName.value = '';
+        }
+        
+        // تحديث التاب بار فوراً
+        _notifyProductController();
+        
+        print('✅ [SECTIONS] تم حذف القسم: $sectionId');
+        return true;
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
+        return false;
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
+      return false;
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+  void _notifyProductController() {
+    try {
+      if (Get.isRegistered<ProductController>()) {
+        final productController = Get.find<ProductController>();
+        productController.onSectionsUpdated(_sections.toList());
+      }
+    } catch (e) {
+      print('⚠️ [SECTIONS] خطأ في إشعار ProductController: $e');
+    }
+  }
+
+  // إضافة دالة للحصول على أقسام متجر محدد
+  List<Section> getSectionsByStoreId(int storeId) {
+    if (storeId <= 0) return _sections.toList();
+    return _sections.where((section) => section.storeId == storeId.toString()).toList();
+  }
+
+  // ============ الوظائف الحالية (محدثة) ============
+
+  Future<void> _loadSections({int? storeId}) async {
+    try {
+      myAppController = Get.find<MyAppController>();
+
+      if (!_isUserAuthenticated()) {
+        print('⚠️ المستخدم غير مسجل دخول');
+        return;
+      }
+
+      _isLoadingSections(true);
+      _sectionsErrorMessage('');
+      
+      final effectiveStoreId = storeId ?? myAppController.selectedStoreId.value;
+      
+      if (effectiveStoreId > 0) {
+        await loadSectionsByStore(effectiveStoreId);
+      } else {
+        await _loadAllSections();
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في تحميل الأقسام: ${e.toString()}';
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+
+  // ============ الوظائف الأساسية (بدون تغيير) ============
+
+  Future<void> _loadAttributesFromApi() async {
+    try {
+      print('📡 [BOTTOM SHEET] محاولة تحميل السمات...');
+      
+      if (!_isUserAuthenticated()) {
+        print('⚠️ [BOTTOM SHEET] المستخدم غير مسجل دخول، تخطي تحميل السمات');
+        return;
+      }
+
+      final response = await ApiHelper.get(
+        path: '/merchants/attributes',
+        withLoading: false,
+      );
+
+      if (response != null && response['status'] == true) {
+        final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        
+        final loadedAttributes = attributesList.map((attributeJson) {
+          return ProductAttribute.fromApiJson(attributeJson);
+        }).toList();
+
+        _tempAttributes.assignAll(loadedAttributes);
+        print('✅ تم تحميل ${_tempAttributes.length} سمة في الـ BottomSheet بنجاح');
+      }
+    } catch (e) {
+      print('❌ خطأ في تحميل السمات في الـ BottomSheet: $e');
+    }
+  }
+
+  bool _isUserAuthenticated() {
+    try {
+      if (Get.isRegistered<MyAppController>()) {
+        final myAppController = Get.find<MyAppController>();
+        return myAppController.isLoggedIn.value;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 
   void _initializeAttributeListeners() {
     _attributeSearchController.addListener(() {
@@ -213,123 +449,39 @@ bool _isUserAuthenticated() {
     }
   }
 
-  Future<void> loadSections() async {
-    try {
-      if (!_isUserAuthenticated()) {
-        print('⚠️ المستخدم غير مسجل دخول');
-        return;
-      }
-
-      _isLoadingSections(true);
-      _sectionsErrorMessage('');
-      
-      final response = await ApiHelper.get(
-        path: '/merchants/sections',
-        withLoading: false,
-      );
-      
-      if (response != null && response['status'] == true) {
-        final List<dynamic> data = response['data'] ?? [];
-        _sections.assignAll(data.map((section) => Section.fromJson(section)).toList());
-        _filteredSections.assignAll(_sections);
-      } else {
-        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في تحميل الأقسام';
-      }
-    } catch (e) {
-      _sectionsErrorMessage.value = 'خطأ في تحميل الأقسام: ${e.toString()}';
-    } finally {
-      _isLoadingSections(false);
-    }
-  }
-
-  List<Section> getSections() {
-    return _sections.toList();
-  }
-
-  Future<bool> addSection(String name) async {
-    try {
-      _isLoadingSections(true);
-      
-      final response = await ApiHelper.post(
-        path: '/merchants/sections',
-        body: {'name': name, 'status': 'active'},
-        withLoading: true,
-      );
-      
-      if (response != null && response['status'] == true) {
-        await loadSections();
-        return true;
-      } else {
-        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في إضافة القسم';
-        return false;
-      }
-    } catch (e) {
-      _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
-      return false;
-    } finally {
-      _isLoadingSections(false);
-    }
-  }
-
-  Future<bool> deleteSection(int sectionId) async {
-    try {
-      _isLoadingSections(true);
-      
-      final response = await ApiHelper.delete(
-        path: '/merchants/sections/$sectionId',
-        withLoading: true,
-      );
-      
-      if (response != null && response['status'] == true) {
-        await loadSections();
-        if (_selectedSection.value?.id == sectionId) {
-          _selectedSection.value = null;
-          _selectedSectionName.value = '';
-        }
-        return true;
-      } else {
-        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
-        return false;
-      }
-    } catch (e) {
-      _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
-      return false;
-    } finally {
-      _isLoadingSections(false);
-    }
-  }
-
-void selectSection(Section section) {
-  _selectedSection.value = section;
-  _selectedSectionName.value = section.name;
-  
-  final productController = Get.find<ProductCentralController>();
-  productController.updateSelectedSection(section);
-  
-  print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
-}
-
-void openAddProductScreen() {
-  if (!_isUserAuthenticated()) {
-    _showLoginRequiredMessage();
-    return;
-  }
-
-  if (!hasSelectedSection) {
-    Get.snackbar(
-      'قسم مطلوب',
-      'يجب اختيار قسم أولاً قبل إضافة المنتج',
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
+  void selectSection(Section section) {
+    _selectedSection.value = section;
+    _selectedSectionName.value = section.name;
     
-    openManageSections();
-    return;
+    if (Get.isRegistered<ProductCentralController>()) {
+      final productController = Get.find<ProductCentralController>();
+      productController.updateSelectedSection(section);
+    }
+    
+    print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
   }
 
-  _navigateToAddProductStepper();
-}
+  void openAddProductScreen() {
+    if (!_isUserAuthenticated()) {
+      _showLoginRequiredMessage();
+      return;
+    }
+
+    if (!hasSelectedSection) {
+      Get.snackbar(
+        'قسم مطلوب',
+        'يجب اختيار قسم أولاً قبل إضافة المنتج',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      
+      openManageSections();
+      return;
+    }
+
+    navigateToAddProductStepper();
+  }
 
   void clearSectionSelection() {
     _selectedSection.value = null;
@@ -343,8 +495,6 @@ void openAddProductScreen() {
     );
   }
 
-
-
   void _showLoginRequiredMessage() {
     Get.snackbar(
       'يجب تسجيل الدخول',
@@ -355,47 +505,48 @@ void openAddProductScreen() {
     );
   }
 
-void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, ProductAttribute? attribute}) {
-  _currentType.value = type;
-  
-  if (attributes != null && type == BottomSheetType.manageAttributes) {
-    _tempAttributes.assignAll(attributes);
-    if (_selectedAttributes.isEmpty) {
-      _selectedAttributes.clear();
+  void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, ProductAttribute? attribute}) {
+    _currentType.value = type;
+    
+    if (attributes != null && type == BottomSheetType.manageAttributes) {
+      _tempAttributes.assignAll(attributes);
+      if (_selectedAttributes.isEmpty) {
+        _selectedAttributes.clear();
+      }
+      if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
+        _currentEditingAttribute.value = _selectedAttributes.first;
+      }
     }
-    if (_selectedAttributes.isNotEmpty && _currentEditingAttribute.value == null) {
-      _currentEditingAttribute.value = _selectedAttributes.first;
+    
+    if (attribute != null && type == BottomSheetType.addAttributeValue) {
+      _currentEditingAttribute.value = attribute;
     }
-  }
-  
-  if (attribute != null && type == BottomSheetType.addAttributeValue) {
-    _currentEditingAttribute.value = attribute;
-  }
-  
-  if (type == BottomSheetType.manageSections) {
-    loadSections();
-  }
-  
-  _resetFields();
-  
-  Get.bottomSheet(
-    _buildBottomSheetContent(),
-    isScrollControlled: true,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
-      ),
-    ),
-    enableDrag: true,
-  ).then((_) {
-    if (_currentType.value == BottomSheetType.manageSections) {
-      clearSectionSelection();
+    
+    if (type == BottomSheetType.manageSections) {
+      _loadSections();
     }
+    
     _resetFields();
-  });
-}
+    
+    Get.bottomSheet(
+      _buildBottomSheetContent(),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      enableDrag: true,
+    ).then((_) {
+      if (_currentType.value == BottomSheetType.manageSections) {
+        clearSectionSelection();
+      }
+      _resetFields();
+    });
+  }
+  
   void _resetFields() {
     _selectedOptions.clear();
     _selectedOption.value = '';
@@ -443,7 +594,7 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     showBottomSheet(BottomSheetType.addNewSection);
   }
 
-  void _navigateToAddProductStepper() {
+  void navigateToAddProductStepper() {
     Get.back();
     Get.to(
       () => DemoStepperScreen(),
@@ -474,6 +625,7 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
       ),
     );
   }
+  
   Widget _buildActions() {
     return Row(
       children: [
@@ -497,7 +649,8 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
       ],
     );
   }
-    void _applySelection() {
+  
+  void _applySelection() {
     switch (_currentType.value) {
       case BottomSheetType.filter:
         print('تطبيق الفلاتر: ${_selectedOptions.join(', ')}');
@@ -516,6 +669,7 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     }
     Get.back();
   }
+  
   bool get _shouldShowActions {
     return _currentType.value != BottomSheetType.manageSections &&
            _currentType.value != BottomSheetType.addNewSection &&
@@ -607,106 +761,106 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     });
   }
 
-Widget buildManageSectionsContent() {
-  return Obx(() {
-    final hasSections = _sections.isNotEmpty;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'أضف وعدّل الأقسام الخاصة بمتجرك لترتيب منتجاتك بالطريقة التي تناسبك، هذه الأقسام لا تؤثر على التصنيفات الرئيسية للمنصة، بل تسهل على عملائك تصفح متجرك',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            height: 1.5,
-          ),
-          textAlign: TextAlign.right,
-        ),
-        const SizedBox(height: 20),
-
-        if (!hasSections) ...[
-          AateneButton(
-            color: AppColors.primary400,
-            textColor: Colors.white,
-            borderColor: Colors.transparent,
-            buttonText: 'إضافة قسم جديد',
-            onTap: () {
-              Get.back();
-              openAddNewSection();
-            },
-          ),
-        ],
-
-        if (hasSections) ...[
-          TextFiledAatene(
-            heightTextFiled: 50,
-            onChanged: (value) {
-              _sectionSearchText.value = value;
-              _sectionSearchController.add(value);
-            },
-            prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-            isRTL: isRTL,
-            hintText: 'ابحث في الأقسام',
+  Widget buildManageSectionsContent() {
+    return Obx(() {
+      final hasSections = _sections.isNotEmpty;
+      
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'أضف وعدّل الأقسام الخاصة بمتجرك لترتيب منتجاتك بالطريقة التي تناسبك، هذه الأقسام لا تؤثر على التصنيفات الرئيسية للمنصة، بل تسهل على عملائك تصفح متجرك',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+              height: 1.5,
+            ),
+            textAlign: TextAlign.right,
           ),
           const SizedBox(height: 20),
 
-          Container(
-            height: 200,
-            child: _buildSectionsList(),
-          ),
-          const SizedBox(height: 20),
+          if (!hasSections) ...[
+            AateneButton(
+              color: AppColors.primary400,
+              textColor: Colors.white,
+              borderColor: Colors.transparent,
+              buttonText: 'إضافة قسم جديد',
+              onTap: () {
+                Get.back();
+                openAddNewSection();
+              },
+            ),
+          ],
 
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Get.back();
-                    openAddNewSection();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    side: BorderSide(color: AppColors.primary400),
-                  ),
-                  child: Text(
-                    'إضافة قسم جديد',
-                    style: TextStyle(color: AppColors.primary400),
+          if (hasSections) ...[
+            TextFiledAatene(
+              heightTextFiled: 50,
+              onChanged: (value) {
+                _sectionSearchText.value = value;
+                _sectionSearchController.add(value);
+              },
+              prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+              isRTL: isRTL,
+              hintText: 'ابحث في الأقسام',
+            ),
+            const SizedBox(height: 20),
+
+            Container(
+              height: 200,
+              child: _buildSectionsList(),
+            ),
+            const SizedBox(height: 20),
+
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Get.back();
+                      openAddNewSection();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: BorderSide(color: AppColors.primary400),
+                    ),
+                    child: Text(
+                      'إضافة قسم جديد',
+                      style: TextStyle(color: AppColors.primary400),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Obx(() => ElevatedButton(
-                  onPressed: hasSelectedSection ? () {
-                    final selectedSection = _selectedSection.value;
-                    Get.back();
-                    
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      clearSectionSelection();
-                      _navigateToAddProductStepper();
-                    });
-                  } : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    backgroundColor: hasSelectedSection
-                        ? AppColors.primary400
-                        : Colors.grey[400],
-                  ),
-                  child: const Text(
-                    'التالي',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )),
-              ),
-            ],
-          ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Obx(() => ElevatedButton(
+                    onPressed: hasSelectedSection ? () {
+                      final selectedSection = _selectedSection.value;
+                      Get.back();
+                      
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        clearSectionSelection();
+                        navigateToAddProductStepper();
+                      });
+                    } : null,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: hasSelectedSection
+                          ? AppColors.primary400
+                          : Colors.grey[400],
+                    ),
+                    child: const Text(
+                      'التالي',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )),
+                ),
+              ],
+            ),
+          ],
         ],
-      ],
-    );
-  });
-}
+      );
+    });
+  }
 
   Widget _buildSectionsList() {
     return Obx(() {
@@ -728,7 +882,7 @@ Widget buildManageSectionsContent() {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: loadSections,
+                onPressed: () => refreshSectionsImmediately(),
                 child: const Text('إعادة المحاولة'),
               ),
             ],
@@ -922,13 +1076,84 @@ Widget buildManageSectionsContent() {
   }
 
   Future<void> _addNewSection() async {
-    final success = await addSection(_newSectionName.value.trim());
-    if (success) {
-      _newSectionName.value = '';
-      Get.back();
-      Get.snackbar('تمت الإضافة', 'تم إضافة القسم الجديد بنجاح');
+    try {
+      if (_newSectionName.value.trim().isEmpty) {
+        Get.snackbar('تنبيه', 'يرجى إدخال اسم القسم');
+        return;
+      }
+
+      // إضافة القسم عبر API
+      final success = await addSection(_newSectionName.value.trim());
+      
+      if (success) {
+        // مسح حقل الإدخال
+        _newSectionName.value = '';
+        
+        // إغلاق شيت إضافة القسم
+        Get.back();
+        
+        // تأخير بسيط ثم فتح شيت إدارة الأقسام مع تحديث فوري
+        await Future.delayed(const Duration(milliseconds: 300), () async {
+          try {
+            // تحديث الأقسام فورياً
+            await refreshSectionsImmediately(forceRefresh: true);
+            
+            // إشعار ProductController بالتحديث الفوري
+            if (Get.isRegistered<ProductController>()) {
+              final productController = Get.find<ProductController>();
+              productController.onSectionsUpdated(_sections.toList());
+            }
+            
+            // إشعار ProductCentralController
+            if (Get.isRegistered<ProductCentralController>()) {
+              final productCentralController = Get.find<ProductCentralController>();
+              productCentralController.refreshSectionsFromBottomSheet();
+            }
+            
+            // فتح شيت إدارة الأقسام بعد التحديث
+            openManageSections();
+            
+            print('✅ [BOTTOM SHEET] تم إضافة قسم جديد وتحديث العرض');
+          } catch (e) {
+            print('❌ [BOTTOM SHEET] خطأ في التحديث بعد الإضافة: $e');
+            openManageSections(); // افتح الشيت حتى لو حدث خطأ
+          }
+        });
+        
+        Get.snackbar('تمت الإضافة', 'تم إضافة القسم الجديد بنجاح');
+      }
+    } catch (e) {
+      print('❌ [BOTTOM SHEET] خطأ في إضافة القسم: $e');
+      Get.snackbar('خطأ', 'فشل في إضافة القسم');
     }
   }
+
+  void refreshAfterSectionAdded() {
+    try {
+      print('🔄 [BOTTOM SHEET] تحديث العرض بعد إضافة قسم جديد');
+      
+      // تحديث القائمة المحلية
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        sectionsRx.refresh();
+        _filteredSections.refresh();
+      });
+      
+      // إشعار جميع المراقبين
+      update();
+      
+      // إشعار ProductController باستخدام الدالة الصحيحة
+      if (Get.isRegistered<ProductController>()) {
+        final productController = Get.find<ProductController>();
+        productController.onSectionsUpdated(_sections.toList());
+      }
+      
+      print('✅ [BOTTOM SHEET] تم تحديث العرض بعد الإضافة');
+    } catch (e) {
+      print('⚠️ [BOTTOM SHEET] خطأ في تحديث العرض: $e');
+    }
+  }
+
+  // ============ باقي الدوال (بدون تغيير) ============
 
   Widget _buildManageAttributesContent() {
     return Column(
@@ -1646,105 +1871,102 @@ Widget buildManageSectionsContent() {
     value.isSelected.toggle();
   }
 
-Widget _buildFilterContent() {
-  return Column(
-    children: [
-      _buildFilterOption('نطاق السعر', Icons.attach_money),
-      _buildFilterOption('الفئة', Icons.category),
-      _buildFilterOption('الماركة', Icons.branding_watermark),
-      _buildFilterOption('التقييم', Icons.star),
-    ],
-  );
-}
-
-Widget _buildFilterOption(String title, IconData icon) {
-  return ListTile(
-    leading: Icon(icon),
-    title: Text(title),
-    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-    onTap: () {
-      print('فتح $title');
-    },
-  );
-}
-
-Widget _buildSortContent() {
-  final List<String> sortOptions = ['الأحدث', 'الأقدم', 'السعر من الأعلى', 'السعر من الأدنى'];
-  return Column(
-    children: sortOptions.map((option) {
-      return Obx(() => RadioListTile<String>(
-        title: Text(option),
-        value: option,
-        groupValue: _selectedOption.value,
-        onChanged: (value) {
-          _selectedOption.value = value!;
-        },
-      ));
-    }).toList(),
-  );
-}
-
-Widget _buildMultiSelectContent() {
-  final List<String> multiSelectOptions = ['خيار 1', 'خيار 2', 'خيار 3', 'خيار 4'];
-  return Column(
-    children: multiSelectOptions.map((option) {
-      return Obx(() => CheckboxListTile(
-        title: Text(option),
-        value: _selectedOptions.contains(option),
-        onChanged: (value) {
-          if (value == true) {
-            _selectedOptions.add(option);
-          } else {
-            _selectedOptions.remove(option);
-          }
-        },
-      ));
-    }).toList(),
-  );
-}
-
-Widget _buildSingleSelectContent() {
-  final List<String> singleSelectOptions = ['خيار أ', 'خيار ب', 'خيار ج', 'خيار د'];
-  return Column(
-    children: singleSelectOptions.map((option) {
-      return Obx(() => RadioListTile<String>(
-        title: Text(option),
-        value: option,
-        groupValue: _selectedOption.value,
-        onChanged: (value) {
-          _selectedOption.value = value!;
-        },
-      ));
-    }).toList(),
-  );
-}
-
-RxList<Section> get sectionsRx => _sections;
-
-  List<ProductAttribute> getSelectedAttributes() {
-    return _selectedAttributes.toList();
+  Widget _buildFilterContent() {
+    return Column(
+      children: [
+        _buildFilterOption('نطاق السعر', Icons.attach_money),
+        _buildFilterOption('الفئة', Icons.category),
+        _buildFilterOption('الماركة', Icons.branding_watermark),
+        _buildFilterOption('التقييم', Icons.star),
+      ],
+    );
   }
 
-  List<ProductAttribute> getAllAttributes() {
-    return _tempAttributes.toList();
+  Widget _buildFilterOption(String title, IconData icon) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () {
+        print('فتح $title');
+      },
+    );
   }
 
-  void updateAttributes(List<ProductAttribute> attributes) {
-    _tempAttributes.assignAll(attributes);
+  Widget _buildSortContent() {
+    final List<String> sortOptions = ['الأحدث', 'الأقدم', 'السعر من الأعلى', 'السعر من الأدنى'];
+    return Column(
+      children: sortOptions.map((option) {
+        return Obx(() => RadioListTile<String>(
+          title: Text(option),
+          value: option,
+          groupValue: _selectedOption.value,
+          onChanged: (value) {
+            _selectedOption.value = value!;
+          },
+        ));
+      }).toList(),
+    );
   }
 
+  Widget _buildMultiSelectContent() {
+    final List<String> multiSelectOptions = ['خيار 1', 'خيار 2', 'خيار 3', 'خيار 4'];
+    return Column(
+      children: multiSelectOptions.map((option) {
+        return Obx(() => CheckboxListTile(
+          title: Text(option),
+          value: _selectedOptions.contains(option),
+          onChanged: (value) {
+            if (value == true) {
+              _selectedOptions.add(option);
+            } else {
+              _selectedOptions.remove(option);
+            }
+          },
+        ));
+      }).toList(),
+    );
+  }
+
+  Widget _buildSingleSelectContent() {
+    final List<String> singleSelectOptions = ['خيار أ', 'خيار ب', 'خيار ج', 'خيار د'];
+    return Column(
+      children: singleSelectOptions.map((option) {
+        return Obx(() => RadioListTile<String>(
+          title: Text(option),
+          value: option,
+          groupValue: _selectedOption.value,
+          onChanged: (value) {
+            _selectedOption.value = value!;
+          },
+        ));
+      }).toList(),
+    );
+  }
+
+  // ============ Getters ============
+
+  RxList<Section> get sectionsRx => _sections;
   BottomSheetType get currentType => _currentType.value;
   List<String> get selectedOptions => _selectedOptions.toList();
   String get selectedOption => _selectedOption.value;
   Section? get selectedSection => _selectedSection.value;
   String get selectedSectionName => _selectedSectionName.value;
+  
+  // Getters للـ Rx لتمكين المشاهدة
+  Rx<Section?> get selectedSectionRx => _selectedSection;
+  RxString get selectedSectionNameRx => _selectedSectionName;
+  RxBool get isLoadingSections => _isLoadingSections;
+  RxString get sectionsErrorMessage => _sectionsErrorMessage;
+
   bool get hasSelectedSection => _selectedSection.value != null;
   List<Section> get sections => _sections.toList();
   List<Section> get filteredSections => _filteredSections.toList();
-  bool get isLoadingSections => _isLoadingSections.value;
-  String get sectionsErrorMessage => _sectionsErrorMessage.value;
   List<ProductAttribute> get tempAttributes => _tempAttributes.toList();
   List<ProductAttribute> get selectedAttributes => _selectedAttributes.toList();
+
+  // Getter للتحقق مما إذا كان هناك قسم محدد
+  bool get isSectionSelected => _selectedSection.value != null;
 
   @override
   void onClose() {
@@ -1752,6 +1974,9 @@ RxList<Section> get sectionsRx => _sections;
     _attributeSearchController.dispose();
     _newAttributeController.dispose();
     _newAttributeValueController.dispose();
+    
+    print('🔚 [BOTTOM SHEET CONTROLLER] إغلاق المتحكم');
+    
     super.onClose();
   }
 }

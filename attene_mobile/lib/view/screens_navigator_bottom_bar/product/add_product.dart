@@ -12,6 +12,10 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 
+import '../../../models/section_model.dart';
+import '../../../utlis/sheet_controller.dart';
+import 'product_controller.dart';
+
 class AddProductContent extends StatefulWidget {
   const AddProductContent({super.key});
 
@@ -23,7 +27,9 @@ class _AddProductContentState extends State<AddProductContent> {
   final isRTL = LanguageUtils.isRTL;
   final AddProductController addProductController = Get.find<AddProductController>();
   final ProductCentralController productController = Get.find<ProductCentralController>();
+  final ProductController productMainController = Get.find<ProductController>();
   final MediaLibraryController mediaController = Get.find<MediaLibraryController>();
+  final BottomSheetController bottomSheetController = Get.find<BottomSheetController>();
   
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescriptionController =
@@ -38,11 +44,17 @@ class _AddProductContentState extends State<AddProductContent> {
   
   int _characterCount = 0;
   final int _maxDescriptionLength = 140;
+  
+  // متغيرات لتتبع القسم المختار
+  Section? _selectedSection;
+  String _selectedSectionName = '';
+  String _selectedSectionDescription = '';
 
   @override
   void initState() {
     super.initState();
     _loadStoredData();
+    _loadSelectedSection();
     print('🔴 [ADD PRODUCT CONTENT INITIALIZED]');
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -82,6 +94,52 @@ class _AddProductContentState extends State<AddProductContent> {
    السعر: ${_priceController.text}
    الحالة: $_selectedCondition
 ''');
+  }
+
+  void _loadSelectedSection() {
+    // محاولة الحصول على القسم المختار من عدة مصادر
+    try {
+      // 1. من BottomSheetController
+      if (bottomSheetController.selectedSection != null) {
+        _selectedSection = bottomSheetController.selectedSection;
+        _selectedSectionName = _selectedSection!.name;
+        _selectedSectionDescription = 'منتجات خاصة بـ ${_selectedSection!.name}';
+        
+        print('✅ [SECTION] تم تحميل القسم من BottomSheet: $_selectedSectionName');
+      }
+      // 2. من ProductController
+      else if (productMainController.selectedSection != null) {
+        _selectedSection = productMainController.selectedSection;
+        _selectedSectionName = _selectedSection!.name;
+        _selectedSectionDescription = 'منتجات خاصة بـ ${_selectedSection!.name}';
+        
+        print('✅ [SECTION] تم تحميل القسم من ProductController: $_selectedSectionName');
+      }
+      // 3. من ProductCentralController
+      else if (productController.selectedSection.value != null) {
+        _selectedSection = productController.selectedSection.value;
+        _selectedSectionName = _selectedSection!.name;
+        _selectedSectionDescription = 'منتجات خاصة بـ ${_selectedSection!.name}';
+        
+        print('✅ [SECTION] تم تحميل القسم من ProductCentralController: $_selectedSectionName');
+      }
+      // 4. الافتراضي
+      else {
+        _selectedSectionName = 'الملابس والأحذية';
+        _selectedSectionDescription = 'منتجات خاصة بالملابس و متعلقاتها';
+        
+        print('⚠️ [SECTION] استخدام القسم الافتراضي: $_selectedSectionName');
+      }
+      
+      // تحديث ProductCentralController بالقسم المختار
+      if (_selectedSection != null) {
+        productController.updateSelectedSection(_selectedSection!);
+      }
+    } catch (e) {
+      print('❌ [SECTION] خطأ في تحميل القسم: $e');
+      _selectedSectionName = 'الملابس والأحذية';
+      _selectedSectionDescription = 'منتجات خاصة بالملابس و متعلقاتها';
+    }
   }
 
   @override
@@ -166,31 +224,205 @@ class _AddProductContentState extends State<AddProductContent> {
   }
 
   Widget _buildCategorySection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.primary300Alpha10,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'الملابس والأحذية',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary400,
+    return InkWell(
+      onTap: () {
+        // فتح شاشة اختيار الأقسام
+        _openSectionSelection();
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.primary300Alpha10,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _selectedSection != null ? AppColors.primary400 : Colors.grey[300]!,
+            width: _selectedSection != null ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedSectionName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: _selectedSection != null ? AppColors.primary400 : Colors.black87,
+                    ),
+                  ),
+                ),
+                if (_selectedSection != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary400.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          color: AppColors.primary400,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'محدد',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.primary400,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.grey[400],
+                  size: 16,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'منتجات خاصة بالملابس و متعلقاتها',
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              _selectedSectionDescription,
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+            
+            if (_selectedSection != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: Colors.blue,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'سيتم إضافة المنتج إلى هذا القسم',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
+    );
+  }
+
+  void _openSectionSelection() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'تغيير قسم المنتج',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Get.back(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            
+            if (_selectedSection != null)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'القسم الحالي:',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          Text(
+                            _selectedSectionName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Get.back();
+                bottomSheetController.openManageSections();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary400,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text(
+                'اختيار قسم آخر',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton(
+              onPressed: () {
+                Get.back();
+                bottomSheetController.openAddNewSection();
+              },
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text('إنشاء قسم جديد'),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 
@@ -301,7 +533,7 @@ class _AddProductContentState extends State<AddProductContent> {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 
@@ -536,188 +768,188 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-Widget _buildCategoriesSection() {
-  return Obx(() {
-    final isLoading = productController.isLoadingCategories.value;
-    final hasError = productController.categoriesError.value.isNotEmpty;
-    final categories = productController.categories;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Text(
-              'الفئات',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              '*',
-              style: TextStyle(
-                color: Colors.red[400],
+  Widget _buildCategoriesSection() {
+    return Obx(() {
+      final isLoading = productController.isLoadingCategories.value;
+      final hasError = productController.categoriesError.value.isNotEmpty;
+      final categories = productController.categories;
+      
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text(
+                'الفئات',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            ),
-            Spacer(),
-            if (hasError || (categories.isEmpty && !isLoading))
-              IconButton(
-                icon: Icon(Icons.refresh, size: 20),
-                onPressed: () => productController.reloadCategories(),
-                tooltip: 'إعادة تحميل الفئات',
+              const SizedBox(width: 4),
+              Text(
+                '*',
+                style: TextStyle(
+                  color: Colors.red[400],
+                ),
               ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        
-        if (isLoading)
-          _buildLoadingDropdown('جاري تحميل الفئات...'),
-        
-        if (!isLoading && hasError)
-          _buildErrorDropdown(productController.categoriesError.value),
-        
-        if (!isLoading && !hasError && categories.isEmpty)
-          _buildEmptyDropdown('لا توجد فئات متاحة'),
-        
-        if (!isLoading && !hasError && categories.isNotEmpty)
-          _buildCategoriesDropdown(),
-      ],
-    );
-  });
-}
+              Spacer(),
+              if (hasError || (categories.isEmpty && !isLoading))
+                IconButton(
+                  icon: Icon(Icons.refresh, size: 20),
+                  onPressed: () => productController.reloadCategories(),
+                  tooltip: 'إعادة تحميل الفئات',
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          
+          if (isLoading)
+            _buildLoadingDropdown('جاري تحميل الفئات...'),
+          
+          if (!isLoading && hasError)
+            _buildErrorDropdown(productController.categoriesError.value),
+          
+          if (!isLoading && !hasError && categories.isEmpty)
+            _buildEmptyDropdown('لا توجد فئات متاحة'),
+          
+          if (!isLoading && !hasError && categories.isNotEmpty)
+            _buildCategoriesDropdown(),
+        ],
+      );
+    });
+  }
 
-Widget _buildLoadingDropdown(String text) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey[300]!),
-      borderRadius: BorderRadius.circular(25),
-    ),
-    child: Row(
-      children: [
-        SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-        SizedBox(width: 12),
-        Text(
-          text,
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildErrorDropdown(String error) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.red[300]!),
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 20),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                error,
-                style: TextStyle(color: Colors.red[600]),
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(height: 8),
-      ElevatedButton.icon(
-        onPressed: () => productController.reloadCategories(),
-        icon: Icon(Icons.refresh),
-        label: Text('إعادة المحاولة'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _buildEmptyDropdown(String text) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey[300]!),
-      borderRadius: BorderRadius.circular(25),
-    ),
-    child: Row(
-      children: [
-        Icon(Icons.category_outlined, color: Colors.grey[500]),
-        SizedBox(width: 12),
-        Text(
-          text,
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildCategoriesDropdown() {
-  return Obx(() {
-    final categories = productController.categories;
-    
+  Widget _buildLoadingDropdown(String text) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!),
         borderRadius: BorderRadius.circular(25),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
-          isExpanded: true,
-          value: _selectedCategory.isEmpty ? null : _selectedCategory,
-          decoration: InputDecoration(
-            hintText: 'ابحث عن اسم الفئة',
-            hintStyle: const TextStyle(fontSize: 12),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            isCollapsed: true,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
           ),
-          items: categories.map((category) {
-            final categoryName = category['name'] as String? ?? 'غير معروف';
-            return DropdownMenuItem(
-              value: categoryName,
-              child: Text(
-                categoryName,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: const TextStyle(fontSize: 14),
-              ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              setState(() {
-                _selectedCategory = value;
-                final foundCategory = categories.firstWhere(
-                  (cat) => cat['name'] == value,
-                  orElse: () => {},
-                );
-                if (foundCategory.isNotEmpty) {
-                  _selectedCategoryId = foundCategory['id'] as int;
-                  productController.selectedCategoryId(_selectedCategoryId);
-                }
-              });
-              print('✅ [CATEGORY SELECTED]: $value (ID: $_selectedCategoryId)');
-            }
-          },
-        ),
+          SizedBox(width: 12),
+          Text(
+            text,
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
       ),
     );
-  });
-}
+  }
+
+  Widget _buildErrorDropdown(String error) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.red[300]!),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.red, size: 20),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  error,
+                  style: TextStyle(color: Colors.red[600]),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 8),
+        ElevatedButton.icon(
+          onPressed: () => productController.reloadCategories(),
+          icon: Icon(Icons.refresh),
+          label: Text('إعادة المحاولة'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyDropdown(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.category_outlined, color: Colors.grey[500]),
+          SizedBox(width: 12),
+          Text(
+            text,
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
+      )
+    );
+  }
+
+  Widget _buildCategoriesDropdown() {
+    return Obx(() {
+      final categories = productController.categories;
+      
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButtonFormField<String>(
+            isExpanded: true,
+            value: _selectedCategory.isEmpty ? null : _selectedCategory,
+            decoration: InputDecoration(
+              hintText: 'ابحث عن اسم الفئة',
+              hintStyle: const TextStyle(fontSize: 12),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              isCollapsed: true,
+            ),
+            items: categories.map((category) {
+              final categoryName = category['name'] as String? ?? 'غير معروف';
+              return DropdownMenuItem(
+                value: categoryName,
+                child: Text(
+                  categoryName,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  _selectedCategory = value;
+                  final foundCategory = categories.firstWhere(
+                    (cat) => cat['name'] == value,
+                    orElse: () => {},
+                  );
+                  if (foundCategory.isNotEmpty) {
+                    _selectedCategoryId = foundCategory['id'] as int;
+                    productController.selectedCategoryId(_selectedCategoryId);
+                  }
+                });
+                print('✅ [CATEGORY SELECTED]: $value (ID: $_selectedCategoryId)');
+              }
+            },
+          ),
+        ),
+      );
+    });
+  }
 
   Widget _buildProductConditionSection() {
     return Column(
@@ -832,6 +1064,19 @@ Widget _buildCategoriesDropdown() {
       );
       return false;
     }
+    
+    // التحقق من وجود قسم محدد
+    if (_selectedSection == null) {
+      Get.snackbar(
+        'تنبيه',
+        'يرجى اختيار قسم للمنتج',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      _openSectionSelection();
+      return false;
+    }
+    
     return true;
   }
 
@@ -843,12 +1088,20 @@ Widget _buildCategoriesDropdown() {
       categoryId: _selectedCategoryId,
       condition: _selectedCondition,
       media: productController.selectedMedia,
+      section: _selectedSection,
     );
     
     print('💾 [BASIC INFO SAVED TO CONTROLLER]');
+    print('📂 [SECTION] قسم المنتج: $_selectedSectionName (ID: ${_selectedSection?.id})');
     productController.printDataSummary();
     
-    Get.snackbar('نجاح', 'تم حفظ المعلومات الأساسية بنجاح', backgroundColor: Colors.green, colorText: Colors.white);
+    Get.snackbar(
+      'نجاح', 
+      'تم حفظ المعلومات الأساسية بنجاح\nالقسم: $_selectedSectionName',
+      backgroundColor: Colors.green, 
+      colorText: Colors.white,
+      duration: Duration(seconds: 3),
+    );
   }
 
   @override

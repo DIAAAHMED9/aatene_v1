@@ -9,7 +9,9 @@ import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:attene_mobile/view/related_products/related_products_controller.dart';
-import 'package:attene_mobile/view/related_products/related_products_model.dart';
+
+import '../../controller/product_controller.dart';
+import 'related_products_model.dart';
 
 class RelatedProductsScreen extends StatefulWidget {
   const RelatedProductsScreen({super.key});
@@ -20,6 +22,7 @@ class RelatedProductsScreen extends StatefulWidget {
 
 class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
   final RelatedProductsController controller = Get.put(RelatedProductsController());
+  final ProductCentralController productController = Get.find<ProductCentralController>();
 
   @override
   void initState() {
@@ -56,19 +59,27 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
   }
 
   Widget _buildContent() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(),
-          SizedBox(height: ResponsiveDimensions.h(32)),
-          _buildChooseProductsButton(),
-          SizedBox(height: ResponsiveDimensions.h(24)),
-          _buildSelectedProductsSection(),
-          SizedBox(height: ResponsiveDimensions.h(32)),
-          _buildBottomActions(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                SizedBox(height: ResponsiveDimensions.h(32)),
+                _buildSkipOption(),
+                SizedBox(height: ResponsiveDimensions.h(16)),
+                _buildChooseProductsButton(),
+                SizedBox(height: ResponsiveDimensions.h(24)),
+                _buildSelectedProductsSection(),
+              ],
+            ),
+          ),
+        ),
+        _buildBottomActions(),
+      ],
     );
   }
 
@@ -92,8 +103,65 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
             color: Colors.grey[500],
           ),
         ),
+        SizedBox(height: ResponsiveDimensions.h(8)),
+        Text(
+          'يمكنك تخطي هذه الخطوة إذا لم يكن لديك منتجات حالية',
+          style: TextStyle(
+            fontSize: ResponsiveDimensions.f(13),
+            color: Colors.orange[700],
+            fontStyle: FontStyle.italic,
+          ),
+        ),
       ],
     );
+  }
+
+  Widget _buildSkipOption() {
+    return Obx(() => Container(
+      padding: EdgeInsets.all(ResponsiveDimensions.w(12)),
+      decoration: BoxDecoration(
+        color: Colors.orange[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.orange[200]!),
+      ),
+      child: Row(
+        children: [
+          Checkbox(
+            value: productController.skipRelatedProducts.value,
+            onChanged: (value) {
+              if (value == true) {
+                _showSkipConfirmation();
+              } else {
+                productController.includeRelatedProducts();
+              }
+            },
+            activeColor: Colors.orange,
+          ),
+          SizedBox(width: ResponsiveDimensions.w(8)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'تخطي هذه الخطوة',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange[800],
+                  ),
+                ),
+                Text(
+                  'أنا أضيف منتجاً جديداً ولا أملك منتجات حالية',
+                  style: TextStyle(
+                    fontSize: ResponsiveDimensions.f(12),
+                    color: Colors.orange[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ));
   }
 
   Widget _buildChooseProductsButton() {
@@ -102,13 +170,23 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
         buttonText: 'اختر المنتجات',
         color: AppColors.primary400,
         textColor: Colors.white,
-        onTap: _showProductSelectionSheet,
+        onTap: () {
+          if (productController.skipRelatedProducts.value) {
+            _showSkipWarning();
+          } else {
+            _showProductSelectionSheet();
+          }
+        },
       ),
     );
   }
 
   Widget _buildSelectedProductsSection() {
     return Obx(() {
+      if (productController.skipRelatedProducts.value) {
+        return _buildSkippedSection();
+      }
+      
       if (controller.selectedProducts.isEmpty) {
         return _buildNoProductsSelected();
       }
@@ -128,6 +206,53 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
         ],
       );
     });
+  }
+
+  Widget _buildSkippedSection() {
+    return Container(
+      padding: EdgeInsets.all(ResponsiveDimensions.w(24)),
+      decoration: BoxDecoration(
+        color: Colors.orange[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange[200]!),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.skip_next,
+            size: ResponsiveDimensions.w(60),
+            color: Colors.orange[400],
+          ),
+          SizedBox(height: ResponsiveDimensions.h(16)),
+          Text(
+            'تم تخطي خطوة المنتجات المرتبطة',
+            style: TextStyle(
+              fontSize: ResponsiveDimensions.f(16),
+              color: Colors.orange[800],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: ResponsiveDimensions.h(8)),
+          Text(
+            'يمكنك إضافة منتجات مرتبطة لاحقاً من إعدادات المنتج',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: ResponsiveDimensions.f(14),
+              color: Colors.orange[600],
+            ),
+          ),
+          SizedBox(height: ResponsiveDimensions.h(16)),
+          AateneButton(
+            buttonText: 'إلغاء التخطي وإضافة منتجات',
+            color: Colors.orange,
+            textColor: Colors.white,
+            onTap: () {
+              productController.includeRelatedProducts();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildNoProductsSelected() {
@@ -214,8 +339,6 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
 
   Widget _buildBottomActions() {
     return Obx(() {
-      if (!controller.hasSelectedProducts) return const SizedBox();
-      
       return Container(
         padding: EdgeInsets.symmetric(
           vertical: ResponsiveDimensions.h(16),
@@ -227,32 +350,57 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
         ),
         child: Column(
           children: [
-            Text(
-              'السعر الإجمالي: ${controller.originalPrice.value.toStringAsFixed(2)} ريال',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary400,
+            if (controller.hasSelectedProducts) ...[
+              Text(
+                'السعر الإجمالي: ${controller.originalPrice.value.toStringAsFixed(2)} ريال',
+                style: TextStyle(
+                  fontSize: ResponsiveDimensions.f(16),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary400,
+                ),
               ),
-            ),
-            SizedBox(height: ResponsiveDimensions.h(16)),
+              SizedBox(height: ResponsiveDimensions.h(16)),
+              Row(
+                children: [
+                  Expanded(
+                    child: AateneButton(
+                      buttonText: 'تخفيض على المنتجات',
+                      color: AppColors.primary300,
+                      textColor: Colors.white,
+                      onTap: _showAddDiscountSheet,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: ResponsiveDimensions.h(8)),
+            ],
             Row(
               children: [
                 Expanded(
-                  child: AateneButton(
-                    buttonText: 'تخفيض على المنتجات المختارة',
-                    color: AppColors.primary300,
-                    textColor: Colors.white,
-                    onTap: _showAddDiscountSheet,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: Text('رجوع'),
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.w(12)),
                 Expanded(
-                  child: AateneButton(
-                    buttonText: 'التالي',
-                    color: AppColors.primary400,
-                    textColor: Colors.white,
-                    onTap: _showSuccessSheet,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _continueToNextStep();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: AppColors.primary400,
+                    ),
+                    child: Text(
+                      'متابعة',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
@@ -261,6 +409,66 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
         ),
       );
     });
+  }
+
+  void _showSkipConfirmation() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('تأكيد التخطي'),
+        content: Text(
+          'هل أنت متأكد من تخطي خطوة المنتجات المرتبطة؟\n\n'
+          'يمكنك إضافتها لاحقاً من إعدادات المنتج.'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () {
+              productController.skipRelatedProductsStep();
+              Get.back();
+              Get.snackbar(
+                'تم التخطي',
+                'تم تخطي خطوة المنتجات المرتبطة بنجاح',
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            },
+            child: Text('تأكيد', style: TextStyle(color: Colors.orange)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSkipWarning() {
+    Get.snackbar(
+      'تنبيه',
+      'لقد قمت بتخطي خطوة المنتجات المرتبطة. ألغِ التخطي أولاً.',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+    );
+  }
+
+  void _continueToNextStep() {
+    if (productController.skipRelatedProducts.value || controller.hasSelectedProducts) {
+      productController.nextStep();
+      Get.back();
+      Get.snackbar(
+        'نجاح',
+        'تم حفظ اختيارات المنتجات المرتبطة',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'تنبيه',
+        'يرجى اختيار منتجات أو تأكيد التخطي',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    }
   }
 
   void _showProductSelectionSheet() {
@@ -286,29 +494,8 @@ class _RelatedProductsScreenState extends State<RelatedProductsScreen> {
       enableDrag: true,
     );
   }
-
-  void _showSuccessSheet() {
-    if (controller.selectedProducts.isEmpty) {
-      Get.snackbar(
-        'تنبيه',
-        'يرجى اختيار منتجات أولاً',
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-      );
-      return;
-    }
-    
-    Get.bottomSheet(
-      SuccessBottomSheet(controller: controller),
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      enableDrag: true,
-    );
-  }
 }
+
 
 class ProductSelectionBottomSheet extends StatefulWidget {
   final RelatedProductsController controller;
