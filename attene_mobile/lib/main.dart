@@ -20,6 +20,7 @@ import 'view/Services/data_sync_service.dart' show DataSyncService;
 import 'view/advance_info/keyword_controller.dart';
 import 'view/media_library/media_library_controller.dart';
 import 'view/product_variations/product_variation_controller.dart';
+import 'view/related_products/related_products_controller.dart';
 import 'view/related_products/related_products_screen.dart';
 import 'view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 import 'view/screens_navigator_bottom_bar/product/product_controller.dart';
@@ -69,6 +70,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => KeywordController(), fenix: true);
     Get.lazyPut(() => AddProductController(), fenix: true);
     Get.lazyPut(() => MediaLibraryController(), fenix: true);
+    Get.lazyPut(()=>RelatedProductsController(), fenix: true);
     Get.lazyPut(() => ProductController(), fenix: true);
     Get.lazyPut(() => SectionController(), fenix: true);
     
