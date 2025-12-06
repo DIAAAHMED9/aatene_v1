@@ -179,33 +179,50 @@ class RelatedProductsController extends GetxController {
     return true;
   }
 
-  void addDiscount() {
-    if (!validateDiscount()) return;
+void addDiscount() {
+  if (!validateDiscount()) return;
 
-    final newDiscount = ProductDiscount(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      originalPrice: originalPrice.value,
-      discountedPrice: discountedPrice.value,
-      note: discountNote.value,
-      date: discountDate.value,
-      productCount: selectedProducts.length,
-    );
+  final newDiscount = ProductDiscount(
+    id: DateTime.now().millisecondsSinceEpoch.toString(),
+    originalPrice: originalPrice.value,
+    discountedPrice: discountedPrice.value,
+    note: discountNote.value,
+    date: discountDate.value,
+    productCount: selectedProducts.length,
+  );
 
-    discounts.add(newDiscount);
-    
-    // إعادة تعيين
-    discountedPrice.value = 0.0;
-    discountNote.value = '';
-    
-    print('✅ [RELATED] تم إضافة تخفيض جديد');
-    
-    Get.snackbar(
-      'نجاح',
-      'تم إضافة التخفيض بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
+  discounts.add(newDiscount);
+  
+  // إعادة تعيين جميع القيم
+  _resetDiscountForm();
+  
+  print('✅ [RELATED] تم إضافة تخفيض جديد');
+  
+  Get.snackbar(
+    'نجاح',
+    'تم إضافة التخفيض بنجاح',
+    backgroundColor: Colors.green,
+    colorText: Colors.white,
+  );
+}
+void clearAllData() {
+  selectedProducts.clear();
+  originalPrice.value = 0.0;
+  discountedPrice.value = 0.0;
+  discountNote.value = '';
+  discounts.clear();
+  searchQuery.value = '';
+  
+  print('🔄 [RELATED] تم مسح جميع البيانات');
+}
+// دالة جديدة لإعادة تعيين النموذج
+void _resetDiscountForm() {
+  discountedPrice.value = 0.0;
+  discountNote.value = '';
+  // لا تمسح المنتجات المختارة هنا إلا إذا أردت ذلك
+  // selectedProducts.clear();
+  // originalPrice.value = 0.0;
+}
 
   void removeDiscount(ProductDiscount discount) {
     discounts.removeWhere((d) => d.id == discount.id);

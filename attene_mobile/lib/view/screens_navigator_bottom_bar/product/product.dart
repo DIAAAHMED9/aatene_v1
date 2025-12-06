@@ -161,7 +161,7 @@ Widget _buildAllProductsView(ProductController controller, bool isRTL) {
   }
   
   if (displaySections.isEmpty) {
-    return _buildProductsListView(controller, controller.filteredProducts as List<Product>, isRTL);
+    return _buildProductsListView(controller, controller.filteredProducts , isRTL);
   }
 
   return Column(

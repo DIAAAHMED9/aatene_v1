@@ -170,8 +170,9 @@ class ProductCentralController extends GetxController {
         productDescription.isNotEmpty &&
         price.isNotEmpty &&
         selectedCategoryId > 0 &&
-        selectedCondition.isNotEmpty &&
-        selectedSection.value != null;
+        selectedCondition.isNotEmpty;
+        //  &&
+        // selectedSection.value != null;
   }
   
   Future<Map<String, dynamic>?> submitProduct() async {
@@ -196,12 +197,12 @@ class ProductCentralController extends GetxController {
    المنتجات المرتبطة: ${relatedProducts.length}
 ''');
   
-      if (selectedSection.value == null) {
-        return {
-          'success': false,
-          'message': 'يرجى اختيار قسم للمنتج'
-        };
-      }
+      // if (selectedSection.value == null) {
+      //   return {
+      //     'success': false,
+      //     'message': 'يرجى اختيار قسم للمنتج'
+      //   };
+      // }
   
       _updateVariationsData();
   
@@ -246,7 +247,8 @@ class ProductCentralController extends GetxController {
   
   Future<Map<String, dynamic>> _prepareProductData(List<Map<String, dynamic>> variationsData) async {
     final productData = <String, dynamic>{
-      'section_id': selectedSection.value!.id,
+      'section_id': 44,
+      // selectedSection.value!.id,
       'name': productName.value.trim(),
       'description': productDescription.value.trim(),
       'price': double.tryParse(price.value) ?? 0.0,
@@ -285,6 +287,8 @@ class ProductCentralController extends GetxController {
           '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}';
     } else {
       productData['crossSells'] = [];
+      productData['cross_sells_price']=0;
+      productData['cross_sells_due_date']='';
     }
   
     print('✅ [PRODUCT] بيانات المنتج النهائية: ${jsonEncode(productData)}');

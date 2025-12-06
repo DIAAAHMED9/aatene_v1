@@ -7,6 +7,7 @@ import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 
+import '../../../models/product_model.dart';
 import '../../../my_app/my_app_controller.dart';
 import '../../Services/data_lnitializer_service.dart';
 import '../../Services/unified_loading_screen.dart';
