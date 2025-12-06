@@ -346,9 +346,11 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                           if (states.contains(
                                             MaterialState.selected,
                                           )) {
-                                            return AppColors.primary400;
+                                            return AppColors
+                                                .primary400;
                                           }
-                                          return Colors.white;
+                                          return Colors
+                                              .white;
                                         }),
                                     shape: RoundedRectangleBorder(
                                       borderRadius:
@@ -682,46 +684,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Text("تقييمات ومراجعات"),
                         ],
                       ),
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            width: double.infinity,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.neutral400.withOpacity(0.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text('4.5',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 35),),
-                                  Spacer(),
-
-                                  Column(
-                                    spacing: 3,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Icon(Icons.star_purple500_sharp, color: Colors.orange,),
-                                      Text("بناءً على 2,372 مراجعة")
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                      children: [],
                     ),
                     ExpansionTile(
                       maintainState: true,
