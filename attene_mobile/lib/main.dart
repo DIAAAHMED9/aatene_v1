@@ -16,6 +16,7 @@ import 'utlis/responsive/responsive_service.dart';
 import 'utlis/sheet_controller.dart';
 import 'view/Control_Panal_Vendor/controler_vindor.dart';
 import 'view/Services/data_lnitializer_service.dart';
+import 'view/Services/data_sync_service.dart' show DataSyncService;
 import 'view/advance_info/keyword_controller.dart';
 import 'view/media_library/media_library_controller.dart';
 import 'view/product_variations/product_variation_controller.dart';
@@ -61,6 +62,7 @@ class AppBindings extends Bindings {
     // 5. المتحكمات الأخرى
     Get.lazyPut(() => BottomSheetController(), fenix: true);
     Get.lazyPut(() => CreateStoreController(), fenix: true);
+      Get.lazyPut(()=> DataSyncService(), fenix: true);
     Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
     Get.lazyPut(() => ProductCentralController(), fenix: true);
     Get.lazyPut(() => ProductVariationController(), fenix: true);
@@ -114,14 +116,11 @@ class MyApp extends StatelessWidget {
 }
 
 void main() async {
-  // 1. تهيئة Flutter binding
   WidgetsFlutterBinding.ensureInitialized();
   
-  // 2. تهيئة التخزين المحلي أولاً
   await GetStorage.init();
   print('✅ [MAIN] تم تهيئة GetStorage بنجاح');
   Get.put(AppLifecycleManager());
 
-  // 3. تشغيل التطبيق
   runApp(const MyApp());
 }

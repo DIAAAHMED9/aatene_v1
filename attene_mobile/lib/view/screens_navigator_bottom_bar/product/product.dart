@@ -146,7 +146,7 @@ Widget _buildTabContent(TabData tab, ProductController controller, bool isRTL) {
   if (tabIndex == 0) {
     return _buildAllProductsView(controller, isRTL);
   } else {
-    return _buildProductsListView(controller, products as List<Product>, isRTL, sectionName: tab.viewName);
+    return _buildProductsListView(controller, products, isRTL, sectionName: tab.viewName);
   }
 }
 
