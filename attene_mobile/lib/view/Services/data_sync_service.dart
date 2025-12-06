@@ -52,20 +52,20 @@ class DataSyncService extends GetxService {
       // تحويل البيانات إلى كائنات Section
       final sections = sectionsData.map((section) => Section.fromJson(section)).toList();
       
-      // إشعار BottomSheetController
-      if (Get.isRegistered<BottomSheetController>()) {
-        final bottomSheetController = Get.find<BottomSheetController>();
-        bottomSheetController.onSectionsUpdated(sections);
+      // // إشعار BottomSheetController
+      // if (Get.isRegistered<BottomSheetController>()) {
+      //   final bottomSheetController = Get.find<BottomSheetController>();
+      //   bottomSheetController.onSectionsUpdated(sections);
         
-        // تحديث مباشر للمراقبين
-        bottomSheetController.sectionsRx.assignAll(sections);
-      }
+      //   // تحديث مباشر للمراقبين
+      //   bottomSheetController.sectionsRx.assignAll(sections);
+      // }
       
       // إشعار ProductController باستخدام الدالة الصحيحة
-      if (Get.isRegistered<ProductController>()) {
-        final productController = Get.find<ProductController>();
-        productController.onSectionsUpdated(sections);
-      }
+      // if (Get.isRegistered<ProductController>()) {
+      //   final productController = Get.find<ProductController>();
+      //   productController.onSectionsUpdated(sections);
+      // }
       
       print('📢 [SYNC] تم إشعار المتحكمات بـ ${sections.length} قسم');
     } catch (e) {

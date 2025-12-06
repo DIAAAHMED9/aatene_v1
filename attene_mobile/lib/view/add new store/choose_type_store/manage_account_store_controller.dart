@@ -1,227 +1,154 @@
-// lib/view/manage_account_store/manage_account_store_controller.dart
+import 'dart:convert';
+import 'package:attene_mobile/api/api_request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:attene_mobile/api/api_request.dart';
+import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/models/store_model.dart';
+import 'package:attene_mobile/view/add%20new%20store/choose_type_store/type_store.dart';
+import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
+import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
+import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
-class ManageAccountStoreController extends GetxController {
+class ManageAccountStoreController extends GetxController with GetTickerProviderStateMixin {
   final MyAppController myAppController = Get.find<MyAppController>();
+  final DataInitializerService dataService = Get.find<DataInitializerService>();
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxList<Store> stores = <Store>[].obs;
+  final TextEditingController searchController = TextEditingController();
+  final RxString searchQuery = ''.obs;
   
-  final RxList<Store> _stores = <Store>[].obs;
-  final RxBool _isLoading = false.obs;
-  final RxString _errorMessage = ''.obs;
-  final RxString _searchQuery = ''.obs;
-  late TextEditingController _searchController;
+  late TabController tabController;
   
-  // المتجر المحدد
-  final Rx<Store?> _selectedStore = Rx<Store?>(null);
-  final RxBool _isControllerInitialized = false.obs;
+  final List<TabData> tabs = [
+    TabData(label: 'جميع المتاجر', viewName: 'all_stores'),
+    TabData(label: 'المتاجر النشطة', viewName: 'active_stores'),
+    TabData(label: 'المتاجر المعلقة', viewName: 'pending_stores'),
+  ];
 
   @override
   void onInit() {
+    tabController = TabController(length: tabs.length, vsync: this);
     super.onInit();
-    print('🔄 [ManageAccountStoreController] تهيئة المتحكم');
-    
-    // تأخير تهيئة المتحكمات
-    Future.delayed(Duration.zero, () {
-      _initializeController();
-    });
-  }
-
-  void _initializeController() {
-    if (_isControllerInitialized.value) return;
-    
-    _searchController = TextEditingController();
-    _searchController.addListener(() {
-      _searchQuery.value = _searchController.text;
-    });
-    
-    // تحميل المتاجر عند بدء التطبيق
-    if (myAppController.isLoggedIn.value) {
-      loadStores();
-    } else {
-      _errorMessage.value = 'يجب تسجيل الدخول أولاً';
-    }
-    
-    // الاستماع لتغير حالة تسجيل الدخول
-    ever(myAppController.isLoggedIn, (bool isLoggedIn) {
-      if (isLoggedIn && !_isLoading.value) {
-        loadStores();
-      } else if (!isLoggedIn) {
-        clearStores();
-      }
-    });
-    
-    _isControllerInitialized.value = true;
-    print('✅ [ManageAccountStoreController] تم تهيئة المتحكم بنجاح');
+    loadStores();
   }
 
   @override
   void onClose() {
-    print('🔚 [ManageAccountStoreController] إغلاق المتحكم');
-    _cleanupController();
+    tabController.dispose();
     super.onClose();
   }
+Future<void> loadStores() async {
+  return UnifiedLoadingScreen.showWithFuture<void>(
+    _performLoadStores(),
+    message: 'جاري تحميل المتاجر...',
+  );
+}
 
-  void _cleanupController() {
-    if (_isControllerInitialized.value) {
-      // فقط نوقف الـlistener ولا نحذف الـcontroller
-      // حتى لا يحدث خطأ "used after being disposed"
-      try {
-        if (_searchController.hasListeners) {
-          _searchController.removeListener(() {});
-        }
-      } catch (e) {
-        print('⚠️ [ManageAccountStoreController] خطأ في تنظيف المتحكم: $e');
-      }
-    }
-  }
-
-  // ==================== Getters ====================
-  
-  List<Store> get stores => _stores;
-  bool get isLoading => _isLoading.value;
-  String get errorMessage => _errorMessage.value;
-  String get searchQuery => _searchQuery.value;
-  TextEditingController get searchController => _searchController;
-  
-  // إضافة: Getters للمتجر المحدد
-  Store? get selectedStore => _selectedStore.value;
-  bool get hasSelectedStore => _selectedStore.value != null;
-  bool get isControllerInitialized => _isControllerInitialized.value;
-
-  // ==================== وظائف المتاجر ====================
-  
-  Future<void> loadStores() async {
-    if (!myAppController.isLoggedIn.value) {
-      _errorMessage.value = 'يجب تسجيل الدخول أولاً';
-      return;
+Future<void> _performLoadStores() async {
+  try {
+    isLoading.value = true;
+    errorMessage.value = '';
+    
+    // محاولة استخدام البيانات المخزنة محليًا أولاً
+    final cachedStores = dataService.getStores();
+    if (cachedStores.isNotEmpty) {
+      // تحويل البيانات المخزنة إلى كائنات Store
+      stores.assignAll(cachedStores.map((storeData) => Store.fromJson(storeData)).toList());
     }
     
-    if (_isLoading.value) {
-      print('⏳ [ManageAccountStoreController] التحميل قيد التنفيذ بالفعل');
-      return;
-    }
-    
-    _isLoading.value = true;
-    _errorMessage.value = '';
-    
-    try {
-      print('🔄 [ManageAccountStoreController] تحميل المتاجر...');
+    // ثم جلب التحديثات من الخادم
+    final response = await ApiHelper.get(
+      path: '/merchants/stores',
+      queryParameters: {'orderDir': 'asc'},
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+
+    if (response != null && response['status'] == true) {
+      final List<dynamic> data = response['data'];
+      // تحديث القائمة بالبيانات الجديدة
+      stores.assignAll(data.map((storeData) => Store.fromJson(storeData)).toList());
       
-      final response = await ApiHelper.get(
-        path: '/merchants/stores',
-        queryParameters: {'orderDir': 'asc'},
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-      
-      if (response != null && response['status'] == true) {
-        final List<dynamic> data = response['data'] ?? [];
-        _stores.assignAll(data.map((store) => Store.fromJson(store)).toList());
-        
-        print('✅ [ManageAccountStoreController] تم تحميل ${_stores.length} متجر');
-        
-        // عند تحميل المتاجر لأول مرة، لا يتم تحديد أي متجر تلقائيا
-        if (_stores.isNotEmpty) {
-          print('ℹ️ [ManageAccountStoreController] يرجى اختيار متجر من القائمة');
-        }
-      } else {
-        _errorMessage.value = response?['message'] ?? 'فشل في تحميل المتاجر';
-        print('❌ [ManageAccountStoreController] فشل في تحميل المتاجر: ${_errorMessage.value}');
-      }
-    } catch (e) {
-      _errorMessage.value = 'خطأ في تحميل المتاجر: ${e.toString()}';
-      print('❌ [ManageAccountStoreController] خطأ في تحميل المتاجر: $e');
-    } finally {
-      _isLoading.value = false;
-    }
-  }
-  
-  void clearStores() {
-    _stores.clear();
-    _selectedStore.value = null;
-    print('🗑️ [ManageAccountStoreController] تم مسح قائمة المتاجر');
-  }
-  
-  // ==================== وظائف اختيار المتجر ====================
-  
-  void selectStore(Store store) {
-    if (_selectedStore.value?.id == store.id) {
-      // إذا تم الضغط على نفس المتجر، قم بإلغاء التحديد
-      _selectedStore.value = null;
-      myAppController.updateSelectedStore(0);
-      print('🔓 [ManageAccountStoreController] إلغاء تحديد المتجر: ${store.name}');
-      
-      Get.snackbar(
-        'تم إلغاء التحديد',
-        'تم إلغاء تحديد متجر ${store.name}',
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
+      // تحديث التخزين المحلي
+      await dataService.refreshStores();
     } else {
-      // تحديد المتجر الجديد
-      _selectedStore.value = store;
-      myAppController.updateSelectedStore(int.parse(store.id));
-      
-      print('✅ [ManageAccountStoreController] تحديد المتجر: ${store.name} (ID: ${store.id})');
-      
-      // إشعار المستخدم
-      Get.snackbar(
-        'تم التحديد',
-        'تم اختيار متجر ${store.name}',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
+      errorMessage.value = response?['message'] ?? 'فشل تحميل المتاجر';
     }
+  } catch (e) {
+    errorMessage.value = 'حدث خطأ في تحميل المتاجر: $e';
+  } finally {
+    isLoading.value = false;
   }
-  
-  bool isStoreSelected(Store store) {
-    return _selectedStore.value?.id == store.id;
-  }
-  
-  // ==================== وظائف إدارة المتاجر ====================
-  
+}
+
+
+
   void addNewStore() {
-    print('➕ [ManageAccountStoreController] الذهاب لإضافة متجر جديد');
-    Get.toNamed('/add_new_store');
+    Get.to(() => TypeStore());
   }
-  
+
   void editStore(Store store) {
-    print('✏️ [ManageAccountStoreController] تعديل متجر: ${store.name}');
-    Get.toNamed('/edit_store', arguments: {'store': store.toJson()});
+    Get.to(() => AddNewStore(), arguments: {'storeId': int.parse(store.id)});
   }
-  
-  Future<void> deleteStore(Store store) async {
-    final confirm = await _showDeleteConfirmation(store);
-    if (!confirm) return;
-    
+
+  void deleteStore(Store store) {
+    Get.dialog(
+      AlertDialog(
+        title: Text('حذف المتجر'),
+        content: Text('هل أنت متأكد من حذف المتجر "${store.name}"؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              await _performDeleteStore(store);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('حذف'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _performDeleteStore(Store store) async {
+    return UnifiedLoadingScreen.showWithFuture<void>(
+      _performDeleteStoreInternal(store),
+      message: 'جاري حذف المتجر...',
+    );
+  }
+
+  Future<void> _performDeleteStoreInternal(Store store) async {
     try {
-      final response = await ApiHelper.deleteStore(int.parse(store.id));
+      final storeId = int.tryParse(store.id);
+      if (storeId == null) {
+        Get.snackbar('خطأ', 'معرف المتجر غير صالح');
+        return;
+      }
+      
+      final response = await ApiHelper.deleteStore(storeId);
+      
       if (response != null && response['status'] == true) {
-        _stores.remove(store);
+        stores.removeWhere((s) => s.id == store.id);
         
-        // إذا كان المتجر المحذوف هو المحدد، نزيل التحديد
-        if (_selectedStore.value?.id == store.id) {
-          _selectedStore.value = null;
-          myAppController.updateSelectedStore(0);
-        }
+        // تحديث التخزين المحلي
+        await dataService.deleteStore(storeId);
         
         Get.snackbar(
           'تم الحذف',
-          'تم حذف المتجر ${store.name} بنجاح',
+          'تم حذف المتجر بنجاح',
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        
-        print('🗑️ [ManageAccountStoreController] تم حذف المتجر: ${store.name}');
       } else {
         Get.snackbar(
           'خطأ',
-          response?['message'] ?? 'فشل في حذف المتجر',
+          response?['message'] ?? 'فشل حذف المتجر',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -236,26 +163,29 @@ class ManageAccountStoreController extends GetxController {
     }
   }
   
-  Future<bool> _showDeleteConfirmation(Store store) async {
-    return await Get.dialog<bool>(
-      AlertDialog(
-        title: const Text('حذف المتجر'),
-        content: Text('هل أنت متأكد من حذف المتجر "${store.name}"؟'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(result: false),
-            child: const Text('إلغاء'),
-          ),
-          TextButton(
-            onPressed: () => Get.back(result: true),
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    ) ?? false;
+  void navigateBack() {
+    Get.back();
   }
-  
-  void onSearchChanged(String query) {
-    _searchQuery.value = query;
+
+  void onSearchChanged(String value) {
+    searchQuery.value = value;
+  }
+
+  void onFilterPressed() {
+    Get.snackbar(
+      'تصفية',
+      'سيتم فتح شاشة التصفية',
+      backgroundColor: Colors.blue,
+      colorText: Colors.white,
+    );
+  }
+
+  void onSortPressed() {
+    Get.snackbar(
+      'ترتيب',
+      'سيتم فتح شاشة الترتيب',
+      backgroundColor: Colors.blue,
+      colorText: Colors.white,
+    );
   }
 }

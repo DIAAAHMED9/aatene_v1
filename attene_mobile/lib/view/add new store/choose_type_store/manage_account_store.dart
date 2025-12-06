@@ -21,17 +21,17 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
   late ManageAccountStoreController controller;
   late MyAppController myAppController;
   late DataInitializerService dataService;
-
+  
   @override
   void initState() {
     super.initState();
     print('🔄 [ManageAccountStore] تهيئة الشاشة');
-
+    
     // الحصول على المتحكمات
     controller = Get.put(ManageAccountStoreController(), permanent: true);
     myAppController = Get.find<MyAppController>();
     dataService = Get.find<DataInitializerService>();
-
+    
     // عند بدء الشاشة، تأكد من عدم وجود متجر محدد تلقائياً
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.stores.isNotEmpty && controller.selectedStore == null) {
@@ -64,7 +64,7 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
-
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -216,7 +216,7 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
               raduis: 30,
               onTap: controller.addNewStore,
             ),
-            const SizedBox(height: 500),
+            const SizedBox(height: 120),
           ],
         ),
       ),
@@ -230,127 +230,119 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
         if (controller.searchQuery.isNotEmpty) {
           final query = controller.searchQuery.toLowerCase();
           return store.name.toLowerCase().contains(query) ||
-              store.address.toLowerCase().contains(query) ||
-              (store.email?.toLowerCase() ?? '').contains(query);
+                 store.address.toLowerCase().contains(query) ||
+                 (store.email?.toLowerCase() ?? '').contains(query);
         }
         return true;
       }).toList();
 
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: TextField(
-                  controller: controller.searchController,
-                  onChanged: controller.onSearchChanged,
-                  decoration: InputDecoration(
-                    hintText: 'ابحث عن متجر...',
-                    hintStyle: TextStyle(color: Colors.grey[600]),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 15,
-                    ),
-                  ),
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: TextField(
+                controller: controller.searchController,
+                onChanged: controller.onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'ابحث عن متجر...',
+                  hintStyle: TextStyle(color: Colors.grey[600]),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 ),
               ),
             ),
-
-            // إضافة رسالة تذكير باختيار المتجر إذا لم يكن هناك متجر محدد
-            if (controller.selectedStore == null && filteredStores.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline, color: Colors.orange),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'يرجى اختيار متجر من القائمة أدناه للبدء',
-                        style: TextStyle(
-                          color: Colors.orange[800],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
+          ),
+          
+          // إضافة رسالة تذكير باختيار المتجر إذا لم يكن هناك متجر محدد
+          if (controller.selectedStore == null && filteredStores.isNotEmpty)
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-              padding: const EdgeInsets.all(16.0),
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0XFFF0F7FF),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.orange[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  const Icon(Icons.info_outline, color: Colors.orange),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'الحساب/المتجر',
+                      'يرجى اختيار متجر من القائمة أدناه للبدء',
                       style: TextStyle(
-                        color: const Color(0xFF395A7D),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                        color: Colors.orange[800],
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  Text(
-                    'الإجراءات',
+                ],
+              ),
+            ),
+          
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: const Color(0XFFF0F7FF),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'الحساب/المتجر',
                     style: TextStyle(
                       color: const Color(0xFF395A7D),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
                 ),
-                itemCount: filteredStores.length,
-                itemBuilder: (context, index) {
-                  final store = filteredStores[index];
-                  return _buildStoreItem(store);
-                },
-              ),
+                Text(
+                  'الإجراءات',
+                  style: TextStyle(
+                    color: const Color(0xFF395A7D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: AateneButton(
-                buttonText: 'إضافة متجر جديد',
-                textColor: Colors.white,
-                color: AppColors.primary400,
-                borderColor: AppColors.primary400,
-                raduis: 10,
-                onTap: controller.addNewStore,
-              ),
+          ),
+          
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              itemCount: filteredStores.length,
+              itemBuilder: (context, index) {
+                final store = filteredStores[index];
+                return _buildStoreItem(store);
+              },
             ),
-            const SizedBox(height: 50),
-          ],
-        ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: AateneButton(
+              buttonText: 'إضافة متجر جديد',
+              textColor: Colors.white,
+              color: AppColors.primary400,
+              borderColor: AppColors.primary400,
+              raduis: 10,
+              onTap: controller.addNewStore,
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
       );
     });
   }
@@ -359,7 +351,7 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
     // استخدام Obx للمراقبة التلقائية للتحديد
     return Obx(() {
       final bool isSelected = controller.isStoreSelected(store);
-
+      
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: GestureDetector(
@@ -397,11 +389,11 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
                       size: 24,
                     ),
                   ),
-
+                
                 _buildStoreLogo(store, isSelected),
-
+                
                 const SizedBox(width: 16),
-
+                
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -415,21 +407,16 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: isSelected
-                                    ? AppColors.primary500
-                                    : Colors.black87,
+                                color: isSelected ? AppColors.primary500 : Colors.black87,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-
+                          
                           // إظهار ID المتجر
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(6),
@@ -445,17 +432,14 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
                           ),
                         ],
                       ),
-
+                      
                       const SizedBox(height: 6),
-
+                      
                       Row(
                         children: [
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF7F4F8),
                                 borderRadius: BorderRadius.circular(25),
@@ -492,18 +476,13 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
                               ),
                             ),
                           ),
-
+                          
                           const SizedBox(width: 8),
-
+                          
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: _getStatusColor(
-                                store.status,
-                              ).withOpacity(0.1),
+                              color: _getStatusColor(store.status).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -534,9 +513,9 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(width: 16),
-
+                
                 // أزرار التعديل والحذف
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -557,9 +536,9 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
                         ),
                       ),
                     ),
-
+                    
                     const SizedBox(width: 12),
-
+                    
                     GestureDetector(
                       onTap: () => controller.deleteStore(store),
                       child: Container(
@@ -603,15 +582,13 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
           child: Image.network(
             store.logoUrl!,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) =>
-                _buildDefaultLogo(isSelected),
+            errorBuilder: (context, error, stackTrace) => _buildDefaultLogo(isSelected),
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) return child;
               return Center(
                 child: CircularProgressIndicator(
                   value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
+                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                       : null,
                 ),
               );
@@ -620,7 +597,7 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
         ),
       );
     }
-
+    
     return _buildDefaultLogo(isSelected);
   }
 
@@ -681,9 +658,13 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.login_rounded, size: 80, color: Colors.grey[400]),
+            Icon(
+              Icons.login_rounded,
+              size: 80,
+              color: Colors.grey[400],
+            ),
             const SizedBox(height: 24),
-            Text(
+             Text(
               'يجب تسجيل الدخول',
               style: TextStyle(
                 fontSize: 24,
@@ -692,9 +673,12 @@ class _ManageAccountStoreState extends State<ManageAccountStore> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
+             Text(
               'يرجى تسجيل الدخول للوصول إلى إدارة الحسابات والمتاجر',
-              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[500],
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

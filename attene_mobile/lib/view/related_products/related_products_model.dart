@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:attene_mobile/models/product_model.dart';
 
 class ProductAttribute {
   final String id;
@@ -44,9 +45,7 @@ class ProductAttribute {
     );
   }
 
-  String get displayName {
-    return name;
-  }
+  String get displayName => name;
 
   bool get hasSelectedValues {
     return values.any((value) => value.isSelected.value);
@@ -103,6 +102,7 @@ class AttributeValue {
     }
   }
 }
+
 class ProductDiscount {
   final String id;
   final double originalPrice;
@@ -110,6 +110,7 @@ class ProductDiscount {
   final String note;
   final DateTime date;
   final int productCount;
+  final List<Product>? products;
 
   ProductDiscount({
     required this.id,
@@ -118,12 +119,41 @@ class ProductDiscount {
     required this.note,
     required this.date,
     required this.productCount,
+    this.products,
   });
 
   double get discountAmount => originalPrice - discountedPrice;
   
-  double get discountPercentage => originalPrice > 0 ? (discountAmount / originalPrice) * 100 : 0;
+  double get discountPercentage {
+    if (originalPrice <= 0) return 0;
+    return (discountAmount / originalPrice) * 100;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'originalPrice': originalPrice,
+      'discountedPrice': discountedPrice,
+      'note': note,
+      'date': date.toIso8601String(),
+      'productCount': productCount,
+      'discountAmount': discountAmount,
+      'discountPercentage': discountPercentage,
+    };
+  }
+
+  factory ProductDiscount.fromJson(Map<String, dynamic> json) {
+    return ProductDiscount(
+      id: json['id'] ?? '',
+      originalPrice: (json['originalPrice'] ?? 0).toDouble(),
+      discountedPrice: (json['discountedPrice'] ?? 0).toDouble(),
+      note: json['note'] ?? '',
+      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
+      productCount: json['productCount'] ?? 0,
+    );
+  }
 }
+
 class ProductVariation {
   final String id;
   final RxMap<String, String> attributes;
@@ -167,4 +197,28 @@ class ProductVariation {
   bool get hasImages => images.isNotEmpty;
 
   void toggleActive() => isActive.toggle();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'attributes': Map<String, String>.from(attributes),
+      'price': price.value,
+      'stock': stock.value,
+      'sku': sku.value,
+      'isActive': isActive.value,
+      'images': List<String>.from(images),
+    };
+  }
+
+  factory ProductVariation.fromJson(Map<String, dynamic> json) {
+    return ProductVariation(
+      id: json['id'] ?? '',
+      attributes: Map<String, String>.from(json['attributes'] ?? {}),
+      price: (json['price'] ?? 0).toDouble(),
+      stock: json['stock'] ?? 0,
+      sku: json['sku'] ?? '',
+      isActive: json['isActive'] ?? false,
+      images: List<String>.from(json['images'] ?? []),
+    );
+  }
 }

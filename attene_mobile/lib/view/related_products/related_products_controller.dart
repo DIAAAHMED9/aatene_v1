@@ -8,32 +8,38 @@ import '../../controller/product_controller.dart';
 
 class RelatedProductsController extends GetxController {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
-  final ProductCentralController productController = Get.find<ProductCentralController>();
   
+  // القوائم القابلة للملاحظة
   final RxList<Product> allProducts = <Product>[].obs;
   final RxList<Product> selectedProducts = <Product>[].obs;
   final RxList<ProductDiscount> discounts = <ProductDiscount>[].obs;
   final RxString searchQuery = ''.obs;
-
+  
+  // المتغيرات القابلة للملاحظة
   final RxDouble originalPrice = 0.0.obs;
   final RxDouble discountedPrice = 0.0.obs;
   final RxString discountNote = ''.obs;
   final Rx<DateTime> discountDate = DateTime.now().obs;
+  
+  // أدوات التحكم
   final TextEditingController dateController = TextEditingController();
+  
+  // الحالة المحفوظة
+  final RxList<Product> savedSelectedProducts = <Product>[].obs;
+  final RxDouble savedOriginalPrice = 0.0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _initializeDateController();
-    _loadProducts();
-    _loadSelectedProductsFromCentral();
+    initializeDateController();
+    loadProducts();
   }
 
-  void _initializeDateController() {
-    dateController.text = _formatDateTime(DateTime.now());
+  void initializeDateController() {
+    dateController.text = formatDateTime(DateTime.now());
   }
 
-  String _formatDateTime(DateTime date) {
+  String formatDateTime(DateTime date) {
     final months = [
       'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
       'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
@@ -46,30 +52,11 @@ class RelatedProductsController extends GetxController {
     return '${months[date.month - 1]} ${date.day}, ${date.year} $displayHour:${date.minute.toString().padLeft(2, '0')} $period';
   }
 
-  void _loadSelectedProductsFromCentral() {
+  void loadProducts() {
     try {
-      final relatedProducts = productController.relatedProducts;
-      if (relatedProducts.isNotEmpty) {
-        // تحويل المنتجات المختارة إلى قائمة Product
-        final products = relatedProducts.map((productData) {
-          return Product.fromJson(productData);
-        }).toList();
-        
-        selectedProducts.assignAll(products);
-        print('✅ [RELATED] تم تحميل ${selectedProducts.length} منتج من Central Controller');
-      }
-    } catch (e) {
-      print('❌ [RELATED] خطأ في تحميل المنتجات المختارة: $e');
-    }
-  }
-
-  void _loadProducts() {
-    try {
-      // جلب المنتجات من DataInitializerService
       final productsData = dataService.getProducts();
       print('📦 [RELATED] جاري تحميل المنتجات: ${productsData.length} منتج');
       
-      // تحويل البيانات إلى نموذج Product
       final loadedProducts = productsData.map((productData) {
         try {
           return Product.fromJson(productData);
@@ -90,27 +77,32 @@ class RelatedProductsController extends GetxController {
       print('✅ [RELATED] تم تحميل ${allProducts.length} منتج');
     } catch (e) {
       print('❌ [RELATED] خطأ في تحميل المنتجات: $e');
+      Get.snackbar(
+        'خطأ',
+        'فشل في تحميل المنتجات',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
   void refreshProducts() {
-    _loadProducts();
+    loadProducts();
   }
 
   List<Product> get filteredProducts {
     if (searchQuery.isEmpty) return allProducts;
     
+    final searchLower = searchQuery.value.toLowerCase();
     return allProducts.where((product) {
-      final searchLower = searchQuery.value.toLowerCase();
       final nameMatch = product.name.toLowerCase().contains(searchLower);
       final skuMatch = product.sku?.toLowerCase().contains(searchLower) ?? false;
-      
       return nameMatch || skuMatch;
     }).toList();
   }
 
   void toggleProductSelection(Product product) {
-    if (!selectedProducts.any((p) => p.id == product.id)) {
+    if (!isProductSelected(product)) {
       selectedProducts.add(product);
       print('✅ [RELATED] تم إضافة المنتج: ${product.name}');
     } else {
@@ -118,8 +110,7 @@ class RelatedProductsController extends GetxController {
       print('🗑️ [RELATED] تم إزالة المنتج: ${product.name}');
     }
     
-    _calculateTotalPrice();
-    _saveToCentralController();
+    calculateTotalPrice();
   }
 
   bool isProductSelected(Product product) {
@@ -128,8 +119,7 @@ class RelatedProductsController extends GetxController {
 
   void removeSelectedProduct(Product product) {
     selectedProducts.removeWhere((p) => p.id == product.id);
-    _calculateTotalPrice();
-    _saveToCentralController();
+    calculateTotalPrice();
     print('🗑️ [RELATED] تم حذف المنتج المختار: ${product.name}');
   }
 
@@ -138,37 +128,12 @@ class RelatedProductsController extends GetxController {
     originalPrice.value = 0.0;
     discountedPrice.value = 0.0;
     discountNote.value = '';
-    _saveToCentralController();
+    dateController.text = formatDateTime(DateTime.now());
+    discountDate.value = DateTime.now();
     print('🔄 [RELATED] تم مسح جميع الاختيارات');
   }
 
-  void _saveToCentralController() {
-    try {
-      // تحويل المنتجات المختارة إلى قائمة Map
-      final productsData = selectedProducts.map((product) {
-        return product.toJson();
-      }).toList();
-      
-      // تحديث الـ ProductCentralController
-      productController.addRelatedProducts(productsData);
-      
-    } catch (e) {
-      print('❌ [RELATED] خطأ في حفظ البيانات إلى Central Controller: $e');
-    }
-  }
-
-  void skipAndContinue() {
-    productController.skipRelatedProductsStep();
-    Get.back();
-    Get.snackbar(
-      'تم التخطي',
-      'تم تخطي خطوة المنتجات المرتبطة بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
-
-  void _calculateTotalPrice() {
+  void calculateTotalPrice() {
     double total = 0.0;
     
     for (final product in selectedProducts) {
@@ -178,7 +143,7 @@ class RelatedProductsController extends GetxController {
         final price = double.tryParse(cleanPrice) ?? 0.0;
         total += price;
       } catch (e) {
-        print('⚠️ [RELATED] خطأ في حساب سعر المنتج: ${e}');
+        print('⚠️ [RELATED] خطأ في حساب سعر المنتج: $e');
       }
     }
     
@@ -193,7 +158,7 @@ class RelatedProductsController extends GetxController {
 
   void setDiscountDate(DateTime date) {
     discountDate.value = date;
-    dateController.text = _formatDateTime(date);
+    dateController.text = formatDateTime(date);
   }
 
   bool validateDiscount() {
@@ -230,8 +195,33 @@ class RelatedProductsController extends GetxController {
     return true;
   }
 
+  void saveCurrentState() {
+    savedSelectedProducts.assignAll(selectedProducts);
+    savedOriginalPrice.value = originalPrice.value;
+    print('💾 [RELATED] تم حفظ حالة المنتجات المختارة');
+  }
+
+  void restoreSavedState() {
+    selectedProducts.assignAll(savedSelectedProducts);
+    originalPrice.value = savedOriginalPrice.value;
+    print('↩️ [RELATED] تم استعادة حالة المنتجات المختارة');
+  }
+
   void addDiscount() {
     if (!validateDiscount()) return;
+
+    // حفظ نسخة من المنتجات المختارة
+    final productCopy = selectedProducts.map((p) => Product(
+      id: p.id,
+      sku: p.sku,
+      name: p.name,
+      price: p.price,
+      shown: p.shown,
+      favoritesCount: p.favoritesCount,
+      messagesCount: p.messagesCount,
+      coverUrl: p.coverUrl,
+      // productCount: p.productCount,
+    )).toList();
 
     final newDiscount = ProductDiscount(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -240,15 +230,15 @@ class RelatedProductsController extends GetxController {
       note: discountNote.value,
       date: discountDate.value,
       productCount: selectedProducts.length,
+      products: productCopy,
     );
 
     discounts.add(newDiscount);
     
-    // إعادة تعيين
-    discountedPrice.value = 0.0;
-    discountNote.value = '';
+    clearDiscountFields();
     
     print('✅ [RELATED] تم إضافة تخفيض جديد');
+    print('📊 [RELATED] المنتجات المرفقة: ${selectedProducts.length} منتج');
     
     Get.snackbar(
       'نجاح',
@@ -269,10 +259,18 @@ class RelatedProductsController extends GetxController {
     );
   }
 
+  List<Product> getDiscountProducts(ProductDiscount discount) {
+    if (discount.products != null && discount.products!.isNotEmpty) {
+      return discount.products!;
+    }
+    return selectedProducts.toList();
+  }
+
   double get totalSelectedPrice {
     return selectedProducts.fold(0.0, (sum, product) {
-      final price = double.tryParse(product.price?.replaceAll(RegExp(r'[^0-9.]'), '') ?? '0') ?? 0.0;
-      return sum + price;
+      final priceStr = product.price ?? '0';
+      final cleanPrice = priceStr.replaceAll(RegExp(r'[^0-9.]'), '');
+      return sum + (double.tryParse(cleanPrice) ?? 0.0);
     });
   }
 
@@ -281,6 +279,86 @@ class RelatedProductsController extends GetxController {
   bool get hasSelectedProducts => selectedProducts.isNotEmpty;
 
   bool get hasDiscount => discountedPrice.value > 0 && discountedPrice.value < originalPrice.value;
+
+  int get discountCount => discounts.length;
+
+  void clearDiscountFields() {
+    discountedPrice.value = 0.0;
+    discountNote.value = '';
+  }
+
+  // **الدوال الجديدة للربط مع ProductCentralController**
+  
+  // الحصول على بيانات cross sell للمنتجات المختارة
+  Map<String, dynamic> getCrossSellData() {
+    if (selectedProducts.isEmpty) {
+      return {
+        'crossSells': [],
+        'cross_sells_price': 0.0,
+        'cross_sells_due_date': '',
+      };
+    }
+
+    // إذا كان هناك تخفيضات مضافة
+    if (discounts.isNotEmpty) {
+      final latestDiscount = discounts.last;
+      return {
+        'crossSells': selectedProducts.map((p) => p.id).toList(),
+        'cross_sells_price': latestDiscount.discountedPrice,
+        'cross_sells_due_date': latestDiscount.date.toIso8601String().split('T')[0], // YYYY-MM-DD
+      };
+    }
+
+    // إذا لم يكن هناك تخفيضات، ارسل السعر الأصلي
+    return {
+      'crossSells': selectedProducts.map((p) => p.id).toList(),
+      'cross_sells_price': originalPrice.value,
+      'cross_sells_due_date': DateTime.now().add(const Duration(days: 30)).toIso8601String().split('T')[0],
+    };
+  }
+
+  // الحصول على المنتجات المختارة كقائمة معرفات
+  List<int> getSelectedProductIds() {
+    return selectedProducts.map((product) => product.id).toList();
+  }
+
+  // الحصول على بيانات التخفيض النشط
+  Map<String, dynamic>? getActiveDiscountData() {
+    if (discounts.isEmpty) return null;
+    final discount = discounts.last;
+    return {
+      'discountedPrice': discount.discountedPrice,
+      'date': discount.date,
+    };
+  }
+
+  // الحصول على المنتجات المختارة بالتنسيق المناسب لـ ProductCentralController
+  List<Map<String, dynamic>> getFormattedSelectedProducts() {
+    return selectedProducts.map((product) {
+      return {
+        'id': product.id,
+        'name': product.name,
+        'price': product.price ?? '0',
+        'sku': product.sku,
+      };
+    }).toList();
+  }
+
+  // رابط مع ProductCentralController
+  void linkToProductCentral() {
+    try {
+      if (Get.isRegistered<ProductCentralController>()) {
+        final productCentralController = Get.find<ProductCentralController>();
+        productCentralController.updateRelatedProductsFromRelatedController();
+        
+        print('🔗 [RELATED] تم ربط ${selectedProducts.length} منتج مع ProductCentralController');
+      } else {
+        print('⚠️ [RELATED] ProductCentralController غير مسجل');
+      }
+    } catch (e) {
+      print('❌ [RELATED] خطأ في الربط مع ProductCentralController: $e');
+    }
+  }
 
   @override
   void onClose() {

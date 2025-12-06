@@ -1,11 +1,11 @@
-// lib/api/api_request.dart
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:attene_mobile/my_app/my_app_controller.dart';
+import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
-import 'package:attene_mobile/my_app/my_app_controller.dart';
-import 'package:attene_mobile/utlis/language/language_controller.dart';
 
 const String postMethod = 'POST';
 const String getMethod = 'GET';
@@ -14,45 +14,47 @@ const String deleteMethod = 'DELETE';
 const String patchMethod = 'PATCH';
 
 enum AppMode { dev, staging, production }
+
 const AppMode currentMode = AppMode.dev;
 
 class ApiHelper {
-  // ==================== وظائف الرؤوس ====================
-  
+  // في api_request.dart
   static Map<String, dynamic> _getBaseHeaders() {
     try {
-      // الرؤوس الأساسية
-      Map<String, dynamic> headers = {
+      // إذا لم يكن MyAppController مسجلاً، نرجع رؤوس أساسية فقط
+      if (!Get.isRegistered<MyAppController>()) {
+        return {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Device-Type': 'MOBILE',
+          'Accept-Language': 'ar',
+          'storeId': '53'
+        };
+      }
+
+      final MyAppController myAppController = Get.find<MyAppController>();
+      final LanguageController appLanguageController = Get.find<LanguageController>();
+
+      String authorization = '';
+      
+      // فقط إذا كان المستخدم مسجل دخول ويملك توكن صالح
+      if (myAppController.isLoggedIn.value && 
+          myAppController.userData.isNotEmpty && 
+          myAppController.userData['token'] != null) {
+        authorization = 'Bearer ${myAppController.userData['token']}';
+        print('🔑 [API] استخدام توكن المستخدم: ${authorization.substring(0, 20)}...');
+      } else {
+        print('⚠️ [API] لا يوجد توكن للمستخدم أو غير مسجل دخول');
+      }
+
+      return {
+        if (authorization.isNotEmpty) 'Authorization': authorization,
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Device-Type': 'MOBILE',
-        'Accept-Language': 'ar',
+        'Accept-Language': appLanguageController.appLocale.value,
+        'storeId': '53'
       };
-      
-      // إضافة التوكن إذا كان المستخدم مسجل دخول
-      if (Get.isRegistered<MyAppController>()) {
-        final myAppController = Get.find<MyAppController>();
-        
-        if (myAppController.isLoggedIn.value && 
-            myAppController.token != null &&
-            myAppController.token!.isNotEmpty) {
-          headers['Authorization'] = 'Bearer ${myAppController.token}';
-        }
-        
-        // إضافة storeId من MyAppController
-        headers['storeId'] = myAppController.selectedStoreId.value.toString();
-      } else {
-        // القيمة الافتراضية إذا لم يكن المتحكم مسجلاً
-        // headers['storeId'] = '41';
-      }
-      
-      // إضافة اللغة إذا كان المتحكم مسجلاً
-      if (Get.isRegistered<LanguageController>()) {
-        final languageController = Get.find<LanguageController>();
-        headers['Accept-Language'] = languageController.appLocale.value;
-      }
-      
-      return headers;
     } catch (e) {
       print('❌ [API] خطأ في الحصول على رؤوس الطلب: $e');
       return {
@@ -60,7 +62,6 @@ class ApiHelper {
         'Accept': 'application/json',
         'Device-Type': 'MOBILE',
         'Accept-Language': 'ar',
-        'storeId': '41',
       };
     }
   }
@@ -75,9 +76,7 @@ class ApiHelper {
         return 'https://api.aatene.com/api/v1';
     }
   }
-  
-  // ==================== وظائف الطلبات الأساسية ====================
-  
+
   static Future<dynamic> get({
     required String path,
     Map<String, dynamic>? queryParameters,
@@ -94,7 +93,7 @@ class ApiHelper {
       shouldShowMessage: shouldShowMessage,
     );
   }
-  
+
   static Future<dynamic> post({
     required String path,
     dynamic body,
@@ -113,7 +112,7 @@ class ApiHelper {
       shouldShowMessage: shouldShowMessage,
     );
   }
-  
+
   static Future<dynamic> put({
     required String path,
     dynamic body,
@@ -132,303 +131,7 @@ class ApiHelper {
       shouldShowMessage: shouldShowMessage,
     );
   }
-  
-  static Future<dynamic> delete({
-    required String path,
-    dynamic body,
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
-    bool withLoading = false,
-    bool shouldShowMessage = true,
-  }) async {
-    return await _makeRequest(
-      method: deleteMethod,
-      path: path,
-      body: body,
-      queryParameters: queryParameters,
-      headers: headers,
-      withLoading: withLoading,
-      shouldShowMessage: shouldShowMessage,
-    );
-  }
-  
-  static Future<dynamic> patch({
-    required String path,
-    dynamic body,
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
-    bool withLoading = false,
-    bool shouldShowMessage = true,
-  }) async {
-    return await _makeRequest(
-      method: patchMethod,
-      path: path,
-      body: body,
-      queryParameters: queryParameters,
-      headers: headers,
-      withLoading: withLoading,
-      shouldShowMessage: shouldShowMessage,
-    );
-  }
-  
-  // ==================== وظيفة الطلب الرئيسية ====================
-  
-  static Future<dynamic> _makeRequest({
-    required String method,
-    required String path,
-    dynamic body,
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
-    required bool withLoading,
-    required bool shouldShowMessage,
-  }) async {
-    final Stopwatch stopwatch = Stopwatch()..start();
-    
-    // التحقق من اتصال الإنترنت
-    if (Get.isRegistered<MyAppController>()) {
-      final myAppController = Get.find<MyAppController>();
-      if (!myAppController.isInternetConnect.value) {
-        _showNoInternetError(shouldShowMessage);
-        return null;
-      }
-    }
-    
-    try {
-      if (withLoading) {
-        _startLoading();
-      }
-      
-      // دمج الرؤوس
-      final requestHeaders = {..._getBaseHeaders(), ...?headers};
-      
-      // إزالة التوكن من طلبات تسجيل الدخول
-      if (method.toUpperCase() == 'POST' && path.contains('/auth/login')) {
-        requestHeaders.removeWhere((key, value) => key.toLowerCase() == 'authorization');
-      }
-      
-      print('''
-🎯 [API REQUEST] $method ${_getBaseUrl()}$path
-📦 Headers: ${requestHeaders.keys.map((k) => '$k: ${k == 'Authorization' ? 'Bearer ***' : requestHeaders[k]}').join(', ')}
-📤 Body: ${body != null ? jsonEncode(body) : 'null'}
-    ''');
-      
-      final Dio dio = Dio(
-        BaseOptions(
-          baseUrl: _getBaseUrl(),
-          headers: requestHeaders,
-          connectTimeout: const Duration(seconds: 30),
-          receiveTimeout: const Duration(seconds: 30),
-        ),
-      );
-      
-      Response response;
-      switch (method.toUpperCase()) {
-        case getMethod:
-          response = await dio.get(path, queryParameters: queryParameters);
-          break;
-        case postMethod:
-          response = await dio.post(
-            path,
-            data: body,
-            queryParameters: queryParameters,
-          );
-          break;
-        case putMethod:
-          response = await dio.put(
-            path,
-            data: body,
-            queryParameters: queryParameters,
-          );
-          break;
-        case deleteMethod:
-          response = await dio.delete(
-            path,
-            data: body,
-            queryParameters: queryParameters,
-          );
-          break;
-        case patchMethod:
-          response = await dio.patch(
-            path,
-            data: body,
-            queryParameters: queryParameters,
-          );
-          break;
-        default:
-          throw Exception('HTTP method not supported: $method');
-      }
-      
-      stopwatch.stop();
-      print('''
-🚀 [API SUCCESS] $method $path
-⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
-📦 Response: ${_formatJson(response.data)}
-    ''');
-      
-      if (withLoading) {
-        _dismissLoading();
-      }
-      
-      return response.data;
-    } catch (error) {
-      _dismissLoading();
-      return _handleError(error, method, path, stopwatch, shouldShowMessage);
-    }
-  }
-  
-  // ==================== وظائف المساعدة ====================
-  
-  static void _startLoading() {
-    if (Get.isDialogOpen ?? false) return;
-    
-    Get.dialog(
-      Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 10),
-              Text('جاري التحميل...'),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    );
-  }
-  
-  static void _dismissLoading() {
-    if (Get.isDialogOpen ?? false) {
-      Get.back();
-    }
-  }
-  
-  static void _showNoInternetError(bool shouldShowMessage) {
-    if (shouldShowMessage) {
-      Get.snackbar(
-        'لا يوجد اتصال بالإنترنت',
-        'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
-  }
-  
-  static dynamic _handleError(
-    dynamic error,
-    String method,
-    String path,
-    Stopwatch stopwatch,
-    bool shouldShowMessage,
-  ) {
-    stopwatch.stop();
-    
-    if (error is DioException) {
-      final errorData = error.response?.data ?? {'message': 'حدث خطأ غير متوقع'};
-      
-      print('''
-❌ [API ERROR] $method $path
-⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
-📊 Status Code: ${error.response?.statusCode}
-📦 Error: ${_formatJson(errorData)}
-    ''');
-      
-      if (shouldShowMessage) {
-        final errorMessage = parseApiError(error, StackTrace.current);
-        _showErrorMessage(errorMessage);
-      }
-      
-      _handleSpecificErrors(error);
-      
-      return errorData;
-    } else {
-      print('''
-❌ [API ERROR] $method $path
-⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
-📦 Error: $error
-    ''');
-      
-      if (shouldShowMessage) {
-        _showGenericError();
-      }
-      
-      return {'message': error.toString()};
-    }
-  }
-  
-  static void _showErrorMessage(String errorMessage) {
-    Get.snackbar(
-      'خطأ',
-      errorMessage,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 3),
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  }
-  
-  static void _showGenericError() {
-    Get.snackbar(
-      'خطأ',
-      'حدث خطأ أثناء الاتصال بالخادم',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 3),
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  }
-  
-  static void _handleSpecificErrors(DioException error) {
-    if (!Get.isRegistered<MyAppController>()) return;
-    
-    final myAppController = Get.find<MyAppController>();
-    
-    switch (error.response?.statusCode) {
-      case 401:
-        myAppController.onSignOut();
-        Get.offAllNamed('/login');
-        break;
-      case 403:
-        Get.snackbar(
-          'ممنوع الوصول',
-          'ليس لديك صلاحية للوصول إلى هذا المورد',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
-        break;
-      case 404:
-        Get.snackbar(
-          'غير موجود',
-          'المورد المطلوب غير موجود',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
-        break;
-      case 422:
-        // لا نعرض رسالة هنا لأنها ستعرض في الـsnackbar الرئيسي
-        break;
-      case 500:
-        Get.snackbar(
-          'خطأ في الخادم',
-          'حدث خطأ في الخادم، يرجى المحاولة لاحقاً',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        break;
-    }
-  }
-  
+
   static String parseApiError(dynamic error, StackTrace stackTrace) {
     try {
       if (error is DioException) {
@@ -473,7 +176,7 @@ class ApiHelper {
       return 'حدث خطأ غير معروف';
     }
   }
-  
+
   static String _parse422Error(dynamic data) {
     try {
       if (data is Map<String, dynamic>) {
@@ -496,29 +199,158 @@ class ApiHelper {
       return 'بيانات غير صحيحة';
     }
   }
-  
-  static String _formatJson(dynamic json) {
+
+  static Future<dynamic> delete({
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: deleteMethod,
+      path: path,
+      body: body,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> patch({
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool withLoading = false,
+    bool shouldShowMessage = true,
+  }) async {
+    return await _makeRequest(
+      method: patchMethod,
+      path: path,
+      body: body,
+      queryParameters: queryParameters,
+      headers: headers,
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> _makeRequest({
+    required String method,
+    required String path,
+    dynamic body,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    required bool withLoading,
+    required bool shouldShowMessage,
+  }) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+    final MyAppController myAppController = Get.find<MyAppController>();
+
+    if (!myAppController.isInternetConnect.value) {
+      _showNoInternetError(shouldShowMessage);
+      return null;
+    }
+
     try {
-      if (json is String) {
-        return json;
+      if (withLoading) {
+        _startLoading();
       }
-      return const JsonEncoder.withIndent('  ').convert(json);
-    } catch (e) {
-      return json.toString();
+
+      final requestHeaders = {..._getBaseHeaders(), ...?headers};
+      
+      // إزالة التوكن من طلبات تسجيل الدخول
+      if (method.toUpperCase() == 'POST' && path.contains('/auth/login')) {
+        requestHeaders.removeWhere((key, value) => key.toLowerCase() == 'authorization');
+        print('🔄 [API] إزالة رأس التوكن من طلب تسجيل الدخول');
+      }
+      
+      print('''
+🎯 [API REQUEST] $method ${_getBaseUrl()}$path
+📦 Headers: $requestHeaders
+📤 Body: ${body != null ? jsonEncode(body) : 'null'}
+    ''');
+
+      final Dio dio = Dio(
+        BaseOptions(
+          baseUrl: _getBaseUrl(),
+          headers: requestHeaders,
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+        ),
+      );
+
+      Response response;
+      switch (method.toUpperCase()) {
+        case getMethod:
+          response = await dio.get(path, queryParameters: queryParameters);
+          break;
+        case postMethod:
+          response = await dio.post(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        case putMethod:
+          response = await dio.put(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        case deleteMethod:
+          response = await dio.delete(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        case patchMethod:
+          response = await dio.patch(
+            path,
+            data: body,
+            queryParameters: queryParameters,
+          );
+          break;
+        default:
+          throw Exception('HTTP method not supported: $method');
+      }
+
+      _logRequestSuccess(method, path, response.data, stopwatch);
+
+      if (withLoading) {
+        _dismissLoading();
+      }
+
+      return response.data;
+    } catch (error) {
+      _dismissLoading();
+      return _handleError(error, method, path, stopwatch, shouldShowMessage);
     }
   }
-  
-  // ==================== وظائف المصادقة ====================
-  
+
   static Future<dynamic> login({
     required String email,
     required String password,
     bool withLoading = true,
   }) async {
+    // التحقق من نوع المدخل
+    final bool isEmail = email.contains('@');
+    
     Map<String, dynamic> body = {
       'password': password,
     };
     body['login'] = email;
+    
+    print('''
+🔑 محاولة تسجيل الدخول للمستخدم: $email
+📱 نوع المدخل: ${isEmail ? 'Email' : 'Username/Phone'}
+⚠️ [API] طلب تسجيل دخول جديد - سيتم إزالة التوكن القديم
+''');
     
     return await post(
       path: '/auth/login',
@@ -527,7 +359,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> register({
     required String name,
     required String email,
@@ -549,7 +381,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> logout() async {
     return await post(
       path: '/auth/logout',
@@ -557,7 +389,7 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
   static Future<dynamic> forgotPassword({
     required String email,
     bool withLoading = true,
@@ -569,7 +401,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> resetPassword({
     required String email,
     required String token,
@@ -589,7 +421,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> verifyEmail({
     required String code,
     bool withLoading = true,
@@ -601,7 +433,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> resendVerificationCode({
     bool withLoading = true,
   }) async {
@@ -611,7 +443,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> checkEmailExists(String email) async {
     return await post(
       path: '/auth/check-email',
@@ -620,7 +452,7 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
   static Future<dynamic> checkPhoneExists(String phone) async {
     return await post(
       path: '/auth/check-phone',
@@ -629,7 +461,7 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
   static Future<dynamic> getUserProfile() async {
     return await get(
       path: '/user/profile',
@@ -637,7 +469,7 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
   static Future<dynamic> updateUserProfile(Map<String, dynamic> data) async {
     return await put(
       path: '/user/profile',
@@ -646,7 +478,7 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
+
   static Future<dynamic> changePassword({
     required String currentPassword,
     required String newPassword,
@@ -663,9 +495,212 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
-  // ==================== وظائف الوسائط ====================
-  
+
+  static void _startLoading() {
+    if (Get.isDialogOpen ?? false) return;
+
+    Get.dialog(
+      Center(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 10),
+              Text('جاري التحميل...'),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  static void _dismissLoading() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+  }
+
+  static void _showNoInternetError(bool shouldShowMessage) {
+    if (shouldShowMessage) {
+      Get.snackbar(
+        'لا يوجد اتصال بالإنترنت',
+        'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  static dynamic _handleError(
+    dynamic error,
+    String method,
+    String path,
+    Stopwatch stopwatch,
+    bool shouldShowMessage,
+  ) {
+    stopwatch.stop();
+
+    if (error is DioException) {
+      final errorData =
+          error.response?.data ??
+          {
+            'errors': [
+              {'message': 'حدث خطأ غير متوقع'},
+            ],
+          };
+
+      _logRequestError(
+        method,
+        path,
+        errorData,
+        stopwatch,
+        true,
+        error.response?.statusCode,
+      );
+
+      if (shouldShowMessage) {
+        final errorMessage = parseApiError(error, StackTrace.current);
+        _showErrorMessage(errorMessage);
+      }
+
+      _handleSpecificErrors(error);
+
+      return errorData;
+    } else {
+      _logRequestError(method, path, error.toString(), stopwatch, false, null);
+
+      if (shouldShowMessage) {
+        _showGenericError();
+      }
+
+      return {'message': error.toString()};
+    }
+  }
+
+  static void _logRequestSuccess(
+    String method,
+    String path,
+    dynamic response,
+    Stopwatch stopwatch,
+  ) {
+    stopwatch.stop();
+    print('''
+🚀 [API SUCCESS] $method $path
+⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
+📦 Response: ${_formatJson(response)}
+    ''');
+  }
+
+  static void _logRequestError(
+    String method,
+    String path,
+    dynamic error,
+    Stopwatch stopwatch,
+    bool isDioError,
+    int? statusCode,
+  ) {
+    print('''
+❌ [API ERROR] $method $path
+⏱️  Time: ${stopwatch.elapsedMilliseconds}ms
+${isDioError ? '📊 Status Code: $statusCode' : ''}
+📦 Error: ${isDioError ? _formatJson(error) : error}
+    ''');
+  }
+
+  static void _showErrorMessage(String errorMessage) {
+    Get.snackbar(
+      'خطأ',
+      errorMessage,
+      snackPosition: SnackPosition.BOTTOM,
+      duration: Duration(seconds: 3),
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+
+  static void _showGenericError() {
+    Get.snackbar(
+      'خطأ',
+      'حدث خطأ أثناء الاتصال بالخادم',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: Duration(seconds: 3),
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+
+  static void _handleSpecificErrors(DioException error) {
+    final MyAppController myAppController = Get.find<MyAppController>();
+
+    switch (error.response?.statusCode) {
+      case 401:
+        myAppController.onSignOut();
+        Get.offAllNamed('/login');
+        break;
+      case 403:
+        Get.snackbar(
+          'ممنوع الوصول',
+          'ليس لديك صلاحية للوصول إلى هذا المورد',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        break;
+      case 404:
+        Get.snackbar(
+          'غير موجود',
+          'المورد المطلوب غير موجود',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        break;
+      case 422:
+        break;
+      case 500:
+        Get.snackbar(
+          'خطأ في الخادم',
+          'حدث خطأ في الخادم، يرجى المحاولة لاحقاً',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        break;
+    }
+  }
+
+  static String _formatJson(dynamic json) {
+    try {
+      if (json is String) {
+        return json;
+      }
+      return const JsonEncoder.withIndent('  ').convert(json);
+    } catch (e) {
+      return json.toString();
+    }
+  }
+
+  static Future<bool> checkInternetConnection() async {
+    try {
+      final response = await Dio().get(
+        'https://www.google.com',
+        options: Options(receiveTimeout: Duration(seconds: 5)),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static Future<dynamic> uploadMedia({
     required File file,
     required String type,
@@ -676,7 +711,7 @@ class ApiHelper {
       if (withLoading) {
         _startLoading();
       }
-      
+
       final String fileName = file.path.split('/').last;
       final FormData formData = FormData.fromMap({
         'type': type,
@@ -685,10 +720,17 @@ class ApiHelper {
           filename: fileName,
         ),
       });
-      
+
       final requestHeaders = _getBaseHeaders();
       requestHeaders.remove('Content-Type');
-      
+
+      print('''
+🔼 [UPLOAD] Starting upload...
+📁 File: $fileName
+📊 Type: $type
+📦 Size: ${file.lengthSync()} bytes
+    ''');
+
       final Dio dio = Dio(
         BaseOptions(
           baseUrl: _getBaseUrl(),
@@ -697,24 +739,26 @@ class ApiHelper {
           receiveTimeout: const Duration(seconds: 60),
         ),
       );
-      
+
       final Response response = await dio.post(
         '/media-center/add-new',
         data: formData,
         onSendProgress: onSendProgress,
       );
-      
+
       if (withLoading) {
         _dismissLoading();
       }
-      
+
+      _logRequestSuccess('POST', '/media-center/add-new', response.data, Stopwatch()..start());
+
       return response.data;
     } catch (error) {
       _dismissLoading();
       return _handleError(error, 'POST', '/media-center/add-new', Stopwatch()..start(), true);
     }
   }
-  
+
   static Future<dynamic> getMediaList({
     required String type,
     bool withLoading = false,
@@ -727,7 +771,7 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
   static Future<dynamic> deleteMedia({
     required String fileName,
     bool withLoading = true,
@@ -740,45 +784,11 @@ class ApiHelper {
       shouldShowMessage: true,
     );
   }
-  
-  // ==================== وظائف المتاجر ====================
-  
-  static Future<dynamic> getStores({Map<String, dynamic>? queryParameters}) async {
-    return await get(
-      path: '/merchants/stores',
-      queryParameters: queryParameters,
-      withLoading: false,
-      shouldShowMessage: false,
-    );
+
+  static String getBaseUrl() {
+    return _getBaseUrl().replaceAll('/api', '');
   }
-  
-  static Future<dynamic> getStoreDetails(int storeId) async {
-    return await get(
-      path: '/merchants/stores/$storeId',
-      withLoading: false,
-      shouldShowMessage: true,
-    );
-  }
-  
-  static Future<dynamic> updateStore(int storeId, Map<String, dynamic> data) async {
-    return await post(
-      path: '/merchants/mobile/stores/$storeId',
-      body: data,
-      withLoading: true,
-      shouldShowMessage: true,
-    );
-  }
-  
-  static Future<dynamic> deleteStore(int storeId) async {
-    return await delete(
-      path: '/merchants/mobile/stores/$storeId',
-      withLoading: true,
-      shouldShowMessage: true,
-    );
-  }
-  
-  // ==================== وظائف البيانات العامة ====================
-  
+
   static Future<dynamic> getCities({Map<String, dynamic>? queryParameters}) async {
     return await get(
       path: '/merchants/cities',
@@ -787,7 +797,41 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
+  static Future<dynamic> getCity(int id) async {
+    return await get(
+      path: '/merchants/cities/$id',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> createCity(Map<String, dynamic> data) async {
+    return await post(
+      path: '/merchants/cities',
+      body: data,
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> updateCity(int id, Map<String, dynamic> data) async {
+    return await put(
+      path: '/merchants/cities/$id',
+      body: data,
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> deleteCity(int id) async {
+    return await delete(
+      path: '/merchants/cities/$id',
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
   static Future<dynamic> getDistricts({Map<String, dynamic>? queryParameters}) async {
     return await get(
       path: '/merchants/districts',
@@ -796,7 +840,41 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
+  static Future<dynamic> getDistrict(int id) async {
+    return await get(
+      path: '/merchants/districts/$id',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> createDistrict(Map<String, dynamic> data) async {
+    return await post(
+      path: '/merchants/districts',
+      body: data,
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> updateDistrict(int id, Map<String, dynamic> data) async {
+    return await put(
+      path: '/merchants/districts/$id',
+      body: data,
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> deleteDistrict(int id) async {
+    return await delete(
+      path: '/merchants/districts/$id',
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
   static Future<dynamic> getCurrencies({Map<String, dynamic>? queryParameters}) async {
     return await get(
       path: '/merchants/currencies',
@@ -805,25 +883,46 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
-  
+
+  static Future<dynamic> getStoreDetails(int storeId) async {
+    return await get(
+      path: '/merchants/stores/$storeId',
+      withLoading: false,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> updateStore(int storeId, Map<String, dynamic> data) async {
+    return await post(
+      path: '/merchants/mobile/stores/$storeId',
+      body: data,
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
+  static Future<dynamic> deleteStore(int storeId) async {
+    return await delete(
+      path: '/merchants/mobile/stores/$storeId',
+      withLoading: true,
+      shouldShowMessage: true,
+    );
+  }
+
   static Future<dynamic> getProducts({
     int? sectionId,
     Map<String, dynamic>? queryParameters,
   }) async {
     String path = '/merchants/products';
-    final Map<String, dynamic> params = queryParameters ?? {};
     if (sectionId != null) {
-      params['section_id'] = sectionId;
+      queryParameters ??= {};
+      queryParameters['section_id'] = sectionId;
     }
     
     return await get(
       path: path,
-      queryParameters: params,
+      queryParameters: queryParameters,
       withLoading: false,
     );
-  }
-  
-  static String getBaseUrl() {
-    return _getBaseUrl().replaceAll('/api', '');
   }
 }
