@@ -208,14 +208,17 @@ class Onbording extends StatelessWidget {
               ),
             ],
           ),
-          bottomNavigationBar: AateneButton(
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/start_login');
-            },
-            buttonText: isRTL ? 'ابدأ' : 'Start',
-            textColor: AppColors.light1000,
-            color: AppColors.primary400,
-            borderColor: AppColors.primary400,
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: AateneButton(
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/start_login');
+              },
+              buttonText: isRTL ? 'ابدأ' : 'Start',
+              textColor: AppColors.light1000,
+              color: AppColors.primary400,
+              borderColor: AppColors.primary400,
+            ),
           ),
         ),
       ),
