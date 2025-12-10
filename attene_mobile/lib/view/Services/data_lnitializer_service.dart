@@ -8,22 +8,24 @@ import 'package:attene_mobile/view/product_variations/product_variation_model.da
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 
 class DataInitializerService extends GetxService {
-
-  
   // حالة التحميل
   final RxBool _isInitializing = false.obs;
   final RxDouble _progress = 0.0.obs;
   final RxString _currentStep = ''.obs;
   final RxBool _isOnline = true.obs;
   final RxBool _isDataLoaded = false.obs;
-  
+
   // إضافة Getters للـ Rx variables للاستخدام في المتحكمات الأخرى
   RxBool get isInitializingRx => _isInitializing;
+
   RxString get currentStepRx => _currentStep;
+
   RxDouble get progressRx => _progress;
+
   RxBool get isOnlineRx => _isOnline;
+
   RxBool get isDataLoadedRx => _isDataLoaded;
-  
+
   // مفاتيح التخزين
   static const String _STORES_KEY = 'app_stores';
   static const String _CITIES_KEY = 'app_cities';
@@ -40,62 +42,70 @@ class DataInitializerService extends GetxService {
   static const String _APP_CONFIG_KEY = 'app_config';
   static const String _VARIATIONS_DATA_KEY = 'product_variations_data';
   static const String _PRODUCT_DRAFT_KEY = 'product_draft';
-  static const String _ATTRIBUTES_VARIATIONS_KEY = 'cached_attributes_variations';
+  static const String _ATTRIBUTES_VARIATIONS_KEY =
+      'cached_attributes_variations';
   static const String _CACHED_SECTIONS_KEY = 'cached_sections_enhanced';
   static const String _SYNC_QUEUE_KEY = 'sync_queue';
   static const String _OFFLINE_DATA_KEY = 'offline_data';
   static const String _APP_STATISTICS_KEY = 'app_statistics';
-  
+
   static DataInitializerService get to => Get.find();
-  
+
   // Getters
   bool get isInitializing => _isInitializing.value;
+
   double get progress => _progress.value;
+
   String get currentStep => _currentStep.value;
+
   bool get isOnline => _isOnline.value;
+
   bool get isDataLoaded => _isDataLoaded.value;
-  
+
   GetStorage get _storage => Get.find<GetStorage>();
+
   MyAppController get _myAppController => Get.find<MyAppController>();
-  
+
   @override
   void onInit() {
     super.onInit();
     print('🔄 [DATA SERVICE] تهيئة خدمة البيانات');
-    
+
     // تأخير التهيئة قليلاً
     Future.delayed(const Duration(milliseconds: 500), () {
       _initializeService();
     });
   }
-  
+
   void _initializeService() {
     // تسجيل مستمع لتغير حالة الانترنت
     ever(_myAppController.isInternetConnect, (bool isConnected) {
       _isOnline.value = isConnected;
-      print('📶 [DATA] تغيير حالة الانترنت: ${isConnected ? 'متصل' : 'غير متصل'}');
-      
+      print(
+        '📶 [DATA] تغيير حالة الانترنت: ${isConnected ? 'متصل' : 'غير متصل'}',
+      );
+
       if (isConnected && !_isDataLoaded.value) {
         _tryReloadOnConnection();
       }
     });
-    
+
     _initializeStorage();
   }
-  
+
   Future<void> _initializeStorage() async {
     try {
       await GetStorage.init();
       print('✅ [STORAGE] تم تهيئة GetStorage بنجاح');
-      
+
       // تحميل الإحصائيات
       await _loadInitialStatistics();
-      
+
       // التحقق من وجود بيانات مخزنة
       if (_hasCachedData()) {
         print('📂 [DATA] تم العثور على بيانات مخزنة مسبقاً');
         _isDataLoaded.value = true;
-        
+
         // تنفيذ أي مهام متأخرة
         _processSyncQueue();
       }
@@ -103,13 +113,16 @@ class DataInitializerService extends GetxService {
       print('❌ [STORAGE] خطأ في تهيئة GetStorage: $e');
     }
   }
-  
-  Future<void> initializeAppData({bool forceRefresh = false, bool silent = false}) async {
+
+  Future<void> initializeAppData({
+    bool forceRefresh = false,
+    bool silent = false,
+  }) async {
     if (_isInitializing.value) {
       print('⚠️ [DATA] التهيئة قيد التنفيذ بالفعل');
       return;
     }
-    
+
     if (!silent) {
       return UnifiedLoadingScreen.showWithFuture<void>(
         _performInitialization(forceRefresh: forceRefresh),
@@ -120,71 +133,73 @@ class DataInitializerService extends GetxService {
       return _performInitialization(forceRefresh: forceRefresh);
     }
   }
+
   bool _isUserAuthenticated() {
-  try {
-    if (Get.isRegistered<MyAppController>()) {
-      final myAppController = Get.find<MyAppController>();
-      return myAppController.isLoggedIn.value;
+    try {
+      if (Get.isRegistered<MyAppController>()) {
+        final myAppController = Get.find<MyAppController>();
+        return myAppController.isLoggedIn.value;
+      }
+      return false;
+    } catch (e) {
+      return false;
     }
-    return false;
-  } catch (e) {
-    return false;
   }
-}
 
-Future<void> _loadAttributes() async {
-  try {
-    // التحقق من المصادقة قبل جلب السمات
-    if (!_isUserAuthenticated()) {
-      print('⚠️ [ATTRIBUTES] المستخدم غير مسجل دخول، تخطي تحميل السمات');
-      return;
+  Future<void> _loadAttributes() async {
+    try {
+      // التحقق من المصادقة قبل جلب السمات
+      if (!_isUserAuthenticated()) {
+        print('⚠️ [ATTRIBUTES] المستخدم غير مسجل دخول، تخطي تحميل السمات');
+        return;
+      }
+
+      if (!_isOnline.value) {
+        print('⚠️ [ATTRIBUTES] استخدام السمات المخزنة (غير متصل)');
+        return;
+      }
+
+      final response = await ApiHelper.get(
+        path: '/merchants/attributes',
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+
+      if (response != null && response['status'] == true) {
+        final attributes = response['data'] ?? [];
+        await _storage.write(_ATTRIBUTES_KEY, attributes);
+        print('✅ [ATTRIBUTES] تم تحميل ${attributes.length} سمة');
+
+        await saveAttributesForVariations(attributes);
+      }
+    } catch (e) {
+      print('⚠️ [ATTRIBUTES] فشل في تحميل السمات: $e');
     }
-
-    if (!_isOnline.value) {
-      print('⚠️ [ATTRIBUTES] استخدام السمات المخزنة (غير متصل)');
-      return;
-    }
-
-    final response = await ApiHelper.get(
-      path: '/merchants/attributes',
-      withLoading: false,
-      shouldShowMessage: false,
-    );
-
-    if (response != null && response['status'] == true) {
-      final attributes = response['data'] ?? [];
-      await _storage.write(_ATTRIBUTES_KEY, attributes);
-      print('✅ [ATTRIBUTES] تم تحميل ${attributes.length} سمة');
-      
-      await saveAttributesForVariations(attributes);
-    }
-  } catch (e) {
-    print('⚠️ [ATTRIBUTES] فشل في تحميل السمات: $e');
   }
-}
+
   Future<void> _performInitialization({bool forceRefresh = false}) async {
     _isInitializing.value = true;
     _progress.value = 0.0;
     _currentStep.value = 'جاري التحضير...';
-    
+
     try {
       final totalSteps = 11; // زيادة خطوة للإحصائيات
       int currentStep = 0;
-      
-    // التحقق من تسجيل الدخول أولاً
-    if (!_isUserAuthenticated()) {
-      print('👤 [DATA] المستخدم غير مسجل دخول، استخدام البيانات المخزنة فقط');
-      _isDataLoaded.value = true;
-      _progress.value = 1.0;
-      _currentStep.value = 'جاهز';
-      return;
-    }
+
+      // التحقق من تسجيل الدخول أولاً
+      if (!_isUserAuthenticated()) {
+        print('👤 [DATA] المستخدم غير مسجل دخول، استخدام البيانات المخزنة فقط');
+        _isDataLoaded.value = true;
+        _progress.value = 1.0;
+        _currentStep.value = 'جاهز';
+        return;
+      }
 
       // التحقق من الاتصال بالانترنت
       if (!_isOnline.value && forceRefresh) {
         throw Exception('لا يوجد اتصال بالإنترنت');
       }
-      
+
       // استخدام البيانات المخزنة إذا كانت موجودة وليس هناك طلب لتحديث قسري
       if (!forceRefresh && _isDataLoaded.value && _hasCachedData()) {
         print('📂 [DATA] استخدام البيانات المخزنة مؤقتًا');
@@ -192,96 +207,95 @@ Future<void> _loadAttributes() async {
         _currentStep.value = 'جاهز';
         return;
       }
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري التحقق من الاتصال...';
       // await _checkConnection();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل الإعدادات...';
       await _loadSettings();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل المتاجر...';
       await _loadStores();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل المدن...';
       await _loadCities();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل المناطق...';
       await _loadDistricts();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل العملات...';
       await _loadCurrencies();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل الأقسام...';
       await _loadSections();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل السمات...';
       await _loadAttributes();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل الفئات...';
       await _loadCategories();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل المنتجات...';
       await _loadProducts();
-      
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل الوسائط...';
       await _loadMedia();
-      
+
       // تحديث الإحصائيات
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحديث الإحصائيات...';
       await _updateStatistics();
-      
+
       _progress.value = 1.0;
       _currentStep.value = 'تم تهيئة البيانات بنجاح';
       _isDataLoaded.value = true;
-      
+
       print('✅ [DATA] تم تهيئة بيانات التطبيق بنجاح');
-      
+
       // حفظ وقت التحديث الأخير
       await _storage.write(_LAST_UPDATE_KEY, DateTime.now().toIso8601String());
-      
+
       // تنظيف البيانات القديمة
       await _cleanupOldData();
-      
     } catch (e) {
       print('❌ [DATA] خطأ في تهيئة بيانات التطبيق: $e');
       _currentStep.value = 'فشل في تهيئة البيانات';
-      
+
       // استخدام البيانات المخزنة كنسخة احتياطية
       if (_hasCachedData() && !_isDataLoaded.value) {
         print('🔄 [DATA] استخدام البيانات المخزنة كنسخة احتياطية');
         _isDataLoaded.value = true;
       }
-      
+
       rethrow;
     } finally {
       _isInitializing.value = false;
     }
   }
-  
+
   // Future<void> _checkConnection() async {
   //   try {
   //     // محاولة الاتصال بالخادم
@@ -290,46 +304,46 @@ Future<void> _loadAttributes() async {
   //     //   withLoading: false,
   //     //   shouldShowMessage: false,
   //     // );
-      
+
   //     _isOnline.value = true;
   //     print('✅ [NETWORK] الاتصال بالخادم نشط');
   //   } catch (e) {
   //     _isOnline.value = false;
   //     print('⚠️ [NETWORK] لا يوجد اتصال بالخادم');
-      
+
   //     // استدعاء سينك المهام المتأخرة
   //     if (_hasOfflineData()) {
   //       print('📦 [NETWORK] هناك بيانات تحتاج للمزامنة');
   //     }
   //   }
   // }
-  
+
   bool _hasCachedData() {
     return _storage.hasData(_STORES_KEY) &&
-           _storage.hasData(_CITIES_KEY) &&
-           _storage.hasData(_SECTIONS_KEY) &&
-           _storage.hasData(_CATEGORIES_KEY);
+        _storage.hasData(_CITIES_KEY) &&
+        _storage.hasData(_SECTIONS_KEY) &&
+        _storage.hasData(_CATEGORIES_KEY);
   }
-  
+
   bool _hasOfflineData() {
     return _storage.hasData(_SYNC_QUEUE_KEY);
   }
-  
+
   // ==================== تحميل البيانات من الـAPI ====================
-  
+
   Future<void> _loadSettings() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [SETTINGS] استخدام الإعدادات المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/settings',
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final settings = response['data'] ?? {};
         await _storage.write(_SETTINGS_KEY, settings);
@@ -339,21 +353,21 @@ Future<void> _loadAttributes() async {
       print('⚠️ [SETTINGS] فشل في تحميل الإعدادات: $e');
     }
   }
-  
+
   Future<void> _loadStores() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [STORES] استخدام المتاجر المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/stores',
         queryParameters: {'orderDir': 'asc'},
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final stores = response['data'] ?? [];
         await _storage.write(_STORES_KEY, stores);
@@ -363,20 +377,20 @@ Future<void> _loadAttributes() async {
       print('⚠️ [STORES] فشل في تحميل المتاجر: $e');
     }
   }
-  
+
   Future<void> _loadCities() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [CITIES] استخدام المدن المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/cities',
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final cities = response['data'] ?? [];
         await _storage.write(_CITIES_KEY, cities);
@@ -386,20 +400,20 @@ Future<void> _loadAttributes() async {
       print('⚠️ [CITIES] فشل في تحميل المدن: $e');
     }
   }
-  
+
   Future<void> _loadDistricts() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [DISTRICTS] استخدام المناطق المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/districts',
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final districts = response['data'] ?? [];
         await _storage.write(_DISTRICTS_KEY, districts);
@@ -409,20 +423,20 @@ Future<void> _loadAttributes() async {
       print('⚠️ [DISTRICTS] فشل في تحميل المناطق: $e');
     }
   }
-  
+
   Future<void> _loadCurrencies() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [CURRENCIES] استخدام العملات المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/currencies',
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final currencies = response['data'] ?? [];
         await _storage.write(_CURRENCIES_KEY, currencies);
@@ -432,24 +446,24 @@ Future<void> _loadAttributes() async {
       print('⚠️ [CURRENCIES] فشل في تحميل العملات: $e');
     }
   }
-  
+
   Future<void> _loadSections() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [SECTIONS] استخدام الأقسام المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/sections',
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final sections = response['data'] ?? [];
         await _storage.write(_SECTIONS_KEY, sections);
-        
+
         // حفظ نسخة محسنة للاستخدام السريع
         final enhancedSections = sections.map((section) {
           return {
@@ -459,7 +473,7 @@ Future<void> _loadAttributes() async {
             'is_active': section['status'] == 'active',
           };
         }).toList();
-        
+
         await _storage.write(_CACHED_SECTIONS_KEY, enhancedSections);
         print('✅ [SECTIONS] تم تحميل ${sections.length} قسم');
       }
@@ -467,9 +481,7 @@ Future<void> _loadAttributes() async {
       print('⚠️ [SECTIONS] فشل في تحميل الأقسام: $e');
     }
   }
-  
 
-  
   Future<void> saveAttributesForVariations(List<dynamic> attributes) async {
     try {
       final processedAttributes = attributes.map((attr) {
@@ -490,27 +502,29 @@ Future<void> _loadAttributes() async {
           'updated_at': attr['updated_at'],
         };
       }).toList();
-      
+
       await _storage.write(_ATTRIBUTES_VARIATIONS_KEY, processedAttributes);
-      print('✅ [ATTRIBUTES] تم حفظ ${processedAttributes.length} سمة للاستخدام في الاختلافات');
+      print(
+        '✅ [ATTRIBUTES] تم حفظ ${processedAttributes.length} سمة للاستخدام في الاختلافات',
+      );
     } catch (e) {
       print('⚠️ [ATTRIBUTES] خطأ في حفظ السمات: $e');
     }
   }
-  
+
   Future<void> _loadCategories() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [CATEGORIES] استخدام الفئات المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/categories/select',
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final categories = response['categories'] ?? [];
         await _storage.write(_CATEGORIES_KEY, categories);
@@ -520,21 +534,25 @@ Future<void> _loadAttributes() async {
       print('⚠️ [CATEGORIES] فشل في تحميل الفئات: $e');
     }
   }
-  
+
   Future<void> _loadProducts() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [PRODUCTS] استخدام المنتجات المخزنة (غير متصل)');
         return;
       }
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/products',
-        queryParameters: {'limit': 100, 'orderBy': 'created_at', 'orderDir': 'desc'},
+        queryParameters: {
+          'limit': 100,
+          'orderBy': 'created_at',
+          'orderDir': 'desc',
+        },
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final products = response['data'] ?? [];
         await _storage.write(_PRODUCTS_KEY, products);
@@ -544,17 +562,23 @@ Future<void> _loadAttributes() async {
       print('⚠️ [PRODUCTS] فشل في تحميل المنتجات: $e');
     }
   }
-  
+
   Future<void> _loadMedia() async {
     try {
       if (!_isOnline.value) {
         print('⚠️ [MEDIA] استخدام الوسائط المخزنة (غير متصل)');
         return;
       }
-      
-      final List<String> mediaTypes = ['gallery', 'image', 'media', 'avatar', 'thumbnail'];
+
+      final List<String> mediaTypes = [
+        'gallery',
+        'image',
+        'media',
+        'avatar',
+        'thumbnail',
+      ];
       final List<Map<String, dynamic>> allMedia = [];
-      
+
       for (String mediaType in mediaTypes) {
         try {
           final response = await ApiHelper.get(
@@ -563,18 +587,18 @@ Future<void> _loadAttributes() async {
             withLoading: false,
             shouldShowMessage: false,
           );
-          
-          if (response != null && response['status'] == true && response['data'] != null) {
+
+          if (response != null &&
+              response['status'] == true &&
+              response['data'] != null) {
             final data = response['data'];
             if (data is List) {
-              final typedMedia = List<Map<String, dynamic>>.from(data).map((item) {
-                return {
-                  ...item,
-                  'type': mediaType,
-                  'selected': false,
-                };
+              final typedMedia = List<Map<String, dynamic>>.from(data).map((
+                item,
+              ) {
+                return {...item, 'type': mediaType, 'selected': false};
               }).toList();
-              
+
               allMedia.addAll(typedMedia);
             }
           }
@@ -582,23 +606,25 @@ Future<void> _loadAttributes() async {
           print('⚠️ [MEDIA] فشل في تحميل نوع الوسائط $mediaType: $e');
         }
       }
-      
+
       // ترتيب الوسائط حسب تاريخ الإنشاء
       allMedia.sort((a, b) {
-        final dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(2000);
-        final dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(2000);
+        final dateA =
+            DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(2000);
+        final dateB =
+            DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(2000);
         return dateB.compareTo(dateA);
       });
-      
+
       await _storage.write(_MEDIA_KEY, allMedia);
       print('✅ [MEDIA] تم تحميل ${allMedia.length} وسائط');
     } catch (e) {
       print('⚠️ [MEDIA] فشل في تحميل الوسائط: $e');
     }
   }
-  
+
   // ==================== وظائف المساعدة ====================
-  
+
   Future<void> _tryReloadOnConnection() async {
     try {
       if (_isDataLoaded.value && _isOnline.value) {
@@ -607,7 +633,7 @@ Future<void> _loadAttributes() async {
           print('🔄 [DATA] البيانات قديمة، جاري التحديث...');
           await initializeAppData(forceRefresh: true, silent: true);
         }
-        
+
         // مزامنة المهام المتأخرة
         await _processSyncQueue();
       }
@@ -615,14 +641,14 @@ Future<void> _loadAttributes() async {
       print('⚠️ [DATA] خطأ في إعادة التحميل: $e');
     }
   }
-  
+
   Future<void> _processSyncQueue() async {
     try {
       final queue = _storage.read<List<dynamic>>(_SYNC_QUEUE_KEY) ?? [];
       if (queue.isEmpty) return;
-      
+
       print('🔄 [SYNC] معالجة ${queue.length} مهمة متأخرة');
-      
+
       for (final task in queue) {
         try {
           await _processSyncTask(task);
@@ -630,7 +656,7 @@ Future<void> _loadAttributes() async {
           print('⚠️ [SYNC] فشل في معالجة المهمة: $e');
         }
       }
-      
+
       // مسح المهام المنجزة
       await _storage.remove(_SYNC_QUEUE_KEY);
       print('✅ [SYNC] تمت مزامنة جميع المهام');
@@ -638,11 +664,11 @@ Future<void> _loadAttributes() async {
       print('❌ [SYNC] خطأ في معالجة قائمة المزامنة: $e');
     }
   }
-  
+
   Future<void> _processSyncTask(Map<String, dynamic> task) async {
     final String type = task['type'] ?? '';
     final dynamic data = task['data'];
-    
+
     switch (type) {
       case 'add_product':
         await _syncAddProduct(data);
@@ -657,22 +683,22 @@ Future<void> _loadAttributes() async {
         print('⚠️ [SYNC] نوع مهمة غير معروف: $type');
     }
   }
-  
+
   Future<void> _syncAddProduct(Map<String, dynamic> productData) async {
     print('🔄 [SYNC] مزامنة إضافة منتج');
     // تنفيذ API لإضافة المنتج
   }
-  
+
   Future<void> _syncUpdateProduct(Map<String, dynamic> productData) async {
     print('🔄 [SYNC] مزامنة تحديث منتج');
     // تنفيذ API لتحديث المنتج
   }
-  
+
   Future<void> _syncAddSection(Map<String, dynamic> sectionData) async {
     print('🔄 [SYNC] مزامنة إضافة قسم');
     // تنفيذ API لإضافة القسم
   }
-  
+
   Future<void> _loadInitialStatistics() async {
     try {
       final stats = await getStatistics();
@@ -682,7 +708,7 @@ Future<void> _loadAttributes() async {
       print('⚠️ [STATS] خطأ في تحميل الإحصائيات: $e');
     }
   }
-  
+
   Future<void> _updateStatistics() async {
     try {
       final stats = await getStatistics();
@@ -692,31 +718,34 @@ Future<void> _loadAttributes() async {
       print('⚠️ [STATS] خطأ في تحديث الإحصائيات: $e');
     }
   }
-  
+
   Future<void> _cleanupOldData() async {
     try {
       final now = DateTime.now();
       final cutoffDate = now.subtract(const Duration(days: 30));
-      
+
       // تنظيف الوسائط القديمة
       final media = getMedia();
       final recentMedia = media.where((item) {
         try {
-          final dateString = item['created_at'] ?? item['updated_at'] ?? item['date'] ?? '';
+          final dateString =
+              item['created_at'] ?? item['updated_at'] ?? item['date'] ?? '';
           if (dateString.isEmpty) return true;
-          
+
           final date = DateTime.tryParse(dateString);
           return date == null || date.isAfter(cutoffDate);
         } catch (e) {
           return true;
         }
       }).toList();
-      
+
       if (recentMedia.length < media.length) {
         await _storage.write(_MEDIA_KEY, recentMedia);
-        print('🧹 [CLEANUP] تم تنظيف الوسائط القديمة: ${media.length - recentMedia.length} عنصر');
+        print(
+          '🧹 [CLEANUP] تم تنظيف الوسائط القديمة: ${media.length - recentMedia.length} عنصر',
+        );
       }
-      
+
       // تنظيف المنتجات القديمة غير النشطة
       final products = getProducts();
       final activeProducts = products.where((product) {
@@ -727,45 +756,61 @@ Future<void> _loadAttributes() async {
           return true;
         }
       }).toList();
-      
+
       if (activeProducts.length < products.length) {
         await _storage.write(_PRODUCTS_KEY, activeProducts);
-        print('🧹 [CLEANUP] تم تنظيف المنتجات غير النشطة: ${products.length - activeProducts.length} منتج');
+        print(
+          '🧹 [CLEANUP] تم تنظيف المنتجات غير النشطة: ${products.length - activeProducts.length} منتج',
+        );
       }
-      
+
       print('✅ [CLEANUP] اكتمل تنظيف البيانات القديمة');
     } catch (e) {
       print('⚠️ [CLEANUP] خطأ في تنظيف البيانات القديمة: $e');
     }
   }
-  
+
   // ==================== Getters للبيانات ====================
-  
+
   List<dynamic> getStores() => _storage.read(_STORES_KEY) ?? [];
+
   List<dynamic> getCities() => _storage.read(_CITIES_KEY) ?? [];
+
   List<dynamic> getDistricts() => _storage.read(_DISTRICTS_KEY) ?? [];
+
   List<dynamic> getCurrencies() => _storage.read(_CURRENCIES_KEY) ?? [];
+
   List<dynamic> getSections() => _storage.read(_SECTIONS_KEY) ?? [];
+
   List<dynamic> getAttributes() => _storage.read(_ATTRIBUTES_KEY) ?? [];
+
   List<dynamic> getCategories() => _storage.read(_CATEGORIES_KEY) ?? [];
+
   List<dynamic> getMedia() => _storage.read(_MEDIA_KEY) ?? [];
+
   List<dynamic> getProducts() => _storage.read(_PRODUCTS_KEY) ?? [];
+
   Map<String, dynamic> getSettings() => _storage.read(_SETTINGS_KEY) ?? {};
+
   Map<String, dynamic> getUserData() => _storage.read(_USER_DATA_KEY) ?? {};
+
   Map<String, dynamic> getAppConfig() => _storage.read(_APP_CONFIG_KEY) ?? {};
-  
+
   // الحصول على الأقسام المحسنة
   List<Map<String, dynamic>> getEnhancedSections() {
     final sections = _storage.read<List<dynamic>>(_CACHED_SECTIONS_KEY) ?? [];
-    return sections.map((section) => Map<String, dynamic>.from(section)).toList();
+    return sections
+        .map((section) => Map<String, dynamic>.from(section))
+        .toList();
   }
-  
+
   // الحصول على السمات للاختلافات
   List<ProductAttribute> getAttributesForVariations() {
     try {
-      final cachedAttributes = _storage.read<List<dynamic>>(_ATTRIBUTES_VARIATIONS_KEY) ?? [];
+      final cachedAttributes =
+          _storage.read<List<dynamic>>(_ATTRIBUTES_VARIATIONS_KEY) ?? [];
       if (cachedAttributes.isEmpty) return [];
-      
+
       return cachedAttributes.map((attr) {
         return ProductAttribute.fromApiJson(Map<String, dynamic>.from(attr));
       }).toList();
@@ -774,15 +819,15 @@ Future<void> _loadAttributes() async {
       return [];
     }
   }
-  
+
   // الحصول على السمات حسب النوع
   List<ProductAttribute> getAttributesByType(String type) {
     final allAttributes = getAttributesForVariations();
     return allAttributes.where((attr) => attr.type == type).toList();
   }
-  
+
   // ==================== وظائف البحث ====================
-  
+
   Map<String, dynamic>? getStoreById(dynamic id) {
     try {
       final stores = getStores();
@@ -796,12 +841,12 @@ Future<void> _loadAttributes() async {
     }
     return null;
   }
-  
+
   String _getStoreName(dynamic storeId) {
     final store = getStoreById(storeId);
     return store?['name']?.toString() ?? 'غير معروف';
   }
-  
+
   int _countProductsInSection(dynamic sectionId) {
     try {
       final products = getProducts();
@@ -813,7 +858,7 @@ Future<void> _loadAttributes() async {
       return 0;
     }
   }
-  
+
   Map<String, dynamic>? getCityById(dynamic id) {
     try {
       final cities = getCities();
@@ -827,7 +872,7 @@ Future<void> _loadAttributes() async {
     }
     return null;
   }
-  
+
   Map<String, dynamic>? getDistrictById(dynamic id) {
     try {
       final districts = getDistricts();
@@ -841,7 +886,7 @@ Future<void> _loadAttributes() async {
     }
     return null;
   }
-  
+
   Map<String, dynamic>? getSectionById(dynamic id) {
     try {
       final sections = getSections();
@@ -855,7 +900,7 @@ Future<void> _loadAttributes() async {
     }
     return null;
   }
-  
+
   Map<String, dynamic>? getProductById(dynamic id) {
     try {
       final products = getProducts();
@@ -869,22 +914,31 @@ Future<void> _loadAttributes() async {
     }
     return null;
   }
-  
+
   // ==================== وظائف التحديث ====================
-  
+
   // Future<void> refreshStores() async => await _loadStores();
   Future<void> refreshCities() async => await _loadCities();
+
   Future<void> refreshDistricts() async => await _loadDistricts();
+
   Future<void> refreshCurrencies() async => await _loadCurrencies();
+
   Future<void> refreshSections() async => await _loadSections();
+
   Future<void> refreshAttributes() async => await _loadAttributes();
+
   Future<void> refreshCategories() async => await _loadCategories();
+
   Future<void> refreshProducts() async => await _loadProducts();
+
   Future<void> refreshMedia() async => await _loadMedia();
-  Future<void> refreshAllData() async => await initializeAppData(forceRefresh: true);
-  
+
+  Future<void> refreshAllData() async =>
+      await initializeAppData(forceRefresh: true);
+
   // ==================== إدارة بيانات المستخدم ====================
-  
+
   Future<void> saveUserData(Map<String, dynamic> userData) async {
     try {
       await _storage.write(_USER_DATA_KEY, userData);
@@ -894,7 +948,7 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Future<void> updateUserData(Map<String, dynamic> updates) async {
     try {
       final currentData = getUserData();
@@ -906,7 +960,7 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Future<void> clearUserData() async {
     try {
       await _storage.remove(_USER_DATA_KEY);
@@ -916,9 +970,9 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   // ==================== إدارة التطبيق ====================
-  
+
   Future<void> saveAppConfig(Map<String, dynamic> config) async {
     try {
       await _storage.write(_APP_CONFIG_KEY, config);
@@ -928,7 +982,7 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Future<void> addStore(Map<String, dynamic> store) async {
     try {
       final stores = getStores();
@@ -940,11 +994,16 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
-  Future<void> updateStore(dynamic id, Map<String, dynamic> updatedStore) async {
+
+  Future<void> updateStore(
+    dynamic id,
+    Map<String, dynamic> updatedStore,
+  ) async {
     try {
       final stores = getStores();
-      final index = stores.indexWhere((store) => store['id'].toString() == id.toString());
+      final index = stores.indexWhere(
+        (store) => store['id'].toString() == id.toString(),
+      );
       if (index != -1) {
         stores[index] = {...stores[index], ...updatedStore};
         await _storage.write(_STORES_KEY, stores);
@@ -955,7 +1014,7 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Future<void> deleteStore(dynamic id) async {
     try {
       final stores = getStores();
@@ -967,9 +1026,9 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   // ==================== إدارة المنتجات والاختلافات ====================
-  
+
   Future<void> saveVariationsData(Map<String, dynamic> variationsData) async {
     try {
       await _storage.write(_VARIATIONS_DATA_KEY, variationsData);
@@ -979,11 +1038,11 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Map<String, dynamic> getVariationsData() {
     return _storage.read(_VARIATIONS_DATA_KEY) ?? {};
   }
-  
+
   Future<void> saveProductDraft(Map<String, dynamic> productData) async {
     try {
       await _storage.write(_PRODUCT_DRAFT_KEY, {
@@ -997,11 +1056,11 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Map<String, dynamic> getProductDraft() {
     return _storage.read(_PRODUCT_DRAFT_KEY) ?? {};
   }
-  
+
   Future<void> clearProductDraft() async {
     try {
       await _storage.remove(_PRODUCT_DRAFT_KEY);
@@ -1011,7 +1070,7 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   Future<void> addToSyncQueue(String type, Map<String, dynamic> data) async {
     try {
       final queue = _storage.read<List<dynamic>>(_SYNC_QUEUE_KEY) ?? [];
@@ -1021,7 +1080,7 @@ Future<void> _loadAttributes() async {
         'created_at': DateTime.now().toIso8601String(),
         'attempts': 0,
       });
-      
+
       await _storage.write(_SYNC_QUEUE_KEY, queue);
       print('📝 [SYNC] تم إضافة مهمة للمزامنة: $type');
     } catch (e) {
@@ -1029,9 +1088,9 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   // ==================== إدارة البيانات العامة ====================
-  
+
   Future<void> clearAllData() async {
     try {
       await _storage.erase();
@@ -1042,25 +1101,25 @@ Future<void> _loadAttributes() async {
       throw e;
     }
   }
-  
+
   bool isDataStale({int maxAgeHours = 24}) {
     try {
       final lastUpdate = _storage.read<String>(_LAST_UPDATE_KEY);
       if (lastUpdate == null) return true;
-      
+
       final lastUpdateTime = DateTime.parse(lastUpdate);
       final now = DateTime.now();
       final difference = now.difference(lastUpdateTime);
-      
+
       return difference.inHours > maxAgeHours;
     } catch (e) {
       print('⚠️ [DATA] خطأ في التحقق من عمر البيانات: $e');
       return true;
     }
   }
-  
+
   // ==================== الإحصائيات والتقارير ====================
-  
+
   Future<Map<String, dynamic>> getStorageInfo() async {
     try {
       final keys = _storage.getKeys();
@@ -1069,219 +1128,242 @@ Future<void> _loadAttributes() async {
         'keys': keys.toList(),
         'details': {},
       };
-      
-    int estimatedSize = 0;
-    for (var key in keys) {
-      final value = _storage.read(key);
-      if (value != null) {
-        final jsonString = jsonEncode(value);
-        final keySize = jsonString.length * 2; // تقدير تقريبي
-        estimatedSize += keySize;
-        
-        info['details'][key] = {
-          'type': value.runtimeType.toString(),
-          'size_bytes': keySize,
-          'size_kb': (keySize / 1024).toStringAsFixed(2),
-        };
+
+      int estimatedSize = 0;
+      for (var key in keys) {
+        final value = _storage.read(key);
+        if (value != null) {
+          final jsonString = jsonEncode(value);
+          final keySize = jsonString.length * 2; // تقدير تقريبي
+          estimatedSize += keySize;
+
+          info['details'][key] = {
+            'type': value.runtimeType.toString(),
+            'size_bytes': keySize,
+            'size_kb': (keySize / 1024).toStringAsFixed(2),
+          };
+        }
       }
+
+      info['estimated_size_bytes'] = estimatedSize;
+      info['estimated_size_kb'] = (estimatedSize / 1024).toStringAsFixed(2);
+      info['estimated_size_mb'] = (estimatedSize / (1024 * 1024))
+          .toStringAsFixed(2);
+
+      return info;
+    } catch (e) {
+      print('⚠️ [DATA] خطأ في الحصول على معلومات التخزين: $e');
+      return {'error': e.toString()};
     }
-    
-    info['estimated_size_bytes'] = estimatedSize;
-    info['estimated_size_kb'] = (estimatedSize / 1024).toStringAsFixed(2);
-    info['estimated_size_mb'] = (estimatedSize / (1024 * 1024)).toStringAsFixed(2);
-    
-    return info;
-  } catch (e) {
-    print('⚠️ [DATA] خطأ في الحصول على معلومات التخزين: $e');
-    return {'error': e.toString()};
   }
-}
 
-Future<Map<String, dynamic>> getStatistics() async {
-  try {
-    final now = DateTime.now();
-    final storageInfo = await getStorageInfo();
-    
-    return {
-      'general': {
-        'stores_count': getStores().length,
-        'cities_count': getCities().length,
-        'districts_count': getDistricts().length,
-        'currencies_count': getCurrencies().length,
-        'sections_count': getSections().length,
-        'attributes_count': getAttributes().length,
-        'categories_count': getCategories().length,
-        'products_count': getProducts().length,
-        'media_count': getMedia().length,
-        'is_online': _isOnline.value,
-        'is_data_loaded': _isDataLoaded.value,
-        'last_update': _storage.read<String>(_LAST_UPDATE_KEY),
-        'is_data_stale': isDataStale(),
-      },
-      'storage': storageInfo,
-      'user': {
-        'is_logged_in': _myAppController.isLoggedIn.value,
-        'user_data_exists': getUserData().isNotEmpty,
-      },
-      'sync': {
-        'pending_tasks': (_storage.read<List<dynamic>>(_SYNC_QUEUE_KEY) ?? []).length,
-        'has_offline_data': _hasOfflineData(),
-      },
-      'timestamp': now.toIso8601String(),
-      'app_version': '1.0.0',
-    };
-  } catch (e) {
-    print('⚠️ [DATA] خطأ في الحصول على الإحصائيات: $e');
-    return {'error': e.toString()};
-  }
-}
+  Future<Map<String, dynamic>> getStatistics() async {
+    try {
+      final now = DateTime.now();
+      final storageInfo = await getStorageInfo();
 
-Future<Map<String, dynamic>> exportData() async {
-  try {
-    final stats = await getStatistics();
-    
-    return {
-      'metadata': {
-        'export_date': DateTime.now().toIso8601String(),
+      return {
+        'general': {
+          'stores_count': getStores().length,
+          'cities_count': getCities().length,
+          'districts_count': getDistricts().length,
+          'currencies_count': getCurrencies().length,
+          'sections_count': getSections().length,
+          'attributes_count': getAttributes().length,
+          'categories_count': getCategories().length,
+          'products_count': getProducts().length,
+          'media_count': getMedia().length,
+          'is_online': _isOnline.value,
+          'is_data_loaded': _isDataLoaded.value,
+          'last_update': _storage.read<String>(_LAST_UPDATE_KEY),
+          'is_data_stale': isDataStale(),
+        },
+        'storage': storageInfo,
+        'user': {
+          'is_logged_in': _myAppController.isLoggedIn.value,
+          'user_data_exists': getUserData().isNotEmpty,
+        },
+        'sync': {
+          'pending_tasks':
+              (_storage.read<List<dynamic>>(_SYNC_QUEUE_KEY) ?? []).length,
+          'has_offline_data': _hasOfflineData(),
+        },
+        'timestamp': now.toIso8601String(),
         'app_version': '1.0.0',
-        'export_format': 'v1',
-        'statistics': stats,
-      },
-      'data': {
-        'stores': getStores(),
-        'cities': getCities(),
-        'districts': getDistricts(),
-        'currencies': getCurrencies(),
-        'sections': getSections(),
-        'attributes': getAttributes(),
-        'categories': getCategories(),
-        'products': getProducts(),
-        'media': getMedia(),
-        'settings': getSettings(),
-        'user_data': getUserData(),
-        'app_config': getAppConfig(),
-        'variations_data': getVariationsData(),
-        'product_draft': getProductDraft(),
-        'sync_queue': _storage.read(_SYNC_QUEUE_KEY) ?? [],
-      },
-    };
-  } catch (e) {
-    print('❌ [DATA] خطأ في تصدير البيانات: $e');
-    return {'error': e.toString()};
-  }
-}
-
-Future<bool> importData(Map<String, dynamic> data) async {
-  try {
-    if (data['metadata'] == null || data['data'] == null) {
-      throw Exception('بيانات غير صالحة');
+      };
+    } catch (e) {
+      print('⚠️ [DATA] خطأ في الحصول على الإحصائيات: $e');
+      return {'error': e.toString()};
     }
-    
-    final metadata = Map<String, dynamic>.from(data['metadata']);
-    final importData = Map<String, dynamic>.from(data['data']);
-    
-    print('📥 [IMPORT] استيراد بيانات من: ${metadata['export_date']}');
-    
-    // استيراد البيانات الأساسية
-    if (importData['stores'] != null) await _storage.write(_STORES_KEY, importData['stores']);
-    if (importData['cities'] != null) await _storage.write(_CITIES_KEY, importData['cities']);
-    if (importData['districts'] != null) await _storage.write(_DISTRICTS_KEY, importData['districts']);
-    if (importData['currencies'] != null) await _storage.write(_CURRENCIES_KEY, importData['currencies']);
-    if (importData['sections'] != null) await _storage.write(_SECTIONS_KEY, importData['sections']);
-    if (importData['attributes'] != null) await _storage.write(_ATTRIBUTES_KEY, importData['attributes']);
-    if (importData['categories'] != null) await _storage.write(_CATEGORIES_KEY, importData['categories']);
-    if (importData['products'] != null) await _storage.write(_PRODUCTS_KEY, importData['products']);
-    if (importData['media'] != null) await _storage.write(_MEDIA_KEY, importData['media']);
-    if (importData['settings'] != null) await _storage.write(_SETTINGS_KEY, importData['settings']);
-    if (importData['user_data'] != null) await _storage.write(_USER_DATA_KEY, importData['user_data']);
-    if (importData['app_config'] != null) await _storage.write(_APP_CONFIG_KEY, importData['app_config']);
-    if (importData['variations_data'] != null) await _storage.write(_VARIATIONS_DATA_KEY, importData['variations_data']);
-    if (importData['product_draft'] != null) await _storage.write(_PRODUCT_DRAFT_KEY, importData['product_draft']);
-    if (importData['sync_queue'] != null) await _storage.write(_SYNC_QUEUE_KEY, importData['sync_queue']);
-    
-    // إعادة بناء البيانات المحسنة
-    await saveAttributesForVariations(getAttributes());
-    
-    // تحديث وقت التحديث الأخير
-    await _storage.write(_LAST_UPDATE_KEY, DateTime.now().toIso8601String());
-    
-    // تحديث حالة التحميل
-    _isDataLoaded.value = true;
-    
-    print('✅ [DATA] تم استيراد البيانات بنجاح');
-    return true;
-  } catch (e) {
-    print('❌ [DATA] خطأ في استيراد البيانات: $e');
-    return false;
   }
-}
 
-// ==================== وظائف مساعدة متقدمة ====================
+  Future<Map<String, dynamic>> exportData() async {
+    try {
+      final stats = await getStatistics();
 
-Future<void> backupData() async {
-  try {
-    final exportedData = await exportData();
-    final backupKey = 'backup_${DateTime.now().millisecondsSinceEpoch}';
-    await _storage.write(backupKey, exportedData);
-    
-    print('💾 [BACKUP] تم إنشاء نسخة احتياطية: $backupKey');
-  } catch (e) {
-    print('❌ [BACKUP] خطأ في إنشاء نسخة احتياطية: $e');
-  }
-}
-
-Future<bool> restoreFromBackup(String backupKey) async {
-  try {
-    final backupData = _storage.read(backupKey);
-    if (backupData == null) {
-      throw Exception('النسخة الاحتياطية غير موجودة');
+      return {
+        'metadata': {
+          'export_date': DateTime.now().toIso8601String(),
+          'app_version': '1.0.0',
+          'export_format': 'v1',
+          'statistics': stats,
+        },
+        'data': {
+          'stores': getStores(),
+          'cities': getCities(),
+          'districts': getDistricts(),
+          'currencies': getCurrencies(),
+          'sections': getSections(),
+          'attributes': getAttributes(),
+          'categories': getCategories(),
+          'products': getProducts(),
+          'media': getMedia(),
+          'settings': getSettings(),
+          'user_data': getUserData(),
+          'app_config': getAppConfig(),
+          'variations_data': getVariationsData(),
+          'product_draft': getProductDraft(),
+          'sync_queue': _storage.read(_SYNC_QUEUE_KEY) ?? [],
+        },
+      };
+    } catch (e) {
+      print('❌ [DATA] خطأ في تصدير البيانات: $e');
+      return {'error': e.toString()};
     }
-    
-    return await importData(Map<String, dynamic>.from(backupData));
-  } catch (e) {
-    print('❌ [BACKUP] خطأ في استعادة النسخة الاحتياطية: $e');
-    return false;
   }
-}
 
-List<String> getAvailableBackups() {
-  return _storage.getKeys().where((key) => key.startsWith('backup_')).toList();
-}
+  Future<bool> importData(Map<String, dynamic> data) async {
+    try {
+      if (data['metadata'] == null || data['data'] == null) {
+        throw Exception('بيانات غير صالحة');
+      }
 
-Future<void> clearOldBackups({int keepLast = 5}) async {
-  try {
-    final backups = getAvailableBackups();
-    if (backups.length <= keepLast) return;
-    
-    // ترتيب النسخ حسب التاريخ (الأقدم أولاً)
-    backups.sort();
-    
-    // حذف النسخ القديمة
-    for (int i = 0; i < backups.length - keepLast; i++) {
-      await _storage.remove(backups[i]);
-      print('🗑️ [BACKUP] تم حذف النسخة الاحتياطية: ${backups[i]}');
+      final metadata = Map<String, dynamic>.from(data['metadata']);
+      final importData = Map<String, dynamic>.from(data['data']);
+
+      print('📥 [IMPORT] استيراد بيانات من: ${metadata['export_date']}');
+
+      // استيراد البيانات الأساسية
+      if (importData['stores'] != null)
+        await _storage.write(_STORES_KEY, importData['stores']);
+      if (importData['cities'] != null)
+        await _storage.write(_CITIES_KEY, importData['cities']);
+      if (importData['districts'] != null)
+        await _storage.write(_DISTRICTS_KEY, importData['districts']);
+      if (importData['currencies'] != null)
+        await _storage.write(_CURRENCIES_KEY, importData['currencies']);
+      if (importData['sections'] != null)
+        await _storage.write(_SECTIONS_KEY, importData['sections']);
+      if (importData['attributes'] != null)
+        await _storage.write(_ATTRIBUTES_KEY, importData['attributes']);
+      if (importData['categories'] != null)
+        await _storage.write(_CATEGORIES_KEY, importData['categories']);
+      if (importData['products'] != null)
+        await _storage.write(_PRODUCTS_KEY, importData['products']);
+      if (importData['media'] != null)
+        await _storage.write(_MEDIA_KEY, importData['media']);
+      if (importData['settings'] != null)
+        await _storage.write(_SETTINGS_KEY, importData['settings']);
+      if (importData['user_data'] != null)
+        await _storage.write(_USER_DATA_KEY, importData['user_data']);
+      if (importData['app_config'] != null)
+        await _storage.write(_APP_CONFIG_KEY, importData['app_config']);
+      if (importData['variations_data'] != null)
+        await _storage.write(
+          _VARIATIONS_DATA_KEY,
+          importData['variations_data'],
+        );
+      if (importData['product_draft'] != null)
+        await _storage.write(_PRODUCT_DRAFT_KEY, importData['product_draft']);
+      if (importData['sync_queue'] != null)
+        await _storage.write(_SYNC_QUEUE_KEY, importData['sync_queue']);
+
+      // إعادة بناء البيانات المحسنة
+      await saveAttributesForVariations(getAttributes());
+
+      // تحديث وقت التحديث الأخير
+      await _storage.write(_LAST_UPDATE_KEY, DateTime.now().toIso8601String());
+
+      // تحديث حالة التحميل
+      _isDataLoaded.value = true;
+
+      print('✅ [DATA] تم استيراد البيانات بنجاح');
+      return true;
+    } catch (e) {
+      print('❌ [DATA] خطأ في استيراد البيانات: $e');
+      return false;
     }
-    
-    print('✅ [BACKUP] تم تنظيف النسخ الاحتياطية القديمة');
-  } catch (e) {
-    print('⚠️ [BACKUP] خطأ في تنظيف النسخ الاحتياطية: $e');
   }
-}
 
-// ==================== إدارة الذاكرة ====================
+  // ==================== وظائف مساعدة متقدمة ====================
 
-@override
-void onClose() {
-  print('🔚 [DATA SERVICE] إغلاق خدمة البيانات');
-  // حفظ الإحصائيات النهائية قبل الإغلاق
-  _updateStatistics().catchError((e) {
-    print('⚠️ [DATA] خطأ في حفظ الإحصائيات النهائية: $e');
-  });
-  super.onClose();
-}
+  Future<void> backupData() async {
+    try {
+      final exportedData = await exportData();
+      final backupKey = 'backup_${DateTime.now().millisecondsSinceEpoch}';
+      await _storage.write(backupKey, exportedData);
 
-void printDebugInfo() {
-  print('''
+      print('💾 [BACKUP] تم إنشاء نسخة احتياطية: $backupKey');
+    } catch (e) {
+      print('❌ [BACKUP] خطأ في إنشاء نسخة احتياطية: $e');
+    }
+  }
+
+  Future<bool> restoreFromBackup(String backupKey) async {
+    try {
+      final backupData = _storage.read(backupKey);
+      if (backupData == null) {
+        throw Exception('النسخة الاحتياطية غير موجودة');
+      }
+
+      return await importData(Map<String, dynamic>.from(backupData));
+    } catch (e) {
+      print('❌ [BACKUP] خطأ في استعادة النسخة الاحتياطية: $e');
+      return false;
+    }
+  }
+
+  List<String> getAvailableBackups() {
+    return _storage
+        .getKeys()
+        .where((key) => key.startsWith('backup_'))
+        .toList();
+  }
+
+  Future<void> clearOldBackups({int keepLast = 5}) async {
+    try {
+      final backups = getAvailableBackups();
+      if (backups.length <= keepLast) return;
+
+      // ترتيب النسخ حسب التاريخ (الأقدم أولاً)
+      backups.sort();
+
+      // حذف النسخ القديمة
+      for (int i = 0; i < backups.length - keepLast; i++) {
+        await _storage.remove(backups[i]);
+        print('🗑️ [BACKUP] تم حذف النسخة الاحتياطية: ${backups[i]}');
+      }
+
+      print('✅ [BACKUP] تم تنظيف النسخ الاحتياطية القديمة');
+    } catch (e) {
+      print('⚠️ [BACKUP] خطأ في تنظيف النسخ الاحتياطية: $e');
+    }
+  }
+
+  // ==================== إدارة الذاكرة ====================
+
+  @override
+  void onClose() {
+    print('🔚 [DATA SERVICE] إغلاق خدمة البيانات');
+    // حفظ الإحصائيات النهائية قبل الإغلاق
+    _updateStatistics().catchError((e) {
+      print('⚠️ [DATA] خطأ في حفظ الإحصائيات النهائية: $e');
+    });
+    super.onClose();
+  }
+
+  void printDebugInfo() {
+    print('''
 📊 [DATA DEBUG INFO]:
    حالة التحميل: ${isInitializing ? 'قيد التحميل' : 'جاهز'}
    التقدم: ${(progress * 100).toStringAsFixed(1)}%
@@ -1295,32 +1377,36 @@ void printDebugInfo() {
    عدد المنتجات: ${getProducts().length}
    عدد الوسائط: ${getMedia().length}
 ''');
-}
-Future<void> refreshStores() async {
-  try {
-    if (!_isOnline.value) {
-      print('⚠️ [STORES] لا يمكن التحديث (غير متصل)');
-      return;
-    }
-    
-    final response = await ApiHelper.get(
-      path: '/merchants/stores',
-      queryParameters: {'orderDir': 'asc'},
-      withLoading: false,
-      shouldShowMessage: false,
-    );
-    
-    if (response != null && response['status'] == true) {
-      final stores = response['data'] ?? [];
-      await _storage.write(_STORES_KEY, stores);
-      print('✅ [STORES] تم تحديث المتاجر: ${stores.length} متجر');
-    }
-  } catch (e) {
-    print('⚠️ [STORES] فشل في تحديث المتاجر: $e');
   }
-}
-// إضافة Stream getters
-Stream<bool> get isInitializingStream => _isInitializing.stream;
-Stream<String> get currentStepStream => _currentStep.stream;
-Stream<double> get progressStream => _progress.stream;
+
+  Future<void> refreshStores() async {
+    try {
+      if (!_isOnline.value) {
+        print('⚠️ [STORES] لا يمكن التحديث (غير متصل)');
+        return;
+      }
+
+      final response = await ApiHelper.get(
+        path: '/merchants/stores',
+        queryParameters: {'orderDir': 'asc'},
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+
+      if (response != null && response['status'] == true) {
+        final stores = response['data'] ?? [];
+        await _storage.write(_STORES_KEY, stores);
+        print('✅ [STORES] تم تحديث المتاجر: ${stores.length} متجر');
+      }
+    } catch (e) {
+      print('⚠️ [STORES] فشل في تحديث المتاجر: $e');
+    }
+  }
+
+  // إضافة Stream getters
+  Stream<bool> get isInitializingStream => _isInitializing.stream;
+
+  Stream<String> get currentStepStream => _currentStep.stream;
+
+  Stream<double> get progressStream => _progress.stream;
 }

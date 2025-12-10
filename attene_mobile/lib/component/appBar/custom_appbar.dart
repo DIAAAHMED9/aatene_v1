@@ -7,7 +7,8 @@ import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 
-class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBarWithTabs extends StatelessWidget
+    implements PreferredSizeWidget {
   final AppBarConfig config;
   final bool isRTL;
 
@@ -32,28 +33,25 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
     return Container(
       margin: const EdgeInsets.only(top: 5),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration:config.tabs!=null? _buildBoxDecoration():null,
-      child:config.tabs!=null?SafeArea(
-        child: Column(
-          children: _buildAppBarContent(),
-        ),
-      ):Column(
-          children: _buildAppBarContent(),
-        ),
+      decoration: config.tabs != null ? _buildBoxDecoration() : null,
+      child: config.tabs != null
+          ? SafeArea(child: Column(children: _buildAppBarContent()))
+          : Column(children: _buildAppBarContent()),
     );
   }
 
   List<Widget> _buildAppBarContent() {
     final List<Widget> children = [
-    config.tabs!=null?  _buildTopBar():SizedBox(),
-    config.tabs!=null?   const SizedBox(height: 15):SizedBox(),
+      config.tabs != null ? _buildTopBar() : SizedBox(),
+      config.tabs != null ? const SizedBox(height: 15) : SizedBox(),
     ];
 
-    if (config.showTabs && (config.tabs?.isNotEmpty ?? false) && config.tabController != null) {
-    config.tabs!=null?  children.addAll([
-        _buildTabBar(),
-        const SizedBox(height: 15),
-      ]):SizedBox();
+    if (config.showTabs &&
+        (config.tabs?.isNotEmpty ?? false) &&
+        config.tabController != null) {
+      config.tabs != null
+          ? children.addAll([_buildTabBar(), const SizedBox(height: 15)])
+          : SizedBox();
     }
 
     if (config.showSearch) {
@@ -156,9 +154,9 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
             assets: 'assets/images/png/filter_icon.png',
             onTap: config.onFilterPressed!,
           ),
-        
+
         if (config.onFilterPressed != null) const SizedBox(width: 8),
-        
+
         Expanded(
           child: TextFiledAatene(
             heightTextFiled: 50,
@@ -177,9 +175,9 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
             hintText: isRTL ? 'بحث...' : 'Search...',
           ),
         ),
-        
+
         if (config.onSortPressed != null) const SizedBox(width: 8),
-        
+
         if (config.onSortPressed != null)
           _buildFilterButton(
             assets: 'assets/images/png/sort_icon.png',
@@ -221,7 +219,7 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
   }) {
     try {
       Widget imageWidget;
-      
+
       if (assetPath.toLowerCase().endsWith('.svg')) {
         imageWidget = SvgPicture.asset(
           assetPath,
@@ -252,16 +250,11 @@ class CustomAppBarWithTabs extends StatelessWidget implements PreferredSizeWidge
           child: imageWidget,
         );
       }
-      
+
       return imageWidget;
-      
     } catch (e) {
       debugPrint('Image loading failed: $assetPath, Error: $e');
-      return Icon(
-        Icons.error_outline,
-        size: size,
-        color: Colors.red,
-      );
+      return Icon(Icons.error_outline, size: size, color: Colors.red);
     }
   }
 }

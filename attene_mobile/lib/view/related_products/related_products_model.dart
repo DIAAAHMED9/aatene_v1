@@ -23,7 +23,7 @@ class ProductAttribute {
 
   factory ProductAttribute.fromApiJson(Map<String, dynamic> json) {
     final options = List<Map<String, dynamic>>.from(json['options'] ?? []);
-    
+
     return ProductAttribute(
       id: json['id'].toString(),
       name: json['title'] ?? 'بدون اسم',
@@ -36,10 +36,10 @@ class ProductAttribute {
           isSelected: false.obs,
         );
       }).toList(),
-      createdAt: json['created_at'] != null 
+      createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
           : null,
-      updatedAt: json['updated_at'] != null 
+      updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'])
           : null,
     );
@@ -123,7 +123,7 @@ class ProductDiscount {
   });
 
   double get discountAmount => originalPrice - discountedPrice;
-  
+
   double get discountPercentage {
     if (originalPrice <= 0) return 0;
     return (discountAmount / originalPrice) * 100;
@@ -171,16 +171,18 @@ class ProductVariation {
     required String sku,
     required bool isActive,
     required List<String> images,
-  })  : attributes = attributes.obs,
-        price = price.obs,
-        stock = stock.obs,
-        sku = sku.obs,
-        isActive = isActive.obs,
-        images = images.obs;
+  }) : attributes = attributes.obs,
+       price = price.obs,
+       stock = stock.obs,
+       sku = sku.obs,
+       isActive = isActive.obs,
+       images = images.obs;
 
   String get displayName {
     if (attributes.isEmpty) return 'بدون سمات';
-    final attributeStrings = attributes.entries.map((e) => '${e.key}: ${e.value}');
+    final attributeStrings = attributes.entries.map(
+      (e) => '${e.key}: ${e.value}',
+    );
     return attributeStrings.join(' | ');
   }
 

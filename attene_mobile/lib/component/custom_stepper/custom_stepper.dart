@@ -23,14 +23,11 @@ class StepperStep {
   final String subtitle;
   final IconData? icon;
 
-  const StepperStep({
-    required this.title,
-    required this.subtitle,
-    this.icon,
-  });
+  const StepperStep({required this.title, required this.subtitle, this.icon});
 }
 
-class _CustomStepperState extends State<CustomStepper> with SingleTickerProviderStateMixin {
+class _CustomStepperState extends State<CustomStepper>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   int _previousStep = 0;
   bool _isForward = true;
@@ -77,7 +74,7 @@ class _CustomStepperState extends State<CustomStepper> with SingleTickerProvider
           final isCompleted = index < widget.currentStep;
           final isPrevious = index == _previousStep;
           final isNext = index == widget.currentStep + 1;
-    
+
           return _buildStepWithConnector(
             index: index,
             isActive: isActive,
@@ -98,12 +95,9 @@ class _CustomStepperState extends State<CustomStepper> with SingleTickerProvider
     required bool isNext,
   }) {
     final isLast = index == widget.steps.length - 1;
-    
+
     return Container(
-      constraints: const BoxConstraints(
-        minWidth: 60,
-        maxWidth: 80,
-      ),
+      constraints: const BoxConstraints(minWidth: 60, maxWidth: 80),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -172,12 +166,16 @@ class _AnimatedStepCircle extends StatelessWidget {
           animation: animation,
           builder: (context, child) {
             final scale = isActive || isNext
-                ? Tween<double>(begin: 0.8, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: animation,
-                      curve: isActive ? Curves.elasticOut : Curves.easeInOut,
-                    ),
-                  ).value
+                ? Tween<double>(begin: 0.8, end: 1.0)
+                      .animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: isActive
+                              ? Curves.elasticOut
+                              : Curves.easeInOut,
+                        ),
+                      )
+                      .value
                 : 1.0;
 
             return Transform.scale(
@@ -198,17 +196,21 @@ class _AnimatedStepCircle extends StatelessWidget {
                             : Colors.grey[300]!,
                         width: 2.5,
                       ),
-                      boxShadow: (isActive || isNext) ? [
-                        BoxShadow(
-                          color: Colors.blue.withOpacity(0.3 * animation.value),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 2),
-                        )
-                      ] : [],
+                      boxShadow: (isActive || isNext)
+                          ? [
+                              BoxShadow(
+                                color: Colors.blue.withOpacity(
+                                  0.3 * animation.value,
+                                ),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : [],
                     ),
                   ),
-                  
+
                   if (isCompleted || isActive)
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 600),
@@ -222,7 +224,7 @@ class _AnimatedStepCircle extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                     ),
-                  
+
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 400),
                     switchInCurve: Curves.elasticOut,
@@ -235,31 +237,31 @@ class _AnimatedStepCircle extends StatelessWidget {
                             key: ValueKey('check_$stepNumber'),
                           )
                         : (isActive
-                            ? Container(
-                                width: 12,
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.blue.withOpacity(0.5),
-                                      blurRadius: 4,
-                                      spreadRadius: 1,
-                                    )
-                                  ],
-                                ),
-                                key: ValueKey('dot_$stepNumber'),
-                              )
-                            : Text(
-                                stepNumber.toString(),
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                key: ValueKey('number_$stepNumber'),
-                              )),
+                              ? Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.blue.withOpacity(0.5),
+                                        blurRadius: 4,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  key: ValueKey('dot_$stepNumber'),
+                                )
+                              : Text(
+                                  stepNumber.toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  key: ValueKey('number_$stepNumber'),
+                                )),
                   ),
                 ],
               ),
@@ -291,14 +293,15 @@ class _AnimatedStepConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool shouldAnimate = (isPrevious && stepIndex == currentStep - 1) ||
-                              (isNext && stepIndex == currentStep);
+    final bool shouldAnimate =
+        (isPrevious && stepIndex == currentStep - 1) ||
+        (isNext && stepIndex == currentStep);
 
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
         double progress = 0.0;
-        
+
         if (shouldAnimate) {
           progress = animation.value;
         } else if (isActive) {
@@ -320,10 +323,7 @@ class _StepConnectorPainter extends CustomPainter {
   final double progress;
   final bool isActive;
 
-  _StepConnectorPainter({
-    required this.progress,
-    required this.isActive,
-  });
+  _StepConnectorPainter({required this.progress, required this.isActive});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -334,10 +334,7 @@ class _StepConnectorPainter extends CustomPainter {
 
     final Paint progressPaint = Paint()
       ..shader = LinearGradient(
-        colors: [
-          Colors.blue.shade400,
-          Colors.blue.shade600,
-        ],
+        colors: [Colors.blue.shade400, Colors.blue.shade600],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;

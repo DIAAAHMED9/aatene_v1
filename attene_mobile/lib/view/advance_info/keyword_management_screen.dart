@@ -59,69 +59,61 @@ class KeywordManagementScreen extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           'اختر المتجر وأضف الكلمات المفتاحية المناسبة لظهور أفضل في نتائج البحث',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
       ],
     );
   }
 
-Widget _buildStoreSelector() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        children: [
-          Text(
-            'إظهار المنتج في متجر',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+  Widget _buildStoreSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'إظهار المنتج في متجر',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-          ),
-          SizedBox(width: 4),
-          Text(
-            '*',
-            style: TextStyle(
-              color: Colors.red,
-            ),
-          ),
-          Spacer(),
-          Obx(() {
-            if (controller.storesError.isNotEmpty ||
-                (controller.stores.isEmpty && !controller.isLoadingStores.value)) {
-              return IconButton(
-                icon: Icon(Icons.refresh, size: 20),
-                onPressed: () => controller.reloadStores(),
-                tooltip: 'إعادة تحميل المتاجر',
-              );
-            }
-            return SizedBox.shrink();
-          }),
-        ],
-      ),
-      SizedBox(height: 8),
-      Obx(() {
-        print('🔄 [REBUILDING STORE SELECTOR] Loading: ${controller.isLoadingStores.value}');
-        if (controller.isLoadingStores.isTrue) {
-          return _buildStoreLoading();
-        }
-        
-        if (controller.storesError.isNotEmpty) {
-          return _buildStoreError();
-        }
-        
-        if (controller.stores.isEmpty) {
-          return _buildStoreEmpty();
-        }
-        
-        return _buildStoreDropdown();
-      }),
-    ],
-  );
-}
+            SizedBox(width: 4),
+            Text('*', style: TextStyle(color: Colors.red)),
+            Spacer(),
+            Obx(() {
+              if (controller.storesError.isNotEmpty ||
+                  (controller.stores.isEmpty &&
+                      !controller.isLoadingStores.value)) {
+                return IconButton(
+                  icon: Icon(Icons.refresh, size: 20),
+                  onPressed: () => controller.reloadStores(),
+                  tooltip: 'إعادة تحميل المتاجر',
+                );
+              }
+              return SizedBox.shrink();
+            }),
+          ],
+        ),
+        SizedBox(height: 8),
+        Obx(() {
+          print(
+            '🔄 [REBUILDING STORE SELECTOR] Loading: ${controller.isLoadingStores.value}',
+          );
+          if (controller.isLoadingStores.isTrue) {
+            return _buildStoreLoading();
+          }
+
+          if (controller.storesError.isNotEmpty) {
+            return _buildStoreError();
+          }
+
+          if (controller.stores.isEmpty) {
+            return _buildStoreEmpty();
+          }
+
+          return _buildStoreDropdown();
+        }),
+      ],
+    );
+  }
 
   Widget _buildStoreLoading() {
     return Container(
@@ -193,7 +185,11 @@ Widget _buildStoreSelector() {
       ),
       child: Row(
         children: [
-          Icon(Icons.store_mall_directory_outlined, color: Colors.orange, size: 20),
+          Icon(
+            Icons.store_mall_directory_outlined,
+            color: Colors.orange,
+            size: 20,
+          ),
           SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -206,85 +202,91 @@ Widget _buildStoreSelector() {
     );
   }
 
-Widget _buildStoreDropdown() {
-  return Obx(() {
-    final stores = controller.stores;
-    final selectedStore = controller.selectedStore.value;
-    
-    print('🔄 [BUILDING DROPDOWN] Stores: ${stores.length}, Selected: ${selectedStore?.name}');
-    
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<Store>(
-          isExpanded: true,
-          value: selectedStore,
-          decoration: InputDecoration(
-            hintText: stores.isEmpty ? 'لا توجد متاجر متاحة' : 'اختر المتجر',
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          ),
-          items: stores.map((store) {
-            return DropdownMenuItem(
-              value: store,
-              child: Container(
-                constraints: BoxConstraints(
-                  minHeight: 60,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        if (store.logoUrl != null && store.logoUrl!.isNotEmpty)
-                          Container(
-                            width: 30,
-                            height: 30,
-                            margin: EdgeInsets.only(left: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              image: DecorationImage(
-                                image: NetworkImage(store.logoUrl!),
-                                fit: BoxFit.cover,
+  Widget _buildStoreDropdown() {
+    return Obx(() {
+      final stores = controller.stores;
+      final selectedStore = controller.selectedStore.value;
+
+      print(
+        '🔄 [BUILDING DROPDOWN] Stores: ${stores.length}, Selected: ${selectedStore?.name}',
+      );
+
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButtonFormField<Store>(
+            isExpanded: true,
+            value: selectedStore,
+            decoration: InputDecoration(
+              hintText: stores.isEmpty ? 'لا توجد متاجر متاحة' : 'اختر المتجر',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+            ),
+            items: stores.map((store) {
+              return DropdownMenuItem(
+                value: store,
+                child: Container(
+                  constraints: BoxConstraints(minHeight: 60),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          if (store.logoUrl != null &&
+                              store.logoUrl!.isNotEmpty)
+                            Container(
+                              width: 30,
+                              height: 30,
+                              margin: EdgeInsets.only(left: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: DecorationImage(
+                                  image: NetworkImage(store.logoUrl!),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
+                          Expanded(
+                            child: Text(
+                              store.name,
+                              style: TextStyle(fontSize: 14),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        Expanded(
-                          child: Text(
-                            store.name,
-                            style: TextStyle(fontSize: 14),
-                            overflow: TextOverflow.ellipsis,
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        controller.getStoreStatusText(store.status ?? ''),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: controller.getStoreStatusColor(
+                            store.status ?? '',
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      controller.getStoreStatusText(store.status??''),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: controller.getStoreStatusColor(store.status??''),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
-          onChanged: (Store? value) {
-            if (value != null) {
-              controller.setSelectedStore(value);
-            }
-          },
+              );
+            }).toList(),
+            onChanged: (Store? value) {
+              if (value != null) {
+                controller.setSelectedStore(value);
+              }
+            },
+          ),
         ),
-      ),
-    );
-  });
-}
+      );
+    });
+  }
 
   Widget _buildSearchBox() {
     return Container(
@@ -301,11 +303,11 @@ Widget _buildStoreDropdown() {
               decoration: InputDecoration(
                 hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                hintStyle: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
+                hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ),
           ),
@@ -318,12 +320,12 @@ Widget _buildStoreDropdown() {
   Widget _buildAddButton() {
     final hasText = !controller.isSearchInputEmpty.value;
     final canAddMore = controller.canAddMoreKeywords;
-final isDuplicate = controller.searchController.text.isNotEmpty
-    ? controller.isDuplicateKeyword(controller.searchController.text.trim())
-    : false;    
+    final isDuplicate = controller.searchController.text.isNotEmpty
+        ? controller.isDuplicateKeyword(controller.searchController.text.trim())
+        : false;
     String tooltipMessage = '';
     Color buttonColor = Colors.grey[300]!;
-    
+
     if (!hasText) {
       tooltipMessage = 'اكتب كلمة مفتاحية أولاً';
     } else if (isDuplicate) {
@@ -336,7 +338,7 @@ final isDuplicate = controller.searchController.text.isNotEmpty
       tooltipMessage = 'إضافة الكلمة المفتاحية';
       buttonColor = AppColors.primary400;
     }
-    
+
     return Tooltip(
       message: tooltipMessage,
       child: Container(
@@ -353,11 +355,7 @@ final isDuplicate = controller.searchController.text.isNotEmpty
               color: buttonColor,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 20,
-            ),
+            child: Icon(Icons.add, color: Colors.white, size: 20),
           ),
         ),
       ),
@@ -366,8 +364,8 @@ final isDuplicate = controller.searchController.text.isNotEmpty
 
   Widget _buildAvailableKeywords() {
     return Obx(() {
-    final keywords = controller.filteredKeywords; // ✅ Use filteredKeywords
-      
+      final keywords = controller.filteredKeywords; // ✅ Use filteredKeywords
+
       if (keywords.isEmpty) {
         return _buildEmptyAvailableKeywords();
       }
@@ -391,16 +389,17 @@ final isDuplicate = controller.searchController.text.isNotEmpty
               return InkWell(
                 onTap: () => controller.addKeyword(keyword),
                 child: Container(
-                child: Text(keyword, // ✅ Just use keyword (it's a String)
-                  style: TextStyle(
-                    color: AppColors.primary400,
-                    fontWeight: FontWeight.w500,
+                  child: Text(
+                    keyword, // ✅ Just use keyword (it's a String)
+                    style: TextStyle(
+                      color: AppColors.primary400,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: BoxDecoration(
-                    border: Border.all(color:AppColors.primary400,),
-                    borderRadius: BorderRadius.circular(25)
+                    border: Border.all(color: AppColors.primary400),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                 ),
               );
@@ -421,26 +420,16 @@ final isDuplicate = controller.searchController.text.isNotEmpty
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.search_off,
-            size: 40,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.search_off, size: 40, color: Colors.grey[400]),
           SizedBox(height: 8),
           Text(
             'لا توجد كلمات مفتاحية متاحة',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
           SizedBox(height: 4),
           Text(
             'جرب البحث بكلمات مختلفة',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -463,15 +452,17 @@ final isDuplicate = controller.searchController.text.isNotEmpty
               ),
             ),
             Spacer(),
-            Obx(() => Text(
-              '${controller.selectedKeywords.length}/15',
-              style: TextStyle(
-                fontSize: 14,
-                color: controller.selectedKeywords.length >= 15
-                    ? Colors.red
-                    : Colors.grey[600],
+            Obx(
+              () => Text(
+                '${controller.selectedKeywords.length}/15',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: controller.selectedKeywords.length >= 15
+                      ? Colors.red
+                      : Colors.grey[600],
+                ),
               ),
-            )),
+            ),
           ],
         ),
         SizedBox(height: 8),
@@ -499,26 +490,16 @@ final isDuplicate = controller.searchController.text.isNotEmpty
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.tag,
-              size: 40,
-              color: Colors.grey[300],
-            ),
+            Icon(Icons.tag, size: 40, color: Colors.grey[300]),
             SizedBox(height: 8),
             Text(
               'لا توجد كلمات مفتاحية مختارة',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
             ),
             SizedBox(height: 4),
             Text(
               'اختر من الكلمات المفتاحية المتاحة',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[400],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[400]),
             ),
           ],
         ),
@@ -528,10 +509,7 @@ final isDuplicate = controller.searchController.text.isNotEmpty
 
   Widget _buildSelectedKeywordsList() {
     return Container(
-      constraints: BoxConstraints(
-        minHeight: 60,
-        maxHeight: 200,
-      ),
+      constraints: BoxConstraints(minHeight: 60, maxHeight: 200),
       decoration: BoxDecoration(
         color: Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
@@ -554,10 +532,7 @@ final isDuplicate = controller.searchController.text.isNotEmpty
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
-                side: BorderSide(
-                  color: AppColors.primary300,
-                  width: 1.0,
-                ),
+                side: BorderSide(color: AppColors.primary300, width: 1.0),
               ),
             );
           }).toList(),
@@ -594,35 +569,36 @@ final isDuplicate = controller.searchController.text.isNotEmpty
               ),
               child: Text(
                 'إلغاء',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.grey[700], fontSize: 16),
               ),
             ),
           ),
           SizedBox(width: 12),
           Expanded(
-            child: Obx(() => ElevatedButton(
-              onPressed: controller.selectedKeywords.isNotEmpty && controller.selectedStore.value != null
-                  ? () => controller.confirmSelection()
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary400,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            child: Obx(
+              () => ElevatedButton(
+                onPressed:
+                    controller.selectedKeywords.isNotEmpty &&
+                        controller.selectedStore.value != null
+                    ? () => controller.confirmSelection()
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary400,
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'تأكيد الاختيار',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              child: Text(
-                'تأكيد الاختيار',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )),
+            ),
           ),
         ],
       ),

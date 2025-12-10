@@ -17,7 +17,7 @@ class CustomBottomNavigation extends StatefulWidget {
     super.key,
     required this.pages,
     required this.icons,
-   required this.pageName,
+    required this.pageName,
     this.onFabTap,
     this.fabColor = Colors.blueGrey,
     this.fabIcon = Icons.add,
@@ -25,7 +25,10 @@ class CustomBottomNavigation extends StatefulWidget {
     this.unselectedColor = Colors.grey,
     this.notchWidthRatio = 0.3,
     this.notchDepthRatio = 0.35,
-  }) : assert(pages.length == icons.length, 'Pages and icons must be the same length');
+  }) : assert(
+         pages.length == icons.length,
+         'Pages and icons must be the same length',
+       );
 
   @override
   State<CustomBottomNavigation> createState() => _CustomBottomNavigationState();
@@ -82,8 +85,14 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                         if (i == (widget.icons.length ~/ 2)) {
                           return const SizedBox(width: 10);
                         }
-                        final actualIndex = i > (widget.icons.length ~/ 2) ? i - 1 : i;
-                        return navItem(icon: widget.icons[actualIndex], index: actualIndex,text: widget.pageName![actualIndex]);
+                        final actualIndex = i > (widget.icons.length ~/ 2)
+                            ? i - 1
+                            : i;
+                        return navItem(
+                          icon: widget.icons[actualIndex],
+                          index: actualIndex,
+                          text: widget.pageName![actualIndex],
+                        );
                       }),
                     ),
                   ),
@@ -133,23 +142,29 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
           Icon(
             icon,
             size: 28,
-            color: isSelected ? widget.selectedColor : widget.unselectedColor
+            color: isSelected ? widget.selectedColor : widget.unselectedColor,
           ),
           const SizedBox(height: 4),
-        text!=null?  Text(text,
-          style: TextStyle(
-            fontSize:12,
-            color: isSelected ? widget.selectedColor : widget.unselectedColor
-          ),
-          ):(isSelected)?
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: widget.selectedColor
-              ),
-            ):SizedBox(),
+          text != null
+              ? Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isSelected
+                        ? widget.selectedColor
+                        : widget.unselectedColor,
+                  ),
+                )
+              : (isSelected)
+              ? Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.selectedColor,
+                  ),
+                )
+              : SizedBox(),
         ],
       ),
     );

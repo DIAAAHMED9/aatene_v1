@@ -23,11 +23,12 @@ class ProductAttribute {
 
   factory ProductAttribute.fromApiJson(Map<String, dynamic> json) {
     final options = List<Map<String, dynamic>>.from(json['options'] ?? []);
-    
+
     return ProductAttribute(
       id: json['id'].toString(),
       name: json['title'] ?? 'بدون اسم',
-      type: json['type'], // قراءة type من الـAPI
+      type: json['type'],
+      // قراءة type من الـAPI
       isRequired: json['is_required'] ?? false,
       values: options.map((option) {
         return AttributeValue(
@@ -36,10 +37,10 @@ class ProductAttribute {
           isSelected: false.obs,
         );
       }).toList(),
-      createdAt: json['created_at'] != null 
+      createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
           : null,
-      updatedAt: json['updated_at'] != null 
+      updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'])
           : null,
     );
@@ -51,17 +52,17 @@ class ProductAttribute {
             return AttributeValue.fromJson(value);
           }).toList()
         : [];
-    
+
     return ProductAttribute(
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
       type: json['type'],
       values: valuesList as List<AttributeValue>,
       isRequired: json['isRequired'] ?? false,
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,
-      updatedAt: json['updatedAt'] != null 
+      updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'])
           : null,
     );
@@ -214,12 +215,12 @@ class ProductVariation {
     required String sku,
     required bool isActive,
     required List<String> images,
-  })  : attributes = attributes.obs,
-        price = price.obs,
-        stock = stock.obs,
-        sku = sku.obs,
-        isActive = isActive.obs,
-        images = images.obs;
+  }) : attributes = attributes.obs,
+       price = price.obs,
+       stock = stock.obs,
+       sku = sku.obs,
+       isActive = isActive.obs,
+       images = images.obs;
 
   factory ProductVariation.fromJson(Map<String, dynamic> json) {
     return ProductVariation(
@@ -247,7 +248,9 @@ class ProductVariation {
 
   String get displayName {
     if (attributes.isEmpty) return 'بدون سمات';
-    final attributeStrings = attributes.entries.map((e) => '${e.key}: ${e.value}');
+    final attributeStrings = attributes.entries.map(
+      (e) => '${e.key}: ${e.value}',
+    );
     return attributeStrings.join(' | ');
   }
 

@@ -60,12 +60,12 @@ class Product {
       viewCount: json['view_count']?.toString(),
       sectionId: json['section_id']?.toString(),
       status: json['status'],
-      section: json['section'] != null 
-          ? Map<String, dynamic>.from(json['section']) 
+      section: json['section'] != null
+          ? Map<String, dynamic>.from(json['section'])
           : null,
       price: json['price']?.toString(),
-      sectionName: json['section'] != null 
-          ? json['section']['name']?.toString() 
+      sectionName: json['section'] != null
+          ? json['section']['name']?.toString()
           : null,
       isSelected: false,
     );
@@ -115,7 +115,8 @@ class Product {
     return int.tryParse(sectionId!);
   }
 
-  bool get isInSection => sectionId != null && sectionId != '0' && sectionId != '';
+  bool get isInSection =>
+      sectionId != null && sectionId != '0' && sectionId != '';
 
   @override
   bool operator ==(Object other) =>

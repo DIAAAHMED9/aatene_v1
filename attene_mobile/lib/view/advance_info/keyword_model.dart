@@ -3,18 +3,12 @@ class Keyword {
   final String text;
   final String category;
 
-  Keyword({
-    required this.id,
-    required this.text,
-    required this.category,
-  });
+  Keyword({required this.id, required this.text, required this.category});
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Keyword &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is Keyword && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

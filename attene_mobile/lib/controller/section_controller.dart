@@ -1,4 +1,3 @@
-
 import 'package:get/get.dart';
 
 import '../api/api_request.dart';
@@ -20,15 +19,17 @@ class SectionController extends GetxController {
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/sections',
         withLoading: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final List<dynamic> data = response['data'] ?? [];
-        sections.assignAll(data.map((section) => Section.fromJson(section)).toList());
+        sections.assignAll(
+          data.map((section) => Section.fromJson(section)).toList(),
+        );
       } else {
         errorMessage.value = 'فشل في تحميل الأقسام';
       }
@@ -42,16 +43,13 @@ class SectionController extends GetxController {
   Future<bool> addSection(String name) async {
     try {
       isLoading.value = true;
-      
+
       final response = await ApiHelper.post(
         path: '/merchants/sections',
-        body: {
-          'name': name,
-          'status': 'active',
-        },
+        body: {'name': name, 'status': 'active'},
         withLoading: true,
       );
-      
+
       if (response != null && response['status'] == true) {
         await loadSections();
         return true;
@@ -68,12 +66,12 @@ class SectionController extends GetxController {
   Future<bool> deleteSection(int sectionId) async {
     try {
       isLoading.value = true;
-      
+
       final response = await ApiHelper.delete(
         path: '/merchants/sections/$sectionId',
         withLoading: true,
       );
-      
+
       if (response != null && response['status'] == true) {
         await loadSections();
         return true;

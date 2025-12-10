@@ -35,7 +35,7 @@ class LoginController extends GetxController {
   void _setupListeners() {
     ever(email, (_) => _validateEmail());
     ever(password, (_) => _validatePassword());
-    
+
     ever(lastLoginAttempt, (DateTime? timestamp) {
       if (timestamp != null) {
         final now = DateTime.now();
@@ -71,7 +71,7 @@ class LoginController extends GetxController {
   bool validateFields() {
     final isEmailValid = _validateEmail();
     final isPasswordValid = _validatePassword();
-    
+
     return isEmailValid && isPasswordValid;
   }
 
@@ -105,27 +105,25 @@ class LoginController extends GetxController {
     return true;
   }
 
-bool isValidEmail(String email) {
-  if (email.isEmpty) return false;
-  
-  // تعبير نمطي بسيط وفعال
-  return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-}
+  bool isValidEmail(String email) {
+    if (email.isEmpty) return false;
 
-bool isValidPhone(String phone) {
-  if (phone.isEmpty) return false;
-  
-  // إزالة المسافات والرموز
-  final cleanPhone = phone.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
-  
-  // يجب أن يكون طول الرقم بين 10 و15 رقماً
-  if (cleanPhone.length < 10 || cleanPhone.length > 15) return false;
-  
-  // يجب أن يحتوي على أرقام فقط
-  return RegExp(r'^[0-9]+$').hasMatch(cleanPhone);
-}
+    // تعبير نمطي بسيط وفعال
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
 
+  bool isValidPhone(String phone) {
+    if (phone.isEmpty) return false;
 
+    // إزالة المسافات والرموز
+    final cleanPhone = phone.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
+
+    // يجب أن يكون طول الرقم بين 10 و15 رقماً
+    if (cleanPhone.length < 10 || cleanPhone.length > 15) return false;
+
+    // يجب أن يحتوي على أرقام فقط
+    return RegExp(r'^[0-9]+$').hasMatch(cleanPhone);
+  }
 
   Future<void> login() async {
     if (!_canAttemptLogin()) {
@@ -200,9 +198,8 @@ bool isValidPhone(String phone) {
 
   Future<void> _processSuccessfulLogin(dynamic response) async {
     final userData = response['user'] ?? response['data'] ?? {};
-    final token = response['token'] ??
-                 response['access_token'] ??
-                 userData['token'];
+    final token =
+        response['token'] ?? response['access_token'] ?? userData['token'];
 
     if (token == null) {
       throw Exception('لم يتم العثور على رمز المصادقة في الاستجابة');
@@ -215,7 +212,7 @@ bool isValidPhone(String phone) {
 
     // تحديث بيانات المستخدم وتحميل بيانات التطبيق
     myAppController.updateUserData(completeUserData);
-    
+
     // تحميل بيانات التطبيق بعد تسجيل الدخول
     await myAppController.onLoginSuccess(completeUserData);
 
@@ -228,7 +225,7 @@ bool isValidPhone(String phone) {
 
   void _handleFailedLogin(dynamic response) {
     loginAttempts.value++;
-    
+
     if (loginAttempts.value >= maxLoginAttempts) {
       isLoginDisabled.value = true;
       _showMaxAttemptsMessage();
@@ -239,9 +236,9 @@ bool isValidPhone(String phone) {
 
   Future<void> _handleLoginError(dynamic error) async {
     print('❌ خطأ في تسجيل الدخول: $error');
-    
+
     loginAttempts.value++;
-    
+
     if (loginAttempts.value >= maxLoginAttempts) {
       isLoginDisabled.value = true;
       _showMaxAttemptsMessage();
@@ -265,12 +262,18 @@ bool isValidPhone(String phone) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        _showErrorSnackbar('انتهت مهلة الاتصال', 'يرجى التحقق من اتصال الإنترنت');
+        _showErrorSnackbar(
+          'انتهت مهلة الاتصال',
+          'يرجى التحقق من اتصال الإنترنت',
+        );
         break;
-      
+
       case DioExceptionType.badResponse:
         if (statusCode == 401) {
-          _showErrorSnackbar('فشل التسجيل', 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+          _showErrorSnackbar(
+            'فشل التسجيل',
+            'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+          );
         } else if (statusCode == 422) {
           _handleValidationErrors(response?.data);
         } else if (statusCode == 500) {
@@ -279,15 +282,15 @@ bool isValidPhone(String phone) {
           _showErrorSnackbar('خطأ في الاستجابة', 'رمز الخطأ: $statusCode');
         }
         break;
-      
+
       case DioExceptionType.cancel:
         _showErrorSnackbar('تم الإلغاء', 'تم إلغاء عملية تسجيل الدخول');
         break;
-      
+
       case DioExceptionType.unknown:
         _showErrorSnackbar('خطأ في الاتصال', 'لا يوجد اتصال بالإنترنت');
         break;
-      
+
       default:
         _showErrorSnackbar('خطأ غير معروف', 'حدث خطأ أثناء الاتصال بالخادم');
     }
@@ -301,10 +304,11 @@ bool isValidPhone(String phone) {
           emailError.value = errors['email'].first ?? 'بريد إلكتروني غير صالح';
         }
         if (errors['password'] is List) {
-          passwordError.value = errors['password'].first ?? 'كلمة مرور غير صالحة';
+          passwordError.value =
+              errors['password'].first ?? 'كلمة مرور غير صالحة';
         }
       }
-      
+
       if (errorData['message'] != null) {
         _showErrorSnackbar('خطأ في البيانات', errorData['message']);
       }
@@ -313,14 +317,14 @@ bool isValidPhone(String phone) {
 
   void _handleApiError(dynamic response) {
     String errorMessage = 'فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.';
-    
+
     if (response != null) {
       if (response['message'] != null) {
         errorMessage = response['message'];
       }
       _handleValidationErrors(response);
     }
-    
+
     _showErrorSnackbar('خطأ', errorMessage);
   }
 
@@ -370,10 +374,10 @@ bool isValidPhone(String phone) {
       final now = DateTime.now();
       final difference = loginTimeoutDuration - now.difference(lastAttempt);
       final minutesLeft = difference.inMinutes;
-      
+
       _showErrorSnackbar(
         'تم تعطيل التسجيل',
-        'يرجى الانتظار $minutesLeft دقيقة قبل المحاولة مرة أخرى'
+        'يرجى الانتظار $minutesLeft دقيقة قبل المحاولة مرة أخرى',
       );
     }
   }
@@ -381,19 +385,19 @@ bool isValidPhone(String phone) {
   void _showMaxAttemptsMessage() {
     _showErrorSnackbar(
       'عدد محاولات متجاوز',
-      'تم تعطيل التسجيل مؤقتاً بسبب تجاوز عدد المحاولات المسموح بها'
+      'تم تعطيل التسجيل مؤقتاً بسبب تجاوز عدد المحاولات المسموح بها',
     );
   }
 
   Future<void> _redirectToMainScreen() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     // التحقق من وجود Get.context قبل التنقل
     if (Get.context != null) {
       Get.offAllNamed('/mainScreen');
     } else {
       print('⚠️ لا يمكن التنقل إلى الشاشة الرئيسية: Get.context غير متوفر');
-      
+
       // محاولة التنقل بعد تأخير إضافي
       await Future.delayed(const Duration(milliseconds: 500));
       if (Get.context != null) {
@@ -409,21 +413,18 @@ bool isValidPhone(String phone) {
     }
 
     isLoading.value = true;
-    
+
     try {
       print('🌐 بدء تسجيل الدخول بواسطة: $provider');
-      
+
       await Future.delayed(const Duration(seconds: 2));
-      
+
       _showSuccessMessage('تم تسجيل الدخول بواسطة $provider');
-      
+
       _resetLoginAttempts();
       await _redirectToMainScreen();
     } catch (error) {
-      _showErrorSnackbar(
-        'فشل التسجيل',
-        'فشل تسجيل الدخول بواسطة $provider'
-      );
+      _showErrorSnackbar('فشل التسجيل', 'فشل تسجيل الدخول بواسطة $provider');
     } finally {
       isLoading.value = false;
     }
@@ -442,9 +443,13 @@ bool isValidPhone(String phone) {
   }
 
   bool get isEmail => isValidEmail(email.value);
+
   bool get isPhone => isValidPhone(email.value);
+
   bool get canLogin => !isLoading.value && !isLoginDisabled.value;
+
   int get remainingAttempts => maxLoginAttempts - loginAttempts.value;
+
   String get inputType => _getInputType();
 
   Future<void> autoLogin() async {
@@ -461,7 +466,7 @@ bool isValidPhone(String phone) {
       if (!myAppController.isLoggedIn.value) {
         return false;
       }
-      
+
       final token = myAppController.userData['token'];
       return token != null && token is String && token.isNotEmpty;
     } catch (error) {

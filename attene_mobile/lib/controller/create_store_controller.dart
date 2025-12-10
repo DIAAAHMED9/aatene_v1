@@ -20,7 +20,7 @@ class CreateStoreController extends GetxController {
   final MyAppController myAppController = Get.find<MyAppController>();
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   final GetStorage storage = GetStorage();
-  
+
   // المتحكمات
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -40,12 +40,12 @@ class CreateStoreController extends GetxController {
   final TextEditingController pinterestController = TextEditingController();
   final TextEditingController latController = TextEditingController();
   final TextEditingController lngController = TextEditingController();
-  
+
   // القوائم
   final RxList<Map<String, dynamic>> cities = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> districts = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> currencies = <Map<String, dynamic>>[].obs;
-  
+
   // القيم المحددة
   final RxString storeType = 'products'.obs;
   final RxString deliveryType = 'free'.obs;
@@ -53,18 +53,19 @@ class CreateStoreController extends GetxController {
   final RxString selectedDistrictName = 'اختر الحي'.obs;
   final RxString selectedCurrencyName = 'اختر العملة'.obs;
   final RxBool hidePhone = false.obs;
-  
+
   // شركات الشحن
-  final RxList<Map<String, dynamic>> shippingCompanies = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> shippingCompanies =
+      <Map<String, dynamic>>[].obs;
   final RxList<int> locationCities = <int>[].obs;
   final RxList<int> serviceCities = <int>[].obs;
-  
+
   // الوسائط
   final RxList<MediaItem> selectedLogoMedia = <MediaItem>[].obs;
   final Rx<MediaItem?> primaryLogo = Rx<MediaItem?>(null);
   final RxList<MediaItem> selectedCoverMedia = <MediaItem>[].obs;
   final Rx<MediaItem?> primaryCover = Rx<MediaItem?>(null);
-  
+
   // حالات التحميل
   final RxBool isUploadingLogo = false.obs;
   final RxBool isUploadingCover = false.obs;
@@ -73,11 +74,11 @@ class CreateStoreController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   final RxBool createStoreLoading = false.obs;
-  
+
   // حالة التعديل
   final RxInt editingStoreId = 0.obs;
   final RxBool isEditMode = false.obs;
-  
+
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -90,7 +91,7 @@ class CreateStoreController extends GetxController {
   void _initializeDefaultValues() {
     storeType.value = 'products';
     deliveryType.value = 'free';
-    
+
     if (cityIdController.text.isEmpty) cityIdController.text = "1";
     if (districtIdController.text.isEmpty) districtIdController.text = "1";
     if (currencyIdController.text.isEmpty) currencyIdController.text = "2";
@@ -102,27 +103,26 @@ class CreateStoreController extends GetxController {
       message: 'جاري تحميل البيانات...',
     );
   }
-  
+
   Future<void> _performLoadInitialData() async {
     try {
       isLoading.value = true;
       print('🔄 [STORE] تحميل البيانات الأولية...');
-      
+
       // استخدام البيانات المخزنة أولاً
       await _loadCachedData();
-      
+
       // إذا كانت البيانات غير كافية، جلب من API
       if (cities.isEmpty || districts.isEmpty || currencies.isEmpty) {
         await _fetchDataFromApi();
       }
-      
+
       _updateSelectedValues();
       print('✅ [STORE] تم تحميل البيانات الأولية بنجاح');
-      
     } catch (e) {
       print('❌ [STORE] خطأ في تحميل البيانات الأولية: $e');
       errorMessage.value = 'فشل في تحميل البيانات: ${e.toString()}';
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في تحميل البيانات',
@@ -133,7 +133,7 @@ class CreateStoreController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
   Future<void> _loadCachedData() async {
     // تحميل المدن من التخزين
     final cachedCities = dataService.getCities();
@@ -141,14 +141,14 @@ class CreateStoreController extends GetxController {
       cities.assignAll(List<Map<String, dynamic>>.from(cachedCities));
       print('✅ [STORE] تم تحميل ${cities.length} مدينة من التخزين المحلي');
     }
-    
+
     // تحميل المناطق من التخزين
     final cachedDistricts = dataService.getDistricts();
     if (cachedDistricts.isNotEmpty) {
       districts.assignAll(List<Map<String, dynamic>>.from(cachedDistricts));
       print('✅ [STORE] تم تحميل ${districts.length} منطقة من التخزين المحلي');
     }
-    
+
     // تحميل العملات من التخزين
     final cachedCurrencies = dataService.getCurrencies();
     if (cachedCurrencies.isNotEmpty) {
@@ -156,32 +156,39 @@ class CreateStoreController extends GetxController {
       print('✅ [STORE] تم تحميل ${currencies.length} عملة من التخزين المحلي');
     }
   }
-  
+
   Future<void> _fetchDataFromApi() async {
     try {
       // جلب المدن من API
       if (cities.isEmpty) {
         final citiesResponse = await ApiHelper.getCities();
         if (citiesResponse != null && citiesResponse['status'] == true) {
-          final citiesList = List<Map<String, dynamic>>.from(citiesResponse['data'] ?? []);
+          final citiesList = List<Map<String, dynamic>>.from(
+            citiesResponse['data'] ?? [],
+          );
           cities.assignAll(citiesList);
         }
       }
-      
+
       // جلب المناطق من API
       if (districts.isEmpty) {
         final districtsResponse = await ApiHelper.getDistricts();
         if (districtsResponse != null && districtsResponse['status'] == true) {
-          final districtsList = List<Map<String, dynamic>>.from(districtsResponse['data'] ?? []);
+          final districtsList = List<Map<String, dynamic>>.from(
+            districtsResponse['data'] ?? [],
+          );
           districts.assignAll(districtsList);
         }
       }
-      
+
       // جلب العملات من API
       if (currencies.isEmpty) {
         final currenciesResponse = await ApiHelper.getCurrencies();
-        if (currenciesResponse != null && currenciesResponse['status'] == true) {
-          final currenciesList = List<Map<String, dynamic>>.from(currenciesResponse['data'] ?? []);
+        if (currenciesResponse != null &&
+            currenciesResponse['status'] == true) {
+          final currenciesList = List<Map<String, dynamic>>.from(
+            currenciesResponse['data'] ?? [],
+          );
           currencies.assignAll(currenciesList);
         }
       }
@@ -189,54 +196,54 @@ class CreateStoreController extends GetxController {
       print('⚠️ [STORE] خطأ في جلب البيانات من API: $e');
     }
   }
-  
+
   void _updateSelectedValues() {
     if (cityIdController.text.isNotEmpty) {
       selectedCityName.value = getCityName(cityIdController.text);
     }
-    
+
     if (districtIdController.text.isNotEmpty) {
       selectedDistrictName.value = getDistrictName(districtIdController.text);
     }
-    
+
     if (currencyIdController.text.isNotEmpty) {
       selectedCurrencyName.value = getCurrencyName(currencyIdController.text);
     }
   }
-  
+
   Future<bool?> updateStoreBasicInfo() async {
     return UnifiedLoadingScreen.showWithFuture<bool>(
       _performUpdateStoreBasicInfo(),
       message: 'جاري تحديث البيانات الأساسية...',
     );
   }
-  
+
   Future<bool> _performUpdateStoreBasicInfo() async {
     try {
       createStoreLoading.value = true;
-      
+
       // التحقق من الحقول الإلزامية
       if (!_validateBasicInfo()) {
         return false;
       }
-      
+
       // رفع الصور المحلية إذا وجدت
       final bool hasLocalImages = await _uploadLocalImagesIfNeeded();
       if (!hasLocalImages) {
         return false;
       }
-      
+
       // إعداد البيانات
       final Map<String, dynamic> data = _prepareBasicInfoData();
-      
+
       print('📤 [STORE] تحديث البيانات الأساسية للمتجر: ${jsonEncode(data)}');
-      
+
       final response = await ApiHelper.updateStore(editingStoreId.value, data);
-      
+
       if (response != null && response['status'] == true) {
         // تحديث التخزين المحلي
         await dataService.refreshStores();
-        
+
         Get.snackbar(
           'نجاح',
           'تم تحديث البيانات الأساسية',
@@ -250,7 +257,7 @@ class CreateStoreController extends GetxController {
       }
     } catch (e) {
       print('❌ [STORE] خطأ في تحديث البيانات الأساسية: $e');
-      
+
       Get.snackbar(
         'خطأ',
         'حدث خطأ أثناء التحديث: ${e.toString()}',
@@ -262,14 +269,13 @@ class CreateStoreController extends GetxController {
       createStoreLoading.value = false;
     }
   }
-  
+
   bool _validateBasicInfo() {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         phoneController.text.isEmpty ||
         selectedLogoMedia.isEmpty ||
         selectedCoverMedia.isEmpty) {
-      
       Get.snackbar(
         'خطأ',
         'يرجى تعبئة جميع الحقول الإلزامية',
@@ -278,7 +284,7 @@ class CreateStoreController extends GetxController {
       );
       return false;
     }
-    
+
     if (!emailController.text.contains('@')) {
       Get.snackbar(
         'خطأ',
@@ -288,17 +294,17 @@ class CreateStoreController extends GetxController {
       );
       return false;
     }
-    
+
     return true;
   }
-  
+
   Future<bool> _uploadLocalImagesIfNeeded() async {
     try {
       isUploadingLogo.value = true;
       isUploadingCover.value = true;
-      
+
       bool allUploaded = true;
-      
+
       // رفع صور الشعار المحلية
       for (int i = 0; i < selectedLogoMedia.length; i++) {
         final media = selectedLogoMedia[i];
@@ -307,7 +313,7 @@ class CreateStoreController extends GetxController {
           if (!success) allUploaded = false;
         }
       }
-      
+
       // رفع صور الغلاف المحلية
       for (int i = 0; i < selectedCoverMedia.length; i++) {
         final media = selectedCoverMedia[i];
@@ -316,7 +322,7 @@ class CreateStoreController extends GetxController {
           if (!success) allUploaded = false;
         }
       }
-      
+
       return allUploaded;
     } catch (e) {
       print('❌ [STORE] خطأ في رفع الصور المحلية: $e');
@@ -326,7 +332,7 @@ class CreateStoreController extends GetxController {
       isUploadingCover.value = false;
     }
   }
-  
+
   Future<bool> _uploadMediaFile(MediaItem media, int index, bool isLogo) async {
     try {
       if (isLogo) {
@@ -334,19 +340,19 @@ class CreateStoreController extends GetxController {
       } else {
         coverUploadingStates[media.id] = true;
       }
-      
+
       final file = File(media.path);
       final response = await ApiHelper.uploadMedia(
         file: file,
         type: 'images',
         withLoading: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final path = response['path'];
         final fileName = response['file_name'];
         final fileUrl = response['file_url'];
-        
+
         if (isLogo) {
           selectedLogoMedia[index] = MediaItem(
             id: media.id,
@@ -386,7 +392,7 @@ class CreateStoreController extends GetxController {
       }
     }
   }
-  
+
   Map<String, dynamic> _prepareBasicInfoData() {
     final data = <String, dynamic>{
       'type': storeType.value,
@@ -397,103 +403,107 @@ class CreateStoreController extends GetxController {
       'hide_phone': hidePhone.value ? "1" : "0",
       'delivery_type': deliveryType.value,
     };
-    
+
     final primaryLogoPath = getPrimaryLogoPath();
     if (primaryLogoPath != null && primaryLogoPath.isNotEmpty) {
       data['logo'] = primaryLogoPath;
     }
-    
+
     final coverPaths = getAllCoverPaths();
     if (coverPaths.isNotEmpty) {
       data['cover'] = coverPaths;
     }
-    
+
     data['city_id'] = int.tryParse(cityIdController.text.trim()) ?? 1;
     data['district_id'] = int.tryParse(districtIdController.text.trim()) ?? 1;
-    data['address'] = addressController.text.trim().isEmpty ? "العنوان" : addressController.text.trim();
+    data['address'] = addressController.text.trim().isEmpty
+        ? "العنوان"
+        : addressController.text.trim();
     data['currency_id'] = int.tryParse(currencyIdController.text.trim()) ?? 2;
-    
+
     // إضافة بيانات الشبكات الاجتماعية إذا كانت موجودة
     _addSocialMediaData(data);
-    
+
     // إزالة الحقول الفارغة
     data.removeWhere((key, value) {
       if (value == null) return true;
       if (value is String && value.isEmpty) return true;
       return false;
     });
-    
+
     return data;
   }
-  
+
   void _addSocialMediaData(Map<String, dynamic> data) {
     if (whatsappController.text.isNotEmpty) {
       data['whats_app'] = whatsappController.text.trim();
     }
-    
+
     if (facebookController.text.isNotEmpty) {
       data['facebook'] = facebookController.text.trim();
     }
-    
+
     if (instagramController.text.isNotEmpty) {
       data['instagram'] = instagramController.text.trim();
     }
-    
+
     if (tiktokController.text.isNotEmpty) {
       data['tiktok'] = tiktokController.text.trim();
     }
-    
+
     if (youtubeController.text.isNotEmpty) {
       data['youtube'] = youtubeController.text.trim();
     }
-    
+
     if (twitterController.text.isNotEmpty) {
       data['twitter'] = twitterController.text.trim();
     }
-    
+
     if (linkedinController.text.isNotEmpty) {
       data['linkedin'] = linkedinController.text.trim();
     }
-    
+
     if (pinterestController.text.isNotEmpty) {
       data['pinterest'] = pinterestController.text.trim();
     }
-    
+
     if (latController.text.isNotEmpty && lngController.text.isNotEmpty) {
       data['lat'] = latController.text.trim();
       data['lng'] = lngController.text.trim();
     }
   }
-  
+
   Future<bool?> saveCompleteStore() async {
     return UnifiedLoadingScreen.showWithFuture<bool>(
       _performSaveCompleteStore(),
-      message: isEditMode.value ? 'جاري تحديث المتجر...' : 'جاري إنشاء المتجر...',
+      message: isEditMode.value
+          ? 'جاري تحديث المتجر...'
+          : 'جاري إنشاء المتجر...',
     );
   }
-  
+
   Future<bool> _performSaveCompleteStore() async {
     try {
       createStoreLoading.value = true;
-      
+
       // التحقق من صحة البيانات
       if (!_validateCompleteStoreData()) {
         return false;
       }
-      
+
       // رفع الصور المحلية إذا وجدت
       final bool hasLocalImages = await _uploadLocalImagesIfNeeded();
       if (!hasLocalImages) {
         return false;
       }
-      
+
       // إعداد البيانات الكاملة
       final Map<String, dynamic> data = _prepareCompleteStoreData();
-      
+
       print('📤 [STORE] البيانات النهائية المرسلة للخادم: ${jsonEncode(data)}');
-      
+
       dynamic response;
-      
+
       if (isEditMode.value && editingStoreId.value > 0) {
         response = await ApiHelper.updateStore(editingStoreId.value, data);
       } else {
@@ -504,30 +514,30 @@ class CreateStoreController extends GetxController {
           shouldShowMessage: false,
         );
       }
-      
-     if (response != null && response['status'] == true) {
-  print('✅ [STORE] استجابة الخادم: ${jsonEncode(response)}');
-  
-  // تحديث التخزين المحلي
-  await dataService.refreshStores();
-  
-  // تحديث قائمة المتاجر في شاشة إدارة المتاجر
-  if (Get.isRegistered<ManageAccountStoreController>()) {
-    Get.find<ManageAccountStoreController>().loadStores();
-  }
-  
-  // عرض رسالة النجاح
-  Get.snackbar(
-    '🎉 نجاح',
-    isEditMode.value ? 'تم تحديث المتجر بنجاح' : 'تم إنشاء المتجر بنجاح',
-    backgroundColor: Colors.green,
-    colorText: Colors.white,
-    duration: const Duration(seconds: 3),
-  );
-  
-  // إعادة تعيين البيانات
-  resetData();
-  return true;
+
+      if (response != null && response['status'] == true) {
+        print('✅ [STORE] استجابة الخادم: ${jsonEncode(response)}');
+
+        // تحديث التخزين المحلي
+        await dataService.refreshStores();
+
+        // تحديث قائمة المتاجر في شاشة إدارة المتاجر
+        if (Get.isRegistered<ManageAccountStoreController>()) {
+          Get.find<ManageAccountStoreController>().loadStores();
+        }
+
+        // عرض رسالة النجاح
+        Get.snackbar(
+          '🎉 نجاح',
+          isEditMode.value ? 'تم تحديث المتجر بنجاح' : 'تم إنشاء المتجر بنجاح',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+
+        // إعادة تعيين البيانات
+        resetData();
+        return true;
       } else {
         final errorMsg = response?['message'] ?? 'فشل العملية';
         throw Exception(errorMsg);
@@ -535,7 +545,7 @@ class CreateStoreController extends GetxController {
     } catch (e, stackTrace) {
       print('❌ [STORE] خطأ في حفظ المتجر: $e');
       print('📜 Stack trace: $stackTrace');
-      
+
       Get.snackbar(
         '❌ خطأ',
         'حدث خطأ أثناء الحفظ: ${e.toString()}',
@@ -547,7 +557,7 @@ class CreateStoreController extends GetxController {
       createStoreLoading.value = false;
     }
   }
-  
+
   bool _validateCompleteStoreData() {
     // التحقق من الحقول الإلزامية
     if (nameController.text.isEmpty ||
@@ -555,7 +565,6 @@ class CreateStoreController extends GetxController {
         phoneController.text.isEmpty ||
         selectedLogoMedia.isEmpty ||
         selectedCoverMedia.isEmpty) {
-      
       Get.snackbar(
         'خطأ',
         'يرجى تعبئة جميع الحقول الإلزامية',
@@ -564,7 +573,7 @@ class CreateStoreController extends GetxController {
       );
       return false;
     }
-    
+
     // التحقق من صحة البريد الإلكتروني
     if (!emailController.text.contains('@')) {
       Get.snackbar(
@@ -575,7 +584,7 @@ class CreateStoreController extends GetxController {
       );
       return false;
     }
-    
+
     // التحقق من شركات الشحن إذا كان النوع shipping
     if (deliveryType.value == 'shipping') {
       if (shippingCompanies.isEmpty) {
@@ -587,12 +596,11 @@ class CreateStoreController extends GetxController {
         );
         return false;
       }
-      
+
       for (int i = 0; i < shippingCompanies.length; i++) {
         final company = shippingCompanies[i];
-        if (company['prices'] == null || 
+        if (company['prices'] == null ||
             (company['prices'] is List && company['prices'].isEmpty)) {
-          
           Get.snackbar(
             'خطأ',
             'يرجى تعبئة أسعار التوصيل لشركة ${company['name']}',
@@ -603,10 +611,10 @@ class CreateStoreController extends GetxController {
         }
       }
     }
-    
+
     return true;
   }
-  
+
   Map<String, dynamic> _prepareCompleteStoreData() {
     final data = <String, dynamic>{
       'type': storeType.value,
@@ -615,54 +623,58 @@ class CreateStoreController extends GetxController {
       'email': emailController.text.trim(),
       'city_id': int.tryParse(cityIdController.text.trim()) ?? 1,
       'district_id': int.tryParse(districtIdController.text.trim()) ?? 1,
-      'address': addressController.text.trim().isEmpty ? "العنوان" : addressController.text.trim(),
+      'address': addressController.text.trim().isEmpty
+          ? "العنوان"
+          : addressController.text.trim(),
       'currency_id': int.tryParse(currencyIdController.text.trim()) ?? 2,
       'phone': phoneController.text.trim(),
       'hide_phone': hidePhone.value ? "1" : "0",
-      'delivery_type': deliveryType.value == 'free' ? 'hand' : deliveryType.value,
+      'delivery_type': deliveryType.value == 'free'
+          ? 'hand'
+          : deliveryType.value,
     };
-    
+
     if (!isEditMode.value) {
       data['owner_id'] = myAppController.userData['id']?.toString() ?? '41';
     }
-    
+
     final primaryLogoPath = getPrimaryLogoPath();
     if (primaryLogoPath != null && primaryLogoPath.isNotEmpty) {
       data['logo'] = primaryLogoPath;
     }
-    
+
     final coverPaths = getAllCoverPaths();
     if (coverPaths.isNotEmpty) {
       data['cover'] = coverPaths;
     }
-    
+
     // إضافة بيانات الشبكات الاجتماعية
     _addSocialMediaData(data);
-    
+
     // إعداد شركات الشحن إذا كان النوع shipping
     if (deliveryType.value == 'shipping' && shippingCompanies.isNotEmpty) {
       _prepareShippingCompaniesData(data);
     }
-    
+
     return data;
   }
-  
+
   void _prepareShippingCompaniesData(Map<String, dynamic> data) {
     final List<Map<String, dynamic>> formattedCompanies = [];
     final Set<dynamic> allCities = {};
-    
+
     for (var company in shippingCompanies) {
       final Map<String, dynamic> formattedCompany = {
         'name': company['name']?.toString() ?? '',
         'phone': company['phone']?.toString() ?? '',
       };
-      
+
       if (company['prices'] != null && company['prices'] is List) {
         formattedCompany['prices'] = (company['prices'] as List).map((price) {
           if (price['city_id'] != null) {
             allCities.add(price['city_id']);
           }
-          
+
           return {
             'city_id': price['city_id'] ?? 0,
             'days': int.tryParse(price['days'].toString()) ?? 0,
@@ -670,29 +682,29 @@ class CreateStoreController extends GetxController {
           };
         }).toList();
       }
-      
+
       formattedCompanies.add(formattedCompany);
     }
-    
+
     data['shippingCompanies'] = formattedCompanies;
-    
+
     if (allCities.isNotEmpty) {
       data['locationCities'] = allCities.toList();
       data['serviceCities'] = allCities.toList();
     }
   }
-  
+
   Future<void> openCitySelection() async {
     try {
       if (cities.isEmpty) {
         await loadInitialData();
       }
-      
+
       if (cities.isEmpty) {
         Get.snackbar('تنبيه', 'لا توجد مدن متاحة حالياً');
         return;
       }
-      
+
       await Get.bottomSheet(
         Container(
           decoration: BoxDecoration(
@@ -731,28 +743,35 @@ class CreateStoreController extends GetxController {
                   ],
                 ),
               ),
-              
+
               Expanded(
                 child: ListView.builder(
                   itemCount: cities.length,
                   itemBuilder: (context, index) {
                     final city = cities[index];
-                    final isSelected = cityIdController.text == city['id'].toString();
-                    
+                    final isSelected =
+                        cityIdController.text == city['id'].toString();
+
                     return ListTile(
                       title: Text(
                         city['name']?.toString() ?? 'مدينة',
                         style: TextStyle(
                           fontSize: 16,
-                          color: isSelected ? AppColors.primary400 : AppColors.neutral800,
+                          color: isSelected
+                              ? AppColors.primary400
+                              : AppColors.neutral800,
                         ),
                       ),
                       trailing: isSelected
-                          ? const Icon(Icons.check_circle, color: AppColors.primary400)
+                          ? const Icon(
+                              Icons.check_circle,
+                              color: AppColors.primary400,
+                            )
                           : null,
                       onTap: () {
                         cityIdController.text = city['id'].toString();
-                        selectedCityName.value = city['name']?.toString() ?? 'اختر المدينة';
+                        selectedCityName.value =
+                            city['name']?.toString() ?? 'اختر المدينة';
                         Get.back();
                         update();
                       },
@@ -769,18 +788,18 @@ class CreateStoreController extends GetxController {
       print('❌ [STORE] خطأ في فتح قائمة المدن: $e');
     }
   }
-  
+
   Future<void> openDistrictSelection() async {
     try {
       if (districts.isEmpty) {
         await loadInitialData();
       }
-      
+
       if (districts.isEmpty) {
         Get.snackbar('تنبيه', 'لا توجد أحياء متاحة حالياً');
         return;
       }
-      
+
       await Get.bottomSheet(
         Container(
           decoration: BoxDecoration(
@@ -819,34 +838,44 @@ class CreateStoreController extends GetxController {
                   ],
                 ),
               ),
-              
+
               Expanded(
                 child: ListView.builder(
                   itemCount: districts.length,
                   itemBuilder: (context, index) {
                     final district = districts[index];
-                    final isSelected = districtIdController.text == district['id'].toString();
-                    
+                    final isSelected =
+                        districtIdController.text == district['id'].toString();
+
                     return ListTile(
                       title: Text(
                         district['name']?.toString() ?? 'حي',
                         style: TextStyle(
                           fontSize: 16,
-                          color: isSelected ? AppColors.primary400 : AppColors.neutral800,
+                          color: isSelected
+                              ? AppColors.primary400
+                              : AppColors.neutral800,
                         ),
                       ),
                       subtitle: district['city_name'] != null
                           ? Text(
                               'مدينة: ${district['city_name']}',
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
                             )
                           : null,
                       trailing: isSelected
-                          ? const Icon(Icons.check_circle, color: AppColors.primary400)
+                          ? const Icon(
+                              Icons.check_circle,
+                              color: AppColors.primary400,
+                            )
                           : null,
                       onTap: () {
                         districtIdController.text = district['id'].toString();
-                        selectedDistrictName.value = district['name']?.toString() ?? 'اختر الحي';
+                        selectedDistrictName.value =
+                            district['name']?.toString() ?? 'اختر الحي';
                         Get.back();
                         update();
                       },
@@ -863,18 +892,18 @@ class CreateStoreController extends GetxController {
       print('❌ [STORE] خطأ في فتح قائمة الأحياء: $e');
     }
   }
-  
+
   Future<void> openCurrencySelection() async {
     try {
       if (currencies.isEmpty) {
         await loadInitialData();
       }
-      
+
       if (currencies.isEmpty) {
         Get.snackbar('تنبيه', 'لا توجد عملات متاحة حالياً');
         return;
       }
-      
+
       await Get.bottomSheet(
         Container(
           decoration: BoxDecoration(
@@ -913,14 +942,15 @@ class CreateStoreController extends GetxController {
                   ],
                 ),
               ),
-              
+
               Expanded(
                 child: ListView.builder(
                   itemCount: currencies.length,
                   itemBuilder: (context, index) {
                     final currency = currencies[index];
-                    final isSelected = currencyIdController.text == currency['id'].toString();
-                    
+                    final isSelected =
+                        currencyIdController.text == currency['id'].toString();
+
                     return ListTile(
                       leading: currency['symbol'] != null
                           ? Container(
@@ -946,21 +976,30 @@ class CreateStoreController extends GetxController {
                         currency['name']?.toString() ?? 'عملة',
                         style: TextStyle(
                           fontSize: 16,
-                          color: isSelected ? AppColors.primary400 : AppColors.neutral800,
+                          color: isSelected
+                              ? AppColors.primary400
+                              : AppColors.neutral800,
                         ),
                       ),
                       subtitle: currency['code'] != null
                           ? Text(
                               'الرمز: ${currency['code']}',
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
                             )
                           : null,
                       trailing: isSelected
-                          ? const Icon(Icons.check_circle, color: AppColors.primary400)
+                          ? const Icon(
+                              Icons.check_circle,
+                              color: AppColors.primary400,
+                            )
                           : null,
                       onTap: () {
                         currencyIdController.text = currency['id'].toString();
-                        selectedCurrencyName.value = currency['name']?.toString() ?? 'اختر العملة';
+                        selectedCurrencyName.value =
+                            currency['name']?.toString() ?? 'اختر العملة';
                         Get.back();
                         update();
                       },
@@ -977,78 +1016,82 @@ class CreateStoreController extends GetxController {
       print('❌ [STORE] خطأ في فتح قائمة العملات: $e');
     }
   }
-  
+
   String getCityName(String cityId) {
     if (cityId.isEmpty) return 'اختر المدينة';
-    
+
     try {
-      final city = cities.firstWhereOrNull(
-        (c) => c['id'].toString() == cityId,
-      );
-      
-      return city != null ? city['name']?.toString() ?? 'اختر المدينة' : 'اختر المدينة';
+      final city = cities.firstWhereOrNull((c) => c['id'].toString() == cityId);
+
+      return city != null
+          ? city['name']?.toString() ?? 'اختر المدينة'
+          : 'اختر المدينة';
     } catch (e) {
       return 'اختر المدينة';
     }
   }
-  
+
   String getDistrictName(String districtId) {
     if (districtId.isEmpty) return 'اختر الحي';
-    
+
     try {
       final district = districts.firstWhereOrNull(
         (d) => d['id'].toString() == districtId,
       );
-      
-      return district != null ? district['name']?.toString() ?? 'اختر الحي' : 'اختر الحي';
+
+      return district != null
+          ? district['name']?.toString() ?? 'اختر الحي'
+          : 'اختر الحي';
     } catch (e) {
       return 'اختر الحي';
     }
   }
-  
+
   String getCurrencyName(String currencyId) {
     if (currencyId.isEmpty) return 'اختر العملة';
-    
+
     try {
       final currency = currencies.firstWhereOrNull(
         (c) => c['id'].toString() == currencyId,
       );
-      
-      return currency != null ? currency['name']?.toString() ?? 'اختر العملة' : 'اختر العملة';
+
+      return currency != null
+          ? currency['name']?.toString() ?? 'اختر العملة'
+          : 'اختر العملة';
     } catch (e) {
       return 'اختر العملة';
     }
   }
-  
+
   Future<void> loadStoreForEdit(int storeId) async {
     return UnifiedLoadingScreen.showWithFuture<void>(
       _performLoadStoreForEdit(storeId),
       message: 'جاري تحميل بيانات المتجر...',
     );
   }
-  
+
   Future<void> _performLoadStoreForEdit(int storeId) async {
     try {
       isLoading.value = true;
       isEditMode.value = true;
       editingStoreId.value = storeId;
-      
+
       print('🔄 [STORE] تحميل بيانات المتجر للتعديل - ID: $storeId');
-      
+
       await loadInitialData();
-      
+
       final response = await ApiHelper.getStoreDetails(storeId);
-      
+
       if (response != null && response['status'] == true) {
         final storeData = response['record'] ?? response['data'];
-        
+
         if (storeData == null) {
           throw Exception('بيانات المتجر غير موجودة');
         }
-        
+
         _populateStoreData(storeData);
         await _loadStoreImages(storeData);
-        
+
         print('✅ [STORE] تم تحميل بيانات المتجر بنجاح');
         update();
       } else {
@@ -1057,7 +1100,7 @@ class CreateStoreController extends GetxController {
       }
     } catch (e, stackTrace) {
       print('❌ [STORE] خطأ في تحميل بيانات المتجر: $e\n$stackTrace');
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في تحميل بيانات المتجر',
@@ -1068,50 +1111,53 @@ class CreateStoreController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
   void _populateStoreData(Map<String, dynamic> storeData) {
     storeType.value = storeData['type']?.toString() ?? 'products';
     nameController.text = storeData['name']?.toString() ?? '';
     descriptionController.text = storeData['description']?.toString() ?? '';
     emailController.text = storeData['email']?.toString() ?? '';
-    
+
     if (storeData['city_id'] != null) {
       final cityId = storeData['city_id'].toString();
       cityIdController.text = cityId;
       selectedCityName.value = getCityName(cityId);
     }
-    
+
     if (storeData['district_id'] != null) {
       final districtId = storeData['district_id'].toString();
       districtIdController.text = districtId;
       selectedDistrictName.value = getDistrictName(districtId);
     }
-    
+
     addressController.text = storeData['address']?.toString() ?? '';
-    
+
     if (storeData['currency_id'] != null) {
       final currencyId = storeData['currency_id'].toString();
       currencyIdController.text = currencyId;
       selectedCurrencyName.value = getCurrencyName(currencyId);
     }
-    
+
     phoneController.text = storeData['phone']?.toString() ?? '';
-    hidePhone.value = storeData['hide_phone'] == "1" ||
-                      storeData['hide_phone'] == 1 ||
-                      storeData['hide_phone'] == true;
-    
+    hidePhone.value =
+        storeData['hide_phone'] == "1" ||
+        storeData['hide_phone'] == 1 ||
+        storeData['hide_phone'] == true;
+
     final deliveryTypeValue = storeData['delivery_type']?.toString() ?? 'free';
-    deliveryType.value = deliveryTypeValue == 'hand_delivery' ? 'hand' : deliveryTypeValue;
+    deliveryType.value = deliveryTypeValue == 'hand_delivery'
+        ? 'hand'
+        : deliveryTypeValue;
   }
-  
+
   Future<void> _loadStoreImages(Map<String, dynamic> storeData) async {
     try {
       final logoUrl = storeData['logo_url']?.toString();
       final logoPath = storeData['logo']?.toString();
-      
+
       if (logoUrl != null && logoUrl.isNotEmpty) {
         selectedLogoMedia.clear();
-        
+
         final logoMedia = MediaItem(
           id: 'logo_${storeData['id']}',
           path: logoUrl,
@@ -1123,26 +1169,26 @@ class CreateStoreController extends GetxController {
           fileUrl: logoUrl,
           fileName: logoPath,
         );
-        
+
         selectedLogoMedia.add(logoMedia);
         primaryLogo.value = logoMedia;
       } else {
         selectedLogoMedia.clear();
         primaryLogo.value = null;
       }
-      
+
       final coverUrls = storeData['cover_urls'];
       final coverPaths = storeData['cover'];
-      
+
       if (coverUrls != null && coverUrls is List && coverUrls.isNotEmpty) {
         selectedCoverMedia.clear();
-        
+
         for (int i = 0; i < coverUrls.length; i++) {
           final coverUrl = coverUrls[i]?.toString();
           final coverPath = (coverPaths is List && i < coverPaths.length)
               ? coverPaths[i]?.toString()
               : null;
-          
+
           if (coverUrl != null && coverUrl.isNotEmpty) {
             final coverMedia = MediaItem(
               id: 'cover_${storeData['id']}_$i',
@@ -1155,11 +1201,11 @@ class CreateStoreController extends GetxController {
               fileUrl: coverUrl,
               fileName: coverPath,
             );
-            
+
             selectedCoverMedia.add(coverMedia);
           }
         }
-        
+
         if (selectedCoverMedia.isNotEmpty) {
           primaryCover.value = selectedCoverMedia.first;
         } else {
@@ -1173,17 +1219,17 @@ class CreateStoreController extends GetxController {
       print('❌ [STORE] خطأ في تحميل صور المتجر: $e');
     }
   }
-  
+
   void setStoreType(String type) {
     storeType.value = type;
     update();
   }
-  
+
   void setDeliveryType(String type) {
     deliveryType.value = type;
     update();
   }
-  
+
   String getDeliveryTypeDisplay() {
     switch (deliveryType.value) {
       case 'free':
@@ -1196,65 +1242,70 @@ class CreateStoreController extends GetxController {
         return 'غير محدد';
     }
   }
-  
+
   void addShippingCompany(Map<String, dynamic> company) {
     shippingCompanies.add(company);
-    
+
     if (company['prices'] != null && company['prices'] is List) {
       for (var price in company['prices']) {
-        if (price['city_id'] != null && !locationCities.contains(price['city_id'])) {
+        if (price['city_id'] != null &&
+            !locationCities.contains(price['city_id'])) {
           locationCities.add(price['city_id']);
         }
-        if (price['city_id'] != null && !serviceCities.contains(price['city_id'])) {
+        if (price['city_id'] != null &&
+            !serviceCities.contains(price['city_id'])) {
           serviceCities.add(price['city_id']);
         }
       }
     }
-    
+
     update();
   }
-  
+
   void removeShippingCompany(int index) {
     if (index >= 0 && index < shippingCompanies.length) {
       shippingCompanies.removeAt(index);
       update();
     }
   }
-  
+
   void addLocationCity(int cityId) {
     if (!locationCities.contains(cityId)) {
       locationCities.add(cityId);
       update();
     }
   }
-  
+
   void removeLocationCity(int cityId) {
     locationCities.remove(cityId);
     update();
   }
-  
+
   void addServiceCity(int cityId) {
     if (!serviceCities.contains(cityId)) {
       serviceCities.add(cityId);
       update();
     }
   }
-  
+
   void removeServiceCity(int cityId) {
     serviceCities.remove(cityId);
     update();
   }
-  
+
   List<MediaItem> get selectedMedia {
     return [...selectedLogoMedia, ...selectedCoverMedia];
   }
-  
+
   bool isLogoUploading(String mediaId) => logoUploadingStates[mediaId] ?? false;
-  bool isCoverUploading(String mediaId) => coverUploadingStates[mediaId] ?? false;
-  
+
+  bool isCoverUploading(String mediaId) =>
+      coverUploadingStates[mediaId] ?? false;
+
   bool isPrimaryLogo(MediaItem media) => primaryLogo.value?.id == media.id;
+
   bool isPrimaryCover(MediaItem media) => primaryCover.value?.id == media.id;
-  
+
   String getMediaDisplayUrl(MediaItem media) {
     if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
       return media.fileUrl!;
@@ -1269,32 +1320,30 @@ class CreateStoreController extends GetxController {
     }
     return '';
   }
-  
+
   Future<void> openMediaLibraryForLogo() async {
     try {
       if (selectedLogoMedia.length >= 5) {
         Get.snackbar('تنبيه', 'يمكنك إضافة 5 صور كحد أقصى للشعار');
         return;
       }
-      
+
       final List<MediaItem>? selectedImages = await Get.to<List<MediaItem>>(
-        () => MediaLibraryScreen(
-          isSelectionMode: true,
-        ),
+        () => MediaLibraryScreen(isSelectionMode: true),
         preventDuplicates: false,
       );
-      
+
       if (selectedImages != null && selectedImages.isNotEmpty) {
         for (var image in selectedImages) {
           if (!selectedLogoMedia.any((item) => item.id == image.id)) {
             selectedLogoMedia.add(image);
           }
         }
-        
+
         if (primaryLogo.value == null && selectedLogoMedia.isNotEmpty) {
           primaryLogo.value = selectedLogoMedia.first;
         }
-        
+
         update();
       }
     } catch (e) {
@@ -1302,32 +1351,30 @@ class CreateStoreController extends GetxController {
       Get.snackbar('خطأ', 'فشل في فتح مكتبة الوسائط');
     }
   }
-  
+
   Future<void> openMediaLibraryForCover() async {
     try {
       if (selectedCoverMedia.length >= 10) {
         Get.snackbar('تنبيه', 'يمكنك إضافة 10 صور كحد أقصى للغلاف');
         return;
       }
-      
+
       final List<MediaItem>? selectedImages = await Get.to<List<MediaItem>>(
-        () => MediaLibraryScreen(
-          isSelectionMode: true,
-        ),
+        () => MediaLibraryScreen(isSelectionMode: true),
         preventDuplicates: false,
       );
-      
+
       if (selectedImages != null && selectedImages.isNotEmpty) {
         for (var image in selectedImages) {
           if (!selectedCoverMedia.any((item) => item.id == image.id)) {
             selectedCoverMedia.add(image);
           }
         }
-        
+
         if (primaryCover.value == null && selectedCoverMedia.isNotEmpty) {
           primaryCover.value = selectedCoverMedia.first;
         }
-        
+
         update();
       }
     } catch (e) {
@@ -1335,19 +1382,19 @@ class CreateStoreController extends GetxController {
       Get.snackbar('خطأ', 'فشل في فتح مكتبة الوسائط');
     }
   }
-  
+
   Future<void> pickLogoFromDevice() async {
     try {
       if (selectedLogoMedia.length >= 5) {
         Get.snackbar('تنبيه', 'يمكنك إضافة 5 صور كحد أقصى للشعار');
         return;
       }
-      
+
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         final file = File(image.path);
         final fileSize = await file.length();
-        
+
         final mediaItem = MediaItem(
           id: 'local_logo_${DateTime.now().millisecondsSinceEpoch}',
           path: image.path,
@@ -1357,13 +1404,13 @@ class CreateStoreController extends GetxController {
           size: fileSize,
           isLocal: true,
         );
-        
+
         selectedLogoMedia.add(mediaItem);
-        
+
         if (selectedLogoMedia.length == 1) {
           primaryLogo.value = mediaItem;
         }
-        
+
         update();
       }
     } catch (e) {
@@ -1371,19 +1418,19 @@ class CreateStoreController extends GetxController {
       Get.snackbar('خطأ', 'فشل في اختيار الصورة');
     }
   }
-  
+
   Future<void> pickCoverFromDevice() async {
     try {
       if (selectedCoverMedia.length >= 10) {
         Get.snackbar('تنبيه', 'يمكنك إضافة 10 صور كحد أقصى للغلاف');
         return;
       }
-      
+
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         final file = File(image.path);
         final fileSize = await file.length();
-        
+
         final mediaItem = MediaItem(
           id: 'local_cover_${DateTime.now().millisecondsSinceEpoch}',
           path: image.path,
@@ -1393,13 +1440,13 @@ class CreateStoreController extends GetxController {
           size: fileSize,
           isLocal: true,
         );
-        
+
         selectedCoverMedia.add(mediaItem);
-        
+
         if (selectedCoverMedia.length == 1) {
           primaryCover.value = mediaItem;
         }
-        
+
         update();
       }
     } catch (e) {
@@ -1407,125 +1454,131 @@ class CreateStoreController extends GetxController {
       Get.snackbar('خطأ', 'فشل في اختيار الصورة');
     }
   }
-  
+
   void removeLogo(int index) {
     if (index >= 0 && index < selectedLogoMedia.length) {
       final removedMedia = selectedLogoMedia[index];
       selectedLogoMedia.removeAt(index);
-      
+
       if (primaryLogo.value?.id == removedMedia.id) {
-        primaryLogo.value = selectedLogoMedia.isEmpty ? null : selectedLogoMedia.first;
+        primaryLogo.value = selectedLogoMedia.isEmpty
+            ? null
+            : selectedLogoMedia.first;
       }
-      
+
       update();
     }
   }
-  
+
   void removeCover(int index) {
     if (index >= 0 && index < selectedCoverMedia.length) {
       final removedMedia = selectedCoverMedia[index];
       selectedCoverMedia.removeAt(index);
-      
+
       if (primaryCover.value?.id == removedMedia.id) {
-        primaryCover.value = selectedCoverMedia.isEmpty ? null : selectedCoverMedia.first;
+        primaryCover.value = selectedCoverMedia.isEmpty
+            ? null
+            : selectedCoverMedia.first;
       }
-      
+
       update();
     }
   }
-  
+
   void setPrimaryLogo(int index) {
     if (index >= 0 && index < selectedLogoMedia.length) {
       primaryLogo.value = selectedLogoMedia[index];
       update();
     }
   }
-  
+
   void setPrimaryCover(int index) {
     if (index >= 0 && index < selectedCoverMedia.length) {
       primaryCover.value = selectedCoverMedia[index];
       update();
     }
   }
-  
+
   String? _extractRelativePath(String? url) {
     if (url == null || url.isEmpty) return null;
-    
+
     if (url.contains('/storage/')) {
       final parts = url.split('/storage/');
       return parts.length > 1 ? parts[1] : null;
     }
-    
-    if (url.contains('images/') || url.contains('gallery/') || url.contains('avatar/')) {
+
+    if (url.contains('images/') ||
+        url.contains('gallery/') ||
+        url.contains('avatar/')) {
       return url;
     }
-    
+
     return url;
   }
-  
+
   String? getPrimaryLogoPath() {
     if (primaryLogo.value != null) {
       final media = primaryLogo.value!;
       final path = media.fileName ?? media.path;
       final relativePath = _extractRelativePath(path);
-      
+
       if (relativePath != null && relativePath.startsWith('http')) {
         return _extractRelativePath(relativePath);
       }
-      
+
       return relativePath;
     }
     return null;
   }
-  
+
   List<String> getAllLogoPaths() {
     final List<String> paths = [];
-    
+
     for (var media in selectedLogoMedia) {
       final path = media.fileName ?? media.path;
       final relativePath = _extractRelativePath(path);
-      
+
       String? finalPath = relativePath;
       if (finalPath != null && finalPath.startsWith('http')) {
         finalPath = _extractRelativePath(finalPath);
       }
-      
+
       if (finalPath != null && finalPath.isNotEmpty) {
         paths.add(finalPath);
       }
     }
-    
+
     return paths;
   }
-  
+
   List<String> getAllCoverPaths() {
     final List<String> paths = [];
-    
+
     for (var media in selectedCoverMedia) {
       final path = media.fileName ?? media.path;
       final relativePath = _extractRelativePath(path);
-      
+
       String? finalPath = relativePath;
       if (finalPath != null && finalPath.startsWith('http')) {
         finalPath = _extractRelativePath(finalPath);
       }
-      
+
       if (finalPath != null && finalPath.isNotEmpty) {
         paths.add(finalPath);
       }
     }
-    
+
     return paths;
   }
-  
+
   Future<void> createOrUpdateStore() async {
     await saveCompleteStore();
   }
-  
+
   void resetData() {
     storeType.value = 'products';
     deliveryType.value = 'free';
-    
+
     nameController.clear();
     descriptionController.clear();
     emailController.clear();
@@ -1544,33 +1597,33 @@ class CreateStoreController extends GetxController {
     pinterestController.clear();
     latController.clear();
     lngController.clear();
-    
+
     hidePhone.value = false;
     shippingCompanies.clear();
     locationCities.clear();
     serviceCities.clear();
-    
+
     selectedLogoMedia.clear();
     selectedCoverMedia.clear();
     primaryLogo.value = null;
     primaryCover.value = null;
     logoUploadingStates.clear();
     coverUploadingStates.clear();
-    
+
     isLoading.value = false;
     errorMessage.value = '';
     isUploadingLogo.value = false;
     isUploadingCover.value = false;
     isEditMode.value = false;
     editingStoreId.value = 0;
-    
+
     cityIdController.text = "1";
     districtIdController.text = "1";
     currencyIdController.text = "2";
-    
+
     update();
   }
-  
+
   void printDataSummary() {
     print('''
 📊 [STORE SUMMARY]:
@@ -1590,7 +1643,7 @@ class CreateStoreController extends GetxController {
    معرف المتجر: ${editingStoreId.value}
 ''');
   }
-  
+
   @override
   void onClose() {
     nameController.dispose();
@@ -1611,7 +1664,7 @@ class CreateStoreController extends GetxController {
     pinterestController.dispose();
     latController.dispose();
     lngController.dispose();
-    
+
     super.onClose();
   }
 }

@@ -17,7 +17,7 @@ class DemoStepperScreen extends StatefulWidget {
 
 class _DemoStepperScreenState extends State<DemoStepperScreen> {
   int currentStep = 0;
-  
+
   final List<StepperStep> steps = [
     const StepperStep(
       title: 'المعلومات الأساسية',
@@ -27,10 +27,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
       title: 'الكلمات المفتاحية',
       subtitle: 'إدارة الكلمات المفتاحية',
     ),
-    const StepperStep(
-      title: 'المتغيرات',
-      subtitle: 'إدارة السمات والمتغيرات',
-    ),
+    const StepperStep(title: 'المتغيرات', subtitle: 'إدارة السمات والمتغيرات'),
     const StepperStep(
       title: 'المنتجات المرتبطة',
       subtitle: 'إدارة المنتجات المرتبطة',
@@ -63,37 +60,32 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
       ),
       body: Column(
         children: [
-           Padding(
-             padding: const EdgeInsets.only(top: 25),
-             child: CustomStepper(
-                steps: steps,
-                currentStep: currentStep,
-                onStepTapped: (step) {
-                  if (step <= currentStep) {
-                    setState(() {
-                      currentStep = step;
-                    });
-                  }
-                },
-                builder: (context, stepIndex) {
-                  return _buildStepBody(stepIndex);
-                },
-              ),
-           ),
-          
-          Expanded(
-            child: _buildStepBody(currentStep),
+          Padding(
+            padding: const EdgeInsets.only(top: 25),
+            child: CustomStepper(
+              steps: steps,
+              currentStep: currentStep,
+              onStepTapped: (step) {
+                if (step <= currentStep) {
+                  setState(() {
+                    currentStep = step;
+                  });
+                }
+              },
+              builder: (context, stepIndex) {
+                return _buildStepBody(stepIndex);
+              },
+            ),
           ),
-          
+
+          Expanded(child: _buildStepBody(currentStep)),
+
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(
-                top: BorderSide(
-                  color: Colors.grey[300]!,
-                  width: 1.5,
-                ),
+                top: BorderSide(color: Colors.grey[300]!, width: 1.5),
               ),
               boxShadow: [
                 BoxShadow(
@@ -152,7 +144,9 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         if (currentStep > 0) const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            onPressed: currentStep == steps.length - 1 ? _submitProduct : _nextStep,
+            onPressed: currentStep == steps.length - 1
+                ? _submitProduct
+                : _nextStep,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               backgroundColor: Colors.blue,
@@ -175,7 +169,9 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
                       ),
                     )
                   : Text(
-                      currentStep == steps.length - 1 ? 'إنهاء وإرسال' : 'التالي',
+                      currentStep == steps.length - 1
+                          ? 'إنهاء وإرسال'
+                          : 'التالي',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -207,8 +203,9 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
   }
 
   Future<void> _submitProduct() async {
-    final ProductCentralController productController = Get.find<ProductCentralController>();
-    
+    final ProductCentralController productController =
+        Get.find<ProductCentralController>();
+
     print('🚀 [FINAL SUBMISSION STARTED]');
     productController.printDataSummary();
 
@@ -217,7 +214,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         'خطأ',
         'يرجى إكمال المعلومات الأساسية أولاً',
         backgroundColor: Colors.red,
-        colorText: Colors.white
+        colorText: Colors.white,
       );
       return;
     }
@@ -230,15 +227,16 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
           'خطأ',
           validation.errorMessage,
           backgroundColor: Colors.red,
-          colorText: Colors.white
+          colorText: Colors.white,
         );
         return;
       }
     }
 
     try {
-      final Map<String, dynamic>? result = await productController.submitProduct();
-      
+      final Map<String, dynamic>? result = await productController
+          .submitProduct();
+
       if (result == null) {
         Get.snackbar(
           'خطأ',
@@ -249,9 +247,9 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
         );
         return;
       }
-      
+
       final bool success = result['success'] == true;
-      
+
       if (success) {
         Get.dialog(
           AlertDialog(
@@ -276,7 +274,11 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.shopping_bag_rounded, size: 60, color: Colors.green),
+                const Icon(
+                  Icons.shopping_bag_rounded,
+                  size: 60,
+                  color: Colors.green,
+                ),
                 const SizedBox(height: 20),
                 const Text(
                   'تم إضافة المنتج بنجاح',
@@ -288,13 +290,12 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                if (result['data'] != null && result['data'] is List && (result['data'] as List).isNotEmpty)
+                if (result['data'] != null &&
+                    result['data'] is List &&
+                    (result['data'] as List).isNotEmpty)
                   Text(
                     'رقم المنتج: ${(result['data'][0] as Map<String, dynamic>)['sku'] ?? 'N/A'}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
               ],
             ),
@@ -320,7 +321,8 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
           ),
         );
       } else {
-        final String errorMessage = result['message']?.toString() ?? 'فشل في إضافة المنتج';
+        final String errorMessage =
+            result['message']?.toString() ?? 'فشل في إضافة المنتج';
         Get.snackbar(
           'خطأ',
           errorMessage,

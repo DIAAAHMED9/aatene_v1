@@ -39,45 +39,46 @@ import 'component/BottomNavigationBar/main_screen.dart';
 import 'demo_stepper_screen.dart';
 
 class AppBindings extends Bindings {
-    static bool _initialized = false;
+  static bool _initialized = false;
 
   @override
   void dependencies() {
     if (_initialized) return;
     print('🔄 [APP BINDINGS] تسجيل المتحكمات...');
-    
+
     // 1. GetStorage أولاً
     Get.lazyPut(() => GetStorage(), fenix: true);
-    
+
     // 2. MyAppController بدون أي اعتماد على DataInitializerService
     Get.lazyPut(() => MyAppController(), fenix: true);
-    
+
     // 3. الخدمات الأخرى
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
-    
+
     // 4. تأخير تسجيل DataInitializerService حتى يكتمل تحميل التطبيق
     // يتم تسجيله فقط عندما يُطلب
     Get.lazyPut(() => DataInitializerService(), fenix: true);
-    
+
     // 5. المتحكمات الأخرى
     Get.lazyPut(() => BottomSheetController(), fenix: true);
     Get.lazyPut(() => CreateStoreController(), fenix: true);
-      Get.lazyPut(()=> DataSyncService(), fenix: true);
+    Get.lazyPut(() => DataSyncService(), fenix: true);
     Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
     Get.lazyPut(() => ProductCentralController(), fenix: true);
     Get.lazyPut(() => ProductVariationController(), fenix: true);
     Get.lazyPut(() => KeywordController(), fenix: true);
     Get.lazyPut(() => AddProductController(), fenix: true);
     Get.lazyPut(() => MediaLibraryController(), fenix: true);
-    Get.lazyPut(()=>RelatedProductsController(), fenix: true);
+    Get.lazyPut(() => RelatedProductsController(), fenix: true);
     Get.lazyPut(() => ProductController(), fenix: true);
     Get.lazyPut(() => SectionController(), fenix: true);
-    
+
     print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات بنجاح');
-     _initialized = true;
+    _initialized = true;
   }
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -119,7 +120,7 @@ class MyApp extends StatelessWidget {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await GetStorage.init();
   print('✅ [MAIN] تم تهيئة GetStorage بنجاح');
   Get.put(AppLifecycleManager());

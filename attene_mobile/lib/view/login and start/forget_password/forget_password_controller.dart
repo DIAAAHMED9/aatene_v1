@@ -36,9 +36,9 @@ class ForgetPasswordController extends GetxController {
     if (!validateFields()) {
       return;
     }
-      
+
     isLoading.value = true;
-    
+
     try {
       print('📧 إرسال طلب إعادة تعيين كلمة المرور لـ: ${email.value}');
 
@@ -50,7 +50,8 @@ class ForgetPasswordController extends GetxController {
 
       print('📄 استجابة الخادم: $response');
 
-      if (response != null && (response['status'] == true || response['success'] == true)) {
+      if (response != null &&
+          (response['status'] == true || response['success'] == true)) {
         Get.snackbar(
           'نجاح',
           response['message'] ?? 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
@@ -59,16 +60,18 @@ class ForgetPasswordController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 5),
         );
-        
-        Get.toNamed('/verification', arguments: {
-          'email': email.value,
-          'isForgetPassword': true,
-          'verificationType': 'password_reset',
-        });
+
+        Get.toNamed(
+          '/verification',
+          arguments: {
+            'email': email.value,
+            'isForgetPassword': true,
+            'verificationType': 'password_reset',
+          },
+        );
       } else {
         _handleApiError(response);
       }
-      
     } catch (error) {
       print('❌ خطأ في إرسال طلب إعادة التعيين: $error');
       _handleGeneralError(error);
@@ -78,13 +81,14 @@ class ForgetPasswordController extends GetxController {
   }
 
   void _handleApiError(dynamic response) {
-    String errorMessage = 'فشل إرسال طلب إعادة التعيين. يرجى المحاولة مرة أخرى.';
-    
+    String errorMessage =
+        'فشل إرسال طلب إعادة التعيين. يرجى المحاولة مرة أخرى.';
+
     if (response != null) {
       if (response['message'] != null) {
         errorMessage = response['message'];
       }
-      
+
       if (response['errors'] != null) {
         final errors = response['errors'];
         if (errors['identifier'] != null) {
@@ -102,13 +106,13 @@ class ForgetPasswordController extends GetxController {
         }
       }
     }
-    
+
     _showErrorSnackbar(errorMessage);
   }
 
   void _handleGeneralError(dynamic error) {
     String errorMessage = 'حدث خطأ أثناء إرسال طلب إعادة التعيين. ';
-    
+
     if (error is DioException) {
       switch (error.type) {
         case DioExceptionType.connectionTimeout:
@@ -121,9 +125,11 @@ class ForgetPasswordController extends GetxController {
           if (statusCode == 404) {
             errorMessage = 'البريد الإلكتروني غير مسجل في النظام.';
           } else if (statusCode == 422) {
-            errorMessage = 'بيانات غير صالحة. يرجى التحقق من البريد الإلكتروني.';
+            errorMessage =
+                'بيانات غير صالحة. يرجى التحقق من البريد الإلكتروني.';
           } else if (statusCode == 429) {
-            errorMessage = 'لقد تجاوزت عدد المحاولات المسموح بها. يرجى الانتظار قليلاً.';
+            errorMessage =
+                'لقد تجاوزت عدد المحاولات المسموح بها. يرجى الانتظار قليلاً.';
           } else if (statusCode == 500) {
             errorMessage = 'خطأ في الخادم الداخلي. يرجى المحاولة لاحقاً.';
           } else {

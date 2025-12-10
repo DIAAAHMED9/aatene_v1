@@ -5,10 +5,6 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Chat'),
-      ),
-    );
+    return Scaffold(body: Center(child: Text('Chat')));
   }
 }

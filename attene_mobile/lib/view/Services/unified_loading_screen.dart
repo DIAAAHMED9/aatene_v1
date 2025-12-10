@@ -10,35 +10,36 @@ class UnifiedLoadingScreen {
   static final RxString _currentMessage = ''.obs;
   static String? _currentDialogId;
 
-static void show({
-  String? message,
-  bool isDismissible = false,
-  bool showProgress = false,
-  double? progressValue,
-  Color? backgroundColor,
-  Color? progressColor,
-  String? dialogId,
-}) {
-  // التحقق من تسجيل AppLifecycleManager أولاً
-  if (!Get.isRegistered<AppLifecycleManager>()) {
-    print('⚠️ [LOADING] AppLifecycleManager غير مسجل، تخطي التحقق');
-    _showDialogInternal(
-      message: message,
-      isDismissible: isDismissible,
-      showProgress: showProgress,
-      progressValue: progressValue,
-      backgroundColor: backgroundColor,
-      progressColor: progressColor,
-      dialogId: dialogId,
-    );
-    return;
-  }
+  static void show({
+    String? message,
+    bool isDismissible = false,
+    bool showProgress = false,
+    double? progressValue,
+    Color? backgroundColor,
+    Color? progressColor,
+    String? dialogId,
+  }) {
+    // التحقق من تسجيل AppLifecycleManager أولاً
+    if (!Get.isRegistered<AppLifecycleManager>()) {
+      print('⚠️ [LOADING] AppLifecycleManager غير مسجل، تخطي التحقق');
+      _showDialogInternal(
+        message: message,
+        isDismissible: isDismissible,
+        showProgress: showProgress,
+        progressValue: progressValue,
+        backgroundColor: backgroundColor,
+        progressColor: progressColor,
+        dialogId: dialogId,
+      );
+      return;
+    }
 
-  final lifecycleManager = Get.find<AppLifecycleManager>();
-  if (!lifecycleManager.canShowDialogs) {
-    print('⚠️ [LOADING] Cannot show dialog - app is not in active state');
-    return;
-  }}
+    final lifecycleManager = Get.find<AppLifecycleManager>();
+    if (!lifecycleManager.canShowDialogs) {
+      print('⚠️ [LOADING] Cannot show dialog - app is not in active state');
+      return;
+    }
+  }
 
   static void _showDialogInternal({
     String? message,
@@ -87,6 +88,7 @@ static void show({
       print('❌ [LOADING] Error showing dialog: $e');
     }
   }
+
   static void updateProgress(double progress, {String? message}) {
     _currentProgress.value = progress;
     if (message != null) {
@@ -105,7 +107,8 @@ static void show({
     _currentDialogId = null;
   }
 
-  static Future<T?> showWithFuture<T>(Future<T> future, {
+  static Future<T?> showWithFuture<T>(
+    Future<T> future, {
     String? message,
     String? dialogId,
     Function(dynamic error)? onError,
@@ -207,10 +210,7 @@ class _LoadingDialog extends StatelessWidget {
                 ),
               ],
             ),
-            constraints: const BoxConstraints(
-              maxWidth: 300,
-              minWidth: 250,
-            ),
+            constraints: const BoxConstraints(maxWidth: 300, minWidth: 250),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -224,21 +224,24 @@ class _LoadingDialog extends StatelessWidget {
                       end: Alignment.bottomRight,
                       colors: [
                         progressColor ?? Theme.of(context).primaryColor,
-                        progressColor?.withOpacity(0.7) ?? Theme.of(context).primaryColor.withOpacity(0.7),
+                        progressColor?.withOpacity(0.7) ??
+                            Theme.of(context).primaryColor.withOpacity(0.7),
                       ],
                     ),
                   ),
                   padding: const EdgeInsets.all(15),
                   child: CircularProgressIndicator(
                     strokeWidth: 4,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
                     backgroundColor: Colors.white.withOpacity(0.3),
                     value: showProgress ? currentProgress : null,
                   ),
                 ),
-                
+
                 const SizedBox(height: 25),
-                
+
                 Text(
                   currentMessage,
                   style: const TextStyle(
@@ -251,7 +254,7 @@ class _LoadingDialog extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
+
                 if (showProgress) ...[
                   const SizedBox(height: 15),
                   Text(
@@ -275,16 +278,13 @@ class _LoadingDialog extends StatelessWidget {
                     ),
                   ),
                 ],
-                
+
                 const SizedBox(height: 5),
-                
+
                 if (isDismissible)
                   const Text(
                     'يمكنك النقر خارج الصندوق للإلغاء',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
               ],
             ),

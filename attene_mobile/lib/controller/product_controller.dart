@@ -15,11 +15,11 @@ import '../view/Services/unified_loading_screen.dart';
 
 class ProductCentralController extends GetxController {
   static ProductCentralController get to => Get.find();
-  
+
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   final GetStorage storage = GetStorage();
   final MyAppController myAppController = Get.find<MyAppController>();
-  
+
   final RxString productName = ''.obs;
   final RxString productDescription = ''.obs;
   final RxString price = ''.obs;
@@ -27,15 +27,17 @@ class ProductCentralController extends GetxController {
   final RxString selectedCondition = ''.obs;
   final RxList<MediaItem> selectedMedia = <MediaItem>[].obs;
   final Rx<Section?> selectedSection = Rx<Section?>(null);
-  
+
   final RxList<String> keywords = <String>[].obs;
   final RxList<Map<String, dynamic>> variations = <Map<String, dynamic>>[].obs;
-  final Rx<Map<String, dynamic>?> selectedStore = Rx<Map<String, dynamic>?>(null);
-  
+  final Rx<Map<String, dynamic>?> selectedStore = Rx<Map<String, dynamic>?>(
+    null,
+  );
+
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingCategories = false.obs;
   final RxString categoriesError = ''.obs;
-  
+
   final RxBool isSubmitting = false.obs;
   final RxBool isUpdatingSection = false.obs;
 
@@ -45,33 +47,35 @@ class ProductCentralController extends GetxController {
     print('🔄 [PRODUCT CENTRAL] تهيئة متحكم المنتجات المركزي');
     loadCachedCategories();
   }
-  
+
   Future<void> loadCachedCategories() async {
     try {
       final cachedCategories = dataService.getCategories();
       if (cachedCategories.isNotEmpty) {
         categories.assignAll(List<Map<String, dynamic>>.from(cachedCategories));
-        print('✅ [PRODUCT] تم تحميل ${categories.length} فئة من التخزين المحلي');
+        print(
+          '✅ [PRODUCT] تم تحميل ${categories.length} فئة من التخزين المحلي',
+        );
       }
     } catch (e) {
       print('⚠️ [PRODUCT] خطأ في تحميل الفئات المخزنة: $e');
     }
   }
-  
+
   Future<void> loadCategoriesIfNeeded() async {
     if (categories.isNotEmpty || isLoadingCategories.value) {
       return;
     }
     await loadCategories();
   }
-  
+
   Future<void> loadCategories() async {
     return UnifiedLoadingScreen.showWithFuture<void>(
       performLoadCategories(),
       message: 'جاري تحميل الفئات...',
     );
   }
-  
+
   Future<void> performLoadCategories() async {
     try {
       if (!myAppController.isLoggedIn.value) {
@@ -79,18 +83,20 @@ class ProductCentralController extends GetxController {
         print('⚠️ [PRODUCT] المستخدم غير مسجل دخول');
         return;
       }
-  
+
       isLoadingCategories(true);
       categoriesError('');
       print('📡 [PRODUCT] جلب الفئات من API');
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/categories/select',
         withLoading: false,
       );
-  
+
       if (response != null && response['status'] == true) {
-        final categoriesList = List<Map<String, dynamic>>.from(response['categories'] ?? []);
+        final categoriesList = List<Map<String, dynamic>>.from(
+          response['categories'] ?? [],
+        );
         categories.assignAll(categoriesList);
         print('✅ [PRODUCT] تم تحميل ${categories.length} فئة بنجاح');
       } else {
@@ -106,18 +112,20 @@ class ProductCentralController extends GetxController {
       isLoadingCategories(false);
     }
   }
-  
+
   Future<void> reloadCategories() async {
     categories.clear();
     await loadCategories();
   }
-  
+
   void updateSelectedStore(Map<String, dynamic> store) {
     selectedStore(store);
-    print('🏪 [PRODUCT] تم تحديث المتجر: ${store['name']} (ID: ${store['id']})');
+    print(
+      '🏪 [PRODUCT] تم تحديث المتجر: ${store['name']} (ID: ${store['id']})',
+    );
     printDataSummary();
   }
-  
+
   void updateBasicInfo({
     required String name,
     required String description,
@@ -133,11 +141,11 @@ class ProductCentralController extends GetxController {
     selectedCategoryId(categoryId);
     selectedCondition(condition);
     selectedMedia.assignAll(media);
-    
+
     if (section != null) {
       updateSelectedSection(section);
     }
-  
+
     print('''
 📦 [PRODUCT] تحديث المعلومات الأساسية:
    الاسم: $name
@@ -149,27 +157,29 @@ class ProductCentralController extends GetxController {
    الوسائط: ${media.length} عنصر
 ''');
   }
-  
+
   void addKeywords(List<String> newKeywords) {
     keywords.assignAll(newKeywords);
     print('🔤 [PRODUCT] تحديث الكلمات المفتاحية: ${newKeywords.length} كلمة');
   }
-  
+
   void addVariations(List<Map<String, dynamic>> newVariations) {
     variations.assignAll(newVariations);
     print('🎨 [PRODUCT] تحديث المتغيرات: ${newVariations.length} متغير');
   }
-  
+
   // **الدوال الجديدة للربط مع RelatedProductsController**
-  
+
   void updateRelatedProductsFromRelatedController() {
     try {
       final relatedController = Get.find<RelatedProductsController>();
-      
+
       // هنا يمكنك القيام بأي عملية مطلوبة عند الربط
       print('🔗 [PRODUCT] تم استقبال طلب الربط من RelatedProductsController');
-      print('🔗 [PRODUCT] عدد المنتجات المختارة: ${relatedController.selectedProductsCount}');
-      
+      print(
+        '🔗 [PRODUCT] عدد المنتجات المختارة: ${relatedController.selectedProductsCount}',
+      );
+
       Get.snackbar(
         'تم الربط',
         'تم ربط ${relatedController.selectedProductsCount} منتج بنجاح',
@@ -180,7 +190,7 @@ class ProductCentralController extends GetxController {
       print('⚠️ [PRODUCT] خطأ في تحديث المنتجات المرتبطة: $e');
     }
   }
-  
+
   // الحصول على بيانات cross sell من RelatedProductsController
   Map<String, dynamic> getCrossSellData() {
     try {
@@ -191,7 +201,7 @@ class ProductCentralController extends GetxController {
     } catch (e) {
       print('⚠️ [PRODUCT] خطأ في جلب بيانات cross sell: $e');
     }
-    
+
     // بيانات افتراضية إذا لم يكن هناك RelatedProductsController
     return {
       'crossSells': [],
@@ -199,7 +209,7 @@ class ProductCentralController extends GetxController {
       'cross_sells_due_date': '',
     };
   }
-  
+
   bool isBasicInfoComplete() {
     return productName.isNotEmpty &&
         productDescription.isNotEmpty &&
@@ -207,18 +217,18 @@ class ProductCentralController extends GetxController {
         selectedCategoryId > 0 &&
         selectedCondition.isNotEmpty;
   }
-  
+
   Future<Map<String, dynamic>?> submitProduct() async {
     return UnifiedLoadingScreen.showWithFuture<Map<String, dynamic>>(
       performSubmitProduct(),
       message: 'جاري إضافة المنتج...',
     );
   }
-  
+
   Future<Map<String, dynamic>> performSubmitProduct() async {
     try {
       isSubmitting(true);
-      
+
       print('''
 🚀 [PRODUCT] إرسال المنتج:
    الاسم: ${productName.value}
@@ -228,34 +238,36 @@ class ProductCentralController extends GetxController {
    الوسائط: ${selectedMedia.length}
    الكلمات المفتاحية: ${keywords.length}
 ''');
-  
+
       updateVariationsData();
-  
+
       final variationController = Get.find<ProductVariationController>();
       final variationsData = variationController.prepareVariationsForApi();
-  
-      print('🎯 [PRODUCT] بيانات المتغيرات المعدة: ${variationsData.length} متغير');
-  
+
+      print(
+        '🎯 [PRODUCT] بيانات المتغيرات المعدة: ${variationsData.length} متغير',
+      );
+
       final productData = await prepareProductData(variationsData);
-  
+
       print('📤 [PRODUCT] بيانات المنتج المرسلة: ${jsonEncode(productData)}');
-  
+
       final response = await ApiHelper.post(
         path: '/merchants/products',
         body: productData,
         withLoading: false,
       );
-  
+
       print('📥 [PRODUCT] استجابة API: ${jsonEncode(response)}');
-  
+
       if (response != null && response['status'] == true) {
         final product = response['data']?[0];
         print('✅ [PRODUCT] تم إنشاء المنتج بنجاح: ${product?['name']}');
-        
+
         await dataService.refreshProducts();
-        
+
         resetAfterSuccess(variationController);
-        
+
         return {'success': true, 'data': response['data']};
       } else {
         final errorMessage = parseErrorMessage(response);
@@ -269,8 +281,10 @@ class ProductCentralController extends GetxController {
       isSubmitting(false);
     }
   }
-  
-  Future<Map<String, dynamic>> prepareProductData(List<Map<String, dynamic>> variationsData) async {
+
+  Future<Map<String, dynamic>> prepareProductData(
+    List<Map<String, dynamic>> variationsData,
+  ) async {
     final productData = <String, dynamic>{
       'section_id': 44,
       'name': productName.value.trim(),
@@ -281,19 +295,21 @@ class ProductCentralController extends GetxController {
       'short_description': getShortDescription(),
       'sku': generateSku(),
     };
-  
+
     if (selectedMedia.isNotEmpty) {
       final firstMedia = selectedMedia.first;
       productData['cover'] = getFilePath(firstMedia.fileUrl);
-      productData['gallary'] = selectedMedia.map((media) => getFilePath(media.fileUrl)).toList();
+      productData['gallary'] = selectedMedia
+          .map((media) => getFilePath(media.fileUrl))
+          .toList();
     }
-  
+
     if (keywords.isNotEmpty) {
       productData['tags'] = keywords;
     } else {
       productData['tags'] = [];
     }
-  
+
     if (variationsData.isNotEmpty) {
       productData['type'] = 'variation';
       productData['variations'] = prepareVariationsData(variationsData);
@@ -301,18 +317,21 @@ class ProductCentralController extends GetxController {
       productData['type'] = 'simple';
       productData['variations'] = [];
     }
-  
+
     // **استخدام بيانات cross sell من RelatedProductsController**
     final crossSellData = getCrossSellData();
-    
+
     productData['crossSells'] = crossSellData['crossSells'] ?? [];
-    
-    if (crossSellData['crossSells'] != null && (crossSellData['crossSells'] as List).isNotEmpty) {
-      productData['cross_sells_price'] = crossSellData['cross_sells_price'] ?? 0.0;
-      
-      if (crossSellData['cross_sells_due_date'] != null && 
+
+    if (crossSellData['crossSells'] != null &&
+        (crossSellData['crossSells'] as List).isNotEmpty) {
+      productData['cross_sells_price'] =
+          crossSellData['cross_sells_price'] ?? 0.0;
+
+      if (crossSellData['cross_sells_due_date'] != null &&
           (crossSellData['cross_sells_due_date'] as String).isNotEmpty) {
-        productData['cross_sells_due_date'] = crossSellData['cross_sells_due_date'];
+        productData['cross_sells_due_date'] =
+            crossSellData['cross_sells_due_date'];
       } else {
         final dueDate = DateTime.now().add(const Duration(days: 30));
         productData['cross_sells_due_date'] =
@@ -322,65 +341,80 @@ class ProductCentralController extends GetxController {
       productData['cross_sells_price'] = 0;
       productData['cross_sells_due_date'] = '';
     }
-  
+
     print('''
 📤 [PRODUCT] بيانات cross sell:
    crossSells: ${productData['crossSells']}
    cross_sells_price: ${productData['cross_sells_price']}
    cross_sells_due_date: ${productData['cross_sells_due_date']}
 ''');
-  
+
     return productData;
   }
-  
-  List<Map<String, dynamic>> prepareVariationsData(List<Map<String, dynamic>> variationsData) {
+
+  List<Map<String, dynamic>> prepareVariationsData(
+    List<Map<String, dynamic>> variationsData,
+  ) {
     return variationsData.map((variation) {
       final variationData = {
         'price': variation['price'],
-        'attributeOptions': prepareAttributeOptions(variation['attributeOptions'] ?? []),
+        'attributeOptions': prepareAttributeOptions(
+          variation['attributeOptions'] ?? [],
+        ),
       };
-      
-      if (variation['image'] != null && variation['image'].toString().isNotEmpty) {
+
+      if (variation['image'] != null &&
+          variation['image'].toString().isNotEmpty) {
         variationData['image'] = getFilePath(variation['image'].toString());
       }
-      
+
       return variationData;
     }).toList();
   }
-  
-  List<Map<String, dynamic>> prepareAttributeOptions(List<dynamic> attributeOptions) {
+
+  List<Map<String, dynamic>> prepareAttributeOptions(
+    List<dynamic> attributeOptions,
+  ) {
     final List<Map<String, dynamic>> result = [];
-    
+
     for (final option in attributeOptions) {
       if (option is Map<String, dynamic>) {
         final attributeId = option['attribute_id'];
         final optionId = option['option_id'];
-        
+
         if (attributeId != null && optionId != null) {
           result.add({
-            'attribute_id': attributeId is int ? attributeId : int.tryParse(attributeId.toString()) ?? 0,
-            'option_id': optionId is int ? optionId : int.tryParse(optionId.toString()) ?? 0,
+            'attribute_id': attributeId is int
+                ? attributeId
+                : int.tryParse(attributeId.toString()) ?? 0,
+            'option_id': optionId is int
+                ? optionId
+                : int.tryParse(optionId.toString()) ?? 0,
           });
         }
       } else if (option is Map) {
         final attributeId = option['attribute_id'];
         final optionId = option['option_id'];
-        
+
         if (attributeId != null && optionId != null) {
           result.add({
-            'attribute_id': attributeId is int ? attributeId : int.tryParse(attributeId.toString()) ?? 0,
-            'option_id': optionId is int ? optionId : int.tryParse(optionId.toString()) ?? 0,
+            'attribute_id': attributeId is int
+                ? attributeId
+                : int.tryParse(attributeId.toString()) ?? 0,
+            'option_id': optionId is int
+                ? optionId
+                : int.tryParse(optionId.toString()) ?? 0,
           });
         }
       }
     }
-    
+
     return result;
   }
-  
+
   void updateVariationsData() {
     final variationController = Get.find<ProductVariationController>();
-    
+
     for (final variation in variationController.variations) {
       if (variation.images.isNotEmpty) {
         if (variation.images.first.contains('variation_default.jpg') ||
@@ -389,34 +423,36 @@ class ProductCentralController extends GetxController {
         }
       }
     }
-    
+
     print('✅ [PRODUCT] تحديث بيانات المتغيرات: تم تنظيف الصور لـ API');
   }
-  
+
   String parseErrorMessage(Map<String, dynamic>? response) {
     if (response == null) {
       return 'فشل في الاتصال بالخادم';
     }
-  
+
     if (response['errors'] != null && response['errors'] is Map) {
       final errors = Map<String, dynamic>.from(response['errors']);
       if (errors.isNotEmpty) {
         final firstError = errors.entries.first;
         final errorMessages = List<String>.from(firstError.value);
-        return errorMessages.isNotEmpty ? errorMessages.first : 'حدث خطأ غير معروف';
+        return errorMessages.isNotEmpty
+            ? errorMessages.first
+            : 'حدث خطأ غير معروف';
       }
     }
-  
+
     return response['message'] ?? 'فشل في إضافة المنتج';
   }
-  
+
   void resetAfterSuccess(ProductVariationController variationController) {
     reset();
     variationController.toggleHasVariations(false);
     variationController.selectedAttributes.clear();
     variationController.variations.clear();
   }
-  
+
   String formatCondition(String condition) {
     switch (condition) {
       case 'جديد':
@@ -429,49 +465,49 @@ class ProductCentralController extends GetxController {
         return 'new';
     }
   }
-  
+
   String generateSku() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = timestamp % 10000;
     return 'SKU${productName.value.replaceAll(' ', '_').toUpperCase()}_$random';
   }
-  
+
   String getShortDescription() {
     if (productDescription.value.length <= 100) {
       return productDescription.value;
     }
     return '${productDescription.value.substring(0, 100)}...';
   }
-  
+
   String getFilePath(String? url) {
     if (url == null || url.isEmpty) return '';
-    
+
     try {
       final uri = Uri.parse(url);
       String path = uri.path;
-      
+
       if (path.startsWith('/storage/')) {
         final newPath = path.replaceFirst('/storage/', '');
         return newPath;
       }
-      
+
       if (path.startsWith('/gallery/')) {
         final newPath = path.substring(1);
         return newPath;
       }
-      
+
       if (path.startsWith('/images/')) {
         final newPath = path.substring(1);
         return newPath;
       }
-      
+
       return path;
     } catch (e) {
       print('❌ [PRODUCT] خطأ في تحويل المسار: $e');
       return url;
     }
   }
-  
+
   void reset() {
     productName('');
     productDescription('');
@@ -482,18 +518,18 @@ class ProductCentralController extends GetxController {
     keywords.clear();
     variations.clear();
     selectedSection(null);
-    
+
     print('🔄 [PRODUCT] إعادة تعيين بيانات المنتج');
   }
-  
+
   void printDataSummary() {
     final variationController = Get.find<ProductVariationController>();
-    
+
     try {
-      final relatedProductsCount = Get.isRegistered<RelatedProductsController>() 
-          ? Get.find<RelatedProductsController>().selectedProductsCount 
+      final relatedProductsCount = Get.isRegistered<RelatedProductsController>()
+          ? Get.find<RelatedProductsController>().selectedProductsCount
           : 0;
-      
+
       print('''
 📊 [PRODUCT SUMMARY]:
    الاسم: ${productName.value}
@@ -512,21 +548,23 @@ class ProductCentralController extends GetxController {
       print('⚠️ [PRODUCT] خطأ في طباعة ملخص البيانات: $e');
     }
   }
-  
+
   void updateSelectedSection(Section section) {
     if (isUpdatingSection.value) return;
-    
+
     isUpdatingSection.value = true;
-    
+
     try {
       if (selectedSection.value?.id == section.id) {
-        print('⚠️ [PRODUCT] القسم محدث بالفعل: ${section.name} (ID: ${section.id})');
+        print(
+          '⚠️ [PRODUCT] القسم محدث بالفعل: ${section.name} (ID: ${section.id})',
+        );
         return;
       }
-      
+
       selectedSection(section);
       print('✅ [PRODUCT] تحديث القسم: ${section.name} (ID: ${section.id})');
-      
+
       final bottomSheetController = Get.find<BottomSheetController>();
       bottomSheetController.selectSection(section);
     } finally {
@@ -535,11 +573,11 @@ class ProductCentralController extends GetxController {
       });
     }
   }
-  
+
   Future<Map<String, dynamic>> testWithCorrectStructure() async {
     try {
       print('🧪 [PRODUCT] اختبار الهيكل الصحيح');
-      
+
       final testData = {
         "section_id": 18,
         "name": "منتج تجريبي",
@@ -553,39 +591,42 @@ class ProductCentralController extends GetxController {
         "variations": [],
         "crossSells": [],
       };
-  
+
       print('🧪 [PRODUCT] بيانات الاختبار: ${jsonEncode(testData)}');
-  
+
       final response = await ApiHelper.post(
         path: '/merchants/products',
         body: testData,
         withLoading: false,
       );
-  
+
       print('🧪 [PRODUCT] استجابة الاختبار: ${jsonEncode(response)}');
-  
+
       if (response != null && response['status'] == true) {
         return {'success': true, 'message': '✅ الاختبار نجح - الهيكل صحيح'};
       } else {
-        return {'success': false, 'message': '❌ فشل الاختبار: ${response?['message']}'};
+        return {
+          'success': false,
+          'message': '❌ فشل الاختبار: ${response?['message']}',
+        };
       }
     } catch (e) {
       return {'success': false, 'message': '❌ خطأ في الاختبار: $e'};
     }
   }
-  
+
   Map<String, dynamic> getCategoryById(int id) {
     return categories.firstWhere(
       (category) => category['id'] == id,
       orElse: () => {'name': 'غير محدد'},
     );
   }
-  
+
   String getCategoryName(int id) {
     final category = getCategoryById(id);
     return category['name']?.toString() ?? 'غير محدد';
   }
-  
+
   @override
   void onClose() {
     print('🔚 [PRODUCT] إغلاق متحكم المنتجات المركزي');

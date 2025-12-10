@@ -14,15 +14,12 @@ class MediaLibraryScreen extends StatelessWidget {
   final bool isSelectionMode;
   final Function(List<MediaItem>)? onMediaSelected;
 
-  MediaLibraryScreen({
-    this.isSelectionMode = false,
-    this.onMediaSelected,
-  });
+  MediaLibraryScreen({this.isSelectionMode = false, this.onMediaSelected});
 
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBarWithTabs(
@@ -50,7 +47,7 @@ class MediaLibraryScreen extends StatelessWidget {
       if (controller.isLoading.value && controller.displayedMedia.isEmpty) {
         return _buildLoadingState();
       }
-      
+
       return controller.currentTabIndex.value == 0
           ? _buildUploadTab()
           : _buildMediaGrid();
@@ -87,9 +84,15 @@ class MediaLibraryScreen extends StatelessWidget {
         children: [
           Icon(Icons.cloud_upload_outlined, size: 80, color: Colors.grey[300]),
           SizedBox(height: 16),
-          Text('لا توجد ملفات محملة', style: TextStyle(fontSize: 18, color: Colors.grey[500])),
+          Text(
+            'لا توجد ملفات محملة',
+            style: TextStyle(fontSize: 18, color: Colors.grey[500]),
+          ),
           SizedBox(height: 8),
-          Text('انقر على زر "+" لرفع الملفات', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+          Text(
+            'انقر على زر "+" لرفع الملفات',
+            style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+          ),
         ],
       ),
     );
@@ -121,13 +124,16 @@ class MediaLibraryScreen extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Obx(() {
-            if (controller.uploadProgress.value > 0 && controller.uploadProgress.value < 1) {
+            if (controller.uploadProgress.value > 0 &&
+                controller.uploadProgress.value < 1) {
               return Column(
                 children: [
                   LinearProgressIndicator(
                     value: controller.uploadProgress.value,
                     backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary400),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.primary400,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -149,11 +155,11 @@ class MediaLibraryScreen extends StatelessWidget {
   Widget _buildMediaGrid() {
     return Obx(() {
       final filteredMedia = controller.filteredMedia;
-      
+
       if (filteredMedia.isEmpty) {
         return _buildEmptyState();
       }
-      
+
       return Padding(
         padding: EdgeInsets.all(16),
         child: GridView.builder(
@@ -164,7 +170,8 @@ class MediaLibraryScreen extends StatelessWidget {
             childAspectRatio: 168.5 / 280,
           ),
           itemCount: filteredMedia.length,
-          itemBuilder: (context, index) => _buildMediaGridItem(filteredMedia[index]),
+          itemBuilder: (context, index) =>
+              _buildMediaGridItem(filteredMedia[index]),
         ),
       );
     });
@@ -173,23 +180,39 @@ class MediaLibraryScreen extends StatelessWidget {
   Widget _buildMediaGridItem(MediaItem media) {
     return Obx(() {
       final isSelected = controller.selectedMediaIds.contains(media.id);
-      final isMaxSelected = controller.selectedMediaIds.length >= 10 && !isSelected;
-      final isUploading = media.isLocal == true && controller.temporaryMediaItems.contains(media);
-      
+      final isMaxSelected =
+          controller.selectedMediaIds.length >= 10 && !isSelected;
+      final isUploading =
+          media.isLocal == true &&
+          controller.temporaryMediaItems.contains(media);
+
       return GestureDetector(
-        onTap: () => _handleMediaTap(media, isUploading, isMaxSelected, isSelected),
+        onTap: () =>
+            _handleMediaTap(media, isUploading, isMaxSelected, isSelected),
         onLongPress: () => _handleMediaLongPress(media, isUploading),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isUploading ? Colors.blue :
-                    isSelected ? AppColors.primary400 : Colors.grey[300]!,
+              color: isUploading
+                  ? Colors.blue
+                  : isSelected
+                  ? AppColors.primary400
+                  : Colors.grey[300]!,
               width: isUploading ? 2 : (isSelected ? 2 : 1),
             ),
-            color: isUploading ? Colors.blue.withOpacity(0.1) :
-                  isSelected ? AppColors.primary400.withOpacity(0.1) : Colors.white,
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+            color: isUploading
+                ? Colors.blue.withOpacity(0.1)
+                : isSelected
+                ? AppColors.primary400.withOpacity(0.1)
+                : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
           child: Stack(
             children: [
@@ -203,19 +226,32 @@ class MediaLibraryScreen extends StatelessWidget {
     });
   }
 
-  void _handleMediaTap(MediaItem media, bool isUploading, bool isMaxSelected, bool isSelected) {
+  void _handleMediaTap(
+    MediaItem media,
+    bool isUploading,
+    bool isMaxSelected,
+    bool isSelected,
+  ) {
     if (isUploading) {
-      Get.snackbar('جاري الرفع', 'الملف قيد الرفع إلى السيرفر',
-          backgroundColor: Colors.blue, colorText: Colors.white);
+      Get.snackbar(
+        'جاري الرفع',
+        'الملف قيد الرفع إلى السيرفر',
+        backgroundColor: Colors.blue,
+        colorText: Colors.white,
+      );
       return;
     }
-    
+
     if (isMaxSelected) {
-      Get.snackbar('تنبيه', 'يمكن اختيار 10 ملفات كحد أقصى',
-          backgroundColor: Colors.orange, colorText: Colors.white);
+      Get.snackbar(
+        'تنبيه',
+        'يمكن اختيار 10 ملفات كحد أقصى',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
       return;
     }
-    
+
     if (isSelectionMode) {
       controller.toggleMediaSelection(media.id);
     } else {
@@ -238,12 +274,20 @@ class MediaLibraryScreen extends StatelessWidget {
               width: double.infinity,
               height: 168.5,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(11), topRight: Radius.circular(11)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(11),
+                  topRight: Radius.circular(11),
+                ),
                 color: Colors.grey[100],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(11), topRight: Radius.circular(11)),
-                child: media.type == MediaType.image ? _buildImageWidget(media) : _buildVideoThumbnail(media),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(11),
+                  topRight: Radius.circular(11),
+                ),
+                child: media.type == MediaType.image
+                    ? _buildImageWidget(media)
+                    : _buildVideoThumbnail(media),
               ),
             ),
             if (media.type == MediaType.video) _buildVideoIndicator(),
@@ -257,9 +301,17 @@ class MediaLibraryScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(media.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(
+                  media.name,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 SizedBox(height: 4),
-                Text(_formatFileSize(media.size), style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text(
+                  _formatFileSize(media.size),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
               ],
             ),
           ),
@@ -270,10 +322,15 @@ class MediaLibraryScreen extends StatelessWidget {
 
   Widget _buildSelectionIndicator() {
     return Positioned(
-      top: 8, right: 8,
+      top: 8,
+      right: 8,
       child: Container(
-        width: 24, height: 24,
-        decoration: BoxDecoration(color: AppColors.primary400, shape: BoxShape.circle),
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.primary400,
+          shape: BoxShape.circle,
+        ),
         child: Icon(Icons.check, size: 16, color: Colors.white),
       ),
     );
@@ -287,9 +344,14 @@ class MediaLibraryScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
               SizedBox(height: 8),
-              Text('جاري الرفع...', style: TextStyle(color: Colors.white, fontSize: 12)),
+              Text(
+                'جاري الرفع...',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
             ],
           ),
         ),
@@ -299,10 +361,14 @@ class MediaLibraryScreen extends StatelessWidget {
 
   Widget _buildVideoIndicator() {
     return Positioned(
-      top: 8, left: 8,
+      top: 8,
+      left: 8,
       child: Container(
         padding: EdgeInsets.all(4),
-        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(
+          color: Colors.black54,
+          borderRadius: BorderRadius.circular(4),
+        ),
         child: Icon(Icons.play_arrow, color: Colors.white, size: 16),
       ),
     );
@@ -310,28 +376,46 @@ class MediaLibraryScreen extends StatelessWidget {
 
   Widget _buildUploadingLabel() {
     return Positioned(
-      bottom: 8, left: 8,
+      bottom: 8,
+      left: 8,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.circular(4)),
-        child: Text('جاري الرفع', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+        decoration: BoxDecoration(
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          'جاري الرفع',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildImageWidget(MediaItem media) {
     if (media.isLocal == true) {
-      return Image.file(File(media.path), fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Icon(Icons.image, size: 40, color: Colors.grey[400]));
+      return Image.file(
+        File(media.path),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) =>
+            Icon(Icons.image, size: 40, color: Colors.grey[400]),
+      );
     } else {
       final imageUrl = controller.getMediaDisplayUrl(media);
-      if (imageUrl.isEmpty) return Icon(Icons.image, size: 40, color: Colors.grey[400]);
-      
+      if (imageUrl.isEmpty)
+        return Icon(Icons.image, size: 40, color: Colors.grey[400]);
+
       return CachedNetworkImage(
         imageUrl: imageUrl,
         fit: BoxFit.cover,
-        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => Icon(Icons.image, size: 40, color: Colors.grey[400]),
+        placeholder: (context, url) =>
+            Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) =>
+            Icon(Icons.image, size: 40, color: Colors.grey[400]),
       );
     }
   }
@@ -339,8 +423,21 @@ class MediaLibraryScreen extends StatelessWidget {
   Widget _buildVideoThumbnail(MediaItem media) {
     return Stack(
       children: [
-        Container(color: Colors.black12, child: Center(child: Icon(Icons.videocam, size: 40, color: Colors.grey[400]))),
-        Positioned.fill(child: Center(child: Icon(Icons.play_circle_filled, color: Colors.white54, size: 48))),
+        Container(
+          color: Colors.black12,
+          child: Center(
+            child: Icon(Icons.videocam, size: 40, color: Colors.grey[400]),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.play_circle_filled,
+              color: Colors.white54,
+              size: 48,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -360,28 +457,60 @@ class MediaLibraryScreen extends StatelessWidget {
   void _showUploadOptions() {
     showModalBottomSheet(
       context: Get.context!,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) => Container(
         padding: EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 8),
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             SizedBox(height: 20),
-            Text('اختر طريقة الرفع', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'اختر طريقة الرفع',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 20),
-            Row(children: [
-              _buildUploadOption(Icons.photo_library, 'معرض الصور', () => _selectAndClose(controller.pickImages)),
-              SizedBox(width: 12),
-              _buildUploadOption(Icons.video_library, 'معرض الفيديو', () => _selectAndClose(controller.pickVideo)),
-            ]),
+            Row(
+              children: [
+                _buildUploadOption(
+                  Icons.photo_library,
+                  'معرض الصور',
+                  () => _selectAndClose(controller.pickImages),
+                ),
+                SizedBox(width: 12),
+                _buildUploadOption(
+                  Icons.video_library,
+                  'معرض الفيديو',
+                  () => _selectAndClose(controller.pickVideo),
+                ),
+              ],
+            ),
             SizedBox(height: 12),
-            Row(children: [
-              _buildUploadOption(Icons.camera_alt, 'التقاط صورة', () => _selectAndClose(controller.takePhoto)),
-              SizedBox(width: 12),
-              _buildUploadOption(Icons.videocam, 'تسجيل فيديو', () => _selectAndClose(controller.takeVideo)),
-            ]),
+            Row(
+              children: [
+                _buildUploadOption(
+                  Icons.camera_alt,
+                  'التقاط صورة',
+                  () => _selectAndClose(controller.takePhoto),
+                ),
+                SizedBox(width: 12),
+                _buildUploadOption(
+                  Icons.videocam,
+                  'تسجيل فيديو',
+                  () => _selectAndClose(controller.takeVideo),
+                ),
+              ],
+            ),
             SizedBox(height: 20),
           ],
         ),
@@ -405,11 +534,16 @@ class MediaLibraryScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.grey[300]!),
           ),
-          child: Column(children: [
-            Icon(icon, size: 40, color: AppColors.primary400),
-            SizedBox(height: 8),
-            Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-          ]),
+          child: Column(
+            children: [
+              Icon(icon, size: 40, color: AppColors.primary400),
+              SizedBox(height: 8),
+              Text(
+                title,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -422,7 +556,14 @@ class MediaLibraryScreen extends StatelessWidget {
         children: [
           Icon(Icons.photo_library_outlined, size: 80, color: Colors.grey[300]),
           SizedBox(height: 16),
-          Text('لا توجد ملفات', style: TextStyle(fontSize: 18, color: Colors.grey[500], fontWeight: FontWeight.w500)),
+          Text(
+            'لا توجد ملفات',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           SizedBox(height: 8),
           Text(
             controller.currentTabIndex.value == 0
@@ -450,22 +591,46 @@ class MediaLibraryScreen extends StatelessWidget {
             Container(
               width: Get.width * 0.9,
               height: Get.width * 0.9,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.black),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.black,
+              ),
               child: media.type == MediaType.image
                   ? _buildImageWidget(media)
                   : Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.play_circle_filled, size: 60, color: Colors.white),
+                          Icon(
+                            Icons.play_circle_filled,
+                            size: 60,
+                            color: Colors.white,
+                          ),
                           SizedBox(height: 16),
-                          Text('عرض الفيديو', style: TextStyle(color: Colors.white, fontSize: 16)),
+                          Text(
+                            'عرض الفيديو',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
                         ],
                       ),
                     ),
             ),
-            Positioned(top: 20, right: 20, child: IconButton(icon: Icon(Icons.close, color: Colors.white, size: 30), onPressed: () => Get.back())),
-            Positioned(top: 20, left: 20, child: IconButton(icon: Icon(Icons.delete, color: Colors.white, size: 30), onPressed: () => _deleteMedia(media))),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: Icon(Icons.close, color: Colors.white, size: 30),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            Positioned(
+              top: 20,
+              left: 20,
+              child: IconButton(
+                icon: Icon(Icons.delete, color: Colors.white, size: 30),
+                onPressed: () => _deleteMedia(media),
+              ),
+            ),
           ],
         ),
       ),
@@ -477,26 +642,24 @@ class MediaLibraryScreen extends StatelessWidget {
     _showDeleteDialog(media);
   }
 
-void _showDeleteDialog(MediaItem media) {
-  Get.dialog(
-    AlertDialog(
-      title: Text('حذف الملف'),
-      content: Text('هل أنت متأكد من حذف هذا الملف؟'),
-      actions: [
-        TextButton(
-          onPressed: () => Get.back(),
-          child: Text('إلغاء')
-        ),
-        TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: Text('حذف', style: TextStyle(color: Colors.red)),
-        ),
-      ],
-    ),
-  );
-}
+  void _showDeleteDialog(MediaItem media) {
+    Get.dialog(
+      AlertDialog(
+        title: Text('حذف الملف'),
+        content: Text('هل أنت متأكد من حذف هذا الملف؟'),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('إلغاء')),
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: Text('حذف', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showMediaOptions(MediaItem media) {
     showModalBottomSheet(
       context: Get.context!,
@@ -504,8 +667,16 @@ void _showDeleteDialog(MediaItem media) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(leading: Icon(Icons.delete), title: Text('حذف الملف'), onTap: () => _selectAndDelete(media)),
-            ListTile(leading: Icon(Icons.share), title: Text('مشاركة'), onTap: () => Get.back()),
+            ListTile(
+              leading: Icon(Icons.delete),
+              title: Text('حذف الملف'),
+              onTap: () => _selectAndDelete(media),
+            ),
+            ListTile(
+              leading: Icon(Icons.share),
+              title: Text('مشاركة'),
+              onTap: () => Get.back(),
+            ),
           ],
         ),
       ),
