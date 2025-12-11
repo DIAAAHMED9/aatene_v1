@@ -53,7 +53,10 @@ class BottomSheetController extends GetxController {
   final RxString _sectionsErrorMessage = ''.obs;
   final Rx<Section?> _selectedSection = Rx<Section?>(null);
   final RxList<Section> _filteredSections = <Section>[].obs;
-
+  final RxBool _sectionsUpdated = false.obs;
+  final RxBool _attributesUpdated = false.obs;
+    RxBool get sectionsUpdated => _sectionsUpdated;
+  RxBool get attributesUpdated => _attributesUpdated;
   final _sectionSearchController = StreamController<String>.broadcast();
   late MyAppController myAppController; // تأجيل التهيئة
 final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
@@ -63,6 +66,78 @@ void updateSelectedAttributes(List<ProductAttribute> attributes) {
   _selectedAttributesRx.assignAll(attributes);
   print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
 }
+
+  void notifySectionsUpdated() {
+    _sectionsUpdated(true);
+    // إعادة التعيين بعد فترة قصيرة
+    Future.delayed(const Duration(milliseconds: 100), () => _sectionsUpdated(false));
+    print('📢 [BOTTOM SHEET] تم إشعار تحديث الأقسام');
+  }
+  
+  void notifyAttributesUpdated() {
+    _attributesUpdated(true);
+    Future.delayed(const Duration(milliseconds: 100), () => _attributesUpdated(false));
+    print('📢 [BOTTOM SHEET] تم إشعار تحديث السمات');
+  }
+  
+  // في دالة addSection بعد النجاح
+  Future<bool> addSection(String name) async {
+    try {
+      _isLoadingSections(true);
+      
+      final response = await ApiHelper.post(
+        path: '/merchants/sections',
+        body: {'name': name, 'status': 'active'},
+        withLoading: true,
+      );
+      
+      if (response != null && response['status'] == true) {
+        await loadSections();
+        
+        // إشعار بتحديث الأقسام
+        notifySectionsUpdated();
+        
+        return true;
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في إضافة القسم';
+        return false;
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
+      return false;
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
+  
+  // في دالة deleteSection بعد النجاح
+  Future<bool> deleteSection(int sectionId) async {
+    try {
+      _isLoadingSections(true);
+      
+      final response = await ApiHelper.delete(
+        path: '/merchants/sections/$sectionId',
+        withLoading: true,
+      );
+      
+      if (response != null && response['status'] == true) {
+        await loadSections();
+        
+        // إشعار بتحديث الأقسام
+        notifySectionsUpdated();
+        
+        return true;
+      } else {
+        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
+        return false;
+      }
+    } catch (e) {
+      _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
+      return false;
+    } finally {
+      _isLoadingSections(false);
+    }
+  }
 void _saveAttributesAndClose() {
   try {
     final productVariationController = Get.find<ProductVariationController>();
@@ -246,58 +321,58 @@ bool _isUserAuthenticated() {
     return _sections.toList();
   }
 
-  Future<bool> addSection(String name) async {
-    try {
-      _isLoadingSections(true);
+  // Future<bool> addSection(String name) async {
+  //   try {
+  //     _isLoadingSections(true);
       
-      final response = await ApiHelper.post(
-        path: '/merchants/sections',
-        body: {'name': name, 'status': 'active'},
-        withLoading: true,
-      );
+  //     final response = await ApiHelper.post(
+  //       path: '/merchants/sections',
+  //       body: {'name': name, 'status': 'active'},
+  //       withLoading: true,
+  //     );
       
-      if (response != null && response['status'] == true) {
-        await loadSections();
-        return true;
-      } else {
-        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في إضافة القسم';
-        return false;
-      }
-    } catch (e) {
-      _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
-      return false;
-    } finally {
-      _isLoadingSections(false);
-    }
-  }
+  //     if (response != null && response['status'] == true) {
+  //       await loadSections();
+  //       return true;
+  //     } else {
+  //       _sectionsErrorMessage.value = response?['message'] ?? 'فشل في إضافة القسم';
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
+  //     return false;
+  //   } finally {
+  //     _isLoadingSections(false);
+  //   }
+  // }
 
-  Future<bool> deleteSection(int sectionId) async {
-    try {
-      _isLoadingSections(true);
+  // Future<bool> deleteSection(int sectionId) async {
+  //   try {
+  //     _isLoadingSections(true);
       
-      final response = await ApiHelper.delete(
-        path: '/merchants/sections/$sectionId',
-        withLoading: true,
-      );
+  //     final response = await ApiHelper.delete(
+  //       path: '/merchants/sections/$sectionId',
+  //       withLoading: true,
+  //     );
       
-      if (response != null && response['status'] == true) {
-        await loadSections();
-        if (_selectedSection.value?.id == sectionId) {
-          _selectedSection.value = null;
-          _selectedSectionName.value = '';
-        }
-        return true;
-      } else {
-        _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
-        return false;
-      }
-    } catch (e) {
-      _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
-      return false;
-    } finally {
-      _isLoadingSections(false);
-    }
-  }
+  //     if (response != null && response['status'] == true) {
+  //       await loadSections();
+  //       if (_selectedSection.value?.id == sectionId) {
+  //         _selectedSection.value = null;
+  //         _selectedSectionName.value = '';
+  //       }
+  //       return true;
+  //     } else {
+  //       _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
+  //     return false;
+  //   } finally {
+  //     _isLoadingSections(false);
+  //   }
+  // }
 
 void selectSection(Section section) {
   _selectedSection.value = section;

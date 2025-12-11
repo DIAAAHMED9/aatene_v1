@@ -19,26 +19,30 @@ class ProductScreen extends GetView<ProductController> {
     final isRTL = LanguageUtils.isRTL;
     final MyAppController myAppController = Get.find<MyAppController>();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBarWithTabs(
-        isRTL: isRTL,
-        config: AppBarConfig(
-          title: 'المنتجات',
-          actionText: ' + اضافة منتج جديد',
-          onActionPressed: controller.navigateToAddProduct,
-          tabs: controller.tabs,
-          searchController: controller.searchTextController,
-          onSearchChanged: (value) => controller.searchQuery.value = value,
-          onFilterPressed: () => Get.to(() => MediaLibraryScreen()),
-          onSortPressed: controller.openSort,
-          tabController: controller.tabController,
-          onTabChanged: controller.changeTab,
-          showSearch: true,
-          showTabs: true,
-        ),
-      ),
-      body: Obx(() => _buildBody(controller, isRTL, myAppController)),
+    return GetBuilder<ProductController>(
+      builder: (ProductController controller) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: CustomAppBarWithTabs(
+            isRTL: isRTL,
+            config: AppBarConfig(
+              title: 'المنتجات',
+              actionText: ' + اضافة منتج جديد',
+              onActionPressed: controller.navigateToAddProduct,
+              tabs: controller.tabs,
+              searchController: controller.searchTextController,
+              onSearchChanged: (value) => controller.searchQuery.value = value,
+              onFilterPressed: () => Get.to(() => MediaLibraryScreen()),
+              onSortPressed: controller.openSort,
+              tabController: controller.tabController,
+              onTabChanged: controller.changeTab,
+              showSearch: true,
+              showTabs: true,
+            ),
+          ),
+          body: Obx(() => _buildBody(controller, isRTL, myAppController)),
+        );
+      }
     );
   }
 

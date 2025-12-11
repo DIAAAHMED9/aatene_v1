@@ -74,6 +74,8 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   timeago: ^3.7.1
   url_launcher: ^6.3.2
+  web_socket_channel: ^3.0.3
+  flutter_local_notifications: ^16.1.0 
   flutter_native_splash: ^2.4.7
 flutter_native_splash:
   color: "#42a5f5"

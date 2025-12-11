@@ -23,7 +23,10 @@ class DataInitializerService extends GetxService {
   RxDouble get progressRx => _progress;
   RxBool get isOnlineRx => _isOnline;
   RxBool get isDataLoadedRx => _isDataLoaded;
+   final RxBool _productsUpdated = false.obs;
   
+  // إضافة Getter
+  RxBool get productsUpdated => _productsUpdated;
   // مفاتيح التخزين
   static const String _STORES_KEY = 'app_stores';
   static const String _CITIES_KEY = 'app_cities';
@@ -81,6 +84,38 @@ class DataInitializerService extends GetxService {
     });
     
     _initializeStorage();
+  }
+    void notifyProductsUpdated() {
+    _productsUpdated(true);
+    Future.delayed(const Duration(milliseconds: 100), () => _productsUpdated(false));
+    print('📢 [DATA SERVICE] تم إشعار تحديث المنتجات');
+  }
+    Future<void> refreshProducts() async {
+    try {
+      if (!_isOnline.value) {
+        print('⚠️ [PRODUCTS] لا يمكن التحديث (غير متصل)');
+        return;
+      }
+      
+      final response = await ApiHelper.get(
+        path: '/merchants/products',
+        queryParameters: {'limit': 100, 'orderBy': 'created_at', 'orderDir': 'desc'},
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+      
+      if (response != null && response['status'] == true) {
+        final products = response['data'] ?? [];
+        await _storage.write(_PRODUCTS_KEY, products);
+        
+        // إشعار بتحديث المنتجات
+        notifyProductsUpdated();
+        
+        print('✅ [PRODUCTS] تم تحديث ${products.length} منتج');
+      }
+    } catch (e) {
+      print('⚠️ [PRODUCTS] فشل في تحديث المنتجات: $e');
+    }
   }
   
   Future<void> _initializeStorage() async {
@@ -879,7 +914,7 @@ Future<void> _loadAttributes() async {
   Future<void> refreshSections() async => await _loadSections();
   Future<void> refreshAttributes() async => await _loadAttributes();
   Future<void> refreshCategories() async => await _loadCategories();
-  Future<void> refreshProducts() async => await _loadProducts();
+  // Future<void> refreshProducts() async => await _loadProducts();
   Future<void> refreshMedia() async => await _loadMedia();
   Future<void> refreshAllData() async => await initializeAppData(forceRefresh: true);
   

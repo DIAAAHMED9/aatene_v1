@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart' show ProductController;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -7,11 +8,11 @@ import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
 import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
-import 'package:attene_mobile/view/related_products/related_products_controller.dart';
 
 import '../my_app/my_app_controller.dart';
 import '../view/Services/data_lnitializer_service.dart';
 import '../view/Services/unified_loading_screen.dart';
+import '../view/related_products/related_products_controller.dart';
 
 class ProductCentralController extends GetxController {
   static ProductCentralController get to => Get.find();
@@ -160,13 +161,10 @@ class ProductCentralController extends GetxController {
     print('🎨 [PRODUCT] تحديث المتغيرات: ${newVariations.length} متغير');
   }
   
-  // **الدوال الجديدة للربط مع RelatedProductsController**
-  
   void updateRelatedProductsFromRelatedController() {
     try {
       final relatedController = Get.find<RelatedProductsController>();
       
-      // هنا يمكنك القيام بأي عملية مطلوبة عند الربط
       print('🔗 [PRODUCT] تم استقبال طلب الربط من RelatedProductsController');
       print('🔗 [PRODUCT] عدد المنتجات المختارة: ${relatedController.selectedProductsCount}');
       
@@ -181,7 +179,6 @@ class ProductCentralController extends GetxController {
     }
   }
   
-  // الحصول على بيانات cross sell من RelatedProductsController
   Map<String, dynamic> getCrossSellData() {
     try {
       if (Get.isRegistered<RelatedProductsController>()) {
@@ -192,7 +189,6 @@ class ProductCentralController extends GetxController {
       print('⚠️ [PRODUCT] خطأ في جلب بيانات cross sell: $e');
     }
     
-    // بيانات افتراضية إذا لم يكن هناك RelatedProductsController
     return {
       'crossSells': [],
       'cross_sells_price': 0.0,
@@ -252,7 +248,11 @@ class ProductCentralController extends GetxController {
         final product = response['data']?[0];
         print('✅ [PRODUCT] تم إنشاء المنتج بنجاح: ${product?['name']}');
         
+        // تحديث البيانات المحلية
         await dataService.refreshProducts();
+        
+        // إشعار جميع المتحكمين بتحديث المنتجات
+        _notifyProductUpdate();
         
         resetAfterSuccess(variationController);
         
@@ -302,7 +302,6 @@ class ProductCentralController extends GetxController {
       productData['variations'] = [];
     }
   
-    // **استخدام بيانات cross sell من RelatedProductsController**
     final crossSellData = getCrossSellData();
     
     productData['crossSells'] = crossSellData['crossSells'] ?? [];
@@ -533,6 +532,36 @@ class ProductCentralController extends GetxController {
       Future.delayed(const Duration(milliseconds: 100), () {
         isUpdatingSection.value = false;
       });
+    }
+  }
+  
+  // دالة جديدة لإشعار المتحكمين بتحديث المنتجات
+  void _notifyProductUpdate() {
+    try {
+      // تحديث DataInitializerService
+      dataService.refreshProducts();
+      
+      // إذا كان ProductController موجود، قم بتحديثه
+      if (Get.isRegistered<ProductController>()) {
+        final productController = Get.find<ProductController>();
+        productController.notifyProductsUpdated();
+      }
+      
+      // إشعار BottomSheetController
+      final bottomSheetController = Get.find<BottomSheetController>();
+      bottomSheetController.notifySectionsUpdated();
+      
+      print('📢 [PRODUCT CENTRAL] تم إشعار جميع المتحكمين بتحديث المنتجات');
+      
+      Get.snackbar(
+        'تمت الإضافة',
+        'تم إضافة المنتج بنجاح وتحديث القوائم',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      
+    } catch (e) {
+      print('⚠️ [PRODUCT CENTRAL] خطأ في إشعار التحديث: $e');
     }
   }
   

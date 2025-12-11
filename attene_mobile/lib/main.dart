@@ -1,3 +1,4 @@
+import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/utlis/app_lifecycle_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -63,7 +64,9 @@ class AppBindings extends Bindings {
     // 5. المتحكمات الأخرى
     Get.lazyPut(() => BottomSheetController(), fenix: true);
     Get.lazyPut(() => CreateStoreController(), fenix: true);
-      Get.lazyPut(()=> DataSyncService(), fenix: true);
+    Get.lazyPut(()=> DataSyncService(), fenix: true);
+      Get.lazyPut(()=>ChatController(), fenix: true);
+
     Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
     Get.lazyPut(() => ProductCentralController(), fenix: true);
     Get.lazyPut(() => ProductVariationController(), fenix: true);
