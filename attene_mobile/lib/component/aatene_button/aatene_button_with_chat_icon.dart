@@ -9,7 +9,7 @@ class AateneButtonWithChatIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialButton(
+    return MaterialButton(
       onPressed: () {},
       child: Container(
         width: double.infinity,
@@ -22,7 +22,11 @@ class AateneButtonWithChatIcon extends StatelessWidget {
           spacing: 10,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.mark_unread_chat_alt_sharp, color: AppColors.light1000, size: 15),
+            Icon(
+              Icons.mark_unread_chat_alt_sharp,
+              color: AppColors.light1000,
+              size: 15,
+            ),
             Text(
               buttonText,
               style: TextStyle(

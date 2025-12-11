@@ -16,12 +16,15 @@ class ProductVariationsScreen extends StatefulWidget {
   const ProductVariationsScreen({super.key});
 
   @override
-  State<ProductVariationsScreen> createState() => _ProductVariationsScreenState();
+  State<ProductVariationsScreen> createState() =>
+      _ProductVariationsScreenState();
 }
 
 class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
-  final ProductVariationController controller = Get.find<ProductVariationController>();
-  final BottomSheetController bottomSheetController = Get.find<BottomSheetController>();
+  final ProductVariationController controller =
+      Get.find<ProductVariationController>();
+  final BottomSheetController bottomSheetController =
+      Get.find<BottomSheetController>();
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWideScreen = constraints.maxWidth > 600;
-          
+
           return Column(
             children: [
               _buildAppBar(isWideScreen: isWideScreen),
@@ -69,7 +72,9 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
 
   Widget _buildContent({required bool isWideScreen}) {
     return Column(
-      crossAxisAlignment: isWideScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: isWideScreen
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
         _buildHeader(isWideScreen: isWideScreen),
         SizedBox(height: ResponsiveDimensions.h(24)),
@@ -84,12 +89,16 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
 
   Widget _buildHeader({required bool isWideScreen}) {
     return Column(
-      crossAxisAlignment: isWideScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: isWideScreen
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
         Text(
           'الاختلافات والكميات',
           style: TextStyle(
-            fontSize: isWideScreen ? ResponsiveDimensions.f(20) : ResponsiveDimensions.f(18),
+            fontSize: isWideScreen
+                ? ResponsiveDimensions.f(20)
+                : ResponsiveDimensions.f(18),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -205,7 +214,9 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
     return GetBuilder<ProductVariationController>(
       id: ProductVariationController.attributesUpdateId,
       builder: (controller) {
-        return controller.hasVariations.value ? _buildVariationsContent() : _buildNoVariationsContent();
+        return controller.hasVariations.value
+            ? _buildVariationsContent()
+            : _buildNoVariationsContent();
       },
     );
   }
@@ -272,7 +283,9 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
           color: AppColors.primary400,
           textColor: Colors.white,
           onTap: () {
-            bottomSheetController.openManageAttributes(controller.allAttributes);
+            bottomSheetController.openManageAttributes(
+              controller.allAttributes,
+            );
           },
         ),
         SizedBox(height: ResponsiveDimensions.h(12)),
@@ -401,17 +414,15 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
                   label: Text(attribute.name),
                   backgroundColor: AppColors.primary100,
                   deleteIconColor: AppColors.primary400,
-                  onDeleted: () => controller.removeSelectedAttribute(attribute),
+                  onDeleted: () =>
+                      controller.removeSelectedAttribute(attribute),
                   labelStyle: TextStyle(
                     color: AppColors.primary500,
                     fontWeight: FontWeight.w500,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
-                    side: BorderSide(
-                      color: AppColors.primary300,
-                      width: 1.0,
-                    ),
+                    side: BorderSide(color: AppColors.primary300, width: 1.0),
                   ),
                 );
               }).toList(),
@@ -430,7 +441,7 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
         LayoutBuilder(
           builder: (context, constraints) {
             final isWide = constraints.maxWidth > 500;
-            
+
             return isWide
                 ? _buildWideVariationsHeader()
                 : _buildNarrowVariationsHeader();
@@ -613,7 +624,9 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
             child: OutlinedButton(
               onPressed: () => Get.back(),
               style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: ResponsiveDimensions.h(14)),
+                padding: EdgeInsets.symmetric(
+                  vertical: ResponsiveDimensions.h(14),
+                ),
                 side: BorderSide(color: Colors.grey[300]!),
               ),
               child: Text(
@@ -639,45 +652,51 @@ class _ProductVariationsScreenState extends State<ProductVariationsScreen> {
     );
   }
 
-void _saveVariationsAndContinue() {
-  final productCentralController = Get.find<ProductCentralController>();
-  if (productCentralController.selectedSection.value == null) {
-    Get.snackbar(
-      'قسم مطلوب',
-      'يرجى اختيار قسم للمنتج قبل المتابعة',
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
-    return;
-  }
+  void _saveVariationsAndContinue() {
+    final productCentralController = Get.find<ProductCentralController>();
+    if (productCentralController.selectedSection.value == null) {
+      Get.snackbar(
+        'قسم مطلوب',
+        'يرجى اختيار قسم للمنتج قبل المتابعة',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
 
-  final validationResult = controller.validateVariations();
-  if (!validationResult.isValid) {
-    Get.snackbar(
-      'تنبيه',
-      validationResult.errorMessage,
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
+    final validationResult = controller.validateVariations();
+    if (!validationResult.isValid) {
+      Get.snackbar(
+        'تنبيه',
+        validationResult.errorMessage,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
+
+    final variationsData = controller.getVariationsData();
+    final variationsList =
+        variationsData['variations']
+            ?.map((v) => v as Map<String, dynamic>)
+            .toList() ??
+        [];
+    productCentralController.addVariations(variationsList);
+
+    print('✅ [VARIATIONS SAVED]: ${variationsList.length} اختلاف محفوظ');
+    print(
+      '✅ [SELECTED SECTION]: ${productCentralController.selectedSection.value?.name}',
     );
-    return;
+
+    Get.snackbar(
+      'نجاح',
+      'تم حفظ الاختلافات بنجاح',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+
+    Get.toNamed('/related-products');
   }
-  
-  final variationsData = controller.getVariationsData();
-  final variationsList = variationsData['variations']?.map((v) => v as Map<String, dynamic>).toList() ?? [];
-  productCentralController.addVariations(variationsList);
-  
-  print('✅ [VARIATIONS SAVED]: ${variationsList.length} اختلاف محفوظ');
-  print('✅ [SELECTED SECTION]: ${productCentralController.selectedSection.value?.name}');
-  
-  Get.snackbar(
-    'نجاح',
-    'تم حفظ الاختلافات بنجاح',
-    backgroundColor: Colors.green,
-    colorText: Colors.white,
-  );
-  
-  Get.toNamed('/related-products');
-}
 }

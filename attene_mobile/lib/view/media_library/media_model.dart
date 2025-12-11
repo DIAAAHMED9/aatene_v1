@@ -27,7 +27,7 @@ class MediaItem {
 
   factory MediaItem.fromApiMap(dynamic data) {
     final Map<String, dynamic> parsedData = _convertToStringMap(data);
-    
+
     MediaType determineMediaType(String? type, String? fileName) {
       if (type != null) {
         switch (type.toLowerCase()) {
@@ -53,12 +53,19 @@ class MediaItem {
             return MediaType.other;
         }
       }
-      
+
       if (fileName != null) {
         final extension = fileName.toLowerCase().split('.').last;
         if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].contains(extension)) {
           return MediaType.image;
-        } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'].contains(extension)) {
+        } else if ([
+          'mp4',
+          'avi',
+          'mov',
+          'wmv',
+          'flv',
+          'mkv',
+        ].contains(extension)) {
           return MediaType.video;
         } else if (['pdf'].contains(extension)) {
           return MediaType.pdf;
@@ -68,23 +75,23 @@ class MediaItem {
           return MediaType.word;
         }
       }
-      
+
       return MediaType.other;
     }
 
-    final String id = parsedData['id']?.toString() ??
-                     parsedData['file_name']?.toString() ??
-                     DateTime.now().millisecondsSinceEpoch.toString();
-    
-    final String name = parsedData['name'] ??
-                       parsedData['file_name'] ??
-                       parsedData['original_name'] ??
-                       'unknown';
-    
-    final String path = parsedData['path'] ??
-                       parsedData['url'] ??
-                       parsedData['file_url'] ??
-                       '';
+    final String id =
+        parsedData['id']?.toString() ??
+        parsedData['file_name']?.toString() ??
+        DateTime.now().millisecondsSinceEpoch.toString();
+
+    final String name =
+        parsedData['name'] ??
+        parsedData['file_name'] ??
+        parsedData['original_name'] ??
+        'unknown';
+
+    final String path =
+        parsedData['path'] ?? parsedData['url'] ?? parsedData['file_url'] ?? '';
 
     return MediaItem(
       id: id,
@@ -99,7 +106,8 @@ class MediaItem {
           : int.tryParse(parsedData['size']?.toString() ?? '0') ?? 0,
       isLocal: false,
       fileName: parsedData['file_name']?.toString(),
-      fileUrl: parsedData['url']?.toString() ?? parsedData['file_url']?.toString(),
+      fileUrl:
+          parsedData['url']?.toString() ?? parsedData['file_url']?.toString(),
       userId: parsedData['user_id']?.toString(),
     );
   }

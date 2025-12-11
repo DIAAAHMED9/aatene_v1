@@ -25,28 +25,31 @@ class VariationCard extends StatefulWidget {
 }
 
 class _VariationCardState extends State<VariationCard> {
-  final ProductVariationController _variationController = Get.find<ProductVariationController>();
-  final BottomSheetController _bottomSheetController = Get.find<BottomSheetController>();
-  final DataInitializerService _dataService = Get.find<DataInitializerService>();
-  
+  final ProductVariationController _variationController =
+      Get.find<ProductVariationController>();
+  final BottomSheetController _bottomSheetController =
+      Get.find<BottomSheetController>();
+  final DataInitializerService _dataService =
+      Get.find<DataInitializerService>();
+
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _stockController = TextEditingController();
   final TextEditingController _skuController = TextEditingController();
-  
+
   final FocusNode _priceFocusNode = FocusNode();
   final FocusNode _stockFocusNode = FocusNode();
   final FocusNode _skuFocusNode = FocusNode();
-  
+
   bool _isExpanded = true;
   bool _isUpdating = false;
-  
+
   @override
   void initState() {
     super.initState();
     _initializeControllers();
     _setupFocusListeners();
   }
-  
+
   @override
   void didUpdateWidget(covariant VariationCard oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -54,42 +57,42 @@ class _VariationCardState extends State<VariationCard> {
       _initializeControllers();
     }
   }
-  
+
   void _initializeControllers() {
-    _priceController.text = widget.variation.price.value > 0 
-        ? widget.variation.price.value.toStringAsFixed(2) 
+    _priceController.text = widget.variation.price.value > 0
+        ? widget.variation.price.value.toStringAsFixed(2)
         : '';
-    
-    _stockController.text = widget.variation.stock.value > 0 
-        ? widget.variation.stock.value.toString() 
+
+    _stockController.text = widget.variation.stock.value > 0
+        ? widget.variation.stock.value.toString()
         : '';
-    
+
     _skuController.text = widget.variation.sku.value;
   }
-  
+
   void _setupFocusListeners() {
     _priceFocusNode.addListener(() {
       if (!_priceFocusNode.hasFocus && _priceController.text.isNotEmpty) {
         _onPriceChanged(_priceController.text);
       }
     });
-    
+
     _stockFocusNode.addListener(() {
       if (!_stockFocusNode.hasFocus && _stockController.text.isNotEmpty) {
         _onStockChanged(_stockController.text);
       }
     });
-    
+
     _skuFocusNode.addListener(() {
       if (!_skuFocusNode.hasFocus && _skuController.text.isNotEmpty) {
         _onSkuChanged(_skuController.text);
       }
     });
   }
-  
+
   void _onPriceChanged(String value) {
     if (_isUpdating) return;
-    
+
     _isUpdating = true;
     try {
       _variationController.updateVariationPrice(widget.variation, value);
@@ -100,10 +103,10 @@ class _VariationCardState extends State<VariationCard> {
       _isUpdating = false;
     }
   }
-  
+
   void _onStockChanged(String value) {
     if (_isUpdating) return;
-    
+
     _isUpdating = true;
     try {
       _variationController.updateVariationStock(widget.variation, value);
@@ -114,10 +117,10 @@ class _VariationCardState extends State<VariationCard> {
       _isUpdating = false;
     }
   }
-  
+
   void _onSkuChanged(String value) {
     if (_isUpdating) return;
-    
+
     _isUpdating = true;
     try {
       _variationController.updateVariationSku(widget.variation, value);
@@ -128,18 +131,20 @@ class _VariationCardState extends State<VariationCard> {
       _isUpdating = false;
     }
   }
-  
+
   Future<void> _toggleVariationActive() async {
     try {
       _variationController.toggleVariationActive(widget.variation);
       widget.onUpdate?.call();
-      
+
       Get.snackbar(
         widget.variation.isActive.value ? 'تم التفعيل' : 'تم التعطيل',
-        widget.variation.isActive.value 
-            ? 'الاختلاف مفعل الآن' 
+        widget.variation.isActive.value
+            ? 'الاختلاف مفعل الآن'
             : 'الاختلاف معطل الآن',
-        backgroundColor: widget.variation.isActive.value ? Colors.green : Colors.orange,
+        backgroundColor: widget.variation.isActive.value
+            ? Colors.green
+            : Colors.orange,
         colorText: Colors.white,
         duration: const Duration(seconds: 2),
       );
@@ -147,7 +152,7 @@ class _VariationCardState extends State<VariationCard> {
       print('❌ [VARIATION CARD] خطأ في تغيير حالة الاختلاف: $e');
     }
   }
-  
+
   void _onAddImages(List<String> imageUrls) {
     try {
       for (final imageUrl in imageUrls) {
@@ -165,7 +170,7 @@ class _VariationCardState extends State<VariationCard> {
         }
       }
       widget.onUpdate?.call();
-      
+
       Get.snackbar(
         'تم الإضافة',
         'تم إضافة ${imageUrls.length} صورة',
@@ -177,12 +182,12 @@ class _VariationCardState extends State<VariationCard> {
       print('❌ [VARIATION CARD] خطأ في إضافة الصور: $e');
     }
   }
-  
+
   void _onRemoveImage(String imageUrl) {
     try {
       _variationController.removeImageFromVariation(widget.variation, imageUrl);
       widget.onUpdate?.call();
-      
+
       Get.snackbar(
         'تم الحذف',
         'تم حذف الصورة',
@@ -194,12 +199,12 @@ class _VariationCardState extends State<VariationCard> {
       print('❌ [VARIATION CARD] خطأ في حذف الصورة: $e');
     }
   }
-  
+
   void _onRemoveVariation() {
     try {
       _variationController.removeVariation(widget.variation);
       widget.onRemove?.call();
-      
+
       Get.snackbar(
         'تم الحذف',
         'تم حذف الاختلاف',
@@ -211,16 +216,19 @@ class _VariationCardState extends State<VariationCard> {
       print('❌ [VARIATION CARD] خطأ في حذف الاختلاف: $e');
     }
   }
-  
-  Future<void> _onAttributeChanged(String attributeName, String attributeValue) async {
+
+  Future<void> _onAttributeChanged(
+    String attributeName,
+    String attributeValue,
+  ) async {
     try {
       _variationController.updateVariationAttribute(
-        widget.variation, 
-        attributeName, 
-        attributeValue
+        widget.variation,
+        attributeName,
+        attributeValue,
       );
       widget.onUpdate?.call();
-      
+
       Get.snackbar(
         'تم التحديث',
         'تم تعيين $attributeValue لـ $attributeName',
@@ -232,15 +240,13 @@ class _VariationCardState extends State<VariationCard> {
       print('❌ [VARIATION CARD] خطأ في تحديث السمة: $e');
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(16)),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
         child: Column(
@@ -263,115 +269,127 @@ class _VariationCardState extends State<VariationCard> {
       ),
     );
   }
-  
+
   Widget _buildVariationHeader() {
-    return Obx(() => Row(
-      children: [
-        // زر التوسيع/الطي
-        IconButton(
-          icon: Icon(
-            _isExpanded ? Icons.expand_less : Icons.expand_more,
-            size: ResponsiveDimensions.w(20),
-            color: Colors.grey[600],
-          ),
-          onPressed: () {
-            setState(() {
-              _isExpanded = !_isExpanded;
-            });
-          },
-          tooltip: _isExpanded ? 'طي التفاصيل' : 'عرض التفاصيل',
-        ),
-        
-        SizedBox(width: ResponsiveDimensions.w(8)),
-        
-        // حالة الاختلاف
-        GestureDetector(
-          onTap: _toggleVariationActive,
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveDimensions.w(12),
-              vertical: ResponsiveDimensions.h(6),
+    return Obx(
+      () => Row(
+        children: [
+          // زر التوسيع/الطي
+          IconButton(
+            icon: Icon(
+              _isExpanded ? Icons.expand_less : Icons.expand_more,
+              size: ResponsiveDimensions.w(20),
+              color: Colors.grey[600],
             ),
-            decoration: BoxDecoration(
-              color: widget.variation.isActive.value ? Colors.green[50] : Colors.red[50],
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: widget.variation.isActive.value ? Colors.green : Colors.red,
-                width: 1.5,
+            onPressed: () {
+              setState(() {
+                _isExpanded = !_isExpanded;
+              });
+            },
+            tooltip: _isExpanded ? 'طي التفاصيل' : 'عرض التفاصيل',
+          ),
+
+          SizedBox(width: ResponsiveDimensions.w(8)),
+
+          // حالة الاختلاف
+          GestureDetector(
+            onTap: _toggleVariationActive,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveDimensions.w(12),
+                vertical: ResponsiveDimensions.h(6),
+              ),
+              decoration: BoxDecoration(
+                color: widget.variation.isActive.value
+                    ? Colors.green[50]
+                    : Colors.red[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: widget.variation.isActive.value
+                      ? Colors.green
+                      : Colors.red,
+                  width: 1.5,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    widget.variation.isActive.value
+                        ? Icons.check_circle
+                        : Icons.cancel,
+                    size: ResponsiveDimensions.w(14),
+                    color: widget.variation.isActive.value
+                        ? Colors.green
+                        : Colors.red,
+                  ),
+                  SizedBox(width: ResponsiveDimensions.w(4)),
+                  Text(
+                    widget.variation.isActive.value ? 'مفعل' : 'معطل',
+                    style: TextStyle(
+                      fontSize: ResponsiveDimensions.f(12),
+                      color: widget.variation.isActive.value
+                          ? Colors.green
+                          : Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  widget.variation.isActive.value ? Icons.check_circle : Icons.cancel,
-                  size: ResponsiveDimensions.w(14),
-                  color: widget.variation.isActive.value ? Colors.green : Colors.red,
-                ),
-                SizedBox(width: ResponsiveDimensions.w(4)),
-                Text(
-                  widget.variation.isActive.value ? 'مفعل' : 'معطل',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(12),
-                    color: widget.variation.isActive.value ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+          ),
+
+          SizedBox(width: ResponsiveDimensions.w(8)),
+
+          // زر التبديل
+          Transform.scale(
+            scale: 0.8,
+            child: Switch(
+              value: widget.variation.isActive.value,
+              onChanged: (value) => _toggleVariationActive(),
+              activeColor: AppColors.primary400,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
-        ),
-        
-        SizedBox(width: ResponsiveDimensions.w(8)),
-        
-        // زر التبديل
-        Transform.scale(
-          scale: 0.8,
-          child: Switch(
-            value: widget.variation.isActive.value,
-            onChanged: (value) => _toggleVariationActive(),
-            activeColor: AppColors.primary400,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-        ),
-        
-        Spacer(),
-        
-        // معلومات الاختلاف
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveDimensions.w(8),
-            vertical: ResponsiveDimensions.h(4),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.blue[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.blue[200]!),
-          ),
-          child: Text(
-            'ID: ${widget.variation.id.substring(0, 8)}',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(10),
-              color: Colors.blue[700],
-              fontWeight: FontWeight.w500,
+
+          Spacer(),
+
+          // معلومات الاختلاف
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveDimensions.w(8),
+              vertical: ResponsiveDimensions.h(4),
+            ),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue[200]!),
+            ),
+            child: Text(
+              'ID: ${widget.variation.id.substring(0, 8)}',
+              style: TextStyle(
+                fontSize: ResponsiveDimensions.f(10),
+                color: Colors.blue[700],
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-        
-        SizedBox(width: ResponsiveDimensions.w(8)),
-        
-        // زر الحذف
-        IconButton(
-          icon: Icon(
-            Icons.delete_outline,
-            color: Colors.red,
-            size: ResponsiveDimensions.w(24)
+
+          SizedBox(width: ResponsiveDimensions.w(8)),
+
+          // زر الحذف
+          IconButton(
+            icon: Icon(
+              Icons.delete_outline,
+              color: Colors.red,
+              size: ResponsiveDimensions.w(24),
+            ),
+            onPressed: () => _showDeleteConfirmation(),
+            tooltip: 'حذف الاختلاف',
           ),
-          onPressed: () => _showDeleteConfirmation(),
-          tooltip: 'حذف الاختلاف',
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 
   Widget _buildVariationAttributes() {
@@ -381,7 +399,7 @@ class _VariationCardState extends State<VariationCard> {
         if (controller.selectedAttributes.isEmpty) {
           return _buildNoAttributes();
         }
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -428,13 +446,13 @@ class _VariationCardState extends State<VariationCard> {
               ],
             ),
             SizedBox(height: ResponsiveDimensions.h(12)),
-            
+
             // عرض السمات بطريقة ذكية حسب الشاشة
             LayoutBuilder(
               builder: (context, constraints) {
                 final isWideScreen = constraints.maxWidth > 600;
                 final crossAxisCount = isWideScreen ? 3 : 2;
-                
+
                 return GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -461,20 +479,20 @@ class _VariationCardState extends State<VariationCard> {
   Widget _buildAttributeField(ProductAttribute attribute) {
     final currentValue = widget.variation.attributes[attribute.name] ?? '';
     final hasValue = currentValue.isNotEmpty;
-    
+
     // الحصول على قيم السمة من التخزين المحلي أولاً
     final cachedAttributes = _dataService.getAttributesForVariations();
     ProductAttribute? fullAttribute;
-    
+
     for (final attr in cachedAttributes) {
       if (attr.id == attribute.id) {
         fullAttribute = attr;
         break;
       }
     }
-    
+
     final availableValues = fullAttribute?.values ?? attribute.values;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -506,7 +524,7 @@ class _VariationCardState extends State<VariationCard> {
           ],
         ),
         SizedBox(height: ResponsiveDimensions.h(6)),
-        
+
         // حقل اختيار قيمة السمة
         GestureDetector(
           onTap: () => _showAttributeValueSelection(attribute, availableValues),
@@ -532,7 +550,9 @@ class _VariationCardState extends State<VariationCard> {
                     style: TextStyle(
                       color: hasValue ? AppColors.primary500 : Colors.grey[600],
                       fontSize: ResponsiveDimensions.f(14),
-                      fontWeight: hasValue ? FontWeight.w500 : FontWeight.normal,
+                      fontWeight: hasValue
+                          ? FontWeight.w500
+                          : FontWeight.normal,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -716,13 +736,13 @@ class _VariationCardState extends State<VariationCard> {
                             vertical: ResponsiveDimensions.h(1),
                           ),
                           decoration: BoxDecoration(
-                            color: widget.variation.stock.value > 10 
-                                ? Colors.green[50] 
+                            color: widget.variation.stock.value > 10
+                                ? Colors.green[50]
                                 : Colors.orange[50],
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: widget.variation.stock.value > 10 
-                                  ? Colors.green[200]! 
+                              color: widget.variation.stock.value > 10
+                                  ? Colors.green[200]!
                                   : Colors.orange[200]!,
                             ),
                           ),
@@ -730,8 +750,8 @@ class _VariationCardState extends State<VariationCard> {
                             widget.variation.stock.value.toString(),
                             style: TextStyle(
                               fontSize: ResponsiveDimensions.f(10),
-                              color: widget.variation.stock.value > 10 
-                                  ? Colors.green[700] 
+                              color: widget.variation.stock.value > 10
+                                  ? Colors.green[700]
                                   : Colors.orange[700],
                               fontWeight: FontWeight.bold,
                             ),
@@ -763,7 +783,10 @@ class _VariationCardState extends State<VariationCard> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: AppColors.primary400, width: 2),
+                        borderSide: BorderSide(
+                          color: AppColors.primary400,
+                          width: 2,
+                        ),
                       ),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: ResponsiveDimensions.w(12),
@@ -774,9 +797,9 @@ class _VariationCardState extends State<VariationCard> {
                 ],
               ),
             ),
-            
+
             SizedBox(width: ResponsiveDimensions.w(12)),
-            
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -813,7 +836,10 @@ class _VariationCardState extends State<VariationCard> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: AppColors.primary400, width: 2),
+                        borderSide: BorderSide(
+                          color: AppColors.primary400,
+                          width: 2,
+                        ),
                       ),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: ResponsiveDimensions.w(12),
@@ -846,33 +872,35 @@ class _VariationCardState extends State<VariationCard> {
               ),
             ),
             SizedBox(width: ResponsiveDimensions.w(8)),
-            Obx(() => Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveDimensions.w(8),
-                vertical: ResponsiveDimensions.h(2),
-              ),
-              decoration: BoxDecoration(
-                color: widget.variation.images.isEmpty 
-                    ? Colors.grey[100] 
-                    : AppColors.primary100,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: widget.variation.images.isEmpty 
-                      ? Colors.grey[300]! 
-                      : AppColors.primary200,
+            Obx(
+              () => Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveDimensions.w(8),
+                  vertical: ResponsiveDimensions.h(2),
+                ),
+                decoration: BoxDecoration(
+                  color: widget.variation.images.isEmpty
+                      ? Colors.grey[100]
+                      : AppColors.primary100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: widget.variation.images.isEmpty
+                        ? Colors.grey[300]!
+                        : AppColors.primary200,
+                  ),
+                ),
+                child: Text(
+                  '${widget.variation.images.length} / 5',
+                  style: TextStyle(
+                    color: widget.variation.images.isEmpty
+                        ? Colors.grey[600]
+                        : AppColors.primary400,
+                    fontSize: ResponsiveDimensions.f(12),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              child: Text(
-                '${widget.variation.images.length} / 5',
-                style: TextStyle(
-                  color: widget.variation.images.isEmpty 
-                      ? Colors.grey[600] 
-                      : AppColors.primary400,
-                  fontSize: ResponsiveDimensions.f(12),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )),
+            ),
             Spacer(),
             if (widget.variation.images.isNotEmpty)
               Text(
@@ -885,17 +913,19 @@ class _VariationCardState extends State<VariationCard> {
           ],
         ),
         SizedBox(height: ResponsiveDimensions.h(8)),
-        
+
         Obx(() {
           if (widget.variation.images.isEmpty) {
             return _buildNoImagesPlaceholder();
           }
-          
+
           return Wrap(
             spacing: ResponsiveDimensions.w(8),
             runSpacing: ResponsiveDimensions.h(8),
             children: [
-              ...widget.variation.images.map((imageUrl) => _buildImageThumbnail(imageUrl)),
+              ...widget.variation.images.map(
+                (imageUrl) => _buildImageThumbnail(imageUrl),
+              ),
               if (widget.variation.images.length < 5) _buildAddImageButton(),
             ],
           );
@@ -909,10 +939,7 @@ class _VariationCardState extends State<VariationCard> {
       width: double.infinity,
       padding: EdgeInsets.all(ResponsiveDimensions.w(20)),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey[300]!,
-          style: BorderStyle.solid,
-        ),
+        border: Border.all(color: Colors.grey[300]!, style: BorderStyle.solid),
         borderRadius: BorderRadius.circular(8),
         color: Colors.grey[50],
       ),
@@ -1008,7 +1035,7 @@ class _VariationCardState extends State<VariationCard> {
 
   Future<void> _showAttributeValueSelection(
     ProductAttribute attribute,
-    List<AttributeValue> values
+    List<AttributeValue> values,
   ) async {
     if (values.isEmpty) {
       Get.snackbar(
@@ -1021,7 +1048,7 @@ class _VariationCardState extends State<VariationCard> {
     }
 
     final currentValue = widget.variation.attributes[attribute.name] ?? '';
-    
+
     await Get.bottomSheet(
       Container(
         height: Get.height * 0.6,
@@ -1047,22 +1074,19 @@ class _VariationCardState extends State<VariationCard> {
                 ),
                 IconButton(
                   onPressed: () => Get.back(),
-                  icon: Icon(
-                    Icons.close,
-                    size: ResponsiveDimensions.w(24),
-                  ),
+                  icon: Icon(Icons.close, size: ResponsiveDimensions.w(24)),
                 ),
               ],
             ),
             SizedBox(height: ResponsiveDimensions.h(16)),
-            
+
             Expanded(
               child: ListView.builder(
                 itemCount: values.length,
                 itemBuilder: (context, index) {
                   final value = values[index];
                   final isSelected = currentValue == value.value;
-                  
+
                   return ListTile(
                     leading: Container(
                       width: ResponsiveDimensions.w(24),
@@ -1070,7 +1094,9 @@ class _VariationCardState extends State<VariationCard> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected ? AppColors.primary400 : Colors.grey[400]!,
+                          color: isSelected
+                              ? AppColors.primary400
+                              : Colors.grey[400]!,
                           width: 2,
                         ),
                       ),
@@ -1080,7 +1106,9 @@ class _VariationCardState extends State<VariationCard> {
                           height: ResponsiveDimensions.h(12),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: isSelected ? AppColors.primary400 : Colors.transparent,
+                            color: isSelected
+                                ? AppColors.primary400
+                                : Colors.transparent,
                           ),
                         ),
                       ),
@@ -1088,8 +1116,12 @@ class _VariationCardState extends State<VariationCard> {
                     title: Text(
                       value.value,
                       style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? AppColors.primary400 : Colors.black87,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: isSelected
+                            ? AppColors.primary400
+                            : Colors.black87,
                       ),
                     ),
                     onTap: () {
@@ -1136,21 +1168,14 @@ class _VariationCardState extends State<VariationCard> {
             SizedBox(height: ResponsiveDimensions.h(12)),
             Text(
               'هل أنت متأكد من حذف هذه الصورة؟',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(14),
-              ),
+              style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            ),
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600])),
           ),
           TextButton(
             onPressed: () {
@@ -1159,10 +1184,7 @@ class _VariationCardState extends State<VariationCard> {
             },
             child: Text(
               'حذف',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -1211,12 +1233,7 @@ class _VariationCardState extends State<VariationCard> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            ),
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {

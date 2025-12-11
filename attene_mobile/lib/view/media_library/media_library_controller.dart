@@ -13,10 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaLibraryController extends GetxController
     with SingleGetTickerProviderMixin, WidgetsBindingObserver {
-  
   late TabController tabController;
   final TextEditingController searchTextController = TextEditingController();
-  
+
   final RxInt currentTabIndex = 0.obs;
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
@@ -36,16 +35,16 @@ class MediaLibraryController extends GetxController
   DateTime? _lastLoadTime;
   final RxBool _isInitialized = false.obs;
   final RxBool _isAuthChecked = false.obs;
-final RxInt maxSelection = 10.obs;
+  final RxInt maxSelection = 10.obs;
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
-    
+
     _initializeBasicControllers();
     _setupAuthListener();
-    
+
     print('🎯 [CONTROLLER] MediaLibraryController created');
   }
 
@@ -53,22 +52,22 @@ final RxInt maxSelection = 10.obs;
     tabController = TabController(
       length: tabs.length,
       vsync: this,
-      initialIndex: currentTabIndex.value
+      initialIndex: currentTabIndex.value,
     );
-    
+
     tabController.addListener(_handleTabChange);
     searchTextController.addListener(_handleSearchChange);
   }
 
   void _setupAuthListener() {
     final MyAppController myAppController = Get.find<MyAppController>();
-    
+
     ever(myAppController.isAppInitialized, (bool initialized) {
       if (initialized) {
         _checkAndInitialize();
       }
     });
-    
+
     ever(myAppController.isLoggedIn, (bool isLoggedIn) {
       _isAuthChecked.value = true;
       if (isLoggedIn) {
@@ -77,7 +76,7 @@ final RxInt maxSelection = 10.obs;
         _resetMediaController();
       }
     });
-    
+
     if (myAppController.isAppInitialized.value) {
       _checkAndInitialize();
     }
@@ -95,9 +94,11 @@ final RxInt maxSelection = 10.obs;
 
   void _initializeMediaController() {
     if (_isInitialized.value) return;
-    
-    print('🚀 [CONTROLLER] Initializing MediaLibraryController for user: $currentUserId');
-    
+
+    print(
+      '🚀 [CONTROLLER] Initializing MediaLibraryController for user: $currentUserId',
+    );
+
     _startAutoRefresh();
     _loadInitialData();
     _isInitialized.value = true;
@@ -105,9 +106,9 @@ final RxInt maxSelection = 10.obs;
 
   void _resetMediaController() {
     if (!_isInitialized.value) return;
-    
+
     print('🔁 [CONTROLLER] Resetting MediaLibraryController due to logout');
-    
+
     _isInitialized.value = false;
     uploadedMediaItems.clear();
     temporaryMediaItems.clear();
@@ -125,7 +126,7 @@ final RxInt maxSelection = 10.obs;
     _autoRefreshTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.onClose();
-    
+
     print('🔚 [CONTROLLER] MediaLibraryController closed');
   }
 
@@ -136,15 +137,20 @@ final RxInt maxSelection = 10.obs;
       _loadMediaWhenAppResumed();
     }
   }
-void setMaxSelection(int max) {
-  maxSelection.value = max;
-}
-bool get canSelectMore {
-  return selectedMediaIds.length < maxSelection.value;
-}
+
+  void setMaxSelection(int max) {
+    maxSelection.value = max;
+  }
+
+  bool get canSelectMore {
+    return selectedMediaIds.length < maxSelection.value;
+  }
+
   void _startAutoRefresh() {
     _autoRefreshTimer = Timer.periodic(Duration(minutes: 2), (timer) {
-      if (currentTabIndex.value == 1 && !isLoading.value && _isInitialized.value) {
+      if (currentTabIndex.value == 1 &&
+          !isLoading.value &&
+          _isInitialized.value) {
         print('🔄 [AUTO REFRESH] Periodic auto-refresh triggered');
         loadUploadedMediaFromAPI();
       }
@@ -162,7 +168,7 @@ bool get canSelectMore {
     if (index >= 0 && index < tabs.length) {
       tabController.animateTo(index);
       currentTabIndex.value = index;
-      
+
       if (index == 1 && _isInitialized.value) {
         _loadMediaWhenTabOpened();
       }
@@ -174,13 +180,13 @@ bool get canSelectMore {
       print('⏸️ [TAB OPEN] Controller not initialized, skipping load');
       return;
     }
-    
+
     if (_lastLoadTime != null &&
         DateTime.now().difference(_lastLoadTime!).inSeconds < 30) {
       print('⏱️ [TAB OPEN] Skipping auto-load, last load was recent');
       return;
     }
-    
+
     print('🔄 [TAB OPEN] Auto-load triggered when opening previous files tab');
     await loadUploadedMediaFromAPI();
     _lastLoadTime = DateTime.now();
@@ -189,9 +195,16 @@ bool get canSelectMore {
   Future<void> _saveMediaToLocalStorage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final mediaJsonList = uploadedMediaItems.map((item) => _mediaItemToJson(item)).toList();
-      await prefs.setString('user_media_$currentUserId', jsonEncode(mediaJsonList));
-      print('💾 [LOCAL STORAGE] Saved ${uploadedMediaItems.length} items locally for user: $currentUserId');
+      final mediaJsonList = uploadedMediaItems
+          .map((item) => _mediaItemToJson(item))
+          .toList();
+      await prefs.setString(
+        'user_media_$currentUserId',
+        jsonEncode(mediaJsonList),
+      );
+      print(
+        '💾 [LOCAL STORAGE] Saved ${uploadedMediaItems.length} items locally for user: $currentUserId',
+      );
     } catch (e) {
       print('❌ [LOCAL STORAGE] Error saving locally: $e');
     }
@@ -201,19 +214,25 @@ bool get canSelectMore {
     try {
       final prefs = await SharedPreferences.getInstance();
       final mediaJson = prefs.getString('user_media_$currentUserId');
-      
+
       if (mediaJson != null) {
         final List<dynamic> mediaList = jsonDecode(mediaJson);
-        final List<MediaItem> loadedMedia = mediaList.map((json) => _mediaItemFromJson(json)).toList();
-        
+        final List<MediaItem> loadedMedia = mediaList
+            .map((json) => _mediaItemFromJson(json))
+            .toList();
+
         uploadedMediaItems.assignAll(loadedMedia);
-        print('📂 [LOCAL STORAGE] Loaded ${loadedMedia.length} items from local storage');
-        
+        print(
+          '📂 [LOCAL STORAGE] Loaded ${loadedMedia.length} items from local storage',
+        );
+
         for (var item in loadedMedia) {
           print('   📄 [LOCAL] ${item.name} (ID: ${item.id})');
         }
       } else {
-        print('ℹ️ [LOCAL STORAGE] No local data found for user: $currentUserId');
+        print(
+          'ℹ️ [LOCAL STORAGE] No local data found for user: $currentUserId',
+        );
       }
     } catch (e) {
       print('❌ [LOCAL STORAGE] Error loading from local storage: $e');
@@ -222,10 +241,10 @@ bool get canSelectMore {
 
   Future<void> _loadInitialData() async {
     if (!_isInitialized.value) return;
-    
+
     print('🚀 [INIT] Starting initial data load...');
     await _loadMediaFromLocalStorage();
-    
+
     if (uploadedMediaItems.isEmpty) {
       print('🔄 [INIT] No local data, fetching from API...');
       await loadUploadedMediaFromAPI();
@@ -242,7 +261,9 @@ bool get canSelectMore {
     } else {
       if (canSelectMore) {
         selectedMediaIds.add(mediaId);
-        print('✅ [SELECTION] Selected: $mediaId (Total: ${selectedMediaIds.length})');
+        print(
+          '✅ [SELECTION] Selected: $mediaId (Total: ${selectedMediaIds.length})',
+        );
       } else {
         Get.snackbar(
           'تنبيه',
@@ -270,63 +291,79 @@ bool get canSelectMore {
       print('⏳ [API LOAD] Already loading, skipping duplicate request');
       return;
     }
-    
+
     isLoading.value = true;
     print('🔄 [API LOAD] Starting API media load for user: $currentUserId');
-    
+
     try {
-      final List<String> mediaTypes = ['gallery', 'image', 'media', 'avatar', 'thumbnail'];
+      final List<String> mediaTypes = [
+        'gallery',
+        'image',
+        'media',
+        'avatar',
+        'thumbnail',
+      ];
       final List<MediaItem> allMediaItems = [];
       int totalFilesFound = 0;
-      
+
       for (String mediaType in mediaTypes) {
         try {
           print('🔍 [API LOAD] Trying type: $mediaType');
-          
+
           final response = await ApiHelper.getMediaList(type: mediaType);
-          
-          if (response != null && response['status'] == true && response['data'] != null) {
+
+          if (response != null &&
+              response['status'] == true &&
+              response['data'] != null) {
             final dynamic data = response['data'];
             final int fileCount = data is List ? data.length : 0;
             totalFilesFound += fileCount;
-            
+
             print('📊 [API LOAD] Found $fileCount files of type: $mediaType');
-            
+
             if (data is List) {
               for (var item in data) {
                 final mediaItem = MediaItem.fromApiMap(item);
-                
+
                 if (mediaItem.userId == currentUserId) {
                   allMediaItems.add(mediaItem);
-                  print('   ✅ [API] Added: ${mediaItem.name} (Type: $mediaType)');
+                  print(
+                    '   ✅ [API] Added: ${mediaItem.name} (Type: $mediaType)',
+                  );
                 } else {
-                  print('   ❌ [API] Skipped (wrong user): ${mediaItem.name} (User: ${mediaItem.userId})');
+                  print(
+                    '   ❌ [API] Skipped (wrong user): ${mediaItem.name} (User: ${mediaItem.userId})',
+                  );
                 }
               }
             }
           } else {
-            print('ℹ️ [API LOAD] No files or invalid response for type: $mediaType');
+            print(
+              'ℹ️ [API LOAD] No files or invalid response for type: $mediaType',
+            );
           }
         } catch (e) {
           print('⚠️ [API LOAD] Error loading type $mediaType: $e');
         }
       }
-      
-      print('🎯 [API LOAD] Total files found: $totalFilesFound, User files: ${allMediaItems.length}');
-      
+
+      print(
+        '🎯 [API LOAD] Total files found: $totalFilesFound, User files: ${allMediaItems.length}',
+      );
+
       final uniqueMediaItems = <String, MediaItem>{};
       for (var item in allMediaItems) {
         uniqueMediaItems[item.id] = item;
       }
-      
+
       final int previousCount = uploadedMediaItems.length;
       uploadedMediaItems.assignAll(uniqueMediaItems.values.toList());
       final int newCount = uploadedMediaItems.length;
-      
+
       print('📈 [API LOAD] List updated: $previousCount → $newCount items');
-      
+
       await _saveMediaToLocalStorage();
-      
+
       if (newCount > previousCount) {
         print('🎉 [API LOAD] Added ${newCount - previousCount} new items');
       } else if (newCount < previousCount) {
@@ -334,7 +371,6 @@ bool get canSelectMore {
       } else {
         print('✅ [API LOAD] No changes in item count');
       }
-      
     } catch (e) {
       print('❌ [API LOAD] General error loading media: $e');
       Get.snackbar(
@@ -349,7 +385,10 @@ bool get canSelectMore {
     }
   }
 
-  Future<void> _uploadFilesToAPI(List<File> files, List<MediaItem> mediaItems) async {
+  Future<void> _uploadFilesToAPI(
+    List<File> files,
+    List<MediaItem> mediaItems,
+  ) async {
     final MyAppController myAppController = Get.find<MyAppController>();
     if (!myAppController.isLoggedIn.value) {
       print('⏸️ [UPLOAD] User not authenticated, skipping upload');
@@ -357,12 +396,12 @@ bool get canSelectMore {
     }
 
     print('🚀 [UPLOAD] Starting upload of ${files.length} files');
-    
+
     try {
       final successfulUploads = <MediaItem>[];
       int successCount = 0;
       int failCount = 0;
-      
+
       for (int i = 0; i < files.length; i++) {
         final file = files[i];
         final mediaItem = mediaItems[i];
@@ -374,7 +413,9 @@ bool get canSelectMore {
           uploadType = 'media';
         }
 
-        print('🔼 [UPLOAD] Uploading: ${mediaItem.name} (Type: $uploadType, Size: ${file.lengthSync()} bytes)');
+        print(
+          '🔼 [UPLOAD] Uploading: ${mediaItem.name} (Type: $uploadType, Size: ${file.lengthSync()} bytes)',
+        );
 
         final response = await ApiHelper.uploadMedia(
           file: file,
@@ -384,7 +425,9 @@ bool get canSelectMore {
             if (total != -1) {
               final progress = (i + (sent / total)) / files.length;
               uploadProgress.value = progress;
-              print('   📊 [UPLOAD] Progress: ${(progress * 100).toStringAsFixed(1)}%');
+              print(
+                '   📊 [UPLOAD] Progress: ${(progress * 100).toStringAsFixed(1)}%',
+              );
             }
           },
         );
@@ -392,10 +435,10 @@ bool get canSelectMore {
         if (response != null && response['status'] == true) {
           print('✅ [UPLOAD] SUCCESS: ${mediaItem.name}');
           print('   📦 Response: ${response['data'] ?? 'No data'}');
-          
+
           final responseData = response['data'] ?? response;
           final updatedMediaItem = MediaItem.fromApiMap(responseData);
-          
+
           if (updatedMediaItem.userId == currentUserId) {
             successfulUploads.add(updatedMediaItem);
             temporaryMediaItems.remove(mediaItem);
@@ -406,16 +449,24 @@ bool get canSelectMore {
             }
 
             successCount++;
-            print('   📁 Processed: ${updatedMediaItem.name} → ID: ${updatedMediaItem.id}');
+            print(
+              '   📁 Processed: ${updatedMediaItem.name} → ID: ${updatedMediaItem.id}',
+            );
           } else {
-            print('⚠️ [UPLOAD] File belongs to different user: ${updatedMediaItem.userId}');
+            print(
+              '⚠️ [UPLOAD] File belongs to different user: ${updatedMediaItem.userId}',
+            );
           }
         } else {
           print('❌ [UPLOAD] FAILED: ${mediaItem.name}');
           print('   💬 Error: ${response?['message'] ?? 'Unknown error'}');
           failCount++;
-          
-          final alternativeSuccess = await _tryAlternativeUpload(file, mediaItem, successfulUploads);
+
+          final alternativeSuccess = await _tryAlternativeUpload(
+            file,
+            mediaItem,
+            successfulUploads,
+          );
           if (alternativeSuccess) {
             successCount++;
             failCount--;
@@ -424,24 +475,28 @@ bool get canSelectMore {
       }
 
       uploadProgress.value = 1.0;
-      
+
       if (successfulUploads.isNotEmpty) {
         final existingIds = uploadedMediaItems.map((item) => item.id).toSet();
-        final newItems = successfulUploads.where((item) => !existingIds.contains(item.id)).toList();
-        
+        final newItems = successfulUploads
+            .where((item) => !existingIds.contains(item.id))
+            .toList();
+
         if (newItems.isNotEmpty) {
           uploadedMediaItems.addAll(newItems);
-          
+
           await _saveMediaToLocalStorage();
-          
-          print('🎉 [UPLOAD] COMPLETED: $successCount successful, $failCount failed');
+
+          print(
+            '🎉 [UPLOAD] COMPLETED: $successCount successful, $failCount failed',
+          );
           print('   📈 Added ${newItems.length} new items to list');
-          
+
           if (currentTabIndex.value == 1) {
             print('🔄 [UPLOAD] Auto-refreshing list after successful upload');
             await loadUploadedMediaFromAPI();
           }
-          
+
           Get.snackbar(
             'نجاح',
             'تم رفع $successCount ملف بنجاح${failCount > 0 ? ' وفشل $failCount ملف' : ''}',
@@ -458,7 +513,6 @@ bool get canSelectMore {
           colorText: Colors.white,
         );
       }
-      
     } catch (e) {
       print('❌ [UPLOAD] Upload process error: $e');
       Get.snackbar(
@@ -470,15 +524,26 @@ bool get canSelectMore {
     }
   }
 
-  Future<bool> _tryAlternativeUpload(File file, MediaItem mediaItem, List<MediaItem> successfulUploads) async {
+  Future<bool> _tryAlternativeUpload(
+    File file,
+    MediaItem mediaItem,
+    List<MediaItem> successfulUploads,
+  ) async {
     try {
-      print('🔄 [ALTERNATIVE UPLOAD] Trying alternative upload for: ${mediaItem.name}');
-      
-      final List<String> alternativeTypes = ['gallery', 'avatar', 'thumbnail', 'media'];
-      
+      print(
+        '🔄 [ALTERNATIVE UPLOAD] Trying alternative upload for: ${mediaItem.name}',
+      );
+
+      final List<String> alternativeTypes = [
+        'gallery',
+        'avatar',
+        'thumbnail',
+        'media',
+      ];
+
       for (String altType in alternativeTypes) {
         print('   🔁 Trying type: $altType');
-        
+
         final response = await ApiHelper.uploadMedia(
           file: file,
           type: altType,
@@ -487,10 +552,10 @@ bool get canSelectMore {
 
         if (response != null && response['status'] == true) {
           print('   ✅ [ALTERNATIVE] SUCCESS with type: $altType');
-          
+
           final responseData = response['data'] ?? response;
           final updatedMediaItem = MediaItem.fromApiMap(responseData);
-          
+
           if (updatedMediaItem.userId == currentUserId) {
             successfulUploads.add(updatedMediaItem);
             temporaryMediaItems.remove(mediaItem);
@@ -599,7 +664,9 @@ bool get canSelectMore {
     isLoading.value = true;
     uploadProgress.value = 0.0;
 
-    print('⚙️ [PROCESS] Processing ${files.length} ${type == MediaType.image ? 'images' : 'videos'}');
+    print(
+      '⚙️ [PROCESS] Processing ${files.length} ${type == MediaType.image ? 'images' : 'videos'}',
+    );
 
     final newMediaItems = <MediaItem>[];
     final filesToUpload = <File>[];
@@ -608,7 +675,7 @@ bool get canSelectMore {
       for (int i = 0; i < files.length; i++) {
         final file = files[i];
         final fileSize = await _getFileSize(file.path);
-        
+
         final mediaItem = MediaItem(
           id: 'temp_${DateTime.now().millisecondsSinceEpoch}_$i',
           path: file.path,
@@ -621,14 +688,17 @@ bool get canSelectMore {
 
         newMediaItems.add(mediaItem);
         filesToUpload.add(File(file.path));
-        print('   📄 Added to queue: ${file.name} (${_formatFileSize(fileSize)})');
+        print(
+          '   📄 Added to queue: ${file.name} (${_formatFileSize(fileSize)})',
+        );
       }
 
       temporaryMediaItems.addAll(newMediaItems);
-      print('📦 [PROCESS] Added ${newMediaItems.length} items to temporary list');
+      print(
+        '📦 [PROCESS] Added ${newMediaItems.length} items to temporary list',
+      );
 
       await _uploadFilesToAPI(filesToUpload, newMediaItems);
-
     } catch (e) {
       print('❌ [PROCESS] Error processing files: $e');
       Get.snackbar('خطأ', 'فشل في معالجة الملفات');
@@ -691,28 +761,36 @@ bool get canSelectMore {
   }
 
   List<MediaItem> get displayedMedia {
-    return currentTabIndex.value == 0 ? temporaryMediaItems : uploadedMediaItems;
+    return currentTabIndex.value == 0
+        ? temporaryMediaItems
+        : uploadedMediaItems;
   }
 
   List<MediaItem> get filteredMedia {
     var filtered = displayedMedia;
-    
+
     if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((item) =>
-        item.name.toLowerCase().contains(searchQuery.value.toLowerCase())
-      ).toList();
-      print('🔍 [SEARCH] Filtered ${displayedMedia.length} → ${filtered.length} items');
+      filtered = filtered
+          .where(
+            (item) => item.name.toLowerCase().contains(
+              searchQuery.value.toLowerCase(),
+            ),
+          )
+          .toList();
+      print(
+        '🔍 [SEARCH] Filtered ${displayedMedia.length} → ${filtered.length} items',
+      );
     }
-    
+
     return filtered;
   }
 
   void confirmSelection() {
     if (selectedMediaIds.isNotEmpty) {
       final selectedMedia = _getSelectedMediaItems();
-      
+
       print('✅ [CONFIRM] Confirmed selection of ${selectedMedia.length} items');
-      
+
       Get.back(result: selectedMedia);
       Get.snackbar(
         'تم الإدراج',
@@ -730,78 +808,83 @@ bool get canSelectMore {
       );
     }
   }
-Future<void> deleteMediaItem(MediaItem media) async {
-  try {
-    isLoading.value = true;
-    
-    if (media.isLocal == true) {
-      temporaryMediaItems.remove(media);
-      selectedMediaIds.remove(media.id);
-      print('🗑️ حذف الملف المحلي: ${media.name}');
-      return;
-    }
-    
-    final response = await ApiHelper.deleteMedia(fileName: media.name);
-    
-    if (response != null && response['status'] == true) {
-      uploadedMediaItems.removeWhere((item) => item.id == media.id);
-      selectedMediaIds.remove(media.id);
-      
-      await _saveMediaToLocalStorage();
-      
-      print('🗑️ حذف الملف من الخادم: ${media.name}');
-      
+
+  Future<void> deleteMediaItem(MediaItem media) async {
+    try {
+      isLoading.value = true;
+
+      if (media.isLocal == true) {
+        temporaryMediaItems.remove(media);
+        selectedMediaIds.remove(media.id);
+        print('🗑️ حذف الملف المحلي: ${media.name}');
+        return;
+      }
+
+      final response = await ApiHelper.deleteMedia(fileName: media.name);
+
+      if (response != null && response['status'] == true) {
+        uploadedMediaItems.removeWhere((item) => item.id == media.id);
+        selectedMediaIds.remove(media.id);
+
+        await _saveMediaToLocalStorage();
+
+        print('🗑️ حذف الملف من الخادم: ${media.name}');
+
+        Get.snackbar(
+          'نجاح',
+          'تم حذف الملف بنجاح',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception(response?['message'] ?? 'فشل في حذف الملف');
+      }
+    } catch (e) {
+      print('❌ خطأ في حذف الملف: $e');
       Get.snackbar(
-        'نجاح',
-        'تم حذف الملف بنجاح',
-        backgroundColor: Colors.green,
+        'خطأ',
+        'فشل في حذف الملف',
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } else {
-      throw Exception(response?['message'] ?? 'فشل في حذف الملف');
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    print('❌ خطأ في حذف الملف: $e');
-    Get.snackbar(
-      'خطأ',
-      'فشل في حذف الملف',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  } finally {
-    isLoading.value = false;
-  }
-}
-  List<MediaItem> _getSelectedMediaItems() {
-    final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
-    return allMedia.where((item) => selectedMediaIds.contains(item.id)).toList();
   }
 
-String getMediaDisplayUrl(MediaItem media) {
-  if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
-    return media.fileUrl!;
-  } else if (media.path.isNotEmpty) {
-    if (media.path.startsWith('http')) {
-      return media.path;
-    } else if (media.isLocal == true) {
-      return media.path;
-    } else {
-      return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
-    }
+  List<MediaItem> _getSelectedMediaItems() {
+    final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
+    return allMedia
+        .where((item) => selectedMediaIds.contains(item.id))
+        .toList();
   }
-  return '';
-}
+
+  String getMediaDisplayUrl(MediaItem media) {
+    if (media.fileUrl != null && media.fileUrl!.isNotEmpty) {
+      return media.fileUrl!;
+    } else if (media.path.isNotEmpty) {
+      if (media.path.startsWith('http')) {
+        return media.path;
+      } else if (media.isLocal == true) {
+        return media.path;
+      } else {
+        return '${ApiHelper.getBaseUrl()}/storage/${media.path}';
+      }
+    }
+    return '';
+  }
 
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {
       currentTabIndex.value = tabController.index;
     }
   }
-  
+
   void _handleSearchChange() {
     searchQuery.value = searchTextController.text;
   }
-  
+
   bool get isControllerInitialized => _isInitialized.value;
+
   bool get isAuthChecked => _isAuthChecked.value;
 }

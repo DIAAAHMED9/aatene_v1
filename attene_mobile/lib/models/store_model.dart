@@ -29,7 +29,9 @@ class Store {
     String? logoUrl;
     if (json['logo_url'] != null && json['logo_url'].toString().isNotEmpty) {
       final url = json['logo_url'].toString();
-      logoUrl = url.startsWith('http') ? url : 'https://aatene.dev/storage/$url';
+      logoUrl = url.startsWith('http')
+          ? url
+          : 'https://aatene.dev/storage/$url';
     }
 
     List<String>? coverUrls;
@@ -38,7 +40,9 @@ class Store {
           .where((item) => item != null && item.toString().isNotEmpty)
           .map((item) {
             final url = item.toString();
-            return url.startsWith('http') ? url : 'https://aatene.dev/storage/$url';
+            return url.startsWith('http')
+                ? url
+                : 'https://aatene.dev/storage/$url';
           })
           .toList();
     }
@@ -47,7 +51,9 @@ class Store {
     if (json['address'] != null && json['address'].toString().isNotEmpty) {
       address = json['address'].toString();
     } else if (json['city'] != null) {
-      final city = json['city'] is Map ? json['city']['name'] : json['city'].toString();
+      final city = json['city'] is Map
+          ? json['city']['name']
+          : json['city'].toString();
       address = 'مدينة $city';
     }
 
@@ -73,8 +79,8 @@ class Store {
       currency: json['currency'] != null
           ? json['currency']['name']?.toString()
           : json['currency_id']?.toString(),
-      ownerName: json['owner'] != null ?
-          '${json['owner']['first_name'] ?? ''} ${json['owner']['last_name'] ?? ''}'
+      ownerName: json['owner'] != null
+          ? '${json['owner']['first_name'] ?? ''} ${json['owner']['last_name'] ?? ''}'
           : json['owner_id']?.toString(),
     );
   }

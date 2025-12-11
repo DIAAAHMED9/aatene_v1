@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product_controller.dart' show ProductController;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,6 +12,7 @@ import '../my_app/my_app_controller.dart';
 import '../view/Services/data_lnitializer_service.dart';
 import '../view/Services/unified_loading_screen.dart';
 import '../view/related_products/related_products_controller.dart';
+import '../view/screens_navigator_bottom_bar/product/product_controller.dart';
 
 class ProductCentralController extends GetxController {
   static ProductCentralController get to => Get.find();

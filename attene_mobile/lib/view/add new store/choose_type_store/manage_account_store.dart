@@ -18,28 +18,38 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
 
   @override
   Widget build(BuildContext context) {
-  final ManageAccountStoreController controller = Get.put(ManageAccountStoreController());
-  final isRTL = LanguageUtils.isRTL;
-  final MyAppController myAppController = Get.find<MyAppController>();
-  final DataInitializerService dataService = Get.find<DataInitializerService>();
+    final ManageAccountStoreController controller = Get.put(
+      ManageAccountStoreController(),
+    );
+    final isRTL = LanguageUtils.isRTL;
+    final MyAppController myAppController = Get.find<MyAppController>();
+    final DataInitializerService dataService =
+        Get.find<DataInitializerService>();
 
- return Scaffold(
-    backgroundColor: Colors.white,
-    appBar: AppBar(
+    return Scaffold(
       backgroundColor: Colors.white,
-      elevation: 0,
-      title: Text('إدارة الحسابات', style: TextStyle(
-        fontWeight: FontWeight.w500,
-        color: Colors.black,
-        fontSize: 20,
-      )),
-      centerTitle: false,
-    ),
-    body: Obx(() => _buildBody(controller, isRTL, myAppController)),
-  );
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'إدارة الحسابات',
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: false,
+      ),
+      body: Obx(() => _buildBody(controller, isRTL, myAppController)),
+    );
   }
 
-  Widget _buildBody(ManageAccountStoreController controller, bool isRTL, MyAppController myAppController) {
+  Widget _buildBody(
+    ManageAccountStoreController controller,
+    bool isRTL,
+    MyAppController myAppController,
+  ) {
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
     }
@@ -165,8 +175,8 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
       if (controller.searchQuery.value.isNotEmpty) {
         final query = controller.searchQuery.value.toLowerCase();
         return store.name.toLowerCase().contains(query) ||
-               store.address.toLowerCase().contains(query) ||
-               (store.email?.toLowerCase() ?? '').contains(query);
+            store.address.toLowerCase().contains(query) ||
+            (store.email?.toLowerCase() ?? '').contains(query);
       }
       return true;
     }).toList();
@@ -189,12 +199,15 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                 hintStyle: TextStyle(color: Colors.grey[600]),
                 prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 15,
+                ),
               ),
             ),
           ),
         ),
-        
+
         Container(
           margin: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
           padding: const EdgeInsets.all(16.0),
@@ -226,7 +239,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
             ],
           ),
         ),
-        
+
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -237,7 +250,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
             },
           ),
         ),
-        
+
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: AateneButton(
@@ -249,7 +262,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
             onTap: controller.addNewStore,
           ),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 120),
       ],
     );
   }
@@ -263,9 +276,9 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildStoreLogo(store),
-            
+
             SizedBox(width: 16),
-            
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,14 +294,17 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   SizedBox(height: 6),
-                  
+
                   Row(
                     children: [
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Color(0xFFF7F4F8),
                             borderRadius: BorderRadius.circular(25),
@@ -325,11 +341,14 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(width: 8),
-                      
+
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: _getStatusColor(store.status).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
@@ -362,9 +381,9 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                 ],
               ),
             ),
-            
+
             SizedBox(width: 16),
-            
+
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -384,9 +403,9 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(width: 12),
-                
+
                 GestureDetector(
                   onTap: () => controller.deleteStore(store),
                   child: Container(
@@ -431,7 +450,8 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               return Center(
                 child: CircularProgressIndicator(
                   value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                      ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
                       : null,
                 ),
               );
@@ -440,7 +460,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
         ),
       );
     }
-    
+
     return _buildDefaultLogo();
   }
 
@@ -452,11 +472,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
         borderRadius: BorderRadius.circular(12),
         color: AppColors.primary50,
       ),
-      child: Icon(
-        Icons.store,
-        size: 30,
-        color: AppColors.primary400,
-      ),
+      child: Icon(Icons.store, size: 30, color: AppColors.primary400),
     );
   }
 
@@ -497,11 +513,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.login_rounded,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.login_rounded, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 24),
             Text(
               'يجب تسجيل الدخول',
@@ -514,10 +526,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إدارة الحسابات والمتاجر',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

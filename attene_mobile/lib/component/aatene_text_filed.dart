@@ -6,8 +6,8 @@ class TextFiledAatene extends StatelessWidget {
     super.key,
     required this.isRTL,
     required this.hintText,
-     this.isError,
-     this.errorValue,
+    this.isError,
+    this.errorValue,
     this.onChanged,
     this.suffixIcon,
     this.prefixIcon,
@@ -15,7 +15,7 @@ class TextFiledAatene extends StatelessWidget {
     this.textInputType,
     this.controller,
     this.heightTextFiled,
-     this.fillColor,
+    this.fillColor,
   });
 
   final bool isRTL;
@@ -29,7 +29,7 @@ class TextFiledAatene extends StatelessWidget {
   final TextInputType? textInputType;
   final TextEditingController? controller;
   final double? heightTextFiled;
-  final Color?fillColor;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -51,22 +51,22 @@ class TextFiledAatene extends StatelessWidget {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
                 borderSide: BorderSide(
-                  color: isError??false ? Colors.red : Colors.grey[300]!,
-                  width: isError??false ? 2.0 : 1.0,
+                  color: isError ?? false ? Colors.red : Colors.grey[300]!,
+                  width: isError ?? false ? 2.0 : 1.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
                 borderSide: BorderSide(
-                  color: isError??false ? Colors.red : Colors.grey[300]!,
-                  width: isError??false ? 2.0 : 1.5,
+                  color: isError ?? false ? Colors.red : Colors.grey[300]!,
+                  width: isError ?? false ? 2.0 : 1.5,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
                 borderSide: BorderSide(
-                  color: isError??false ? Colors.red : Colors.blue,
-                  width: isError??false ? 2.0 : 1.0,
+                  color: isError ?? false ? Colors.red : Colors.blue,
+                  width: isError ?? false ? 2.0 : 1.0,
                 ),
               ),
               errorBorder: OutlineInputBorder(
@@ -78,7 +78,9 @@ class TextFiledAatene extends StatelessWidget {
                 borderSide: BorderSide(color: Colors.red, width: 2.0),
               ),
               filled: true,
-              fillColor: isError??false ? Colors.transparent :fillColor?? Colors.grey[50],
+              fillColor: isError ?? false
+                  ? Colors.transparent
+                  : fillColor ?? Colors.grey[50],
               contentPadding: EdgeInsets.symmetric(
                 horizontal: ResponsiveDimensions.w(20),
                 vertical: ResponsiveDimensions.h(16),
@@ -90,7 +92,7 @@ class TextFiledAatene extends StatelessWidget {
             ),
           ),
         ),
-        if (isError??false)
+        if (isError ?? false)
           Padding(
             padding: EdgeInsets.only(
               top: ResponsiveDimensions.h(8),
@@ -98,7 +100,7 @@ class TextFiledAatene extends StatelessWidget {
               left: isRTL ? ResponsiveDimensions.w(12) : 0,
             ),
             child: Text(
-              errorValue??'',
+              errorValue ?? '',
               style: TextStyle(
                 color: Colors.red,
                 fontSize: ResponsiveDimensions.f(12),

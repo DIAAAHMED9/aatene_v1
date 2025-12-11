@@ -19,19 +19,12 @@ class MainScreen extends StatelessWidget {
     return CustomBottomNavigation(
       notchWidthRatio: 0.3,
       notchDepthRatio: 0.4,
-      pageName: [
-        'الرئسية',
-        'المنتجات',
-        'دردشة',
-        'USER',
-
-      ],
+      pageName: ['الرئسية', 'المنتجات', 'دردشة', 'USER'],
       pages: [
-     ManageAccountStore(),
-     ProductScreen(),
-     ChatScreen(),
-     ProfileScreen(),
-
+        ManageAccountStore(),
+        ProductScreen(),
+        ChatScreen(),
+        ProfileScreen(),
       ],
       icons: const [
         Icons.home,

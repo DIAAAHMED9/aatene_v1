@@ -8,22 +8,22 @@ import '../../controller/product_controller.dart';
 
 class RelatedProductsController extends GetxController {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
-  
+
   // القوائم القابلة للملاحظة
   final RxList<Product> allProducts = <Product>[].obs;
   final RxList<Product> selectedProducts = <Product>[].obs;
   final RxList<ProductDiscount> discounts = <ProductDiscount>[].obs;
   final RxString searchQuery = ''.obs;
-  
+
   // المتغيرات القابلة للملاحظة
   final RxDouble originalPrice = 0.0.obs;
   final RxDouble discountedPrice = 0.0.obs;
   final RxString discountNote = ''.obs;
   final Rx<DateTime> discountDate = DateTime.now().obs;
-  
+
   // أدوات التحكم
   final TextEditingController dateController = TextEditingController();
-  
+
   // الحالة المحفوظة
   final RxList<Product> savedSelectedProducts = <Product>[].obs;
   final RxDouble savedOriginalPrice = 0.0.obs;
@@ -41,14 +41,24 @@ class RelatedProductsController extends GetxController {
 
   String formatDateTime(DateTime date) {
     final months = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
-    
+
     final hour = date.hour;
     final period = hour < 12 ? 'ص' : 'م';
     final displayHour = hour <= 12 ? hour : hour - 12;
-    
+
     return '${months[date.month - 1]} ${date.day}, ${date.year} $displayHour:${date.minute.toString().padLeft(2, '0')} $period';
   }
 
@@ -56,23 +66,26 @@ class RelatedProductsController extends GetxController {
     try {
       final productsData = dataService.getProducts();
       print('📦 [RELATED] جاري تحميل المنتجات: ${productsData.length} منتج');
-      
-      final loadedProducts = productsData.map((productData) {
-        try {
-          return Product.fromJson(productData);
-        } catch (e) {
-          print('⚠️ [RELATED] خطأ في تحويل المنتج: $e');
-          return Product(
-            id: 0,
-            sku: '',
-            name: 'منتج غير معروف',
-            shown: false,
-            favoritesCount: '0',
-            messagesCount: '0',
-          );
-        }
-      }).where((product) => product.id > 0).toList();
-      
+
+      final loadedProducts = productsData
+          .map((productData) {
+            try {
+              return Product.fromJson(productData);
+            } catch (e) {
+              print('⚠️ [RELATED] خطأ في تحويل المنتج: $e');
+              return Product(
+                id: 0,
+                sku: '',
+                name: 'منتج غير معروف',
+                shown: false,
+                favoritesCount: '0',
+                messagesCount: '0',
+              );
+            }
+          })
+          .where((product) => product.id > 0)
+          .toList();
+
       allProducts.assignAll(loadedProducts);
       print('✅ [RELATED] تم تحميل ${allProducts.length} منتج');
     } catch (e) {
@@ -92,11 +105,12 @@ class RelatedProductsController extends GetxController {
 
   List<Product> get filteredProducts {
     if (searchQuery.isEmpty) return allProducts;
-    
+
     final searchLower = searchQuery.value.toLowerCase();
     return allProducts.where((product) {
       final nameMatch = product.name.toLowerCase().contains(searchLower);
-      final skuMatch = product.sku?.toLowerCase().contains(searchLower) ?? false;
+      final skuMatch =
+          product.sku?.toLowerCase().contains(searchLower) ?? false;
       return nameMatch || skuMatch;
     }).toList();
   }
@@ -109,7 +123,7 @@ class RelatedProductsController extends GetxController {
       selectedProducts.removeWhere((p) => p.id == product.id);
       print('🗑️ [RELATED] تم إزالة المنتج: ${product.name}');
     }
-    
+
     calculateTotalPrice();
   }
 
@@ -135,7 +149,7 @@ class RelatedProductsController extends GetxController {
 
   void calculateTotalPrice() {
     double total = 0.0;
-    
+
     for (final product in selectedProducts) {
       try {
         final priceStr = product.price ?? '0';
@@ -146,13 +160,13 @@ class RelatedProductsController extends GetxController {
         print('⚠️ [RELATED] خطأ في حساب سعر المنتج: $e');
       }
     }
-    
+
     originalPrice.value = total;
-    
+
     if (discountedPrice.value > originalPrice.value) {
       discountedPrice.value = originalPrice.value;
     }
-    
+
     print('💰 [RELATED] السعر الإجمالي: ${originalPrice.value}');
   }
 
@@ -171,7 +185,7 @@ class RelatedProductsController extends GetxController {
       );
       return false;
     }
-    
+
     if (discountedPrice.value <= 0) {
       Get.snackbar(
         'خطأ',
@@ -181,7 +195,7 @@ class RelatedProductsController extends GetxController {
       );
       return false;
     }
-    
+
     if (discountedPrice.value >= originalPrice.value) {
       Get.snackbar(
         'خطأ',
@@ -191,7 +205,7 @@ class RelatedProductsController extends GetxController {
       );
       return false;
     }
-    
+
     return true;
   }
 
@@ -211,17 +225,21 @@ class RelatedProductsController extends GetxController {
     if (!validateDiscount()) return;
 
     // حفظ نسخة من المنتجات المختارة
-    final productCopy = selectedProducts.map((p) => Product(
-      id: p.id,
-      sku: p.sku,
-      name: p.name,
-      price: p.price,
-      shown: p.shown,
-      favoritesCount: p.favoritesCount,
-      messagesCount: p.messagesCount,
-      coverUrl: p.coverUrl,
-      // productCount: p.productCount,
-    )).toList();
+    final productCopy = selectedProducts
+        .map(
+          (p) => Product(
+            id: p.id,
+            sku: p.sku,
+            name: p.name,
+            price: p.price,
+            shown: p.shown,
+            favoritesCount: p.favoritesCount,
+            messagesCount: p.messagesCount,
+            coverUrl: p.coverUrl,
+            // productCount: p.productCount,
+          ),
+        )
+        .toList();
 
     final newDiscount = ProductDiscount(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -234,12 +252,12 @@ class RelatedProductsController extends GetxController {
     );
 
     discounts.add(newDiscount);
-    
+
     clearDiscountFields();
-    
+
     print('✅ [RELATED] تم إضافة تخفيض جديد');
     print('📊 [RELATED] المنتجات المرفقة: ${selectedProducts.length} منتج');
-    
+
     Get.snackbar(
       'نجاح',
       'تم إضافة التخفيض بنجاح',
@@ -250,7 +268,7 @@ class RelatedProductsController extends GetxController {
 
   void removeDiscount(ProductDiscount discount) {
     discounts.removeWhere((d) => d.id == discount.id);
-    
+
     Get.snackbar(
       'نجاح',
       'تم حذف التخفيض بنجاح',
@@ -278,7 +296,8 @@ class RelatedProductsController extends GetxController {
 
   bool get hasSelectedProducts => selectedProducts.isNotEmpty;
 
-  bool get hasDiscount => discountedPrice.value > 0 && discountedPrice.value < originalPrice.value;
+  bool get hasDiscount =>
+      discountedPrice.value > 0 && discountedPrice.value < originalPrice.value;
 
   int get discountCount => discounts.length;
 
@@ -288,7 +307,7 @@ class RelatedProductsController extends GetxController {
   }
 
   // **الدوال الجديدة للربط مع ProductCentralController**
-  
+
   // الحصول على بيانات cross sell للمنتجات المختارة
   Map<String, dynamic> getCrossSellData() {
     if (selectedProducts.isEmpty) {
@@ -305,7 +324,9 @@ class RelatedProductsController extends GetxController {
       return {
         'crossSells': selectedProducts.map((p) => p.id).toList(),
         'cross_sells_price': latestDiscount.discountedPrice,
-        'cross_sells_due_date': latestDiscount.date.toIso8601String().split('T')[0], // YYYY-MM-DD
+        'cross_sells_due_date': latestDiscount.date.toIso8601String().split(
+          'T',
+        )[0], // YYYY-MM-DD
       };
     }
 
@@ -313,7 +334,10 @@ class RelatedProductsController extends GetxController {
     return {
       'crossSells': selectedProducts.map((p) => p.id).toList(),
       'cross_sells_price': originalPrice.value,
-      'cross_sells_due_date': DateTime.now().add(const Duration(days: 30)).toIso8601String().split('T')[0],
+      'cross_sells_due_date': DateTime.now()
+          .add(const Duration(days: 30))
+          .toIso8601String()
+          .split('T')[0],
     };
   }
 
@@ -326,10 +350,7 @@ class RelatedProductsController extends GetxController {
   Map<String, dynamic>? getActiveDiscountData() {
     if (discounts.isEmpty) return null;
     final discount = discounts.last;
-    return {
-      'discountedPrice': discount.discountedPrice,
-      'date': discount.date,
-    };
+    return {'discountedPrice': discount.discountedPrice, 'date': discount.date};
   }
 
   // الحصول على المنتجات المختارة بالتنسيق المناسب لـ ProductCentralController
@@ -350,8 +371,10 @@ class RelatedProductsController extends GetxController {
       if (Get.isRegistered<ProductCentralController>()) {
         final productCentralController = Get.find<ProductCentralController>();
         productCentralController.updateRelatedProductsFromRelatedController();
-        
-        print('🔗 [RELATED] تم ربط ${selectedProducts.length} منتج مع ProductCentralController');
+
+        print(
+          '🔗 [RELATED] تم ربط ${selectedProducts.length} منتج مع ProductCentralController',
+        );
       } else {
         print('⚠️ [RELATED] ProductCentralController غير مسجل');
       }

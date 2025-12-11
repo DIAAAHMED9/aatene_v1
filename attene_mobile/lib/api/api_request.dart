@@ -28,21 +28,24 @@ class ApiHelper {
           'Accept': 'application/json',
           'Device-Type': 'MOBILE',
           'Accept-Language': 'ar',
-          'storeId': '53'
+          'storeId': '53',
         };
       }
 
       final MyAppController myAppController = Get.find<MyAppController>();
-      final LanguageController appLanguageController = Get.find<LanguageController>();
+      final LanguageController appLanguageController =
+          Get.find<LanguageController>();
 
       String authorization = '';
-      
+
       // فقط إذا كان المستخدم مسجل دخول ويملك توكن صالح
-      if (myAppController.isLoggedIn.value && 
-          myAppController.userData.isNotEmpty && 
+      if (myAppController.isLoggedIn.value &&
+          myAppController.userData.isNotEmpty &&
           myAppController.userData['token'] != null) {
         authorization = 'Bearer ${myAppController.userData['token']}';
-        print('🔑 [API] استخدام توكن المستخدم: ${authorization.substring(0, 20)}...');
+        print(
+          '🔑 [API] استخدام توكن المستخدم: ${authorization.substring(0, 20)}...',
+        );
       } else {
         print('⚠️ [API] لا يوجد توكن للمستخدم أو غير مسجل دخول');
       }
@@ -53,7 +56,7 @@ class ApiHelper {
         'Accept': 'application/json',
         'Device-Type': 'MOBILE',
         'Accept-Language': appLanguageController.appLocale.value,
-        'storeId': '53'
+        'storeId': '53',
       };
     } catch (e) {
       print('❌ [API] خطأ في الحصول على رؤوس الطلب: $e');
@@ -65,7 +68,7 @@ class ApiHelper {
       };
     }
   }
-  
+
   static String _getBaseUrl() {
     switch (currentMode) {
       case AppMode.dev:
@@ -140,12 +143,12 @@ class ApiHelper {
           case DioExceptionType.sendTimeout:
           case DioExceptionType.receiveTimeout:
             return 'انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى';
-          
+
           case DioExceptionType.badResponse:
             if (error.response != null) {
               final statusCode = error.response!.statusCode;
               final data = error.response!.data;
-              
+
               if (statusCode == 422) {
                 return _parse422Error(data);
               } else if (statusCode == 401) {
@@ -159,18 +162,18 @@ class ApiHelper {
               }
             }
             return 'حدث خطأ في الاستجابة: ${error.response?.statusCode}';
-          
+
           case DioExceptionType.cancel:
             return 'تم إلغاء الطلب';
-          
+
           case DioExceptionType.unknown:
             return 'خطأ في الاتصال بالإنترنت';
-          
+
           default:
             return 'حدث خطأ غير متوقع';
         }
       }
-      
+
       return error.toString();
     } catch (e) {
       return 'حدث خطأ غير معروف';
@@ -185,15 +188,17 @@ class ApiHelper {
           if (errors.isNotEmpty) {
             final firstError = errors.entries.first;
             final errorMessages = List<String>.from(firstError.value);
-            return errorMessages.isNotEmpty ? errorMessages.first : 'بيانات غير صحيحة';
+            return errorMessages.isNotEmpty
+                ? errorMessages.first
+                : 'بيانات غير صحيحة';
           }
         }
-        
+
         if (data['message'] != null) {
           return data['message'].toString();
         }
       }
-      
+
       return 'بيانات غير صحيحة يرجى التحقق من المدخلات';
     } catch (e) {
       return 'بيانات غير صحيحة';
@@ -261,13 +266,15 @@ class ApiHelper {
       }
 
       final requestHeaders = {..._getBaseHeaders(), ...?headers};
-      
+
       // إزالة التوكن من طلبات تسجيل الدخول
       if (method.toUpperCase() == 'POST' && path.contains('/auth/login')) {
-        requestHeaders.removeWhere((key, value) => key.toLowerCase() == 'authorization');
+        requestHeaders.removeWhere(
+          (key, value) => key.toLowerCase() == 'authorization',
+        );
         print('🔄 [API] إزالة رأس التوكن من طلب تسجيل الدخول');
       }
-      
+
       print('''
 🎯 [API REQUEST] $method ${_getBaseUrl()}$path
 📦 Headers: $requestHeaders
@@ -340,18 +347,16 @@ class ApiHelper {
   }) async {
     // التحقق من نوع المدخل
     final bool isEmail = email.contains('@');
-    
-    Map<String, dynamic> body = {
-      'password': password,
-    };
+
+    Map<String, dynamic> body = {'password': password};
     body['login'] = email;
-    
+
     print('''
 🔑 محاولة تسجيل الدخول للمستخدم: $email
 📱 نوع المدخل: ${isEmail ? 'Email' : 'Username/Phone'}
 ⚠️ [API] طلب تسجيل دخول جديد - سيتم إزالة التوكن القديم
 ''');
-    
+
     return await post(
       path: '/auth/login',
       body: body,
@@ -715,10 +720,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       final String fileName = file.path.split('/').last;
       final FormData formData = FormData.fromMap({
         'type': type,
-        'file': await MultipartFile.fromFile(
-          file.path,
-          filename: fileName,
-        ),
+        'file': await MultipartFile.fromFile(file.path, filename: fileName),
       });
 
       final requestHeaders = _getBaseHeaders();
@@ -750,12 +752,23 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         _dismissLoading();
       }
 
-      _logRequestSuccess('POST', '/media-center/add-new', response.data, Stopwatch()..start());
+      _logRequestSuccess(
+        'POST',
+        '/media-center/add-new',
+        response.data,
+        Stopwatch()..start(),
+      );
 
       return response.data;
     } catch (error) {
       _dismissLoading();
-      return _handleError(error, 'POST', '/media-center/add-new', Stopwatch()..start(), true);
+      return _handleError(
+        error,
+        'POST',
+        '/media-center/add-new',
+        Stopwatch()..start(),
+        true,
+      );
     }
   }
 
@@ -789,7 +802,9 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     return _getBaseUrl().replaceAll('/api', '');
   }
 
-  static Future<dynamic> getCities({Map<String, dynamic>? queryParameters}) async {
+  static Future<dynamic> getCities({
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return await get(
       path: '/merchants/cities',
       queryParameters: queryParameters,
@@ -832,7 +847,9 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     );
   }
 
-  static Future<dynamic> getDistricts({Map<String, dynamic>? queryParameters}) async {
+  static Future<dynamic> getDistricts({
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return await get(
       path: '/merchants/districts',
       queryParameters: queryParameters,
@@ -858,7 +875,10 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     );
   }
 
-  static Future<dynamic> updateDistrict(int id, Map<String, dynamic> data) async {
+  static Future<dynamic> updateDistrict(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
     return await put(
       path: '/merchants/districts/$id',
       body: data,
@@ -875,7 +895,9 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     );
   }
 
-  static Future<dynamic> getCurrencies({Map<String, dynamic>? queryParameters}) async {
+  static Future<dynamic> getCurrencies({
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return await get(
       path: '/merchants/currencies',
       queryParameters: queryParameters,
@@ -892,7 +914,10 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     );
   }
 
-  static Future<dynamic> updateStore(int storeId, Map<String, dynamic> data) async {
+  static Future<dynamic> updateStore(
+    int storeId,
+    Map<String, dynamic> data,
+  ) async {
     return await post(
       path: '/merchants/mobile/stores/$storeId',
       body: data,
@@ -918,7 +943,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       queryParameters ??= {};
       queryParameters['section_id'] = sectionId;
     }
-    
+
     return await get(
       path: path,
       queryParameters: queryParameters,
