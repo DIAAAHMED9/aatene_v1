@@ -542,7 +542,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
     try {
       final connectivityResult = await _connectivity.checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
-
+  
       if (_isInternetConnect.value != isConnected) {
         _isInternetConnect.value = isConnected;
         print('📶 تحديث حالة الاتصال: ${isConnected ? 'متصل' : 'غير متصل'}');

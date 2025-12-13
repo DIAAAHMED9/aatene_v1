@@ -66,7 +66,13 @@ void updateSelectedAttributes(List<ProductAttribute> attributes) {
   _selectedAttributesRx.assignAll(attributes);
   print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
 }
-
+// أضف هذه الدالة إلى BottomSheetController
+void updateSelectedSectionInBottomSheet(Section section) {
+  _selectedSection.value = section;
+  _selectedSectionName.value = section.name;
+  
+  print('📥 [BOTTOM SHEET] تم استقبال تحديث القسم: ${section.name} (ID: ${section.id})');
+}
   void notifySectionsUpdated() {
     _sectionsUpdated(true);
     // إعادة التعيين بعد فترة قصيرة
@@ -374,16 +380,27 @@ bool _isUserAuthenticated() {
   //   }
   // }
 
+// في BottomSheetController
 void selectSection(Section section) {
   _selectedSection.value = section;
   _selectedSectionName.value = section.name;
   
+  // تمرير القسم المختار إلى ProductCentralController
   final productController = Get.find<ProductCentralController>();
   productController.updateSelectedSection(section);
   
   print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
+  
+  // طباعة للتأكد من وصول البيانات
+  print('''
+📋 [SECTION DATA PASSED TO PRODUCT CONTROLLER]:
+   Section ID: ${section.id}
+   Section Name: ${section.name}
+   In Product Controller: ${productController.selectedSection.value?.id}
+''');
 }
 
+// في BottomSheetController
 void openAddProductScreen() {
   if (!_isUserAuthenticated()) {
     _showLoginRequiredMessage();
@@ -403,9 +420,17 @@ void openAddProductScreen() {
     return;
   }
 
-  _navigateToAddProductStepper();
-}
+  // الحصول على القسم المختار وتمريره
+  final selectedSection = _selectedSection.value;
+  final productController = Get.find<ProductCentralController>();
+  
+  if (selectedSection != null) {
+    productController.updateSelectedSection(selectedSection);
+    print('🚀 [OPEN ADD PRODUCT]: قسم ${selectedSection.name} (ID: ${selectedSection.id}) تم تمريره');
+  }
 
+  _navigateToAddProductStepper(selectedSection!);
+}
   void clearSectionSelection() {
     _selectedSection.value = null;
     _selectedSectionName.value = '';
@@ -518,12 +543,15 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
     showBottomSheet(BottomSheetType.addNewSection);
   }
 
-  void _navigateToAddProductStepper() {
+  void _navigateToAddProductStepper(Section selectedSection) {
     Get.back();
     Get.to(
       () => DemoStepperScreen(),
       transition: Transition.cupertino,
       duration: const Duration(milliseconds: 300),
+      arguments: {
+        'selectedSection':selectedSection
+      }
     );
   }
 
@@ -542,9 +570,10 @@ void showBottomSheet(BottomSheetType type, {List<ProductAttribute>? attributes, 
         children: [
           _buildHeader(),
           const SizedBox(height: 20),
-          Expanded(child: _buildContent()),
+          _buildContent(),
           if (_shouldShowActions) const SizedBox(height: 20),
           if (_shouldShowActions) _buildActions(),
+          SizedBox(height: 40,),
         ],
       ),
     );
@@ -756,11 +785,13 @@ Widget buildManageSectionsContent() {
                 child: Obx(() => ElevatedButton(
                   onPressed: hasSelectedSection ? () {
                     final selectedSection = _selectedSection.value;
+                    print("Setion Id : ${selectedSection!.id}");
                     Get.back();
                     
                     Future.delayed(const Duration(milliseconds: 300), () {
+                      _navigateToAddProductStepper(selectedSection);
                       clearSectionSelection();
-                      _navigateToAddProductStepper();
+
                     });
                   } : null,
                   style: ElevatedButton.styleFrom(

@@ -18,196 +18,346 @@ class CustomAppBarWithTabs extends StatelessWidget
     required this.isRTL,
   }) : super(key: key);
 
-  @override
-  Size get preferredSize => Size.fromHeight(_calculateHeight());
+  // Helper methods for responsive design
+  bool _isMobile(BuildContext context) => MediaQuery.of(context).size.width < 768;
+  bool _isTablet(BuildContext context) => 
+      MediaQuery.of(context).size.width >= 768 && 
+      MediaQuery.of(context).size.width < 1024;
+  bool _isDesktop(BuildContext context) => MediaQuery.of(context).size.width >= 1024;
 
-  double _calculateHeight() {
-    double height = 70;
-    if (config.showTabs && (config.tabs?.isNotEmpty ?? false)) height += 45;
-    if (config.showSearch) height += 60;
-    return height;
+  @override
+  Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
+
+  double _calculateHeight(BuildContext context) {
+    double baseHeight;
+    
+    if (_isMobile(context)) {
+      baseHeight = 140;
+    } else if (_isTablet(context)) {
+      baseHeight = 160;
+    } else {
+      baseHeight = 180;
+    }
+    
+    // Add height for tabs if shown
+    if (config.showTabs && (config.tabs?.isNotEmpty ?? false)) {
+      baseHeight += _getTabBarHeight(context);
+    }
+    
+    // Add height for search if shown
+    if (config.showSearch) {
+      baseHeight += _getSearchFieldHeight(context) + 16;
+    }
+    
+    return baseHeight;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 5),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: config.tabs != null ? _buildBoxDecoration() : null,
-      child: config.tabs != null
-          ? SafeArea(child: Column(children: _buildAppBarContent()))
-          : Column(children: _buildAppBarContent()),
+      margin: EdgeInsets.only(
+        top: _isMobile(context) ? 0 : 8,
+        bottom: _isMobile(context) ? 8 : 12,
+      ),
+      padding: EdgeInsets.zero, // إزالة الـ padding الأفقية
+      decoration: _buildBoxDecoration(context),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _buildAppBarContent(context),
+        ),
+      ),
     );
   }
 
-  List<Widget> _buildAppBarContent() {
+  List<Widget> _buildAppBarContent(BuildContext context) {
     final List<Widget> children = [
-      config.tabs != null ? _buildTopBar() : SizedBox(),
-      config.tabs != null ? const SizedBox(height: 15) : SizedBox(),
+      // إضافة padding فقط للجزء العلوي مع العناوين
+      Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: _isMobile(context) ? 12 : _isTablet(context) ? 20 : 28,
+        ),
+        child: _buildTopBar(context),
+      ),
+      const SizedBox(height: 12),
     ];
 
     if (config.showTabs &&
         (config.tabs?.isNotEmpty ?? false) &&
         config.tabController != null) {
-      config.tabs != null
-          ? children.addAll([_buildTabBar(), const SizedBox(height: 15)])
-          : SizedBox();
+      children.add(_buildTabBar(context));
+      children.add(const SizedBox(height: 12));
     }
 
     if (config.showSearch) {
-      children.add(_buildSearchBox());
+      // إضافة padding فقط لشريط البحث
+      children.add(
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: _isMobile(context) ? 12 : _isTablet(context) ? 20 : 28,
+          ),
+          child: _buildSearchBox(context),
+        ),
+      );
     }
 
     return children;
   }
 
-  BoxDecoration _buildBoxDecoration() {
+  BoxDecoration _buildBoxDecoration(BuildContext context) {
     return BoxDecoration(
       color: Colors.white,
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.withOpacity(0.3),
-          offset: const Offset(1, 1),
-          blurRadius: 1,
-          spreadRadius: 1,
+          color: Colors.grey.withOpacity(0.15),
+          offset: const Offset(0, 2),
+          blurRadius: _isMobile(context) ? 4 : 8,
+          spreadRadius: 0,
         ),
       ],
+      borderRadius: _isMobile(context) 
+          ? BorderRadius.circular(0)
+          : BorderRadius.only(
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          config.title,
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.f(18),
-            fontWeight: FontWeight.w700,
+        // Back button on mobile
+        if (_isMobile(context) && Navigator.of(context).canPop())
+          IconButton(
+            icon: Icon(
+              isRTL ? Icons.arrow_forward : Icons.arrow_back,
+              color: Colors.grey[700],
+              size: 24,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
-        ),
-        if (config.actionText?.isNotEmpty ?? false)
-          GestureDetector(
-            onTap: config.onActionPressed,
+
+        // Title
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: _isMobile(context) ? 8 : 0,
+            ),
             child: Text(
-              config.actionText ?? '',
-              textAlign: TextAlign.center,
+              config.title,
               style: TextStyle(
-                color: AppColors.primary400,
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.w500,
+                fontSize: _getTitleFontSize(context),
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+        ),
+
+        // Action button
+        if (config.actionText.isNotEmpty && config.onActionPressed != null)
+          _buildActionButton(context),
       ],
     );
   }
 
-  Widget _buildTabBar() {
-    if (config.tabController == null || config.tabs == null) {
-      return const SizedBox.shrink();
-    }
-
-    return SizedBox(
-      height: 45,
-      child: TabBar(
-        dividerColor: Colors.transparent,
-        indicatorSize: TabBarIndicatorSize.tab,
-        tabAlignment: TabAlignment.start,
-        isScrollable: true,
-        controller: config.tabController!,
-        labelPadding: const EdgeInsets.all(10),
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: const Color(0x1A5B87B9),
-        ),
-        labelColor: const Color(0XFF2D496A),
-        indicatorColor: Colors.transparent,
-        unselectedLabelColor: const Color(0XFF868687),
-        onTap: config.onTabChanged,
-        tabs: config.tabs!
-            .map(
-              (tab) => Tab(
-                iconMargin: EdgeInsets.all(0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (tab.icon != null) ...[
-                      Icon(tab.icon, size: 16),
-                      const SizedBox(width: 4),
-                    ],
-                    Text(tab.label),
-                  ],
+  Widget _buildActionButton(BuildContext context) {
+    final isSmallMobile = MediaQuery.of(context).size.width < 400;
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: config.onActionPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icon(
+            //   Icons.add,
+            //   color: AppColors.primary400,
+            //   size: _isMobile(context) ? 17 : 19,
+            // ),
+            // if (!isSmallMobile) SizedBox(width: 6),
+            if (!isSmallMobile)
+              Text(
+                config.actionText,
+                style: TextStyle(
+                  color: AppColors.primary400,
+                  fontSize: _isMobile(context) ? 17 : 19,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            )
-            .toList(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSearchBox() {
+  Widget _buildTabBar(BuildContext context) {
+    if (config.tabController == null || config.tabs == null || config.tabs!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      height: _getTabBarHeight(context),
+      padding: EdgeInsets.zero, // إزالة أي padding إضافي
+      margin: EdgeInsets.zero, // إزالة أي margin
+      child: _TabBarWithFullLabels(
+        controller: config.tabController!,
+        tabs: config.tabs!,
+        onTap: config.onTabChanged,
+        isRTL: isRTL,
+        isMobile: _isMobile(context),
+        isTablet: _isTablet(context),
+        isDesktop: _isDesktop(context),
+      ),
+    );
+  }
+
+  double _getTabBarHeight(BuildContext context) {
+    if (_isMobile(context)) return 44;
+    if (_isTablet(context)) return 48;
+    return 52;
+  }
+
+  double _getTitleFontSize(BuildContext context) {
+    if (_isMobile(context)) return 20;
+    if (_isTablet(context)) return 22;
+    return 24;
+  }
+
+  Widget _buildSearchBox(BuildContext context) {
     return Row(
       children: [
+        // Filter button
         if (config.onFilterPressed != null)
-          _buildFilterButton(
-            assets: 'assets/images/png/filter_icon.png',
-            onTap: config.onFilterPressed!,
+          Padding(
+            padding: EdgeInsets.only(right: _isMobile(context) ? 8 : 12),
+            child: _buildIconButton(
+              icon: Icons.filter_list_rounded,
+              onTap: config.onFilterPressed!,
+              context: context,
+              tooltip: 'تصفية',
+            ),
           ),
 
-        if (config.onFilterPressed != null) const SizedBox(width: 8),
-
+        // Search field
         Expanded(
-          child: TextFiledAatene(
-            heightTextFiled: 50,
-            controller: config.searchController,
-            onChanged: config.onSearchChanged,
-            prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-            suffixIcon: Transform.scale(
-              scale: 0.6,
-              child: _buildFilterButton(
-                assets: 'assets/icons/svg/search_icon_svg.svg',
-                color: Colors.white,
-                colorButton: AppColors.primary300,
-              ),
+          child: Container(            height: _getSearchFieldHeight(context),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(_isMobile(context) ? 25 : 25),
+              border: Border.all(color: Colors.grey, width: 1),
             ),
-            isRTL: isRTL,
-            hintText: isRTL ? 'بحث...' : 'Search...',
+            child: Row(
+              children: [
+                SizedBox(width: _isMobile(context) ? 12 : 16),
+                Icon(
+                  Icons.search,
+                  color: Colors.grey[600],
+                  size: _isMobile(context) ? 20 : 22,
+                ),
+                SizedBox(width: _isMobile(context) ? 8 : 12),
+                Expanded(
+                  child: TextField(
+                    
+                    controller: config.searchController,
+                    onChanged: config.onSearchChanged,
+                    
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: isRTL ? 'ابحث عن منتج...' : 'Search products...',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: _isMobile(context) ? 14 : 15,
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontSize: _isMobile(context) ? 14 : 15,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                if (config.searchController?.text.isNotEmpty ?? false)
+                  Padding(
+                    padding: EdgeInsets.only(right: _isMobile(context) ? 8 : 12),
+                    child: GestureDetector(
+                      onTap: () {
+                        config.searchController?.clear();
+                        config.onSearchChanged?.call('');
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey[500],
+                        size: _isMobile(context) ? 18 : 20,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
 
-        if (config.onSortPressed != null) const SizedBox(width: 8),
-
+        // Sort button
         if (config.onSortPressed != null)
-          _buildFilterButton(
-            assets: 'assets/images/png/sort_icon.png',
-            onTap: config.onSortPressed!,
+          Padding(
+            padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
+            child: _buildIconButton(
+              icon: Icons.sort_rounded,
+              onTap: config.onSortPressed!,
+              context: context,
+              tooltip: 'ترتيب',
+            ),
           ),
       ],
     );
   }
 
-  Widget _buildFilterButton({
-    required String assets,
-    Function()? onTap,
-    Color? color,
-    Color? colorButton,
-    double size = 20,
-    double containerSize = 36,
+  double _getSearchFieldHeight(BuildContext context) {
+    if (_isMobile(context)) return 48;
+    if (_isTablet(context)) return 52;
+    return 56;
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    required BuildContext context,
+    String? tooltip,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: containerSize,
-        height: containerSize,
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFE3E3E3)),
-          color: colorButton ?? Colors.white,
-          shape: BoxShape.circle,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(25),
+        child: Container(
+          width: _isMobile(context) ? 44 : 48,
+          height: _isMobile(context) ? 44 : 48,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: Colors.grey[300]!),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 2,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Icon(
+            icon,
+            size: _isMobile(context) ? 20 : 22,
+            color: Colors.grey[700],
+          ),
         ),
-        child: _buildUniversalImage(assets, color: color, size: size),
       ),
     );
   }
@@ -256,5 +406,125 @@ class CustomAppBarWithTabs extends StatelessWidget
       debugPrint('Image loading failed: $assetPath, Error: $e');
       return Icon(Icons.error_outline, size: size, color: Colors.red);
     }
+  }
+}
+
+// Custom TabBar widget that shows full labels
+class _TabBarWithFullLabels extends StatefulWidget {
+  final TabController controller;
+  final List<TabData> tabs;
+  final ValueChanged<int>? onTap;
+  final bool isRTL;
+  final bool isMobile;
+  final bool isTablet;
+  final bool isDesktop;
+
+  const _TabBarWithFullLabels({
+    required this.controller,
+    required this.tabs,
+    this.onTap,
+    required this.isRTL,
+    required this.isMobile,
+    required this.isTablet,
+    required this.isDesktop,
+  });
+
+  @override
+  __TabBarWithFullLabelsState createState() => __TabBarWithFullLabelsState();
+}
+
+class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TabBar(
+      controller: widget.controller,
+      isScrollable: true,
+      dividerColor: Colors.transparent, // إزالة الخط الفاصل بين التبويبات
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: AppColors.primary400,
+      ),
+      indicatorColor: Colors.transparent, // إزالة الخط السفلي الافتراضي
+      indicatorSize: TabBarIndicatorSize.tab,
+      labelColor: Colors.white,
+      unselectedLabelColor: Colors.grey[600],
+      labelPadding: EdgeInsets.symmetric(
+        horizontal: widget.isMobile ? 12 : 16,
+      ),
+      padding: EdgeInsets.only(
+        left: widget.isRTL ? 0 : (widget.isMobile ? 12 : 20),
+        right: widget.isRTL ? (widget.isMobile ? 12 : 20) : 0,
+      ),
+      labelStyle: TextStyle(
+        fontSize: widget.isMobile ? 13 : widget.isTablet ? 14 : 15,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: widget.isMobile ? 13 : widget.isTablet ? 14 : 15,
+        fontWeight: FontWeight.w500,
+      ),
+      tabs: widget.tabs.map((tab) {
+        return _buildTabItem(tab);
+      }).toList(),
+      onTap: widget.onTap,
+    );
+  }
+
+  Widget _buildTabItem(TabData tab) {
+    return Tab(
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: widget.isMobile ? 80 : widget.isTablet ? 100 : 120,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (tab.icon != null && !widget.isMobile) 
+              ...[
+                Icon(
+                  tab.icon,
+                  size: widget.isMobile ? 14 : widget.isTablet ? 16 : 18,
+                ),
+                SizedBox(width: widget.isMobile ? 4 : 6),
+              ],
+            Flexible(
+              child: Text(
+                _getTabLabel(tab.label),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: widget.isMobile ? 13 : widget.isTablet ? 14 : 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getTabLabel(String label) {
+    // For very small screens, truncate long labels
+    if (widget.isMobile && label.length > 15) {
+      return '${label.substring(0, 12)}...';
+    }
+    return label;
   }
 }

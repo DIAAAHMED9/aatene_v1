@@ -4,10 +4,10 @@ import 'package:attene_mobile/view/Control_Panal_Vendor/vindor_home.dart';
 import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
 import 'package:attene_mobile/view/add%20new%20store/choose_type_store/manage_account_store.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/chat/chat.dart';
-import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/product.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/profile/profile.dart';
 import 'package:flutter/material.dart';
 
+import '../../view/products/product_screen.dart';
 import '../../view/screens_navigator_bottom_bar/home/home.dart';
 import 'custom_bottom_navigation.dart';
 

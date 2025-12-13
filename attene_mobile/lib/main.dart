@@ -1,12 +1,11 @@
 import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/utlis/app_lifecycle_manager.dart';
+import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'api/api_request.dart';
-import 'component/appBar/tab_model.dart';
 import 'controller/create_store_controller.dart';
 import 'controller/product_controller.dart';
 import 'controller/section_controller.dart';
@@ -15,16 +14,15 @@ import 'my_app/my_app_controller.dart';
 import 'utlis/language/language_controller.dart';
 import 'utlis/responsive/responsive_service.dart';
 import 'utlis/sheet_controller.dart';
-import 'view/Control_Panal_Vendor/controler_vindor.dart';
 import 'view/Services/data_lnitializer_service.dart';
 import 'view/Services/data_sync_service.dart' show DataSyncService;
 import 'view/advance_info/keyword_controller.dart';
 import 'view/media_library/media_library_controller.dart';
 import 'view/product_variations/product_variation_controller.dart';
+import 'view/products/product_controller.dart';
 import 'view/related_products/related_products_controller.dart';
 import 'view/related_products/related_products_screen.dart';
 import 'view/screens_navigator_bottom_bar/product/add_product_controller.dart';
-import 'view/screens_navigator_bottom_bar/product/product_controller.dart';
 
 import 'view/Splash/splash.dart';
 import 'view/add new store/choose_type_store/manage_account_store_controller.dart';
@@ -75,6 +73,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => MediaLibraryController(), fenix: true);
     Get.lazyPut(()=>RelatedProductsController(), fenix: true);
     Get.lazyPut(() => ProductController(), fenix: true);
+    Get.lazyPut(() => ProductService(), fenix: true);
     Get.lazyPut(() => SectionController(), fenix: true);
     
     print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات بنجاح');

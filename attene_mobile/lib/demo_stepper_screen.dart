@@ -302,7 +302,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Get.back();
+                  Get.offAndToNamed('/mainScreen');
                   productController.reset();
                   setState(() {
                     currentStep = 0;

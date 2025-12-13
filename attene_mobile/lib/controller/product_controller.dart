@@ -39,12 +39,41 @@ class ProductCentralController extends GetxController {
   
   final RxBool isSubmitting = false.obs;
   final RxBool isUpdatingSection = false.obs;
+  final RxBool isProductReadyForSubmission = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     print('🔄 [PRODUCT CENTRAL] تهيئة متحكم المنتجات المركزي');
     loadCachedCategories();
+    
+    // مراقبة تغييرات البيانات الرئيسية
+    ever(productName, (_) => _checkProductReadiness());
+    ever(productDescription, (_) => _checkProductReadiness());
+    ever(price, (_) => _checkProductReadiness());
+    ever(selectedCategoryId, (_) => _checkProductReadiness());
+    ever(selectedCondition, (_) => _checkProductReadiness());
+    ever(selectedSection, (_) => _checkProductReadiness());
+  }
+  
+  void _checkProductReadiness() {
+    final isBasicComplete = productName.isNotEmpty &&
+        productDescription.isNotEmpty &&
+        price.isNotEmpty &&
+        selectedCategoryId > 0 &&
+        selectedCondition.isNotEmpty;
+    
+    final hasSection = selectedSection.value != null;
+    
+    isProductReadyForSubmission(isBasicComplete && hasSection);
+    
+    print('''
+🔍 [PRODUCT READINESS CHECK]:
+   Basic Info: $isBasicComplete
+   Has Section: $hasSection
+   Section ID: ${selectedSection.value?.id}
+   Ready for Submission: ${isProductReadyForSubmission.value}
+''');
   }
   
   Future<void> loadCachedCategories() async {
@@ -126,7 +155,7 @@ class ProductCentralController extends GetxController {
     required int categoryId,
     required String condition,
     required List<MediaItem> media,
-    Section? section,
+     Section? section,
   }) {
     productName(name);
     productDescription(description);
@@ -135,9 +164,11 @@ class ProductCentralController extends GetxController {
     selectedCondition(condition);
     selectedMedia.assignAll(media);
     
-    if (section != null) {
+if(section!=null){
       updateSelectedSection(section);
-    }
+
+}
+ 
   
     print('''
 📦 [PRODUCT] تحديث المعلومات الأساسية:
@@ -149,6 +180,7 @@ class ProductCentralController extends GetxController {
    القسم: ${section?.name ?? 'غير محدد'}
    الوسائط: ${media.length} عنصر
 ''');
+    _checkProductReadiness();
   }
   
   void addKeywords(List<String> newKeywords) {
@@ -204,6 +236,30 @@ class ProductCentralController extends GetxController {
         selectedCondition.isNotEmpty;
   }
   
+  bool isSectionSelected() {
+    final hasSection = selectedSection.value != null;
+    final hasValidSectionId = selectedSection.value?.id != null;
+    
+    print('''
+🔍 [SECTION CHECK]:
+   Has Section: $hasSection
+   Has Valid Section ID: $hasValidSectionId
+   Section ID: ${selectedSection.value?.id}
+   Section Name: ${selectedSection.value?.name}
+''');
+    
+    return hasValidSectionId;
+  }
+  
+  void printCurrentSection() {
+    print('''
+📋 [CURRENT SECTION INFO]:
+   Section: ${selectedSection.value?.name}
+   Section ID: ${selectedSection.value?.id}
+   Is Null: ${selectedSection.value == null}
+''');
+  }
+  
   Future<Map<String, dynamic>?> submitProduct() async {
     return UnifiedLoadingScreen.showWithFuture<Map<String, dynamic>>(
       performSubmitProduct(),
@@ -215,12 +271,23 @@ class ProductCentralController extends GetxController {
     try {
       isSubmitting(true);
       
+      // التحقق من وجود قسم
+      if (!isSectionSelected()) {
+        print('❌ [PRODUCT] فشل: لم يتم اختيار قسم للمنتج');
+        return {
+          'success': false, 
+          'message': 'يجب اختيار قسم للمنتج قبل الإرسال'
+        };
+      }
+      
+      printCurrentSection();
+      
       print('''
 🚀 [PRODUCT] إرسال المنتج:
    الاسم: ${productName.value}
    الفئة: ${selectedCategoryId.value}
    السعر: ${price.value}
-   القسم: ${selectedSection.value?.name ?? 'غير محدد'} (ID: ${selectedSection.value?.id})
+   القسم: ${selectedSection.value?.name} (ID: ${selectedSection.value?.id})
    الوسائط: ${selectedMedia.length}
    الكلمات المفتاحية: ${keywords.length}
 ''');
@@ -271,8 +338,14 @@ class ProductCentralController extends GetxController {
   }
   
   Future<Map<String, dynamic>> prepareProductData(List<Map<String, dynamic>> variationsData) async {
+    // تأكد من وجود قسم
+    if (selectedSection.value == null || selectedSection.value!.id == null) {
+      throw Exception('القسم غير محدد. يرجى اختيار قسم للمنتج.');
+    }
+    
+    print('selectedSection.value?.id :: ${selectedSection.value?.id}');
     final productData = <String, dynamic>{
-      'section_id': 44,
+      'section_id': selectedSection.value!.id,
       'name': productName.value.trim(),
       'description': productDescription.value.trim(),
       'price': double.tryParse(price.value) ?? 0.0,
@@ -410,10 +483,28 @@ class ProductCentralController extends GetxController {
   }
   
   void resetAfterSuccess(ProductVariationController variationController) {
-    reset();
+    reset(resetSection: true);
     variationController.toggleHasVariations(false);
     variationController.selectedAttributes.clear();
     variationController.variations.clear();
+  }
+  
+  void reset({bool resetSection = false}) {
+    productName('');
+    productDescription('');
+    price('');
+    selectedCategoryId(0);
+    selectedCondition('');
+    selectedMedia.clear();
+    keywords.clear();
+    variations.clear();
+    
+    if (resetSection) {
+      selectedSection(null);
+    }
+    
+    print('🔄 [PRODUCT] إعادة تعيين بيانات المنتج ${resetSection ? 'مع القسم' : 'بدون القسم'}');
+    _checkProductReadiness();
   }
   
   String formatCondition(String condition) {
@@ -471,20 +562,6 @@ class ProductCentralController extends GetxController {
     }
   }
   
-  void reset() {
-    productName('');
-    productDescription('');
-    price('');
-    selectedCategoryId(0);
-    selectedCondition('');
-    selectedMedia.clear();
-    keywords.clear();
-    variations.clear();
-    selectedSection(null);
-    
-    print('🔄 [PRODUCT] إعادة تعيين بيانات المنتج');
-  }
-  
   void printDataSummary() {
     final variationController = Get.find<ProductVariationController>();
     
@@ -506,6 +583,7 @@ class ProductCentralController extends GetxController {
    السمات المختارة: ${variationController.selectedAttributes.length}
    المتغيرات: ${variationController.variations.length}
    المنتجات المرتبطة: $relatedProductsCount
+   جاهز للإرسال: ${isProductReadyForSubmission.value}
 ''');
     } catch (e) {
       print('⚠️ [PRODUCT] خطأ في طباعة ملخص البيانات: $e');
@@ -526,13 +604,23 @@ class ProductCentralController extends GetxController {
       selectedSection(section);
       print('✅ [PRODUCT] تحديث القسم: ${section.name} (ID: ${section.id})');
       
-      final bottomSheetController = Get.find<BottomSheetController>();
-      bottomSheetController.selectSection(section);
+      if (Get.isRegistered<BottomSheetController>()) {
+        final bottomSheetController = Get.find<BottomSheetController>();
+        bottomSheetController.updateSelectedSectionInBottomSheet(section);
+      }
     } finally {
       Future.delayed(const Duration(milliseconds: 100), () {
         isUpdatingSection.value = false;
+        _checkProductReadiness();
       });
     }
+  }
+  
+  // دالة جديدة لتحديث القسم مباشرة (للإستخدام من الخارج)
+  void setSectionDirectly(Section section) {
+    selectedSection(section);
+    print('🎯 [PRODUCT] تم تعيين القسم مباشرة: ${section.name} (ID: ${section.id})');
+    _checkProductReadiness();
   }
   
   // دالة جديدة لإشعار المتحكمين بتحديث المنتجات
@@ -548,8 +636,10 @@ class ProductCentralController extends GetxController {
       }
       
       // إشعار BottomSheetController
-      final bottomSheetController = Get.find<BottomSheetController>();
-      bottomSheetController.notifySectionsUpdated();
+      if (Get.isRegistered<BottomSheetController>()) {
+        final bottomSheetController = Get.find<BottomSheetController>();
+        bottomSheetController.notifySectionsUpdated();
+      }
       
       print('📢 [PRODUCT CENTRAL] تم إشعار جميع المتحكمين بتحديث المنتجات');
       
@@ -613,6 +703,44 @@ class ProductCentralController extends GetxController {
   String getCategoryName(int id) {
     final category = getCategoryById(id);
     return category['name']?.toString() ?? 'غير محدد';
+  }
+  
+  // دالة للتحقق من صحة بيانات المنتج قبل الإرسال
+  Map<String, dynamic> validateProductData() {
+    final errors = <String>[];
+    
+    if (productName.isEmpty) errors.add('اسم المنتج مطلوب');
+    if (productDescription.isEmpty) errors.add('وصف المنتج مطلوب');
+    if (price.isEmpty) errors.add('سعر المنتج مطلوب');
+    if (selectedCategoryId <= 0) errors.add('فئة المنتج مطلوبة');
+    if (selectedCondition.isEmpty) errors.add('حالة المنتج مطلوبة');
+    if (selectedSection.value == null) errors.add('قسم المنتج مطلوب');
+    
+    return {
+      'isValid': errors.isEmpty,
+      'errors': errors,
+      'sectionId': selectedSection.value?.id,
+      'sectionName': selectedSection.value?.name,
+    };
+  }
+  
+  // دالة للحصول على ملخص البيانات
+  Map<String, dynamic> getProductSummary() {
+    return {
+      'productName': productName.value,
+      'productDescription': productDescription.value,
+      'price': price.value,
+      'categoryId': selectedCategoryId.value,
+      'categoryName': getCategoryName(selectedCategoryId.value),
+      'condition': selectedCondition.value,
+      'sectionId': selectedSection.value?.id,
+      'sectionName': selectedSection.value?.name,
+      'mediaCount': selectedMedia.length,
+      'keywordsCount': keywords.length,
+      'variationsCount': variations.length,
+      'isReadyForSubmission': isProductReadyForSubmission.value,
+      'validation': validateProductData(),
+    };
   }
   
   @override

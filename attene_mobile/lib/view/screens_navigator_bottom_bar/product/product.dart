@@ -170,30 +170,7 @@ Widget _buildAllProductsView(ProductController controller, bool isRTL) {
 
   return Column(
     children: [
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                'إجمالي المنتجات: ${controller.totalProductsCount}',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: controller.openSort,
-              icon: Icon(Icons.sort, color: AppColors.primary400),
-            ),
-            IconButton(
-              onPressed: controller.openFilter,
-              icon: Icon(Icons.filter_list, color: AppColors.primary400),
-            ),
-          ],
-        ),
-      ),
+    
       
       Expanded(
         child: ListView.builder(
@@ -228,67 +205,21 @@ Widget _buildAllProductsView(ProductController controller, bool isRTL) {
 Widget _buildSectionWithProducts(String sectionName, List<Product> products, ProductController controller, bool isRTL, {bool isUncategorized = false}) {
   print('🎨 [DEBUG] Building section: $sectionName with ${products.length} products');
   
-  return Card(
-    margin: const EdgeInsets.only(bottom: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isUncategorized ? Colors.grey[100] : AppColors.primary50,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  sectionName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isUncategorized ? Colors.grey[600] : AppColors.primary500,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  '${products.length} منتج',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isUncategorized ? Colors.grey[600] : AppColors.primary500,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
-          itemCount: products.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final product = products[index];
-            return _buildProductItem(product, controller, isRTL, showSection: false);
-          },
-        ),
-      ],
-    ),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(16),
+        itemCount: products.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final product = products[index];
+          return _buildProductItem(product, controller, isRTL);
+        },
+      ),
+    ],
   );
 }
 

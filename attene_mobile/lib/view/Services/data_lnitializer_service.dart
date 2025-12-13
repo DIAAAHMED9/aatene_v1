@@ -29,6 +29,36 @@ class DataInitializerService extends GetxService {
   
   // إضافة Getter
   RxBool get productsUpdated => _productsUpdated;
+   void notifyProductsUpdated() {
+    print('📢 [DATA SERVICE] Notifying products update');
+    _productsUpdated.value = !_productsUpdated.value;
+  }
+    Future<void> refreshProducts() async {
+    try {
+      print('🔄 [DATA SERVICE] Refreshing products...');
+      
+      // جلب المنتجات من API
+      final response = await ApiHelper.get(
+        path: '/merchants/products',
+        withLoading: false,
+      );
+      
+      if (response != null && response['status'] == true) {
+        final products = response['data'] ?? [];
+        
+        // تحديث التخزين المحلي
+        await _storage.write('products', json.encode(products));
+        
+        // إشعار كل المتحكمين بالتحديث
+        notifyProductsUpdated();
+        
+        print('✅ [DATA SERVICE] Products refreshed successfully');
+      }
+    } catch (e) {
+      print('❌ [DATA SERVICE] Error refreshing products: $e');
+    }
+  }
+
   // مفاتيح التخزين
   static const String _STORES_KEY = 'app_stores';
   static const String _CITIES_KEY = 'app_cities';
@@ -95,38 +125,34 @@ class DataInitializerService extends GetxService {
 
     _initializeStorage();
   }
-    void notifyProductsUpdated() {
-    _productsUpdated(true);
-    Future.delayed(const Duration(milliseconds: 100), () => _productsUpdated(false));
-    print('📢 [DATA SERVICE] تم إشعار تحديث المنتجات');
-  }
-    Future<void> refreshProducts() async {
-    try {
-      if (!_isOnline.value) {
-        print('⚠️ [PRODUCTS] لا يمكن التحديث (غير متصل)');
-        return;
-      }
+ 
+  //   Future<void> refreshProducts() async {
+  //   try {
+  //     if (!_isOnline.value) {
+  //       print('⚠️ [PRODUCTS] لا يمكن التحديث (غير متصل)');
+  //       return;
+  //     }
       
-      final response = await ApiHelper.get(
-        path: '/merchants/products',
-        queryParameters: {'limit': 100, 'orderBy': 'created_at', 'orderDir': 'desc'},
-        withLoading: false,
-        shouldShowMessage: false,
-      );
+  //     final response = await ApiHelper.get(
+  //       path: '/merchants/products',
+  //       queryParameters: {'limit': 100, 'orderBy': 'created_at', 'orderDir': 'desc'},
+  //       withLoading: false,
+  //       shouldShowMessage: false,
+  //     );
       
-      if (response != null && response['status'] == true) {
-        final products = response['data'] ?? [];
-        await _storage.write(_PRODUCTS_KEY, products);
+  //     if (response != null && response['status'] == true) {
+  //       final products = response['data'] ?? [];
+  //       await _storage.write(_PRODUCTS_KEY, products);
         
-        // إشعار بتحديث المنتجات
-        notifyProductsUpdated();
+  //       // إشعار بتحديث المنتجات
+  //       notifyProductsUpdated();
         
-        print('✅ [PRODUCTS] تم تحديث ${products.length} منتج');
-      }
-    } catch (e) {
-      print('⚠️ [PRODUCTS] فشل في تحديث المنتجات: $e');
-    }
-  }
+  //       print('✅ [PRODUCTS] تم تحديث ${products.length} منتج');
+  //     }
+  //   } catch (e) {
+  //     print('⚠️ [PRODUCTS] فشل في تحديث المنتجات: $e');
+  //   }
+  // }
   
   Future<void> _initializeStorage() async {
     try {

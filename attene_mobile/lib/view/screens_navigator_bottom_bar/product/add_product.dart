@@ -1,6 +1,7 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/controller/product_controller.dart';
+import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/view/advance_info/keyword_management_screen.dart';
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';
@@ -87,6 +88,8 @@ class _AddProductContentState extends State<AddProductContent> {
   @override
   Widget build(BuildContext context) {
     print('🔴 [ADD PRODUCT CONTENT BUILT]');
+    final selectedSection = Get.arguments['selectedSection'];
+    print("test2020 ${selectedSection.id}");
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -100,7 +103,7 @@ class _AddProductContentState extends State<AddProductContent> {
             child: _buildSectionTitle('المعلومات الأساسية')),
           const SizedBox(height: 20),
           
-          _buildCategorySection(),
+          _buildCategorySection(selectedSection),
           const SizedBox(height: 20),
           
           InkWell(
@@ -124,7 +127,7 @@ class _AddProductContentState extends State<AddProductContent> {
           _buildProductDescriptionSection(),
           const SizedBox(height: 20),
           
-          _buildNextButton(),
+          _buildNextButton(selectedSection),
           const SizedBox(height: 20),
         ],
       ),
@@ -165,7 +168,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  Widget _buildCategorySection() {
+  Widget _buildCategorySection(Section selectedSection) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -177,7 +180,8 @@ class _AddProductContentState extends State<AddProductContent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'الملابس والأحذية',
+            
+          '${selectedSection.name}',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -769,7 +773,7 @@ Widget _buildCategoriesDropdown() {
     );
   }
 
-  Widget _buildNextButton() {
+  Widget _buildNextButton(Section selectSection) {
     return Center(
       child: AateneButton(
         color: AppColors.primary400,
@@ -778,7 +782,7 @@ Widget _buildCategoriesDropdown() {
         buttonText: isRTL ? 'التالي' : 'Next',
         onTap: () {
           if (_validateForm()) {
-            _saveBasicInfo();
+            _saveBasicInfo(selectSection);
             Get.to(() => ProductVariationsScreen());
           }
         },
@@ -835,14 +839,16 @@ Widget _buildCategoriesDropdown() {
     return true;
   }
 
-  void _saveBasicInfo() {
+  void _saveBasicInfo(Section selectSection) {
     productController.updateBasicInfo(
+      
       name: _productNameController.text,
       description: _productDescriptionController.text,
       productPrice: _priceController.text,
       categoryId: _selectedCategoryId,
       condition: _selectedCondition,
       media: productController.selectedMedia,
+      section: selectSection,
     );
     
     print('💾 [BASIC INFO SAVED TO CONTROLLER]');

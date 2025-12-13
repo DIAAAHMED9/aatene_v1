@@ -1,17 +1,17 @@
+// في ملف tab_model.dart
 import 'package:flutter/material.dart';
-
 
 class TabData {
   final String label;
   final String viewName;
   final IconData? icon;
-  final int? sectionId; // إضافة هذا الحقل
+  final int? sectionId;
 
   TabData({
     required this.label,
     required this.viewName,
     this.icon,
-    this.sectionId, // إضافة هذا الباراميتر
+    this.sectionId,
   });
 
   @override
@@ -26,6 +26,7 @@ class TabData {
   @override
   int get hashCode => label.hashCode ^ viewName.hashCode ^ (sectionId?.hashCode ?? 0);
 }
+
 class AppBarConfig {
   final String title;
   final String actionText;
@@ -44,8 +45,8 @@ class AppBarConfig {
     required this.title,
     required this.actionText,
     this.onActionPressed,
-     this.tabs,
-     this.searchController,
+    this.tabs,
+    this.searchController,
     this.onSearchChanged,
     this.onFilterPressed,
     this.onSortPressed,
