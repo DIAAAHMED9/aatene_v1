@@ -684,7 +684,11 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Text("تقييمات ومراجعات"),
                         ],
                       ),
-                      children: [],
+                      children: [
+                        Column(
+
+                        ),
+                      ],
                     ),
                     ExpansionTile(
                       maintainState: true,
