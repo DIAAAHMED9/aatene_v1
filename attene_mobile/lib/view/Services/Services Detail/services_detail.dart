@@ -346,11 +346,9 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                           if (states.contains(
                                             MaterialState.selected,
                                           )) {
-                                            return AppColors
-                                                .primary400;
+                                            return AppColors.primary400;
                                           }
-                                          return Colors
-                                              .white;
+                                          return Colors.white;
                                         }),
                                     shape: RoundedRectangleBorder(
                                       borderRadius:
@@ -684,7 +682,9 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Text("تقييمات ومراجعات"),
                         ],
                       ),
-                      children: [],
+                      children: [
+
+                      ],
                     ),
                     ExpansionTile(
                       maintainState: true,
