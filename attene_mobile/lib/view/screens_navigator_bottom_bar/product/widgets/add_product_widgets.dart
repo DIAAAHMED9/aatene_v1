@@ -89,12 +89,24 @@ class ImageUploadSectionWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'الصور *',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Text(
+                  'الصوز',
+                  style: TextStyle(
+                    fontSize: ResponsiveDimensions.f(16),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                   Text(
+                  '*',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveDimensions.f(16),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: ResponsiveDimensions.f(5)),
             Text(

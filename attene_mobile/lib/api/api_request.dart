@@ -923,7 +923,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
 
   static Future<dynamic> deleteStore(int storeId) async {
     return await delete(
-      path: '/merchants/mobile/stores/$storeId',
+      path: '/merchants/stores/$storeId',
       withLoading: true,
       shouldShowMessage: true,
     );

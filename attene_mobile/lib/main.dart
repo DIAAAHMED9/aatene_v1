@@ -1,5 +1,6 @@
 import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/utlis/app_lifecycle_manager.dart';
+import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/view/Services/Services%20Detail/services_detail.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
@@ -91,12 +92,13 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: AppColors.primary500,
+        primarySwatch: AppColors.secondary300,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const ServicesDetail()),
+        GetPage(name: '/', page: () => const SplashScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
