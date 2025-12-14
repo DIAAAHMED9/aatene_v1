@@ -2,390 +2,291 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/view/related_products/related_products_model.dart';
 import 'package:attene_mobile/models/product_model.dart';
-import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
-
 import '../../controller/product_controller.dart';
+import '../Services/data_lnitializer_service.dart';
 
 class RelatedProductsController extends GetxController {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
-
-  // القوائم القابلة للملاحظة
-  final RxList<Product> allProducts = <Product>[].obs;
-  final RxList<Product> selectedProducts = <Product>[].obs;
-  final RxList<ProductDiscount> discounts = <ProductDiscount>[].obs;
-  final RxString searchQuery = ''.obs;
-
-  // المتغيرات القابلة للملاحظة
-  final RxDouble originalPrice = 0.0.obs;
-  final RxDouble discountedPrice = 0.0.obs;
-  final RxString discountNote = ''.obs;
-  final Rx<DateTime> discountDate = DateTime.now().obs;
-
-  // أدوات التحكم
-  final TextEditingController dateController = TextEditingController();
-
-  // الحالة المحفوظة
-  final RxList<Product> savedSelectedProducts = <Product>[].obs;
-  final RxDouble savedOriginalPrice = 0.0.obs;
-
+  
+  final RxList<Product> _allProducts = <Product>[].obs;
+  final RxList<Product> _selectedProducts = <Product>[].obs;
+  final RxList<ProductDiscount> _discounts = <ProductDiscount>[].obs;
+  final RxString _searchQuery = ''.obs;
+  final RxDouble _originalPrice = 0.0.obs;
+  final RxDouble _discountedPrice = 0.0.obs;
+  final RxString _discountNote = ''.obs;
+  final Rx<DateTime> _discountDate = DateTime.now().obs;
+  
+  List<Product> get allProducts => _allProducts;
+  List<Product> get selectedProducts => _selectedProducts;
+  List<ProductDiscount> get discounts => _discounts;
+  String get searchQuery => _searchQuery.value;
+  double get originalPrice => _originalPrice.value;
+  double get discountedPrice => _discountedPrice.value;
+  String get discountNote => _discountNote.value;
+  DateTime get discountDate => _discountDate.value;
+  int get selectedProductsCount => _selectedProducts.length;
+  bool get hasSelectedProducts => _selectedProducts.isNotEmpty;
+  bool get hasDiscount => _discountedPrice.value > 0 && _discountedPrice.value < _originalPrice.value;
+  int get discountCount => _discounts.length;
+  
+  late TextEditingController dateController;
+  late TextEditingController searchController;
+  
+  final RxBool _isSearching = false.obs;
+  bool get isSearching => _isSearching.value;
+  
   @override
   void onInit() {
     super.onInit();
-    initializeDateController();
+    initializeControllers();
     loadProducts();
   }
-
-  void initializeDateController() {
-    dateController.text = formatDateTime(DateTime.now());
+  
+  void initializeControllers() {
+    dateController = TextEditingController(text: _formatDateTime(DateTime.now()));
+    searchController = TextEditingController();
+    searchController.addListener(() {
+      _searchQuery.value = searchController.text;
+      _isSearching.value = searchController.text.isNotEmpty;
+      update(['products', 'search']);
+    });
   }
-
-  String formatDateTime(DateTime date) {
-    final months = [
-      'يناير',
-      'فبراير',
-      'مارس',
-      'أبريل',
-      'مايو',
-      'يونيو',
-      'يوليو',
-      'أغسطس',
-      'سبتمبر',
-      'أكتوبر',
-      'نوفمبر',
-      'ديسمبر',
-    ];
-
+  
+  String _formatDateTime(DateTime date) {
+    final months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
     final hour = date.hour;
     final period = hour < 12 ? 'ص' : 'م';
     final displayHour = hour <= 12 ? hour : hour - 12;
-
     return '${months[date.month - 1]} ${date.day}, ${date.year} $displayHour:${date.minute.toString().padLeft(2, '0')} $period';
   }
-
+  
   void loadProducts() {
     try {
       final productsData = dataService.getProducts();
-      print('📦 [RELATED] جاري تحميل المنتجات: ${productsData.length} منتج');
-
       final loadedProducts = productsData
-          .map((productData) {
-            try {
-              return Product.fromJson(productData);
-            } catch (e) {
-              print('⚠️ [RELATED] خطأ في تحويل المنتج: $e');
-              return Product(
-                id: 0,
-                sku: '',
-                name: 'منتج غير معروف',
-                shown: false,
-                favoritesCount: '0',
-                messagesCount: '0',
-              );
-            }
-          })
+          .map((productData) => Product.fromJson(productData))
           .where((product) => product.id > 0)
           .toList();
-
-      allProducts.assignAll(loadedProducts);
-      print('✅ [RELATED] تم تحميل ${allProducts.length} منتج');
+      _allProducts.assignAll(loadedProducts);
+      update(['products']);
     } catch (e) {
-      print('❌ [RELATED] خطأ في تحميل المنتجات: $e');
-      Get.snackbar(
-        'خطأ',
-        'فشل في تحميل المنتجات',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      _showErrorSnackbar('خطأ في تحميل المنتجات');
     }
   }
-
-  void refreshProducts() {
-    loadProducts();
+  
+  void setSearchQuery(String query) {
+    _searchQuery.value = query;
+    _isSearching.value = query.isNotEmpty;
+    update(['products', 'search']);
   }
-
+  
   List<Product> get filteredProducts {
-    if (searchQuery.isEmpty) return allProducts;
-
-    final searchLower = searchQuery.value.toLowerCase();
-    return allProducts.where((product) {
+    if (_searchQuery.value.isEmpty) return _allProducts;
+    final searchLower = _searchQuery.value.toLowerCase();
+    return _allProducts.where((product) {
       final nameMatch = product.name.toLowerCase().contains(searchLower);
-      final skuMatch =
-          product.sku?.toLowerCase().contains(searchLower) ?? false;
-      return nameMatch || skuMatch;
+      final skuMatch = product.sku?.toLowerCase().contains(searchLower) ?? false;
+      final sectionMatch = product.sectionName?.toLowerCase().contains(searchLower) ?? false;
+      return nameMatch || skuMatch || sectionMatch;
     }).toList();
   }
-
+  
   void toggleProductSelection(Product product) {
-    if (!isProductSelected(product)) {
-      selectedProducts.add(product);
-      print('✅ [RELATED] تم إضافة المنتج: ${product.name}');
+    if (isProductSelected(product)) {
+      _selectedProducts.removeWhere((p) => p.id == product.id);
     } else {
-      selectedProducts.removeWhere((p) => p.id == product.id);
-      print('🗑️ [RELATED] تم إزالة المنتج: ${product.name}');
+      _selectedProducts.add(product);
     }
-
-    calculateTotalPrice();
+    _calculateTotalPrice();
+    update(['selected', 'summary', 'products']);
   }
-
+  
   bool isProductSelected(Product product) {
-    return selectedProducts.any((p) => p.id == product.id);
+    return _selectedProducts.any((p) => p.id == product.id);
   }
-
+  
   void removeSelectedProduct(Product product) {
-    selectedProducts.removeWhere((p) => p.id == product.id);
-    calculateTotalPrice();
-    print('🗑️ [RELATED] تم حذف المنتج المختار: ${product.name}');
+    _selectedProducts.removeWhere((p) => p.id == product.id);
+    _calculateTotalPrice();
+    update(['selected', 'summary', 'products']);
   }
-
+  
   void clearAllSelections() {
-    selectedProducts.clear();
-    originalPrice.value = 0.0;
-    discountedPrice.value = 0.0;
-    discountNote.value = '';
-    dateController.text = formatDateTime(DateTime.now());
-    discountDate.value = DateTime.now();
-    print('🔄 [RELATED] تم مسح جميع الاختيارات');
+    _selectedProducts.clear();
+    _originalPrice.value = 0.0;
+    _discountedPrice.value = 0.0;
+    _discountNote.value = '';
+    dateController.text = _formatDateTime(DateTime.now());
+    _discountDate.value = DateTime.now();
+    update(['selected', 'summary', 'discounts', 'products']);
   }
-
+  
   void calculateTotalPrice() {
     double total = 0.0;
-
-    for (final product in selectedProducts) {
+    for (final product in _selectedProducts) {
       try {
         final priceStr = product.price ?? '0';
         final cleanPrice = priceStr.replaceAll(RegExp(r'[^\d.]'), '');
         final price = double.tryParse(cleanPrice) ?? 0.0;
         total += price;
       } catch (e) {
-        print('⚠️ [RELATED] خطأ في حساب سعر المنتج: $e');
+        print('⚠️ خطأ في حساب سعر المنتج: $e');
       }
     }
-
-    originalPrice.value = total;
-
-    if (discountedPrice.value > originalPrice.value) {
-      discountedPrice.value = originalPrice.value;
+    _originalPrice.value = total;
+    if (_discountedPrice.value > _originalPrice.value) {
+      _discountedPrice.value = _originalPrice.value;
     }
-
-    print('💰 [RELATED] السعر الإجمالي: ${originalPrice.value}');
+    update(['summary']);
   }
-
+  
+  void _calculateTotalPrice() {
+    calculateTotalPrice();
+  }
+  
   void setDiscountDate(DateTime date) {
-    discountDate.value = date;
-    dateController.text = formatDateTime(date);
+    _discountDate.value = date;
+    dateController.text = _formatDateTime(date);
+    update(['discount']);
   }
-
-  bool validateDiscount() {
-    if (selectedProducts.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى اختيار منتجات أولاً',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+  
+  void setDiscountedPrice(double price) {
+    _discountedPrice.value = price;
+    update(['discount']);
+  }
+  
+  void setDiscountNote(String note) {
+    _discountNote.value = note;
+  }
+  
+  bool _validateDiscount() {
+    if (_selectedProducts.isEmpty) {
+      _showErrorSnackbar('يرجى اختيار منتجات أولاً');
       return false;
     }
-
-    if (discountedPrice.value <= 0) {
-      Get.snackbar(
-        'خطأ',
-        'يرجى إدخال سعر مخفض صحيح',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+    if (_discountedPrice.value <= 0) {
+      _showErrorSnackbar('يرجى إدخال سعر مخفض صحيح');
       return false;
     }
-
-    if (discountedPrice.value >= originalPrice.value) {
-      Get.snackbar(
-        'خطأ',
-        'السعر المخفض يجب أن يكون أقل من السعر الأصلي',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+    if (_discountedPrice.value >= _originalPrice.value) {
+      _showErrorSnackbar('السعر المخفض يجب أن يكون أقل من السعر الأصلي');
       return false;
     }
-
     return true;
   }
-
-  void saveCurrentState() {
-    savedSelectedProducts.assignAll(selectedProducts);
-    savedOriginalPrice.value = originalPrice.value;
-    print('💾 [RELATED] تم حفظ حالة المنتجات المختارة');
-  }
-
-  void restoreSavedState() {
-    selectedProducts.assignAll(savedSelectedProducts);
-    originalPrice.value = savedOriginalPrice.value;
-    print('↩️ [RELATED] تم استعادة حالة المنتجات المختارة');
-  }
-
+  
   void addDiscount() {
-    if (!validateDiscount()) return;
-
-    // حفظ نسخة من المنتجات المختارة
-    final productCopy = selectedProducts
-        .map(
-          (p) => Product(
-            id: p.id,
-            sku: p.sku,
-            name: p.name,
-            price: p.price,
-            shown: p.shown,
-            favoritesCount: p.favoritesCount,
-            messagesCount: p.messagesCount,
-            coverUrl: p.coverUrl,
-            // productCount: p.productCount,
-          ),
-        )
-        .toList();
-
+    if (!_validateDiscount()) return;
+    
     final newDiscount = ProductDiscount(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      originalPrice: originalPrice.value,
-      discountedPrice: discountedPrice.value,
-      note: discountNote.value,
-      date: discountDate.value,
-      productCount: selectedProducts.length,
-      products: productCopy,
+      originalPrice: _originalPrice.value,
+      discountedPrice: _discountedPrice.value,
+      note: _discountNote.value,
+      date: _discountDate.value,
+      productCount: _selectedProducts.length,
+      products: _selectedProducts.toList(),
     );
-
-    discounts.add(newDiscount);
-
+    
+    _discounts.add(newDiscount);
     clearDiscountFields();
-
-    print('✅ [RELATED] تم إضافة تخفيض جديد');
-    print('📊 [RELATED] المنتجات المرفقة: ${selectedProducts.length} منتج');
-
-    Get.snackbar(
-      'نجاح',
-      'تم إضافة التخفيض بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+    _showSuccessSnackbar('تم إضافة التخفيض بنجاح');
+    update(['discounts', 'summary']);
   }
-
+  
   void removeDiscount(ProductDiscount discount) {
-    discounts.removeWhere((d) => d.id == discount.id);
-
-    Get.snackbar(
-      'نجاح',
-      'تم حذف التخفيض بنجاح',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+    _discounts.removeWhere((d) => d.id == discount.id);
+    _showSuccessSnackbar('تم حذف التخفيض بنجاح');
+    update(['discounts', 'summary']);
   }
-
-  List<Product> getDiscountProducts(ProductDiscount discount) {
-    if (discount.products != null && discount.products!.isNotEmpty) {
-      return discount.products!;
-    }
-    return selectedProducts.toList();
-  }
-
-  double get totalSelectedPrice {
-    return selectedProducts.fold(0.0, (sum, product) {
-      final priceStr = product.price ?? '0';
-      final cleanPrice = priceStr.replaceAll(RegExp(r'[^0-9.]'), '');
-      return sum + (double.tryParse(cleanPrice) ?? 0.0);
-    });
-  }
-
-  int get selectedProductsCount => selectedProducts.length;
-
-  bool get hasSelectedProducts => selectedProducts.isNotEmpty;
-
-  bool get hasDiscount =>
-      discountedPrice.value > 0 && discountedPrice.value < originalPrice.value;
-
-  int get discountCount => discounts.length;
-
+  
   void clearDiscountFields() {
-    discountedPrice.value = 0.0;
-    discountNote.value = '';
+    _discountedPrice.value = 0.0;
+    _discountNote.value = '';
+    update(['discount']);
   }
-
-  // **الدوال الجديدة للربط مع ProductCentralController**
-
-  // الحصول على بيانات cross sell للمنتجات المختارة
+  
+  void linkToProductCentral() {
+    try {
+      if (Get.isRegistered<ProductCentralController>()) {
+        final productCentralController = Get.find<ProductCentralController>();
+        productCentralController.updateRelatedProductsFromRelatedController();
+        _showSuccessSnackbar('تم الربط بنجاح');
+      }
+    } catch (e) {
+      _showErrorSnackbar('خطأ في الربط');
+    }
+  }
+  
   Map<String, dynamic> getCrossSellData() {
-    if (selectedProducts.isEmpty) {
+    try {
+      print('🔗 [CROSS SELL] جلب بيانات المنتجات المختارة للتسويق المتقاطع');
+      print('🔗 [CROSS SELL] عدد المنتجات المختارة: ${_selectedProducts.length}');
+      
+      final List<int> productIds = _selectedProducts
+          .where((product) => product.id > 0)
+          .map((product) => product.id)
+          .toList();
+      
+      double crossSellPrice = _discountedPrice.value > 0
+          ? _discountedPrice.value
+          : _originalPrice.value;
+      
+      final DateTime dueDate = _discountDate.value;
+      final String formattedDueDate = '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}';
+      
+      final data = {
+        'crossSells': productIds,
+        'cross_sells_price': crossSellPrice,
+        'cross_sells_due_date': formattedDueDate,
+      };
+      
+      print('📊 [CROSS SELL] بيانات التسويق المتقاطع:');
+      print('   - Product IDs: $productIds');
+      print('   - Price: $crossSellPrice');
+      print('   - Due Date: $formattedDueDate');
+      
+      return data;
+    } catch (e) {
+      print('⚠️ [CROSS SELL] خطأ في جلب بيانات التسويق المتقاطع: $e');
       return {
         'crossSells': [],
         'cross_sells_price': 0.0,
         'cross_sells_due_date': '',
       };
     }
-
-    // إذا كان هناك تخفيضات مضافة
-    if (discounts.isNotEmpty) {
-      final latestDiscount = discounts.last;
-      return {
-        'crossSells': selectedProducts.map((p) => p.id).toList(),
-        'cross_sells_price': latestDiscount.discountedPrice,
-        'cross_sells_due_date': latestDiscount.date.toIso8601String().split(
-          'T',
-        )[0], // YYYY-MM-DD
-      };
-    }
-
-    // إذا لم يكن هناك تخفيضات، ارسل السعر الأصلي
-    return {
-      'crossSells': selectedProducts.map((p) => p.id).toList(),
-      'cross_sells_price': originalPrice.value,
-      'cross_sells_due_date': DateTime.now()
-          .add(const Duration(days: 30))
-          .toIso8601String()
-          .split('T')[0],
-    };
   }
-
-  // الحصول على المنتجات المختارة كقائمة معرفات
-  List<int> getSelectedProductIds() {
-    return selectedProducts.map((product) => product.id).toList();
+  
+  void refreshProducts() {
+    update(['products', 'selected', 'summary']);
   }
-
-  // الحصول على بيانات التخفيض النشط
-  Map<String, dynamic>? getActiveDiscountData() {
-    if (discounts.isEmpty) return null;
-    final discount = discounts.last;
-    return {'discountedPrice': discount.discountedPrice, 'date': discount.date};
+  
+  void clearSearch() {
+    searchController.clear();
+    _searchQuery.value = '';
+    _isSearching.value = false;
+    update(['products', 'search']);
   }
-
-  // الحصول على المنتجات المختارة بالتنسيق المناسب لـ ProductCentralController
-  List<Map<String, dynamic>> getFormattedSelectedProducts() {
-    return selectedProducts.map((product) {
-      return {
-        'id': product.id,
-        'name': product.name,
-        'price': product.price ?? '0',
-        'sku': product.sku,
-      };
-    }).toList();
+  
+  void _showErrorSnackbar(String message) {
+    Get.snackbar('خطأ', message,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2));
   }
-
-  // رابط مع ProductCentralController
-  void linkToProductCentral() {
-    try {
-      if (Get.isRegistered<ProductCentralController>()) {
-        final productCentralController = Get.find<ProductCentralController>();
-        productCentralController.updateRelatedProductsFromRelatedController();
-
-        print(
-          '🔗 [RELATED] تم ربط ${selectedProducts.length} منتج مع ProductCentralController',
-        );
-      } else {
-        print('⚠️ [RELATED] ProductCentralController غير مسجل');
-      }
-    } catch (e) {
-      print('❌ [RELATED] خطأ في الربط مع ProductCentralController: $e');
-    }
+  
+  void _showSuccessSnackbar(String message) {
+    Get.snackbar('نجاح', message,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2));
   }
-
+  
   @override
   void onClose() {
     dateController.dispose();
+    searchController.dispose();
     super.onClose();
   }
 }

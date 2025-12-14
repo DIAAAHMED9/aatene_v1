@@ -1,12 +1,10 @@
-import 'dart:ui';
-
 import 'package:get/get.dart';
 
 class ProductAttribute {
   final String id;
   final String name;
-  final RxList<AttributeValue> values;
-  final String? type; // إضافة حقل type
+  RxList<AttributeValue> values;
+  final String? type;
   final bool isRequired;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -19,7 +17,7 @@ class ProductAttribute {
     this.isRequired = false,
     this.createdAt,
     this.updatedAt,
-  }) : values = values.obs;
+  }) : values = RxList<AttributeValue>.from(values);
 
   factory ProductAttribute.fromApiJson(Map<String, dynamic> json) {
     final options = List<Map<String, dynamic>>.from(json['options'] ?? []);
@@ -28,7 +26,6 @@ class ProductAttribute {
       id: json['id'].toString(),
       name: json['title'] ?? 'بدون اسم',
       type: json['type'],
-      // قراءة type من الـAPI
       isRequired: json['is_required'] ?? false,
       values: options.map((option) {
         return AttributeValue(
@@ -47,17 +44,15 @@ class ProductAttribute {
   }
 
   factory ProductAttribute.fromJson(Map<String, dynamic> json) {
-    final valuesList = json['values'] != null
-        ? (json['values'] as List).map((value) {
-            return AttributeValue.fromJson(value);
-          }).toList()
-        : [];
+    final valuesList = (json['values'] as List?)?.map((value) {
+      return AttributeValue.fromJson(value);
+    }).toList() ?? [];
 
     return ProductAttribute(
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
       type: json['type'],
-      values: valuesList as List<AttributeValue>,
+      values: valuesList,
       isRequired: json['isRequired'] ?? false,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
@@ -72,7 +67,7 @@ class ProductAttribute {
     return {
       'id': id,
       'name': name,
-      'type': type, // إضافة type إلى الـJSON
+      'type': type,
       'values': values.map((value) => value.toJson()).toList(),
       'isRequired': isRequired,
       'createdAt': createdAt?.toIso8601String(),
@@ -80,20 +75,14 @@ class ProductAttribute {
     };
   }
 
-  String get displayName {
-    return name;
-  }
-
-  bool get hasSelectedValues {
-    return values.any((value) => value.isSelected.value);
-  }
-
-  List<String> get selectedValueNames {
-    return values
-        .where((value) => value.isSelected.value)
-        .map((value) => value.value)
-        .toList();
-  }
+  String get displayName => name;
+  
+  bool get hasSelectedValues => values.any((value) => value.isSelected.value);
+  
+  List<String> get selectedValueNames => values
+      .where((value) => value.isSelected.value)
+      .map((value) => value.value)
+      .toList();
 
   void clearSelection() {
     for (final value in values) {
@@ -107,7 +96,6 @@ class ProductAttribute {
     }
   }
 
-  // إضافة دالة copyWith
   ProductAttribute copyWith({
     String? id,
     String? name,
@@ -135,22 +123,32 @@ class AttributeValue {
   final RxBool isSelected;
   final String? colorCode;
   final String? imageUrl;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   AttributeValue({
     required this.id,
     required this.value,
-    required RxBool isSelected,
+    required this.isSelected,
     this.colorCode,
     this.imageUrl,
-  }) : isSelected = isSelected;
+    this.createdAt,
+    this.updatedAt,
+  });
 
   factory AttributeValue.fromJson(Map<String, dynamic> json) {
     return AttributeValue(
       id: json['id']?.toString() ?? '',
       value: json['value'] ?? '',
-      isSelected: (json['isSelected'] ?? false).obs,
+      isSelected: RxBool(json['isSelected'] ?? false),
       colorCode: json['colorCode'],
       imageUrl: json['imageUrl'],
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
     );
   }
 
@@ -161,6 +159,8 @@ class AttributeValue {
       'isSelected': isSelected.value,
       'colorCode': colorCode,
       'imageUrl': imageUrl,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -171,29 +171,23 @@ class AttributeValue {
     return value;
   }
 
-  Color? get color {
-    if (colorCode == null) return null;
-    try {
-      return Color(int.parse(colorCode!.replaceAll('#', '0xFF')));
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // إضافة دالة copyWith
   AttributeValue copyWith({
     String? id,
     String? value,
     RxBool? isSelected,
     String? colorCode,
     String? imageUrl,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return AttributeValue(
       id: id ?? this.id,
       value: value ?? this.value,
-      isSelected: isSelected ?? this.isSelected,
+      isSelected: isSelected ?? RxBool(this.isSelected.value),
       colorCode: colorCode ?? this.colorCode,
       imageUrl: imageUrl ?? this.imageUrl,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
@@ -206,6 +200,8 @@ class ProductVariation {
   final RxString sku;
   final RxBool isActive;
   final RxList<String> images;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   ProductVariation({
     required this.id,
@@ -215,12 +211,14 @@ class ProductVariation {
     required String sku,
     required bool isActive,
     required List<String> images,
-  }) : attributes = attributes.obs,
-       price = price.obs,
-       stock = stock.obs,
-       sku = sku.obs,
-       isActive = isActive.obs,
-       images = images.obs;
+    this.createdAt,
+    this.updatedAt,
+  }) : attributes = RxMap<String, String>.from(attributes),
+       price = RxDouble(price),
+       stock = RxInt(stock),
+       sku = RxString(sku),
+       isActive = RxBool(isActive),
+       images = RxList<String>.from(images);
 
   factory ProductVariation.fromJson(Map<String, dynamic> json) {
     return ProductVariation(
@@ -231,6 +229,12 @@ class ProductVariation {
       sku: json['sku']?.toString() ?? '',
       isActive: json['isActive'] ?? true,
       images: List<String>.from(json['images'] ?? []),
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
     );
   }
 
@@ -243,6 +247,8 @@ class ProductVariation {
       'sku': sku.value,
       'isActive': isActive.value,
       'images': images.toList(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -254,21 +260,18 @@ class ProductVariation {
     return attributeStrings.join(' | ');
   }
 
-  String get formattedPrice {
-    return '${price.value.toStringAsFixed(2)} ريال';
-  }
-
+  String get formattedPrice => '${price.value.toStringAsFixed(2)} ر.س';
+  
   String get stockStatus {
     if (stock.value <= 0) return 'غير متوفر';
     if (stock.value < 10) return 'كمية محدودة';
     return 'متوفر';
   }
-
+  
   bool get hasImages => images.isNotEmpty;
-
+  
   void toggleActive() => isActive.toggle();
 
-  // إضافة دالة copyWith
   ProductVariation copyWith({
     String? id,
     Map<String, String>? attributes,
@@ -277,6 +280,8 @@ class ProductVariation {
     String? sku,
     bool? isActive,
     List<String>? images,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ProductVariation(
       id: id ?? this.id,
@@ -286,6 +291,8 @@ class ProductVariation {
       sku: sku ?? this.sku.value,
       isActive: isActive ?? this.isActive.value,
       images: images ?? this.images.toList(),
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

@@ -16,12 +16,10 @@ import '../view/Services/data_lnitializer_service.dart';
 import '../view/Services/unified_loading_screen.dart' show UnifiedLoadingScreen;
 
 class CreateStoreController extends GetxController {
-  // المتحكمات والخدمات
   final MyAppController myAppController = Get.find<MyAppController>();
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   final GetStorage storage = GetStorage();
 
-  // المتحكمات
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -41,12 +39,10 @@ class CreateStoreController extends GetxController {
   final TextEditingController latController = TextEditingController();
   final TextEditingController lngController = TextEditingController();
 
-  // القوائم
   final RxList<Map<String, dynamic>> cities = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> districts = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> currencies = <Map<String, dynamic>>[].obs;
 
-  // القيم المحددة
   final RxString storeType = 'products'.obs;
   final RxString deliveryType = 'free'.obs;
   final RxString selectedCityName = 'اختر المدينة'.obs;
@@ -54,19 +50,16 @@ class CreateStoreController extends GetxController {
   final RxString selectedCurrencyName = 'اختر العملة'.obs;
   final RxBool hidePhone = false.obs;
 
-  // شركات الشحن
   final RxList<Map<String, dynamic>> shippingCompanies =
       <Map<String, dynamic>>[].obs;
   final RxList<int> locationCities = <int>[].obs;
   final RxList<int> serviceCities = <int>[].obs;
 
-  // الوسائط
   final RxList<MediaItem> selectedLogoMedia = <MediaItem>[].obs;
   final Rx<MediaItem?> primaryLogo = Rx<MediaItem?>(null);
   final RxList<MediaItem> selectedCoverMedia = <MediaItem>[].obs;
   final Rx<MediaItem?> primaryCover = Rx<MediaItem?>(null);
 
-  // حالات التحميل
   final RxBool isUploadingLogo = false.obs;
   final RxBool isUploadingCover = false.obs;
   final RxMap<String, bool> logoUploadingStates = <String, bool>{}.obs;
@@ -75,7 +68,6 @@ class CreateStoreController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxBool createStoreLoading = false.obs;
 
-  // حالة التعديل
   final RxInt editingStoreId = 0.obs;
   final RxBool isEditMode = false.obs;
 
@@ -109,10 +101,8 @@ class CreateStoreController extends GetxController {
       isLoading.value = true;
       print('🔄 [STORE] تحميل البيانات الأولية...');
 
-      // استخدام البيانات المخزنة أولاً
       await _loadCachedData();
 
-      // إذا كانت البيانات غير كافية، جلب من API
       if (cities.isEmpty || districts.isEmpty || currencies.isEmpty) {
         await _fetchDataFromApi();
       }
@@ -135,21 +125,18 @@ class CreateStoreController extends GetxController {
   }
 
   Future<void> _loadCachedData() async {
-    // تحميل المدن من التخزين
     final cachedCities = dataService.getCities();
     if (cachedCities.isNotEmpty) {
       cities.assignAll(List<Map<String, dynamic>>.from(cachedCities));
       print('✅ [STORE] تم تحميل ${cities.length} مدينة من التخزين المحلي');
     }
 
-    // تحميل المناطق من التخزين
     final cachedDistricts = dataService.getDistricts();
     if (cachedDistricts.isNotEmpty) {
       districts.assignAll(List<Map<String, dynamic>>.from(cachedDistricts));
       print('✅ [STORE] تم تحميل ${districts.length} منطقة من التخزين المحلي');
     }
 
-    // تحميل العملات من التخزين
     final cachedCurrencies = dataService.getCurrencies();
     if (cachedCurrencies.isNotEmpty) {
       currencies.assignAll(List<Map<String, dynamic>>.from(cachedCurrencies));
@@ -159,7 +146,6 @@ class CreateStoreController extends GetxController {
 
   Future<void> _fetchDataFromApi() async {
     try {
-      // جلب المدن من API
       if (cities.isEmpty) {
         final citiesResponse = await ApiHelper.getCities();
         if (citiesResponse != null && citiesResponse['status'] == true) {
@@ -170,7 +156,6 @@ class CreateStoreController extends GetxController {
         }
       }
 
-      // جلب المناطق من API
       if (districts.isEmpty) {
         final districtsResponse = await ApiHelper.getDistricts();
         if (districtsResponse != null && districtsResponse['status'] == true) {
@@ -181,7 +166,6 @@ class CreateStoreController extends GetxController {
         }
       }
 
-      // جلب العملات من API
       if (currencies.isEmpty) {
         final currenciesResponse = await ApiHelper.getCurrencies();
         if (currenciesResponse != null &&
@@ -222,18 +206,15 @@ class CreateStoreController extends GetxController {
     try {
       createStoreLoading.value = true;
 
-      // التحقق من الحقول الإلزامية
       if (!_validateBasicInfo()) {
         return false;
       }
 
-      // رفع الصور المحلية إذا وجدت
       final bool hasLocalImages = await _uploadLocalImagesIfNeeded();
       if (!hasLocalImages) {
         return false;
       }
 
-      // إعداد البيانات
       final Map<String, dynamic> data = _prepareBasicInfoData();
 
       print('📤 [STORE] تحديث البيانات الأساسية للمتجر: ${jsonEncode(data)}');
@@ -241,7 +222,6 @@ class CreateStoreController extends GetxController {
       final response = await ApiHelper.updateStore(editingStoreId.value, data);
 
       if (response != null && response['status'] == true) {
-        // تحديث التخزين المحلي
         await dataService.refreshStores();
 
         Get.snackbar(
@@ -305,7 +285,6 @@ class CreateStoreController extends GetxController {
 
       bool allUploaded = true;
 
-      // رفع صور الشعار المحلية
       for (int i = 0; i < selectedLogoMedia.length; i++) {
         final media = selectedLogoMedia[i];
         if (media.isLocal == true && media.path.isNotEmpty) {
@@ -314,7 +293,6 @@ class CreateStoreController extends GetxController {
         }
       }
 
-      // رفع صور الغلاف المحلية
       for (int i = 0; i < selectedCoverMedia.length; i++) {
         final media = selectedCoverMedia[i];
         if (media.isLocal == true && media.path.isNotEmpty) {
@@ -421,10 +399,8 @@ class CreateStoreController extends GetxController {
         : addressController.text.trim();
     data['currency_id'] = int.tryParse(currencyIdController.text.trim()) ?? 2;
 
-    // إضافة بيانات الشبكات الاجتماعية إذا كانت موجودة
     _addSocialMediaData(data);
 
-    // إزالة الحقول الفارغة
     data.removeWhere((key, value) {
       if (value == null) return true;
       if (value is String && value.isEmpty) return true;
@@ -486,18 +462,15 @@ class CreateStoreController extends GetxController {
     try {
       createStoreLoading.value = true;
 
-      // التحقق من صحة البيانات
       if (!_validateCompleteStoreData()) {
         return false;
       }
 
-      // رفع الصور المحلية إذا وجدت
       final bool hasLocalImages = await _uploadLocalImagesIfNeeded();
       if (!hasLocalImages) {
         return false;
       }
 
-      // إعداد البيانات الكاملة
       final Map<String, dynamic> data = _prepareCompleteStoreData();
 
       print('📤 [STORE] البيانات النهائية المرسلة للخادم: ${jsonEncode(data)}');
@@ -518,15 +491,12 @@ class CreateStoreController extends GetxController {
       if (response != null && response['status'] == true) {
         print('✅ [STORE] استجابة الخادم: ${jsonEncode(response)}');
 
-        // تحديث التخزين المحلي
         await dataService.refreshStores();
 
-        // تحديث قائمة المتاجر في شاشة إدارة المتاجر
         if (Get.isRegistered<ManageAccountStoreController>()) {
           Get.find<ManageAccountStoreController>().loadStores();
         }
 
-        // عرض رسالة النجاح
         Get.snackbar(
           '🎉 نجاح',
           isEditMode.value ? 'تم تحديث المتجر بنجاح' : 'تم إنشاء المتجر بنجاح',
@@ -535,7 +505,6 @@ class CreateStoreController extends GetxController {
           duration: const Duration(seconds: 3),
         );
 
-        // إعادة تعيين البيانات
         resetData();
         return true;
       } else {
@@ -559,7 +528,6 @@ class CreateStoreController extends GetxController {
   }
 
   bool _validateCompleteStoreData() {
-    // التحقق من الحقول الإلزامية
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         phoneController.text.isEmpty ||
@@ -574,7 +542,6 @@ class CreateStoreController extends GetxController {
       return false;
     }
 
-    // التحقق من صحة البريد الإلكتروني
     if (!emailController.text.contains('@')) {
       Get.snackbar(
         'خطأ',
@@ -585,7 +552,6 @@ class CreateStoreController extends GetxController {
       return false;
     }
 
-    // التحقق من شركات الشحن إذا كان النوع shipping
     if (deliveryType.value == 'shipping') {
       if (shippingCompanies.isEmpty) {
         Get.snackbar(
@@ -648,10 +614,8 @@ class CreateStoreController extends GetxController {
       data['cover'] = coverPaths;
     }
 
-    // إضافة بيانات الشبكات الاجتماعية
     _addSocialMediaData(data);
 
-    // إعداد شركات الشحن إذا كان النوع shipping
     if (deliveryType.value == 'shipping' && shippingCompanies.isNotEmpty) {
       _prepareShippingCompaniesData(data);
     }

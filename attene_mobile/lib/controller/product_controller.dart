@@ -47,7 +47,6 @@ class ProductCentralController extends GetxController {
     print('🔄 [PRODUCT CENTRAL] تهيئة متحكم المنتجات المركزي');
     loadCachedCategories();
     
-    // مراقبة تغييرات البيانات الرئيسية
     ever(productName, (_) => _checkProductReadiness());
     ever(productDescription, (_) => _checkProductReadiness());
     ever(price, (_) => _checkProductReadiness());
@@ -169,7 +168,6 @@ if(section!=null){
 
 }
  
-  
     print('''
 📦 [PRODUCT] تحديث المعلومات الأساسية:
    الاسم: $name
@@ -271,11 +269,10 @@ if(section!=null){
     try {
       isSubmitting(true);
       
-      // التحقق من وجود قسم
       if (!isSectionSelected()) {
         print('❌ [PRODUCT] فشل: لم يتم اختيار قسم للمنتج');
         return {
-          'success': false, 
+          'success': false,
           'message': 'يجب اختيار قسم للمنتج قبل الإرسال'
         };
       }
@@ -315,10 +312,8 @@ if(section!=null){
         final product = response['data']?[0];
         print('✅ [PRODUCT] تم إنشاء المنتج بنجاح: ${product?['name']}');
         
-        // تحديث البيانات المحلية
         await dataService.refreshProducts();
         
-        // إشعار جميع المتحكمين بتحديث المنتجات
         _notifyProductUpdate();
         
         resetAfterSuccess(variationController);
@@ -338,7 +333,6 @@ if(section!=null){
   }
   
   Future<Map<String, dynamic>> prepareProductData(List<Map<String, dynamic>> variationsData) async {
-    // تأكد من وجود قسم
     if (selectedSection.value == null || selectedSection.value!.id == null) {
       throw Exception('القسم غير محدد. يرجى اختيار قسم للمنتج.');
     }
@@ -382,7 +376,7 @@ if(section!=null){
     if (crossSellData['crossSells'] != null && (crossSellData['crossSells'] as List).isNotEmpty) {
       productData['cross_sells_price'] = crossSellData['cross_sells_price'] ?? 0.0;
       
-      if (crossSellData['cross_sells_due_date'] != null && 
+      if (crossSellData['cross_sells_due_date'] != null &&
           (crossSellData['cross_sells_due_date'] as String).isNotEmpty) {
         productData['cross_sells_due_date'] = crossSellData['cross_sells_due_date'];
       } else {
@@ -566,8 +560,8 @@ if(section!=null){
     final variationController = Get.find<ProductVariationController>();
     
     try {
-      final relatedProductsCount = Get.isRegistered<RelatedProductsController>() 
-          ? Get.find<RelatedProductsController>().selectedProductsCount 
+      final relatedProductsCount = Get.isRegistered<RelatedProductsController>()
+          ? Get.find<RelatedProductsController>().selectedProductsCount
           : 0;
       
       print('''
@@ -616,26 +610,21 @@ if(section!=null){
     }
   }
   
-  // دالة جديدة لتحديث القسم مباشرة (للإستخدام من الخارج)
   void setSectionDirectly(Section section) {
     selectedSection(section);
     print('🎯 [PRODUCT] تم تعيين القسم مباشرة: ${section.name} (ID: ${section.id})');
     _checkProductReadiness();
   }
   
-  // دالة جديدة لإشعار المتحكمين بتحديث المنتجات
   void _notifyProductUpdate() {
     try {
-      // تحديث DataInitializerService
       dataService.refreshProducts();
       
-      // إذا كان ProductController موجود، قم بتحديثه
       if (Get.isRegistered<ProductController>()) {
         final productController = Get.find<ProductController>();
         productController.notifyProductsUpdated();
       }
       
-      // إشعار BottomSheetController
       if (Get.isRegistered<BottomSheetController>()) {
         final bottomSheetController = Get.find<BottomSheetController>();
         bottomSheetController.notifySectionsUpdated();
@@ -705,7 +694,6 @@ if(section!=null){
     return category['name']?.toString() ?? 'غير محدد';
   }
   
-  // دالة للتحقق من صحة بيانات المنتج قبل الإرسال
   Map<String, dynamic> validateProductData() {
     final errors = <String>[];
     
@@ -724,7 +712,6 @@ if(section!=null){
     };
   }
   
-  // دالة للحصول على ملخص البيانات
   Map<String, dynamic> getProductSummary() {
     return {
       'productName': productName.value,

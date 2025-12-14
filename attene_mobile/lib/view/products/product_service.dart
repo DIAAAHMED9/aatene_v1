@@ -8,11 +8,9 @@ class ProductService extends GetxService {
   static ProductService get to => Get.find();
   final GetStorage _storage = GetStorage();
   
-  // Cache keys
   static const String _productsCacheKey = 'cached_products';
   static const String _productsTimestampKey = 'products_timestamp';
   
-  // Cache duration (1 hour)
   static const Duration _cacheDuration = Duration(hours: 1);
   final RxBool _productsUpdated = false.obs;
   
@@ -33,10 +31,8 @@ class ProductService extends GetxService {
       if (response != null && response['status'] == true) {
         final product = Product.fromJson(response['data']);
         
-        // إضافة إلى الكاش
         _addProductToCache(product);
         
-        // إشعار بالتحديث
         notifyProductsUpdated();
         
         return product;
@@ -50,7 +46,6 @@ class ProductService extends GetxService {
   
   Future<List<Product>> fetchProducts({bool forceRefresh = false}) async {
     try {
-      // Check cache first if not forcing refresh
       if (!forceRefresh) {
         final cachedProducts = _getCachedProducts();
         if (cachedProducts.isNotEmpty && !_isCacheExpired()) {
@@ -70,7 +65,6 @@ class ProductService extends GetxService {
         final List<dynamic> data = response['data'] ?? [];
         final products = data.map((product) => Product.fromJson(product)).toList();
         
-        // Cache the products
         _cacheProducts(products);
         
         return products;
@@ -80,7 +74,6 @@ class ProductService extends GetxService {
     } catch (e) {
       print('❌ [PRODUCT SERVICE] Error fetching products: $e');
       
-      // Return cached products as fallback
       final cachedProducts = _getCachedProducts();
       if (cachedProducts.isNotEmpty) {
         print('📂 [PRODUCT SERVICE] Using cached products as fallback');
@@ -115,10 +108,8 @@ class ProductService extends GetxService {
       );
       
       if (response != null && response['status'] == true) {
-        // Remove from cache
         _removeProductFromCache(productId);
         
-        // Notify update
         notifyProductsUpdated();
         
         return true;
@@ -140,10 +131,8 @@ class ProductService extends GetxService {
       if (response != null && response['status'] == true) {
         final product = Product.fromJson(response['data']);
         
-        // Update in cache
         _updateProductInCache(product);
         
-        // Notify update
         notifyProductsUpdated();
         
         return product;
@@ -159,7 +148,6 @@ class ProductService extends GetxService {
     try {
       final response = await ApiHelper.get(
         path: '/merchants/products/search',
-        // queryParams: {'query': query},
         withLoading: false,
       );
       
@@ -174,7 +162,6 @@ class ProductService extends GetxService {
     }
   }
   
-  // Cache management methods
   List<Product> _getCachedProducts() {
     try {
       final cachedData = _storage.read(_productsCacheKey);

@@ -46,21 +46,15 @@ class AppBindings extends Bindings {
     if (_initialized) return;
     print('🔄 [APP BINDINGS] تسجيل المتحكمات...');
     
-    // 1. GetStorage أولاً
     Get.lazyPut(() => GetStorage(), fenix: true);
     
-    // 2. MyAppController بدون أي اعتماد على DataInitializerService
     Get.lazyPut(() => MyAppController(), fenix: true);
     
-    // 3. الخدمات الأخرى
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
     
-    // 4. تأخير تسجيل DataInitializerService حتى يكتمل تحميل التطبيق
-    // يتم تسجيله فقط عندما يُطلب
     Get.lazyPut(() => DataInitializerService(), fenix: true);
     
-    // 5. المتحكمات الأخرى
     Get.lazyPut(() => BottomSheetController(), fenix: true);
     Get.lazyPut(() => CreateStoreController(), fenix: true);
     Get.lazyPut(()=> DataSyncService(), fenix: true);

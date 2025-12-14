@@ -58,7 +58,7 @@ class BottomSheetController extends GetxController {
     RxBool get sectionsUpdated => _sectionsUpdated;
   RxBool get attributesUpdated => _attributesUpdated;
   final _sectionSearchController = StreamController<String>.broadcast();
-  late MyAppController myAppController; // تأجيل التهيئة
+  late MyAppController myAppController;
 final RxList<ProductAttribute> _selectedAttributesRx = <ProductAttribute>[].obs;
 RxList<ProductAttribute> get selectedAttributesRx => _selectedAttributesRx;
 void updateSelectedAttributes(List<ProductAttribute> attributes) {
@@ -66,7 +66,6 @@ void updateSelectedAttributes(List<ProductAttribute> attributes) {
   _selectedAttributesRx.assignAll(attributes);
   print('✅ [SELECTED ATTRIBUTES UPDATED]: ${attributes.length} سمات');
 }
-// أضف هذه الدالة إلى BottomSheetController
 void updateSelectedSectionInBottomSheet(Section section) {
   _selectedSection.value = section;
   _selectedSectionName.value = section.name;
@@ -75,7 +74,6 @@ void updateSelectedSectionInBottomSheet(Section section) {
 }
   void notifySectionsUpdated() {
     _sectionsUpdated(true);
-    // إعادة التعيين بعد فترة قصيرة
     Future.delayed(const Duration(milliseconds: 100), () => _sectionsUpdated(false));
     print('📢 [BOTTOM SHEET] تم إشعار تحديث الأقسام');
   }
@@ -86,7 +84,6 @@ void updateSelectedSectionInBottomSheet(Section section) {
     print('📢 [BOTTOM SHEET] تم إشعار تحديث السمات');
   }
   
-  // في دالة addSection بعد النجاح
   Future<bool> addSection(String name) async {
     try {
       _isLoadingSections(true);
@@ -100,7 +97,6 @@ void updateSelectedSectionInBottomSheet(Section section) {
       if (response != null && response['status'] == true) {
         await loadSections();
         
-        // إشعار بتحديث الأقسام
         notifySectionsUpdated();
         
         return true;
@@ -116,7 +112,6 @@ void updateSelectedSectionInBottomSheet(Section section) {
     }
   }
   
-  // في دالة deleteSection بعد النجاح
   Future<bool> deleteSection(int sectionId) async {
     try {
       _isLoadingSections(true);
@@ -129,7 +124,6 @@ void updateSelectedSectionInBottomSheet(Section section) {
       if (response != null && response['status'] == true) {
         await loadSections();
         
-        // إشعار بتحديث الأقسام
         notifySectionsUpdated();
         
         return true;
@@ -219,7 +213,6 @@ Future<void> _loadAttributesFromApi() async {
   try {
     print('📡 [BOTTOM SHEET] محاولة تحميل السمات...');
     
-    // التحقق من تسجيل الدخول أولاً
     if (!_isUserAuthenticated()) {
       print('⚠️ [BOTTOM SHEET] المستخدم غير مسجل دخول، تخطي تحميل السمات');
       return;
@@ -327,71 +320,15 @@ bool _isUserAuthenticated() {
     return _sections.toList();
   }
 
-  // Future<bool> addSection(String name) async {
-  //   try {
-  //     _isLoadingSections(true);
-      
-  //     final response = await ApiHelper.post(
-  //       path: '/merchants/sections',
-  //       body: {'name': name, 'status': 'active'},
-  //       withLoading: true,
-  //     );
-      
-  //     if (response != null && response['status'] == true) {
-  //       await loadSections();
-  //       return true;
-  //     } else {
-  //       _sectionsErrorMessage.value = response?['message'] ?? 'فشل في إضافة القسم';
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     _sectionsErrorMessage.value = 'خطأ في إضافة القسم: ${e.toString()}';
-  //     return false;
-  //   } finally {
-  //     _isLoadingSections(false);
-  //   }
-  // }
-
-  // Future<bool> deleteSection(int sectionId) async {
-  //   try {
-  //     _isLoadingSections(true);
-      
-  //     final response = await ApiHelper.delete(
-  //       path: '/merchants/sections/$sectionId',
-  //       withLoading: true,
-  //     );
-      
-  //     if (response != null && response['status'] == true) {
-  //       await loadSections();
-  //       if (_selectedSection.value?.id == sectionId) {
-  //         _selectedSection.value = null;
-  //         _selectedSectionName.value = '';
-  //       }
-  //       return true;
-  //     } else {
-  //       _sectionsErrorMessage.value = response?['message'] ?? 'فشل في حذف القسم';
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     _sectionsErrorMessage.value = 'خطأ في حذف القسم: ${e.toString()}';
-  //     return false;
-  //   } finally {
-  //     _isLoadingSections(false);
-  //   }
-  // }
-
-// في BottomSheetController
 void selectSection(Section section) {
   _selectedSection.value = section;
   _selectedSectionName.value = section.name;
   
-  // تمرير القسم المختار إلى ProductCentralController
   final productController = Get.find<ProductCentralController>();
   productController.updateSelectedSection(section);
   
   print('✅ [SECTION SELECTED]: ${section.name} (ID: ${section.id})');
   
-  // طباعة للتأكد من وصول البيانات
   print('''
 📋 [SECTION DATA PASSED TO PRODUCT CONTROLLER]:
    Section ID: ${section.id}
@@ -400,7 +337,6 @@ void selectSection(Section section) {
 ''');
 }
 
-// في BottomSheetController
 void openAddProductScreen() {
   if (!_isUserAuthenticated()) {
     _showLoginRequiredMessage();
@@ -420,7 +356,6 @@ void openAddProductScreen() {
     return;
   }
 
-  // الحصول على القسم المختار وتمريره
   final selectedSection = _selectedSection.value;
   final productController = Get.find<ProductCentralController>();
   
@@ -442,8 +377,6 @@ void openAddProductScreen() {
       section.name.toLowerCase() == _newSectionName.value.trim().toLowerCase()
     );
   }
-
-
 
   void _showLoginRequiredMessage() {
     Get.snackbar(

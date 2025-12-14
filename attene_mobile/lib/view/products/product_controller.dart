@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:attene_mobile/controller/product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -14,17 +15,15 @@ import 'product_service.dart';
 
 class ProductController extends GetxController with SingleGetTickerProviderMixin {
   
-  // Dependencies
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   final MyAppController myAppController = Get.find<MyAppController>();
   final BottomSheetController bottomSheetController = Get.find<BottomSheetController>();
   final ProductService productService = Get.find<ProductService>();
+  final  productCentralController = Get.find<ProductCentralController>();
   
-  // Controllers
   TabController? _tabController;
   TabController get tabController {
-    // If controller is null or length doesn't match tabs, recreate it
-    if (_tabController == null || 
+    if (_tabController == null ||
         _tabController!.length != tabs.length ||
         _tabController!.index >= tabs.length) {
       _createTabController();
@@ -34,7 +33,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   
   final TextEditingController searchTextController = TextEditingController();
   
-  // Rx Variables
   final RxInt currentTabIndex = 0.obs;
   final RxString searchQuery = ''.obs;
   final RxList<TabData> tabs = <TabData>[].obs;
@@ -51,17 +49,14 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   final RxList<String> _selectedProductIds = <String>[].obs;
   final RxBool _isSelectionMode = false.obs;
   
-  // UI Update Management
   final RxBool _shouldUpdateUI = false.obs;
   Timer? _uiUpdateTimer;
   final RxBool _isTabControllerReady = false.obs;
   final RxBool _isDisposed = false.obs;
   
-  // Timers for debouncing
   Timer? _searchDebounceTimer;
   Timer? _tabChangeTimer;
   
-  // Cache timestamp
   DateTime? _lastDataFetchTime;
   
   @override
@@ -69,15 +64,13 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     super.onInit();
     print('🚀 [PRODUCT CONTROLLER] onInit called');
     
-    // Initialize tab controller first
     _initializeDefaultTabs();
     _createTabController();
     
-    // Setup listeners
     _setupListeners();
     
-    // Check if we should initialize
     _checkAndInitialize();
+    productCentralController.loadCategories();
   }
   
   @override
@@ -85,10 +78,8 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     super.onReady();
     print('✅ [PRODUCT CONTROLLER] onReady called');
     
-    // Mark tab controller as ready
     _isTabControllerReady.value = true;
     
-    // تأخير بسيط للتأكد من أن كل شيء جاهز
     Future.delayed(const Duration(milliseconds: 500), () {
       if (myAppController.isLoggedIn.value && !_isInitialized.value) {
         _initializeProductController();
@@ -106,7 +97,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   }
   
   void _createTabController() {
-    // Dispose old controller if exists
     if (_tabController != null) {
       if (_tabController!.hasListeners) {
         _tabController!.removeListener(_handleTabChange);
@@ -118,8 +108,7 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     }
     
-    // Create new controller
-    final initialIndex = tabs.isNotEmpty 
+    final initialIndex = tabs.isNotEmpty
         ? currentTabIndex.value.clamp(0, tabs.length - 1)
         : 0;
     
@@ -143,7 +132,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   void _setupListeners() {
     print('🎯 [PRODUCT CONTROLLER] Setting up listeners');
     
-    // Auth listener
     ever(myAppController.isLoggedIn, (bool isLoggedIn) {
       if (_isDisposed.value) return;
       print('🔐 [PRODUCT CONTROLLER] Auth state changed: $isLoggedIn');
@@ -154,7 +142,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
     
-    // Sections data listener
     ever(bottomSheetController.sectionsRx, (List<Section> sections) {
       if (_isDisposed.value) return;
       print('📊 [PRODUCT CONTROLLER] Sections updated: ${sections.length} sections');
@@ -164,7 +151,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
     
-    // Search query listener
     ever(searchQuery, (_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_isDisposed.value) return;
@@ -172,7 +158,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       });
     });
     
-    // Products listener
     ever(_products, (List<Product> products) {
       if (_isDisposed.value) return;
       print('📈 [PRODUCT CONTROLLER] Products list updated: ${products.length} products');
@@ -183,18 +168,15 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       _safeUpdateUI();
     });
     
-    // Tabs listener - IMPORTANT: Recreate tab controller when tabs change
     ever(tabs, (List<TabData> tabsList) {
       if (_isDisposed.value) return;
       print('📊 [PRODUCT CONTROLLER] Tabs updated to ${tabsList.length} tabs');
       
-      // Only recreate if needed and not currently updating
       if (!_isUpdatingTabs.value) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_isDisposed.value || !_isInitialized.value) return;
           
           try {
-            // Check if we really need to recreate
             if (_tabController == null || _tabController!.length != tabsList.length) {
               _createTabController();
               _isTabControllerReady.value = true;
@@ -228,15 +210,12 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     try {
       _isInitialized.value = true;
       
-      // Load cached data first for immediate display
       await _loadCachedProducts();
       
-      // Update tabs with sections
       if (bottomSheetController.sections.isNotEmpty) {
         _updateTabsWithSections();
       }
       
-      // Load fresh data from API
       await _loadProducts();
       
       print('✅ [PRODUCT CONTROLLER] Initialization completed successfully');
@@ -275,7 +254,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       if (!_tabController!.indexIsChanging) {
         final newIndex = _tabController!.index;
         if (newIndex != currentTabIndex.value) {
-          // Debounce the tab change
           if (_tabChangeTimer?.isActive ?? false) {
             _tabChangeTimer?.cancel();
           }
@@ -315,7 +293,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   Future<void> _loadProducts({bool forceRefresh = false}) async {
     print('📡 [PRODUCT CONTROLLER] Loading products, forceRefresh: $forceRefresh');
     
-    // Check if we need to refresh (more than 30 seconds since last fetch)
     final now = DateTime.now();
     if (!forceRefresh && _lastDataFetchTime != null) {
       final difference = now.difference(_lastDataFetchTime!);
@@ -354,17 +331,14 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         
         print('✅ [PRODUCT CONTROLLER] API returned ${newProducts.length} products');
         
-        // Update products list
         _products.assignAll(newProducts);
         _filteredProducts.assignAll(_products);
         
         _updateProductsCountBySection();
         _groupProductsBySection();
         
-        // Update data service cache
         await dataService.refreshProducts();
         
-        // Update tabs
         _updateTabsWithSections();
         
         print('🎉 [PRODUCT CONTROLLER] Products loaded successfully');
@@ -416,7 +390,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         if (needsUpdate) {
           print('📊 [PRODUCT CONTROLLER] Updating tabs: ${updatedTabs.length} tabs');
           
-          // Use assignAll to trigger the listener once
           tabs.assignAll(updatedTabs);
         }
       } catch (e) {
@@ -524,8 +497,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     _scheduleUIUpdate();
   }
   
-  // ========== PUBLIC METHODS ==========
-  
   Future<void> refreshProducts({bool showLoading = true}) async {
     print('🔄 [PRODUCT CONTROLLER] Manual refresh triggered');
     await _performLoadProducts();
@@ -596,7 +567,7 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   void sortProducts(String sortBy, {bool ascending = true}) {
     switch (sortBy) {
       case 'name':
-        _products.sort((a, b) => ascending 
+        _products.sort((a, b) => ascending
             ? a.name.compareTo(b.name)
             : b.name.compareTo(a.name));
         break;
@@ -604,7 +575,7 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         _products.sort((a, b) {
           final priceA = double.tryParse(a.price ?? '0') ?? 0;
           final priceB = double.tryParse(b.price ?? '0') ?? 0;
-          return ascending 
+          return ascending
               ? priceA.compareTo(priceB)
               : priceB.compareTo(priceA);
         });
@@ -770,17 +741,17 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       return _filteredProducts.toList();
     } else if (tabIndex == 1) {
       return _filteredProducts.where((product) {
-        return false; // Filter for offers
+        return false;
       }).toList();
     } else if (tabIndex == 2) {
       return _filteredProducts.where((product) {
-        return int.tryParse(product.messagesCount ?? '0') != null && 
+        return int.tryParse(product.messagesCount ?? '0') != null &&
                int.tryParse(product.messagesCount!)! > 0;
       }).toList();
     } else if (tabIndex >= 3) {
       final sectionTab = tabs[tabIndex];
       if (sectionTab.sectionId != null) {
-        return _filteredProducts.where((product) => 
+        return _filteredProducts.where((product) =>
             product.sectionId == sectionTab.sectionId.toString()
         ).toList();
       }
@@ -788,7 +759,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     return [];
   }
   
-  // Bottom sheet methods
   void openFilter() => bottomSheetController.openFilter();
   void openSort() => bottomSheetController.openSort();
   void openMultiSelect() => bottomSheetController.openMultiSelect();
@@ -802,12 +772,10 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     
     _isDisposed.value = true;
     
-    // Cancel all timers
     _searchDebounceTimer?.cancel();
     _uiUpdateTimer?.cancel();
     _tabChangeTimer?.cancel();
     
-    // Remove listeners and dispose controllers
     if (_tabController != null) {
       if (_tabController!.hasListeners) {
         _tabController!.removeListener(_handleTabChange);
@@ -825,8 +793,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     super.onClose();
     print('✅ [PRODUCT CONTROLLER] Controller closed successfully');
   }
-  
-  // ========== GETTERS ==========
   
   bool get isControllerDisposed => _isDisposed.value;
   bool get isControllerInitialized => _isInitialized.value;

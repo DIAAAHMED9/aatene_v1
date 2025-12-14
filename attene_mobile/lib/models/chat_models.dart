@@ -30,8 +30,8 @@ class ChatConversation {
       id: json['id'] ?? 0,
       name: json['name'],
       lastMessage: json['last_message'],
-      lastMessageTime: json['last_message_time'] != null 
-          ? DateTime.parse(json['last_message_time']) 
+      lastMessageTime: json['last_message_time'] != null
+          ? DateTime.parse(json['last_message_time'])
           : null,
       avatar: json['avatar'],
       isOnline: json['is_online'] ?? false,
@@ -63,7 +63,7 @@ class ChatConversation {
 class ChatMessage {
   final int id;
   final String content;
-  final String messageType; // 'sender' or 'receiver'
+  final String messageType;
   final DateTime timestamp;
   final bool isRead;
   final int? conversationId;
@@ -86,8 +86,8 @@ class ChatMessage {
       id: json['id'] ?? 0,
       content: json['content'] ?? '',
       messageType: json['message_type'] ?? 'receiver',
-      timestamp: json['timestamp'] != null 
-          ? DateTime.parse(json['timestamp']) 
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'])
           : DateTime.now(),
       isRead: json['is_read'] ?? false,
       conversationId: json['conversation_id'],
@@ -128,8 +128,8 @@ class ChatBlock {
       id: json['id'] ?? 0,
       blockedType: json['blocked_type'] ?? 'user',
       blockedId: json['blocked_id'] ?? 0,
-      blockedAt: json['blocked_at'] != null 
-          ? DateTime.parse(json['blocked_at']) 
+      blockedAt: json['blocked_at'] != null
+          ? DateTime.parse(json['blocked_at'])
           : DateTime.now(),
     );
   }

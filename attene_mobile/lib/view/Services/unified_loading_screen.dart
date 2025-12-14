@@ -19,7 +19,6 @@ class UnifiedLoadingScreen {
     Color? progressColor,
     String? dialogId,
   }) {
-    // التحقق من تسجيل AppLifecycleManager أولاً
     if (!Get.isRegistered<AppLifecycleManager>()) {
       print('⚠️ [LOADING] AppLifecycleManager غير مسجل، تخطي التحقق');
       _showDialogInternal(
@@ -162,7 +161,6 @@ class UnifiedLoadingScreen {
       },
     );
 
-    // تخزين الاشتراك للإلغاء عند الإغلاق
     Get.find<StreamSubscription<double>?>()?.cancel();
     Get.put(subscription, permanent: false);
   }

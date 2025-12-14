@@ -1,4 +1,3 @@
-// lib/utils/app_lifecycle_manager.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,7 +62,6 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   
   void _onAppHidden() {
     print('🙈 [LIFECYCLE] التطبيق مخفي');
-    // حفظ البيانات عندما يكون التطبيق مخفيًا
     _saveDataBeforePause();
   }
   
@@ -77,7 +75,6 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
       final myAppController = Get.find<MyAppController>();
       if (myAppController.isLoggedIn.value) {
         print('🔄 [LIFECYCLE] إعادة تحميل البيانات بعد استئناف التطبيق');
-        // إعادة تحميل البيانات المهمة
         _refreshCriticalData();
       }
     } catch (e) {
@@ -88,8 +85,6 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   Future<void> _refreshCriticalData() async {
     try {
       print('🔄 [LIFECYCLE] تحديث البيانات الحرجة...');
-      // يمكنك إضافة تحديث للبيانات المهمة هنا
-      // مثل تحديث حالة المستخدم، التوكن، الإشعارات
     } catch (e) {
       print('⚠️ [LIFECYCLE] خطأ في تحديث البيانات: $e');
     }
@@ -99,13 +94,11 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
     try {
       print('💾 [LIFECYCLE] حفظ البيانات قبل توقف التطبيق');
       
-      // حفظ بيانات المستخدم المهمة
       final myAppController = Get.find<MyAppController>();
       if (myAppController.isLoggedIn.value) {
         await myAppController.saveUserPreferences();
       }
       
-      // حفظ بيانات التطبيق الأخرى
       await _saveAppState();
       
     } catch (e) {
@@ -115,7 +108,6 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   
   Future<void> _saveAppState() async {
     try {
-      // حفظ إعدادات التطبيق الحالية
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('last_active_time', DateTime.now().toIso8601String());
       print('💾 [LIFECYCLE] تم حفظ حالة التطبيق');
@@ -125,14 +117,13 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   }
   
   bool get isAppActive => _currentState.value == AppLifecycleState.resumed;
-  bool get isAppBackground => 
+  bool get isAppBackground =>
       _currentState.value == AppLifecycleState.paused ||
       _currentState.value == AppLifecycleState.inactive ||
       _currentState.value == AppLifecycleState.hidden;
   
   AppLifecycleState get currentState => _currentState.value;
   
-  // دالة مساعدة للتحقق مما إذا كان يمكن عرض الـdialogs
   bool get canShowDialogs {
     return _currentState.value == AppLifecycleState.resumed &&
            Get.context != null &&

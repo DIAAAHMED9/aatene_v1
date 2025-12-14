@@ -18,10 +18,9 @@ class CustomAppBarWithTabs extends StatelessWidget
     required this.isRTL,
   }) : super(key: key);
 
-  // Helper methods for responsive design
   bool _isMobile(BuildContext context) => MediaQuery.of(context).size.width < 768;
-  bool _isTablet(BuildContext context) => 
-      MediaQuery.of(context).size.width >= 768 && 
+  bool _isTablet(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 768 &&
       MediaQuery.of(context).size.width < 1024;
   bool _isDesktop(BuildContext context) => MediaQuery.of(context).size.width >= 1024;
 
@@ -39,12 +38,10 @@ class CustomAppBarWithTabs extends StatelessWidget
       baseHeight = 180;
     }
     
-    // Add height for tabs if shown
     if (config.showTabs && (config.tabs?.isNotEmpty ?? false)) {
       baseHeight += _getTabBarHeight(context);
     }
     
-    // Add height for search if shown
     if (config.showSearch) {
       baseHeight += _getSearchFieldHeight(context) + 16;
     }
@@ -59,7 +56,7 @@ class CustomAppBarWithTabs extends StatelessWidget
         top: _isMobile(context) ? 0 : 8,
         bottom: _isMobile(context) ? 8 : 12,
       ),
-      padding: EdgeInsets.zero, // إزالة الـ padding الأفقية
+      padding: EdgeInsets.zero,
       decoration: _buildBoxDecoration(context),
       child: SafeArea(
         child: Column(
@@ -72,7 +69,6 @@ class CustomAppBarWithTabs extends StatelessWidget
 
   List<Widget> _buildAppBarContent(BuildContext context) {
     final List<Widget> children = [
-      // إضافة padding فقط للجزء العلوي مع العناوين
       Padding(
         padding: EdgeInsets.symmetric(
           horizontal: _isMobile(context) ? 12 : _isTablet(context) ? 20 : 28,
@@ -90,7 +86,6 @@ class CustomAppBarWithTabs extends StatelessWidget
     }
 
     if (config.showSearch) {
-      // إضافة padding فقط لشريط البحث
       children.add(
         Padding(
           padding: EdgeInsets.symmetric(
@@ -115,7 +110,7 @@ class CustomAppBarWithTabs extends StatelessWidget
           spreadRadius: 0,
         ),
       ],
-      borderRadius: _isMobile(context) 
+      borderRadius: _isMobile(context)
           ? BorderRadius.circular(0)
           : BorderRadius.only(
               bottomLeft: Radius.circular(12),
@@ -129,7 +124,6 @@ class CustomAppBarWithTabs extends StatelessWidget
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Back button on mobile
         if (_isMobile(context) && Navigator.of(context).canPop())
           IconButton(
             icon: Icon(
@@ -142,7 +136,6 @@ class CustomAppBarWithTabs extends StatelessWidget
             constraints: const BoxConstraints(),
           ),
 
-        // Title
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -161,7 +154,6 @@ class CustomAppBarWithTabs extends StatelessWidget
           ),
         ),
 
-        // Action button
         if (config.actionText.isNotEmpty && config.onActionPressed != null)
           _buildActionButton(context),
       ],
@@ -179,12 +171,6 @@ class CustomAppBarWithTabs extends StatelessWidget
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon(
-            //   Icons.add,
-            //   color: AppColors.primary400,
-            //   size: _isMobile(context) ? 17 : 19,
-            // ),
-            // if (!isSmallMobile) SizedBox(width: 6),
             if (!isSmallMobile)
               Text(
                 config.actionText,
@@ -207,8 +193,8 @@ class CustomAppBarWithTabs extends StatelessWidget
 
     return Container(
       height: _getTabBarHeight(context),
-      padding: EdgeInsets.zero, // إزالة أي padding إضافي
-      margin: EdgeInsets.zero, // إزالة أي margin
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.zero,
       child: _TabBarWithFullLabels(
         controller: config.tabController!,
         tabs: config.tabs!,
@@ -236,7 +222,6 @@ class CustomAppBarWithTabs extends StatelessWidget
   Widget _buildSearchBox(BuildContext context) {
     return Row(
       children: [
-        // Filter button
         if (config.onFilterPressed != null)
           Padding(
             padding: EdgeInsets.only(right: _isMobile(context) ? 8 : 12),
@@ -248,7 +233,6 @@ class CustomAppBarWithTabs extends StatelessWidget
             ),
           ),
 
-        // Search field
         Expanded(
           child: Container(            height: _getSearchFieldHeight(context),
             decoration: BoxDecoration(
@@ -305,7 +289,6 @@ class CustomAppBarWithTabs extends StatelessWidget
           ),
         ),
 
-        // Sort button
         if (config.onSortPressed != null)
           Padding(
             padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
@@ -409,7 +392,6 @@ class CustomAppBarWithTabs extends StatelessWidget
   }
 }
 
-// Custom TabBar widget that shows full labels
 class _TabBarWithFullLabels extends StatefulWidget {
   final TabController controller;
   final List<TabData> tabs;
@@ -453,12 +435,12 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
     return TabBar(
       controller: widget.controller,
       isScrollable: true,
-      dividerColor: Colors.transparent, // إزالة الخط الفاصل بين التبويبات
+      dividerColor: Colors.transparent,
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         color: AppColors.primary400,
       ),
-      indicatorColor: Colors.transparent, // إزالة الخط السفلي الافتراضي
+      indicatorColor: Colors.transparent,
       indicatorSize: TabBarIndicatorSize.tab,
       labelColor: Colors.white,
       unselectedLabelColor: Colors.grey[600],
@@ -494,7 +476,7 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (tab.icon != null && !widget.isMobile) 
+            if (tab.icon != null && !widget.isMobile)
               ...[
                 Icon(
                   tab.icon,
@@ -521,7 +503,6 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
   }
 
   String _getTabLabel(String label) {
-    // For very small screens, truncate long labels
     if (widget.isMobile && label.length > 15) {
       return '${label.substring(0, 12)}...';
     }

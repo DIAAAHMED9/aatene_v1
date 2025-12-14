@@ -51,14 +51,11 @@ Future<void> _performLoadStores() async {
     isLoading.value = true;
     errorMessage.value = '';
     
-    // محاولة استخدام البيانات المخزنة محليًا أولاً
     final cachedStores = dataService.getStores();
     if (cachedStores.isNotEmpty) {
-      // تحويل البيانات المخزنة إلى كائنات Store
       stores.assignAll(cachedStores.map((storeData) => Store.fromJson(storeData)).toList());
     }
     
-    // ثم جلب التحديثات من الخادم
     final response = await ApiHelper.get(
       path: '/merchants/stores',
       queryParameters: {'orderDir': 'asc'},
@@ -68,10 +65,8 @@ Future<void> _performLoadStores() async {
 
     if (response != null && response['status'] == true) {
       final List<dynamic> data = response['data'];
-      // تحديث القائمة بالبيانات الجديدة
       stores.assignAll(data.map((storeData) => Store.fromJson(storeData)).toList());
       
-      // تحديث التخزين المحلي
       await dataService.refreshStores();
     } else {
       errorMessage.value = response?['message'] ?? 'فشل تحميل المتاجر';
@@ -82,8 +77,6 @@ Future<void> _performLoadStores() async {
     isLoading.value = false;
   }
 }
-
-
 
   void addNewStore() {
     Get.to(() => TypeStore());
@@ -136,7 +129,6 @@ Future<void> _performLoadStores() async {
       if (response != null && response['status'] == true) {
         stores.removeWhere((s) => s.id == store.id);
         
-        // تحديث التخزين المحلي
         await dataService.deleteStore(storeId);
         
         Get.snackbar(

@@ -8,14 +8,12 @@ import 'package:attene_mobile/view/product_variations/product_variation_model.da
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 
 class DataInitializerService extends GetxService {
-  // حالة التحميل
   final RxBool _isInitializing = false.obs;
   final RxDouble _progress = 0.0.obs;
   final RxString _currentStep = ''.obs;
   final RxBool _isOnline = true.obs;
   final RxBool _isDataLoaded = false.obs;
 
-  // إضافة Getters للـ Rx variables للاستخدام في المتحكمات الأخرى
   RxBool get isInitializingRx => _isInitializing;
 
   RxString get currentStepRx => _currentStep;
@@ -27,7 +25,6 @@ class DataInitializerService extends GetxService {
   RxBool get isDataLoadedRx => _isDataLoaded;
    final RxBool _productsUpdated = false.obs;
   
-  // إضافة Getter
   RxBool get productsUpdated => _productsUpdated;
    void notifyProductsUpdated() {
     print('📢 [DATA SERVICE] Notifying products update');
@@ -37,7 +34,6 @@ class DataInitializerService extends GetxService {
     try {
       print('🔄 [DATA SERVICE] Refreshing products...');
       
-      // جلب المنتجات من API
       final response = await ApiHelper.get(
         path: '/merchants/products',
         withLoading: false,
@@ -46,10 +42,8 @@ class DataInitializerService extends GetxService {
       if (response != null && response['status'] == true) {
         final products = response['data'] ?? [];
         
-        // تحديث التخزين المحلي
         await _storage.write('products', json.encode(products));
         
-        // إشعار كل المتحكمين بالتحديث
         notifyProductsUpdated();
         
         print('✅ [DATA SERVICE] Products refreshed successfully');
@@ -59,7 +53,6 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // مفاتيح التخزين
   static const String _STORES_KEY = 'app_stores';
   static const String _CITIES_KEY = 'app_cities';
   static const String _DISTRICTS_KEY = 'app_districts';
@@ -84,7 +77,6 @@ class DataInitializerService extends GetxService {
 
   static DataInitializerService get to => Get.find();
 
-  // Getters
   bool get isInitializing => _isInitializing.value;
 
   double get progress => _progress.value;
@@ -104,14 +96,12 @@ class DataInitializerService extends GetxService {
     super.onInit();
     print('🔄 [DATA SERVICE] تهيئة خدمة البيانات');
 
-    // تأخير التهيئة قليلاً
     Future.delayed(const Duration(milliseconds: 500), () {
       _initializeService();
     });
   }
 
   void _initializeService() {
-    // تسجيل مستمع لتغير حالة الانترنت
     ever(_myAppController.isInternetConnect, (bool isConnected) {
       _isOnline.value = isConnected;
       print(
@@ -126,48 +116,17 @@ class DataInitializerService extends GetxService {
     _initializeStorage();
   }
  
-  //   Future<void> refreshProducts() async {
-  //   try {
-  //     if (!_isOnline.value) {
-  //       print('⚠️ [PRODUCTS] لا يمكن التحديث (غير متصل)');
-  //       return;
-  //     }
-      
-  //     final response = await ApiHelper.get(
-  //       path: '/merchants/products',
-  //       queryParameters: {'limit': 100, 'orderBy': 'created_at', 'orderDir': 'desc'},
-  //       withLoading: false,
-  //       shouldShowMessage: false,
-  //     );
-      
-  //     if (response != null && response['status'] == true) {
-  //       final products = response['data'] ?? [];
-  //       await _storage.write(_PRODUCTS_KEY, products);
-        
-  //       // إشعار بتحديث المنتجات
-  //       notifyProductsUpdated();
-        
-  //       print('✅ [PRODUCTS] تم تحديث ${products.length} منتج');
-  //     }
-  //   } catch (e) {
-  //     print('⚠️ [PRODUCTS] فشل في تحديث المنتجات: $e');
-  //   }
-  // }
-  
   Future<void> _initializeStorage() async {
     try {
       await GetStorage.init();
       print('✅ [STORAGE] تم تهيئة GetStorage بنجاح');
 
-      // تحميل الإحصائيات
       await _loadInitialStatistics();
 
-      // التحقق من وجود بيانات مخزنة
       if (_hasCachedData()) {
         print('📂 [DATA] تم العثور على بيانات مخزنة مسبقاً');
         _isDataLoaded.value = true;
 
-        // تنفيذ أي مهام متأخرة
         _processSyncQueue();
       }
     } catch (e) {
@@ -209,7 +168,6 @@ class DataInitializerService extends GetxService {
 
   Future<void> _loadAttributes() async {
     try {
-      // التحقق من المصادقة قبل جلب السمات
       if (!_isUserAuthenticated()) {
         print('⚠️ [ATTRIBUTES] المستخدم غير مسجل دخول، تخطي تحميل السمات');
         return;
@@ -244,10 +202,9 @@ class DataInitializerService extends GetxService {
     _currentStep.value = 'جاري التحضير...';
 
     try {
-      final totalSteps = 11; // زيادة خطوة للإحصائيات
+      final totalSteps = 11;
       int currentStep = 0;
 
-      // التحقق من تسجيل الدخول أولاً
       if (!_isUserAuthenticated()) {
         print('👤 [DATA] المستخدم غير مسجل دخول، استخدام البيانات المخزنة فقط');
         _isDataLoaded.value = true;
@@ -256,12 +213,10 @@ class DataInitializerService extends GetxService {
         return;
       }
 
-      // التحقق من الاتصال بالانترنت
       if (!_isOnline.value && forceRefresh) {
         throw Exception('لا يوجد اتصال بالإنترنت');
       }
 
-      // استخدام البيانات المخزنة إذا كانت موجودة وليس هناك طلب لتحديث قسري
       if (!forceRefresh && _isDataLoaded.value && _hasCachedData()) {
         print('📂 [DATA] استخدام البيانات المخزنة مؤقتًا');
         _progress.value = 1.0;
@@ -272,7 +227,6 @@ class DataInitializerService extends GetxService {
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري التحقق من الاتصال...';
-      // await _checkConnection();
 
       currentStep++;
       _progress.value = currentStep / totalSteps;
@@ -324,7 +278,6 @@ class DataInitializerService extends GetxService {
       _currentStep.value = 'جاري تحميل الوسائط...';
       await _loadMedia();
 
-      // تحديث الإحصائيات
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحديث الإحصائيات...';
@@ -336,16 +289,13 @@ class DataInitializerService extends GetxService {
 
       print('✅ [DATA] تم تهيئة بيانات التطبيق بنجاح');
 
-      // حفظ وقت التحديث الأخير
       await _storage.write(_LAST_UPDATE_KEY, DateTime.now().toIso8601String());
 
-      // تنظيف البيانات القديمة
       await _cleanupOldData();
     } catch (e) {
       print('❌ [DATA] خطأ في تهيئة بيانات التطبيق: $e');
       _currentStep.value = 'فشل في تهيئة البيانات';
 
-      // استخدام البيانات المخزنة كنسخة احتياطية
       if (_hasCachedData() && !_isDataLoaded.value) {
         print('🔄 [DATA] استخدام البيانات المخزنة كنسخة احتياطية');
         _isDataLoaded.value = true;
@@ -357,28 +307,6 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // Future<void> _checkConnection() async {
-  //   try {
-  //     // محاولة الاتصال بالخادم
-  //     // final response = await ApiHelper.get(
-  //     //   path: '/health',
-  //     //   withLoading: false,
-  //     //   shouldShowMessage: false,
-  //     // );
-
-  //     _isOnline.value = true;
-  //     print('✅ [NETWORK] الاتصال بالخادم نشط');
-  //   } catch (e) {
-  //     _isOnline.value = false;
-  //     print('⚠️ [NETWORK] لا يوجد اتصال بالخادم');
-
-  //     // استدعاء سينك المهام المتأخرة
-  //     if (_hasOfflineData()) {
-  //       print('📦 [NETWORK] هناك بيانات تحتاج للمزامنة');
-  //     }
-  //   }
-  // }
-
   bool _hasCachedData() {
     return _storage.hasData(_STORES_KEY) &&
         _storage.hasData(_CITIES_KEY) &&
@@ -389,8 +317,6 @@ class DataInitializerService extends GetxService {
   bool _hasOfflineData() {
     return _storage.hasData(_SYNC_QUEUE_KEY);
   }
-
-  // ==================== تحميل البيانات من الـAPI ====================
 
   Future<void> _loadSettings() async {
     try {
@@ -525,7 +451,6 @@ class DataInitializerService extends GetxService {
         final sections = response['data'] ?? [];
         await _storage.write(_SECTIONS_KEY, sections);
 
-        // حفظ نسخة محسنة للاستخدام السريع
         final enhancedSections = sections.map((section) {
           return {
             ...section,
@@ -668,7 +593,6 @@ class DataInitializerService extends GetxService {
         }
       }
 
-      // ترتيب الوسائط حسب تاريخ الإنشاء
       allMedia.sort((a, b) {
         final dateA =
             DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(2000);
@@ -684,18 +608,14 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // ==================== وظائف المساعدة ====================
-
   Future<void> _tryReloadOnConnection() async {
     try {
       if (_isDataLoaded.value && _isOnline.value) {
-        // التحقق إذا كانت البيانات قديمة
         if (isDataStale()) {
           print('🔄 [DATA] البيانات قديمة، جاري التحديث...');
           await initializeAppData(forceRefresh: true, silent: true);
         }
 
-        // مزامنة المهام المتأخرة
         await _processSyncQueue();
       }
     } catch (e) {
@@ -718,7 +638,6 @@ class DataInitializerService extends GetxService {
         }
       }
 
-      // مسح المهام المنجزة
       await _storage.remove(_SYNC_QUEUE_KEY);
       print('✅ [SYNC] تمت مزامنة جميع المهام');
     } catch (e) {
@@ -747,17 +666,14 @@ class DataInitializerService extends GetxService {
 
   Future<void> _syncAddProduct(Map<String, dynamic> productData) async {
     print('🔄 [SYNC] مزامنة إضافة منتج');
-    // تنفيذ API لإضافة المنتج
   }
 
   Future<void> _syncUpdateProduct(Map<String, dynamic> productData) async {
     print('🔄 [SYNC] مزامنة تحديث منتج');
-    // تنفيذ API لتحديث المنتج
   }
 
   Future<void> _syncAddSection(Map<String, dynamic> sectionData) async {
     print('🔄 [SYNC] مزامنة إضافة قسم');
-    // تنفيذ API لإضافة القسم
   }
 
   Future<void> _loadInitialStatistics() async {
@@ -785,7 +701,6 @@ class DataInitializerService extends GetxService {
       final now = DateTime.now();
       final cutoffDate = now.subtract(const Duration(days: 30));
 
-      // تنظيف الوسائط القديمة
       final media = getMedia();
       final recentMedia = media.where((item) {
         try {
@@ -807,7 +722,6 @@ class DataInitializerService extends GetxService {
         );
       }
 
-      // تنظيف المنتجات القديمة غير النشطة
       final products = getProducts();
       final activeProducts = products.where((product) {
         try {
@@ -830,8 +744,6 @@ class DataInitializerService extends GetxService {
       print('⚠️ [CLEANUP] خطأ في تنظيف البيانات القديمة: $e');
     }
   }
-
-  // ==================== Getters للبيانات ====================
 
   List<dynamic> getStores() => _storage.read(_STORES_KEY) ?? [];
 
@@ -857,7 +769,6 @@ class DataInitializerService extends GetxService {
 
   Map<String, dynamic> getAppConfig() => _storage.read(_APP_CONFIG_KEY) ?? {};
 
-  // الحصول على الأقسام المحسنة
   List<Map<String, dynamic>> getEnhancedSections() {
     final sections = _storage.read<List<dynamic>>(_CACHED_SECTIONS_KEY) ?? [];
     return sections
@@ -865,7 +776,6 @@ class DataInitializerService extends GetxService {
         .toList();
   }
 
-  // الحصول على السمات للاختلافات
   List<ProductAttribute> getAttributesForVariations() {
     try {
       final cachedAttributes =
@@ -881,13 +791,10 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // الحصول على السمات حسب النوع
   List<ProductAttribute> getAttributesByType(String type) {
     final allAttributes = getAttributesForVariations();
     return allAttributes.where((attr) => attr.type == type).toList();
   }
-
-  // ==================== وظائف البحث ====================
 
   Map<String, dynamic>? getStoreById(dynamic id) {
     try {
@@ -976,9 +883,6 @@ class DataInitializerService extends GetxService {
     return null;
   }
 
-  // ==================== وظائف التحديث ====================
-
-  // Future<void> refreshStores() async => await _loadStores();
   Future<void> refreshCities() async => await _loadCities();
 
   Future<void> refreshDistricts() async => await _loadDistricts();
@@ -990,13 +894,10 @@ class DataInitializerService extends GetxService {
   Future<void> refreshAttributes() async => await _loadAttributes();
 
   Future<void> refreshCategories() async => await _loadCategories();
-  // Future<void> refreshProducts() async => await _loadProducts();
   Future<void> refreshMedia() async => await _loadMedia();
 
   Future<void> refreshAllData() async =>
       await initializeAppData(forceRefresh: true);
-
-  // ==================== إدارة بيانات المستخدم ====================
 
   Future<void> saveUserData(Map<String, dynamic> userData) async {
     try {
@@ -1029,8 +930,6 @@ class DataInitializerService extends GetxService {
       throw e;
     }
   }
-
-  // ==================== إدارة التطبيق ====================
 
   Future<void> saveAppConfig(Map<String, dynamic> config) async {
     try {
@@ -1085,8 +984,6 @@ class DataInitializerService extends GetxService {
       throw e;
     }
   }
-
-  // ==================== إدارة المنتجات والاختلافات ====================
 
   Future<void> saveVariationsData(Map<String, dynamic> variationsData) async {
     try {
@@ -1148,8 +1045,6 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // ==================== إدارة البيانات العامة ====================
-
   Future<void> clearAllData() async {
     try {
       await _storage.erase();
@@ -1177,8 +1072,6 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // ==================== الإحصائيات والتقارير ====================
-
   Future<Map<String, dynamic>> getStorageInfo() async {
     try {
       final keys = _storage.getKeys();
@@ -1193,7 +1086,7 @@ class DataInitializerService extends GetxService {
         final value = _storage.read(key);
         if (value != null) {
           final jsonString = jsonEncode(value);
-          final keySize = jsonString.length * 2; // تقدير تقريبي
+          final keySize = jsonString.length * 2;
           estimatedSize += keySize;
 
           info['details'][key] = {
@@ -1302,7 +1195,6 @@ class DataInitializerService extends GetxService {
 
       print('📥 [IMPORT] استيراد بيانات من: ${metadata['export_date']}');
 
-      // استيراد البيانات الأساسية
       if (importData['stores'] != null)
         await _storage.write(_STORES_KEY, importData['stores']);
       if (importData['cities'] != null)
@@ -1337,13 +1229,10 @@ class DataInitializerService extends GetxService {
       if (importData['sync_queue'] != null)
         await _storage.write(_SYNC_QUEUE_KEY, importData['sync_queue']);
 
-      // إعادة بناء البيانات المحسنة
       await saveAttributesForVariations(getAttributes());
 
-      // تحديث وقت التحديث الأخير
       await _storage.write(_LAST_UPDATE_KEY, DateTime.now().toIso8601String());
 
-      // تحديث حالة التحميل
       _isDataLoaded.value = true;
 
       print('✅ [DATA] تم استيراد البيانات بنجاح');
@@ -1353,8 +1242,6 @@ class DataInitializerService extends GetxService {
       return false;
     }
   }
-
-  // ==================== وظائف مساعدة متقدمة ====================
 
   Future<void> backupData() async {
     try {
@@ -1394,10 +1281,8 @@ class DataInitializerService extends GetxService {
       final backups = getAvailableBackups();
       if (backups.length <= keepLast) return;
 
-      // ترتيب النسخ حسب التاريخ (الأقدم أولاً)
       backups.sort();
 
-      // حذف النسخ القديمة
       for (int i = 0; i < backups.length - keepLast; i++) {
         await _storage.remove(backups[i]);
         print('🗑️ [BACKUP] تم حذف النسخة الاحتياطية: ${backups[i]}');
@@ -1409,12 +1294,9 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // ==================== إدارة الذاكرة ====================
-
   @override
   void onClose() {
     print('🔚 [DATA SERVICE] إغلاق خدمة البيانات');
-    // حفظ الإحصائيات النهائية قبل الإغلاق
     _updateStatistics().catchError((e) {
       print('⚠️ [DATA] خطأ في حفظ الإحصائيات النهائية: $e');
     });
@@ -1462,7 +1344,6 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  // إضافة Stream getters
   Stream<bool> get isInitializingStream => _isInitializing.stream;
 
   Stream<String> get currentStepStream => _currentStep.stream;

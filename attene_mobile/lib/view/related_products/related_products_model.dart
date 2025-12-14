@@ -187,7 +187,7 @@ class ProductVariation {
   }
 
   String get formattedPrice {
-    return '${price.value.toStringAsFixed(2)} ريال';
+    return '${price.value.toStringAsFixed(2)} ₪';
   }
 
   String get stockStatus {

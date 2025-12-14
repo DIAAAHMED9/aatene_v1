@@ -74,15 +74,12 @@ class ChatUnread extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                // شريط البحث
                 _buildSearchBar(controller),
                 const SizedBox(height: 10),
                 
-                // تبويبات
                 _buildTabButtons(controller),
                 const Divider(color: Colors.grey, height: 15),
                 
-                // قائمة غير المقروء
                 Expanded(
                   child: controller.unreadConversations.isEmpty
                       ? _buildEmptyState()
@@ -246,11 +243,9 @@ class ChatUnread extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          // صورة المستخدم مع مؤشر العدد
           _buildUnreadAvatar(conversation),
           const SizedBox(width: 12),
           
-          // معلومات المحادثة
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,7 +291,6 @@ class ChatUnread extends StatelessWidget {
             ),
           ),
           
-          // زر المتابعة
           IconButton(
             icon: Icon(
               conversation.isInterested
@@ -329,7 +323,6 @@ class ChatUnread extends StatelessWidget {
               : const AssetImage("assets/image/1.png") as ImageProvider,
         ),
         
-        // مؤشر الاتصال
         Positioned(
           bottom: 0,
           right: 0,
@@ -347,7 +340,6 @@ class ChatUnread extends StatelessWidget {
           ),
         ),
         
-        // عداد الرسائل غير المقروءة
         if (conversation.unreadCount > 0)
           Positioned(
             top: -5,

@@ -121,7 +121,6 @@ class Login extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      // onTap: () => controller.socialLogin('google'),
                       child: SizedBox(
                         width: ResponsiveDimensions.w(40),
                         height: ResponsiveDimensions.h(40),

@@ -41,7 +41,7 @@ class ProductGridItem extends StatelessWidget {
         margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: isSelected 
+          side: isSelected
               ? BorderSide(color: AppColors.primary400, width: 2)
               : BorderSide(color: Colors.grey[200]!, width: 1),
         ),
@@ -50,7 +50,6 @@ class ProductGridItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product Image
                 Container(
                   height: 120,
                   width: double.infinity,
@@ -80,8 +79,8 @@ class ProductGridItem extends StatelessWidget {
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
                                     color: Colors.grey[200],
-                                    child: Icon(Icons.broken_image, 
-                                      color: Colors.grey[400], 
+                                    child: Icon(Icons.broken_image,
+                                      color: Colors.grey[400],
                                       size: 40),
                                   );
                                 },
@@ -89,8 +88,8 @@ class ProductGridItem extends StatelessWidget {
                             )
                           : Container(
                               color: Colors.grey[200],
-                              child: Icon(Icons.image, 
-                                color: Colors.grey[400], 
+                              child: Icon(Icons.image,
+                                color: Colors.grey[400],
                                 size: 40),
                             ),
                       
@@ -118,7 +117,6 @@ class ProductGridItem extends StatelessWidget {
                   ),
                 ),
 
-                // Product Details
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
@@ -140,8 +138,8 @@ class ProductGridItem extends StatelessWidget {
                       if (product.sectionId != null && product.sectionId != '0')
                         Row(
                           children: [
-                            Icon(Icons.local_offer_outlined, 
-                                 color: Colors.grey[600], 
+                            Icon(Icons.local_offer_outlined,
+                                 color: Colors.grey[600],
                                  size: 12),
                             const SizedBox(width: 4),
                             Expanded(

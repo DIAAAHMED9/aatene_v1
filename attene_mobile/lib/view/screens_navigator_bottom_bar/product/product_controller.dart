@@ -42,7 +42,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     super.onInit();
     bottomSheetController = Get.find<BottomSheetController>();
     
-    // تهيئة التبويبات الأساسية
     _initializeDefaultTabs();
     
     _initializeBasicControllers();
@@ -62,7 +61,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   }
   
   void _setupRefreshListener() {
-    // الاستماع لتحديثات المنتجات من DataInitializerService
     ever(dataService.productsUpdated, (bool updated) {
       if (updated && _isInitialized.value) {
         print('🔄 [PRODUCTS] تم استلام إشعار تحديث المنتجات');
@@ -70,7 +68,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
     
-    // الاستماع لتحديثات الأقسام
     ever(bottomSheetController.sectionsUpdated, (bool updated) {
       if (updated && _isInitialized.value) {
         print('🔄 [PRODUCTS] تم استلام إشعار تحديث الأقسام');
@@ -447,7 +444,6 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     await _loadProducts();
   }
   
-  // دالة جديدة للتنبيه بتحديث المنتجات
   void notifyProductsUpdated() {
     print('📢 [PRODUCTS] تنبيه بتحديث المنتجات');
     _loadProducts();
@@ -516,13 +512,13 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }).toList();
     } else if (tabIndex == 2) {
       return _filteredProducts.where((product) {
-        return int.tryParse(product.messagesCount) != null && 
+        return int.tryParse(product.messagesCount) != null &&
                int.tryParse(product.messagesCount)! > 0;
       }).toList();
     } else if (tabIndex >= 3) {
       final sectionTab = tabs[tabIndex];
       if (sectionTab.sectionId != null) {
-        return _filteredProducts.where((product) => 
+        return _filteredProducts.where((product) =>
             product.sectionId == sectionTab.sectionId.toString()
         ).toList();
       }

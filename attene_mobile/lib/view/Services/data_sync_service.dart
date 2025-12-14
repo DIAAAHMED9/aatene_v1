@@ -32,7 +32,6 @@ class DataSyncService extends GetxService {
       );
 
       if (response != null && response['status'] == true) {
-        // إشعار جميع المتحكمات بالبيانات المحدثة
         _notifyControllersAboutSections(response['data'] ?? []);
 
         _lastSyncTimes['sections_$storeId'] = DateTime.now();
@@ -46,28 +45,11 @@ class DataSyncService extends GetxService {
     }
   }
 
-  // في DataSyncService - تحديث دالة _notifyControllersAboutSections
   void _notifyControllersAboutSections(List<dynamic> sectionsData) {
     try {
-      // تحويل البيانات إلى كائنات Section
       final sections = sectionsData
           .map((section) => Section.fromJson(section))
           .toList();
-
-      // // إشعار BottomSheetController
-      // if (Get.isRegistered<BottomSheetController>()) {
-      //   final bottomSheetController = Get.find<BottomSheetController>();
-      //   bottomSheetController.onSectionsUpdated(sections);
-
-      //   // تحديث مباشر للمراقبين
-      //   bottomSheetController.sectionsRx.assignAll(sections);
-      // }
-
-      // إشعار ProductController باستخدام الدالة الصحيحة
-      // if (Get.isRegistered<ProductController>()) {
-      //   final productController = Get.find<ProductController>();
-      //   productController.onSectionsUpdated(sections);
-      // }
 
       print('📢 [SYNC] تم إشعار المتحكمات بـ ${sections.length} قسم');
     } catch (e) {
@@ -83,7 +65,6 @@ class DataSyncService extends GetxService {
         }
         break;
       case 'products':
-        // إضافة مزامنة المنتجات إذا لزم الأمر
         break;
     }
   }
@@ -98,7 +79,6 @@ class DataSyncService extends GetxService {
     return difference.inMinutes < maxAgeMinutes;
   }
 
-  // وظيفة مساعدة لتحميل الأقسام بسرعة
   Future<void> quickLoadSections(int storeId) async {
     try {
       final response = await ApiHelper.get(

@@ -41,7 +41,7 @@ class ProductListItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary400.withOpacity(0.1) : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: isSelected 
+          border: isSelected
               ? Border.all(color: AppColors.primary400, width: 2)
               : Border.all(color: Colors.grey[200]!),
           boxShadow: [
@@ -54,7 +54,6 @@ class ProductListItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Selection checkbox
             if (isSelectionMode)
               Padding(
                 padding: const EdgeInsets.only(left: 12),
@@ -67,12 +66,10 @@ class ProductListItem extends StatelessWidget {
                 ),
               ),
             
-            // Product Image
             _buildProductImage(context),
             
             const SizedBox(width: 16),
             
-            // Product Details
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -95,8 +92,8 @@ class ProductListItem extends StatelessWidget {
                     if (product.sectionId != null && product.sectionId != '0')
                       Row(
                         children: [
-                          Icon(Icons.local_offer_outlined, 
-                               color: Colors.grey[600], 
+                          Icon(Icons.local_offer_outlined,
+                               color: Colors.grey[600],
                                size: 14),
                           const SizedBox(width: 4),
                           Text(
@@ -109,7 +106,6 @@ class ProductListItem extends StatelessWidget {
                         ],
                       ),
                     
-               
                   ],
                 ),
               ),
@@ -124,7 +120,6 @@ class ProductListItem extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
-            // Actions
             if (!isSelectionMode)
               IconButton(
                 onPressed: _showProductOptions,
@@ -170,8 +165,8 @@ class ProductListItem extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey[200],
-                    child: Icon(Icons.broken_image, 
-                      color: Colors.grey[400], 
+                    child: Icon(Icons.broken_image,
+                      color: Colors.grey[400],
                       size: 40),
                   );
                 },
@@ -179,8 +174,8 @@ class ProductListItem extends StatelessWidget {
             )
           : Container(
               color: Colors.grey[200],
-              child: Icon(Icons.image, 
-                color: Colors.grey[400], 
+              child: Icon(Icons.image,
+                color: Colors.grey[400],
                 size: 40),
             ),
     );

@@ -18,10 +18,8 @@ enum AppMode { dev, staging, production }
 const AppMode currentMode = AppMode.dev;
 
 class ApiHelper {
-  // في api_request.dart
   static Map<String, dynamic> _getBaseHeaders() {
     try {
-      // إذا لم يكن MyAppController مسجلاً، نرجع رؤوس أساسية فقط
       if (!Get.isRegistered<MyAppController>()) {
         return {
           'Content-Type': 'application/json',
@@ -38,7 +36,6 @@ class ApiHelper {
 
       String authorization = '';
 
-      // فقط إذا كان المستخدم مسجل دخول ويملك توكن صالح
       if (myAppController.isLoggedIn.value &&
           myAppController.userData.isNotEmpty &&
           myAppController.userData['token'] != null) {
@@ -267,7 +264,6 @@ class ApiHelper {
 
       final requestHeaders = {..._getBaseHeaders(), ...?headers};
 
-      // إزالة التوكن من طلبات تسجيل الدخول
       if (method.toUpperCase() == 'POST' && path.contains('/auth/login')) {
         requestHeaders.removeWhere(
           (key, value) => key.toLowerCase() == 'authorization',
@@ -345,7 +341,6 @@ class ApiHelper {
     required String password,
     bool withLoading = true,
   }) async {
-    // التحقق من نوع المدخل
     final bool isEmail = email.contains('@');
 
     Map<String, dynamic> body = {'password': password};

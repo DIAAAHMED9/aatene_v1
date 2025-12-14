@@ -24,7 +24,6 @@ class ProductScreen extends GetView<ProductController> {
       backgroundColor: Colors.white,
       appBar: _buildAppBar(isRTL, context),
       body: _buildBody(context),
-      // floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 
@@ -33,8 +32,7 @@ class ProductScreen extends GetView<ProductController> {
       preferredSize: Size.fromHeight(_calculateAppBarHeight(context)),
       child: GetBuilder<ProductController>(
         builder: (controller) {
-          // تحقق من جاهزية التبويبات
-          final bool shouldShowTabs = controller.tabs.isNotEmpty && 
+          final bool shouldShowTabs = controller.tabs.isNotEmpty &&
                                      controller.isTabControllerReady;
           
           return CustomAppBarWithTabs(
@@ -73,19 +71,18 @@ class ProductScreen extends GetView<ProductController> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
     
-    double height = ResponsiveDimensions.f(175); // Top bar height
+    double height = ResponsiveDimensions.f(175);
     
-    // Check if tabs should be shown
     final controller = Get.find<ProductController>();
     final shouldShowTabs = controller.tabs.isNotEmpty && controller.isTabControllerReady;
     
     if (shouldShowTabs) {
-      height += ResponsiveDimensions.f(45); // Tab bar height
-      height += ResponsiveDimensions.f(15); // Spacer after tabs
+      height += ResponsiveDimensions.f(45);
+      height += ResponsiveDimensions.f(15);
     }
     
-    height += ResponsiveDimensions.f(60); // Search box height
-    height += ResponsiveDimensions.f(15); // Additional padding
+    height += ResponsiveDimensions.f(60);
+    height += ResponsiveDimensions.f(15);
     
     return height;
   }
@@ -95,7 +92,6 @@ class ProductScreen extends GetView<ProductController> {
     final isSmallScreen = screenWidth < 600;
     return Column(
       children: [
-        // _buildSearchBar(context),
         Expanded(
           child: GetBuilder<MyAppController>(
             builder: (myAppController) {
@@ -105,8 +101,7 @@ class ProductScreen extends GetView<ProductController> {
 
               return GetBuilder<ProductController>(
                 builder: (productController) {
-                  // تحقق من جاهزية الكونترولر والتبويبات
-                  if (!productController.isTabControllerReady || 
+                  if (!productController.isTabControllerReady ||
                       productController.tabs.isEmpty) {
                     return Center(
                       child: Column(
@@ -128,7 +123,6 @@ class ProductScreen extends GetView<ProductController> {
                     );
                   }
 
-                  // بناء التبويبات
                   return Padding(
                     padding:  EdgeInsets.only(bottom: isSmallScreen?ResponsiveDimensions.f(100):ResponsiveDimensions.f(25) ),
                     child: TabBarView(
@@ -168,7 +162,7 @@ class ProductScreen extends GetView<ProductController> {
               children: [
                 SizedBox(width: ResponsiveDimensions.f(16)),
                 Icon(
-                  Icons.search, 
+                  Icons.search,
                   color: Colors.grey,
                   size: ResponsiveDimensions.f(20),
                 ),
@@ -193,7 +187,7 @@ class ProductScreen extends GetView<ProductController> {
                 if (controller.searchTextController.text.isNotEmpty)
                   IconButton(
                     icon: Icon(
-                      Icons.clear, 
+                      Icons.clear,
                       size: ResponsiveDimensions.f(20),
                     ),
                     onPressed: controller.clearSearch,
@@ -222,25 +216,20 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildTabContentInternal(TabData tab, int tabIndex, BuildContext context) {
     return GetBuilder<ProductController>(
       builder: (controller) {
-        // تحميل...
         if (controller.isLoadingProducts && controller.allProducts.isEmpty) {
           return _buildLoadingView(context);
         }
 
-        // خطأ...
         if (controller.productsErrorMessage.isNotEmpty) {
           return _buildErrorView(context);
         }
 
-        // جلب المنتجات الخاصة بالتبويب
         final products = controller.getProductsForTab(tabIndex);
 
-        // لا توجد منتجات
         if (products.isEmpty) {
           return _buildEmptyView(tab.viewName, tabIndex, context);
         }
 
-        // عرض المنتجات
         return _buildProductsView(products, context);
       },
     );
@@ -341,8 +330,8 @@ class ProductScreen extends GetView<ProductController> {
           Text(
             'يجب تسجيل الدخول',
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(20) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(20)
                   : ResponsiveDimensions.f(24),
               fontWeight: FontWeight.bold,
               color: Colors.grey[600],
@@ -352,8 +341,8 @@ class ProductScreen extends GetView<ProductController> {
           Text(
             'يرجى تسجيل الدخول للوصول إلى إدارة المنتجات والأقسام',
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(14) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
               color: Colors.grey[500],
             ),
@@ -401,8 +390,8 @@ class ProductScreen extends GetView<ProductController> {
           Text(
             _getEmptyMessage(sectionName, tabIndex),
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(18) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(18)
                   : ResponsiveDimensions.f(22),
               color: const Color(0xFF555555),
               fontWeight: FontWeight.w700,
@@ -413,8 +402,8 @@ class ProductScreen extends GetView<ProductController> {
           Text(
             _getEmptyDescription(sectionName, tabIndex),
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(12) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(12)
                   : ResponsiveDimensions.f(14),
               color: const Color(0xFFAAAAAA),
               fontWeight: FontWeight.w500,
@@ -422,7 +411,7 @@ class ProductScreen extends GetView<ProductController> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: ResponsiveDimensions.f(32)),
-          if (tabIndex == 0) // فقط في تبويب "جميع المنتجات"
+          if (tabIndex == 0)
             SizedBox(
               width: ResponsiveDimensions.f(200),
               child: ElevatedButton(
@@ -488,8 +477,8 @@ class ProductScreen extends GetView<ProductController> {
           Text(
             'جاري تحميل المنتجات...',
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(14) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
               color: Colors.grey,
             ),
@@ -509,16 +498,16 @@ class ProductScreen extends GetView<ProductController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.error_outline, 
-            size: ResponsiveDimensions.f(80), 
+            Icons.error_outline,
+            size: ResponsiveDimensions.f(80),
             color: Colors.red,
           ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'حدث خطأ',
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(16) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(16)
                   : ResponsiveDimensions.f(18),
               fontWeight: FontWeight.bold,
               color: Colors.red,
@@ -529,8 +518,8 @@ class ProductScreen extends GetView<ProductController> {
             controller.productsErrorMessage,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: isSmallScreen 
-                  ? ResponsiveDimensions.f(12) 
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(12)
                   : ResponsiveDimensions.f(14),
               color: Colors.grey,
             ),

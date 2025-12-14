@@ -279,7 +279,6 @@ class _ChatMassegeState extends State<ChatMassege> {
       builder: (controller) {
         return Column(
           children: [
-            // حالة الاتصال
             if (controller.connectionStatus.value != ConnectionStatus.connected)
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -312,14 +311,12 @@ class _ChatMassegeState extends State<ChatMassege> {
                 ),
               ),
             
-            // قائمة الرسائل
             Expanded(
               child: controller.isLoadingMessages.value
                   ? const Center(child: CircularProgressIndicator())
                   : _buildMessagesList(controller),
             ),
 
-            // شريط إرسال الرسائل
             _buildMessageInput(),
           ],
         );
@@ -462,7 +459,6 @@ class _ChatMassegeState extends State<ChatMassege> {
       color: Colors.white,
       child: Row(
         children: [
-          // زر إضافة مرفق
           IconButton(
             icon: Icon(
               Icons.add_circle_outline,
@@ -471,7 +467,6 @@ class _ChatMassegeState extends State<ChatMassege> {
             onPressed: () => _showAttachmentMenu(),
           ),
           
-          // حقل النص
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -494,7 +489,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                     icon: const Icon(Icons.emoji_emotions_outlined),
                     color: Colors.grey.shade600,
                     onPressed: () {
-                      // إضافة إيموجي
                     },
                   ),
                 ),
@@ -504,7 +498,6 @@ class _ChatMassegeState extends State<ChatMassege> {
             ),
           ),
           
-          // زر الإرسال
           const SizedBox(width: 8),
           _isSending
               ? Container(
@@ -579,7 +572,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                     label: 'صورة',
                     onTap: () {
                       Get.back();
-                      // اختيار صورة
                     },
                   ),
                   _buildAttachmentOption(
@@ -587,7 +579,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                     label: 'فيديو',
                     onTap: () {
                       Get.back();
-                      // اختيار فيديو
                     },
                   ),
                   _buildAttachmentOption(
@@ -595,7 +586,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                     label: 'ملف',
                     onTap: () {
                       Get.back();
-                      // اختيار ملف
                     },
                   ),
                   _buildAttachmentOption(
@@ -603,7 +593,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                     label: 'موقع',
                     onTap: () {
                       Get.back();
-                      // اختيار موقع
                     },
                   ),
                 ],
@@ -677,7 +666,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 widget.conversation.participantType,
                 widget.conversation.participantId,
               );
-              Get.back(); // العودة للشاشة السابقة
+              Get.back();
             },
             child: const Text(
               'حظر',
@@ -702,7 +691,6 @@ class _ChatMassegeState extends State<ChatMassege> {
           TextButton(
             onPressed: () {
               Get.back();
-              // تنفيذ مسح المحادثة
             },
             child: const Text(
               'مسح',

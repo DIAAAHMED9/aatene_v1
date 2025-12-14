@@ -67,14 +67,12 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
   @override
   void initState() {
     super.initState();
-    // تحميل المدن من التخزين المحلي
     _loadCitiesFromCache();
   }
 
   void _loadCitiesFromCache() {
     final cachedCities = dataService.getCities();
     if (cachedCities.isNotEmpty) {
-      // يمكن استخدام البيانات المخزنة هنا
     }
   }
 

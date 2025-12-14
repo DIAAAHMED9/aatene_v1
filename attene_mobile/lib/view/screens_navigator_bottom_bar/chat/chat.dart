@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 import '../../../controller/chat_controller.dart' show ChatController;
 import '../../../utlis/connection_status.dart';
-import 'chat_all.dart'; // استيراد الملف الصحيح
+import 'chat_all.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -19,7 +18,6 @@ class ChatScreen extends StatelessWidget {
       ),
       body: GetBuilder<ChatController>(
         builder: (controller) {
-          // التحقق من حالة الاتصال باستخدام ConnectionStatus enum
           if (controller.connectionStatus.value == ConnectionStatus.disconnected ||
               controller.connectionStatus.value == ConnectionStatus.error) {
             return Center(
@@ -53,17 +51,14 @@ class ChatScreen extends StatelessWidget {
             );
           }
 
-          // إذا كان متصلاً، إعادة توجيه إلى شاشة ChatAll
           return GetBuilder<ChatController>(
             builder: (controller) {
-              // انتظر حتى يتم تحميل البيانات إذا كانت قيد التحميل
               if (controller.isLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
               
-              // إعادة التوجيه إلى ChatAll
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Get.offAll(() => ChatAll());
               });

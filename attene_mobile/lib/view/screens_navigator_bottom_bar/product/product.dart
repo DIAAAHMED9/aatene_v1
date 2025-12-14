@@ -171,7 +171,6 @@ Widget _buildAllProductsView(ProductController controller, bool isRTL) {
   return Column(
     children: [
     
-      
       Expanded(
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -300,7 +299,6 @@ Widget _buildProductItem(Product product, ProductController controller, bool isR
                      ],
                    ),
                     
-              
               const SizedBox(height: 8),
             ],
           ),
@@ -334,7 +332,6 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
   
   return _buildProductsListView(controller, products as List<Product> , isRTL);
 }
-
 
   Widget _buildNoSectionsView(ProductController controller, bool isRTL) {
     return Container(
@@ -405,7 +402,7 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
             SizedBox(
               width: 280,
               child: Text(
-                sectionName != null 
+                sectionName != null
                   ? 'يمكنك البدء بإضافة منتجات جديدة إلى هذا القسم'
                   : 'يمكنك البدء بإضافة منتجات جديدة إلى الأقسام التي قمت بإنشائها',
                 style: TextStyle(
@@ -481,7 +478,6 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
     );
   }
 
- 
   Color _getStatusColor(String? status) {
     switch (status) {
       case 'active':

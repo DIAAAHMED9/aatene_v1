@@ -96,15 +96,12 @@ class ChatAll extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              // شريط البحث
               _buildSearchBar(controller),
               const SizedBox(height: 10),
               
-              // تبويبات التصنيف
               _buildTabButtons(controller),
               const Divider(color: Colors.grey, height: 15),
               
-              // حالة التحميل
               if (controller.isLoading.value)
                 const Expanded(
                   child: Center(
@@ -112,7 +109,6 @@ class ChatAll extends StatelessWidget {
                   ),
                 )
               else
-                // قائمة المحادثات
                 Expanded(
                   child: _buildConversationsList(controller),
                 ),
@@ -158,7 +154,6 @@ class ChatAll extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // تبويب الكل
         _buildTabButton(
           label: "الكل",
           isActive: controller.currentTab.value == ChatTab.all,
@@ -169,7 +164,6 @@ class ChatAll extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         
-        // تبويب غير مقروء
         _buildTabButton(
           label: "غير مقروء",
           isActive: controller.currentTab.value == ChatTab.unread,
@@ -180,7 +174,6 @@ class ChatAll extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         
-        // تبويب المهتمين
         _buildTabButton(
           label: "المهتمين",
           isActive: controller.currentTab.value == ChatTab.interested,
@@ -312,11 +305,9 @@ class ChatAll extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          // صورة المستخدم
           _buildUserAvatar(conversation),
           const SizedBox(width: 12),
           
-          // معلومات المحادثة
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +380,6 @@ class ChatAll extends StatelessWidget {
             ),
           ),
           
-          // زر المتابعة
           IconButton(
             icon: Icon(
               conversation.isInterested
@@ -421,7 +411,6 @@ class ChatAll extends StatelessWidget {
               ? NetworkImage(conversation.avatar!)
               : const AssetImage("assets/image/1.png") as ImageProvider,
         ),
-        // مؤشر حالة الاتصال
         Container(
           width: 12,
           height: 12,

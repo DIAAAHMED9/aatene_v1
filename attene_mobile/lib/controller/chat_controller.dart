@@ -5,7 +5,6 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:attene_mobile/models/chat_models.dart';
 
-
 import '../api/api_request.dart';
 import '../my_app/my_app_controller.dart';
 import '../utlis/connection_status.dart';
@@ -15,31 +14,25 @@ enum ChatTab { all, unread, interested }
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
   
-  // WebSocket connection
   WebSocketChannel? _channel;
   Rx<ConnectionStatus> connectionStatus = ConnectionStatus.disconnected.obs;
   StreamSubscription? _webSocketSubscription;
   
-  // القوائم القابلة للملاحظة
   RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
   RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
   RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
   RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
   RxList<ChatBlock> blocks = <ChatBlock>[].obs;
   
-  // حالة التبويب الحالي
   Rx<ChatTab> currentTab = ChatTab.all.obs;
   
-  // التحميل والحالة
   RxBool isLoading = false.obs;
   RxBool isLoadingMessages = false.obs;
   RxString searchQuery = ''.obs;
   RxInt totalUnreadCount = 0.obs;
   
-  // المحادثة الحالية
   Rx<ChatConversation?> currentConversation = Rx<ChatConversation?>(null);
   
-  // Reconnection logic
   Timer? _reconnectTimer;
   int _reconnectAttempts = 0;
   final int _maxReconnectAttempts = 5;
@@ -47,9 +40,7 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // تحميل البيانات الأولية
     loadInitialData();
-    // الاتصال بالـ WebSocket
     _connectToWebSocket();
   }
   
@@ -60,8 +51,6 @@ class ChatController extends GetxController {
     super.onClose();
   }
   
-  // --- إضافة الدوال المفقودة ---
-  
   Future<void> refreshConversations() async {
     try {
       isLoading.value = true;
@@ -69,7 +58,7 @@ class ChatController extends GetxController {
         loadConversations(),
         loadUnreadCount(),
       ]);
-      update(); // تحديث واجهة المستخدم
+      update();
     } catch (e) {
       print('خطأ في تحديث المحادثات: $e');
     } finally {
@@ -92,7 +81,6 @@ class ChatController extends GetxController {
   
   void _connectToWebSocket() async {
     try {
-      // الحصول على التوكن
       if (!Get.isRegistered<MyAppController>()) {
         print('❌ MyAppController غير مسجل');
         connectionStatus.value = ConnectionStatus.error;
@@ -102,8 +90,8 @@ class ChatController extends GetxController {
       final MyAppController myAppController = Get.find<MyAppController>();
       String? token;
       
-      if (myAppController.isLoggedIn.value && 
-          myAppController.userData.isNotEmpty && 
+      if (myAppController.isLoggedIn.value &&
+          myAppController.userData.isNotEmpty &&
           myAppController.userData['token'] != null) {
         token = myAppController.userData['token'];
       }
@@ -114,7 +102,6 @@ class ChatController extends GetxController {
         return;
       }
       
-      // بناء رابط WebSocket
       final baseUrl = ApiHelper.getBaseUrl().replaceAll('https://', 'wss://').replaceAll('http://', 'ws://');
       final wsUrl = '$baseUrl/ws/chat?token=$token';
       
@@ -167,7 +154,6 @@ class ChatController extends GetxController {
     
     _reconnectTimer?.cancel();
     
-    // زيادة التأخير مع كل محاولة (أسي)
     final delay = Duration(seconds: 2 << _reconnectAttempts);
     _reconnectAttempts++;
     
@@ -226,22 +212,17 @@ class ChatController extends GetxController {
     final message = ChatMessage.fromJson(payload['message']);
     final conversationId = payload['conversation_id'];
     
-    // إذا كنا في المحادثة الحالية، نضيف الرسالة
     if (currentConversation.value?.id == conversationId) {
       currentMessages.add(message);
-      // إشعار القراءة
       _sendReadReceipt(conversationId);
     }
     
-    // تحديث قائمة المحادثات
     _updateConversationLastMessage(conversationId, message.content);
     
-    // تحديث العداد
     if (currentConversation.value?.id != conversationId) {
       totalUnreadCount.value = totalUnreadCount.value + 1;
     }
     
-    // إشعار للمستخدم
     if (currentConversation.value?.id != conversationId) {
       _showMessageNotification(message);
     }
@@ -251,7 +232,6 @@ class ChatController extends GetxController {
     final conversationId = payload['conversation_id'];
     final userId = payload['user_id'];
     
-    // تحديث حالة القراءة للرسائل
     for (var i = 0; i < currentMessages.length; i++) {
       if (currentMessages[i].messageType == 'receiver') {
         currentMessages[i] = ChatMessage(
@@ -267,14 +247,12 @@ class ChatController extends GetxController {
       }
     }
     
-    // تحديث قائمة المحادثات
     _updateConversationUnreadCount(conversationId, 0);
   }
   
   void _handleConversationUpdated(Map<String, dynamic> payload) {
     final conversation = ChatConversation.fromJson(payload);
     
-    // تحديث في القائمة الرئيسية
     final index = allConversations.indexWhere((c) => c.id == conversation.id);
     if (index != -1) {
       allConversations[index] = conversation;
@@ -282,16 +260,14 @@ class ChatController extends GetxController {
       allConversations.add(conversation);
     }
     
-    // تحديث القوائم الفرعية
     updateFilteredLists();
   }
   
   void _handleUserOnline(Map<String, dynamic> payload) {
     final userId = payload['user_id'];
     
-    // تحديث حالة الاتصال للمحادثات
     for (var i = 0; i < allConversations.length; i++) {
-      if (allConversations[i].participantType == 'user' && 
+      if (allConversations[i].participantType == 'user' &&
           allConversations[i].participantId == userId) {
         allConversations[i] = ChatConversation(
           id: allConversations[i].id,
@@ -316,7 +292,7 @@ class ChatController extends GetxController {
     final userId = payload['user_id'];
     
     for (var i = 0; i < allConversations.length; i++) {
-      if (allConversations[i].participantType == 'user' && 
+      if (allConversations[i].participantType == 'user' &&
           allConversations[i].participantId == userId) {
         allConversations[i] = ChatConversation(
           id: allConversations[i].id,
@@ -338,22 +314,18 @@ class ChatController extends GetxController {
   }
   
   void _handleTyping(Map<String, dynamic> payload) {
-    // يمكن إضافة مؤشر الكتابة
     final conversationId = payload['conversation_id'];
     final userId = payload['user_id'];
     final isTyping = payload['is_typing'];
     
-    // تنفيذ منطق مؤشر الكتابة حسب الحاجة
   }
   
   void _handleMessageDeleted(Map<String, dynamic> payload) {
     final messageId = payload['message_id'];
     final conversationId = payload['conversation_id'];
     
-    // حذف الرسالة من القائمة الحالية
     currentMessages.removeWhere((msg) => msg.id == messageId);
     
-    // تحديث آخر رسالة في المحادثة
     if (currentMessages.isNotEmpty) {
       final lastMessage = currentMessages.last;
       _updateConversationLastMessage(conversationId, lastMessage.content);
@@ -372,7 +344,6 @@ class ChatController extends GetxController {
     final blockedType = payload['blocked_type'];
     
     if (isBlocked) {
-      // إضافة للحظر
       final block = ChatBlock(
         id: payload['id'],
         blockedType: blockedType,
@@ -381,8 +352,7 @@ class ChatController extends GetxController {
       );
       blocks.add(block);
     } else {
-      // إزالة من الحظر
-      blocks.removeWhere((b) => 
+      blocks.removeWhere((b) =>
         b.blockedType == blockedType && b.blockedId == blockedId);
     }
   }
@@ -446,7 +416,6 @@ class ChatController extends GetxController {
   }
   
   void _showMessageNotification(ChatMessage message) {
-    // يمكن استخدام Flutter Local Notifications هنا
     Get.snackbar(
       'رسالة جديدة',
       message.content,
@@ -520,7 +489,6 @@ class ChatController extends GetxController {
           messages.map((msg) => ChatMessage.fromJson(msg)).toList()
         );
         
-        // إرسال إشعار قراءة
         _sendReadReceipt(conversationId);
       }
     } catch (e) {
@@ -545,11 +513,9 @@ class ChatController extends GetxController {
       );
       
       if (response != null) {
-        // إضافة الرسالة الجديدة
         final ChatMessage newMessage = ChatMessage.fromJson(response['data']);
         currentMessages.add(newMessage);
         
-        // تحديث عبر WebSocket
         if (_channel != null && connectionStatus.value == ConnectionStatus.connected) {
           final wsMessage = jsonEncode({
             'event': 'new_message',
@@ -576,7 +542,6 @@ class ChatController extends GetxController {
         shouldShowMessage: false,
       );
       
-      // إرسال عبر WebSocket
       if (_channel != null && connectionStatus.value == ConnectionStatus.connected) {
         final message = jsonEncode({
           'event': 'message_read',
@@ -619,7 +584,6 @@ class ChatController extends GetxController {
       );
       
       if (response != null) {
-        // إرسال عبر WebSocket
         if (_channel != null && connectionStatus.value == ConnectionStatus.connected) {
           final message = jsonEncode({
             'event': 'conversation_updated',
@@ -647,7 +611,6 @@ class ChatController extends GetxController {
       );
       
       if (response != null) {
-        // إرسال عبر WebSocket
         if (_channel != null && connectionStatus.value == ConnectionStatus.connected) {
           final message = jsonEncode({
             'event': 'block_update',
@@ -671,7 +634,6 @@ class ChatController extends GetxController {
       );
       
       if (response != null) {
-        // إرسال عبر WebSocket
         if (_channel != null && connectionStatus.value == ConnectionStatus.connected) {
           final message = jsonEncode({
             'event': 'block_update',
@@ -715,7 +677,6 @@ class ChatController extends GetxController {
       );
       
       if (response != null) {
-        // إرسال عبر WebSocket
         if (_channel != null && connectionStatus.value == ConnectionStatus.connected) {
           final message = jsonEncode({
             'event': 'conversation_created',
@@ -731,17 +692,14 @@ class ChatController extends GetxController {
   }
   
   void updateFilteredLists() {
-    // تحديث قائمة غير المقروء
     unreadConversations.assignAll(
       allConversations.where((conv) => conv.unreadCount > 0).toList()
     );
     
-    // تحديث قائمة المهتمين
     interestedConversations.assignAll(
       allConversations.where((conv) => conv.isInterested).toList()
     );
     
-    // تحديث العدد الإجمالي غير المقروء
     totalUnreadCount.value = allConversations.fold(
       0, (sum, conv) => sum + conv.unreadCount);
     

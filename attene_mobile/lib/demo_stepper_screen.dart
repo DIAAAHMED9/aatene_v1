@@ -220,7 +220,7 @@ class _DemoStepperScreenState extends State<DemoStepperScreen> {
     }
 
     final variationController = Get.find<ProductVariationController>();
-    if (variationController.hasVariations.value) {
+    if (variationController.hasVariations) {
       final validation = variationController.validateVariations();
       if (!validation.isValid) {
         Get.snackbar(

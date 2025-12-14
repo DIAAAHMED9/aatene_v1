@@ -108,20 +108,16 @@ class LoginController extends GetxController {
   bool isValidEmail(String email) {
     if (email.isEmpty) return false;
 
-    // تعبير نمطي بسيط وفعال
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
   bool isValidPhone(String phone) {
     if (phone.isEmpty) return false;
 
-    // إزالة المسافات والرموز
     final cleanPhone = phone.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
 
-    // يجب أن يكون طول الرقم بين 10 و15 رقماً
     if (cleanPhone.length < 10 || cleanPhone.length > 15) return false;
 
-    // يجب أن يحتوي على أرقام فقط
     return RegExp(r'^[0-9]+$').hasMatch(cleanPhone);
   }
 
@@ -210,10 +206,8 @@ class LoginController extends GetxController {
       ..['token'] = token
       ..['login_time'] = DateTime.now().toString();
 
-    // تحديث بيانات المستخدم وتحميل بيانات التطبيق
     myAppController.updateUserData(completeUserData);
 
-    // تحميل بيانات التطبيق بعد تسجيل الدخول
     await myAppController.onLoginSuccess(completeUserData);
 
     _resetLoginAttempts();
@@ -335,7 +329,6 @@ class LoginController extends GetxController {
   }
 
   void _showSuccessMessage(String message) {
-    // التحقق من وجود Get.context قبل عرض snackbar
     if (Get.context != null) {
       Get.snackbar(
         'نجاح',
@@ -352,7 +345,6 @@ class LoginController extends GetxController {
   }
 
   void _showErrorSnackbar(String title, String message) {
-    // التحقق من وجود Get.context قبل عرض snackbar
     if (Get.context != null) {
       Get.snackbar(
         title,
@@ -392,13 +384,11 @@ class LoginController extends GetxController {
   Future<void> _redirectToMainScreen() async {
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // التحقق من وجود Get.context قبل التنقل
     if (Get.context != null) {
       Get.offAllNamed('/mainScreen');
     } else {
       print('⚠️ لا يمكن التنقل إلى الشاشة الرئيسية: Get.context غير متوفر');
 
-      // محاولة التنقل بعد تأخير إضافي
       await Future.delayed(const Duration(milliseconds: 500));
       if (Get.context != null) {
         Get.offAllNamed('/mainScreen');

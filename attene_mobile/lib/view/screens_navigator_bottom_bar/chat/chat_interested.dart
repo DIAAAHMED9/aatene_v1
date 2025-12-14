@@ -75,15 +75,12 @@ class ChatInterested extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                // شريط البحث
                 _buildSearchBar(controller),
                 const SizedBox(height: 10),
                 
-                // تبويبات
                 _buildTabButtons(controller),
                 const Divider(color: Colors.grey, height: 15),
                 
-                // قائمة المهتمين
                 Expanded(
                   child: controller.interestedConversations.isEmpty
                       ? _buildEmptyState()
@@ -247,11 +244,9 @@ class ChatInterested extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          // صورة المستخدم
           _buildUserAvatar(conversation),
           const SizedBox(width: 12),
           
-          // معلومات المحادثة
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,7 +287,6 @@ class ChatInterested extends StatelessWidget {
             ),
           ),
           
-          // زر المتابعة
           IconButton(
             icon: Icon(
               Icons.star,
