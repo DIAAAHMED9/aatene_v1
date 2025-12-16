@@ -22,7 +22,7 @@ class ProductGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelectionMode = controller.isSelectionMode;
-    
+
     return GestureDetector(
       onLongPress: () {
         if (!isSelectionMode) {
@@ -54,45 +54,59 @@ class ProductGridItem extends StatelessWidget {
                   height: 120,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
                     color: Colors.grey[200],
                   ),
                   child: Stack(
                     children: [
                       product.coverUrl != null
                           ? ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
                               child: Image.network(
                                 product.coverUrl!,
                                 fit: BoxFit.cover,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes!
-                                          : null,
-                                    ),
-                                  );
-                                },
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value:
+                                              loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
                                     color: Colors.grey[200],
-                                    child: Icon(Icons.broken_image,
+                                    child: Icon(
+                                      Icons.broken_image,
                                       color: Colors.grey[400],
-                                      size: 40),
+                                      size: 40,
+                                    ),
                                   );
                                 },
                               ),
                             )
                           : Container(
                               color: Colors.grey[200],
-                              child: Icon(Icons.image,
+                              child: Icon(
+                                Icons.image,
                                 color: Colors.grey[400],
-                                size: 40),
+                                size: 40,
+                              ),
                             ),
-                      
+
                       if (isSelectionMode)
                         Positioned(
                           top: 8,
@@ -108,7 +122,8 @@ class ProductGridItem extends StatelessWidget {
                                 onSelectionChanged?.call(value ?? false);
                               },
                               activeColor: AppColors.primary400,
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                               visualDensity: VisualDensity.compact,
                             ),
                           ),
@@ -116,7 +131,6 @@ class ProductGridItem extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
@@ -132,20 +146,22 @@ class ProductGridItem extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       if (product.sectionId != null && product.sectionId != '0')
                         Row(
                           children: [
-                            Icon(Icons.local_offer_outlined,
-                                 color: Colors.grey[600],
-                                 size: 12),
+                            Icon(
+                              Icons.local_offer_outlined,
+                              color: Colors.grey[600],
+                              size: 12,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 controller.getSectionName(product.sectionId!),
-                                style:  TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.grey[600],
                                 ),
@@ -155,9 +171,9 @@ class ProductGridItem extends StatelessWidget {
                             ),
                           ],
                         ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -169,7 +185,7 @@ class ProductGridItem extends StatelessWidget {
                               color: AppColors.primary400,
                             ),
                           ),
-                          
+
                           if (!isSelectionMode)
                             IconButton(
                               onPressed: _showProductOptions,
@@ -239,10 +255,7 @@ class ProductGridItem extends StatelessWidget {
         title: const Text('حذف المنتج'),
         content: Text('هل أنت متأكد من حذف المنتج "${product.name}"؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () {
               Get.back();

@@ -40,7 +40,7 @@ class Login extends StatelessWidget {
                   style: TextStyle(
                     fontSize: ResponsiveDimensions.f(16),
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0071A7),
+                    color: AppColors.primary400,
                   ),
                   textAlign: isRTL ? TextAlign.right : TextAlign.left,
                 ),
@@ -100,7 +100,7 @@ class Login extends StatelessWidget {
                     child: Text(
                       isRTL ? 'نسيت كلمة المرور؟' : 'Forgot Password?',
                       style: TextStyle(
-                        color: Color(0xFF0071A7),
+                        color: AppColors.primary400,
                         fontSize: ResponsiveDimensions.f(14),
                       ),
                     ),
@@ -154,7 +154,7 @@ class Login extends StatelessWidget {
                       child: Text(
                         isRTL ? 'إنشاء حساب جديد' : 'Create new account',
                         style: TextStyle(
-                          color: Color(0xFF0071A7),
+                          color: AppColors.primary400,
                           fontWeight: FontWeight.bold,
                           fontSize: ResponsiveDimensions.f(14),
                         ),

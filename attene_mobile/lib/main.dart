@@ -2,6 +2,7 @@ import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/utlis/app_lifecycle_manager.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/view/Services/Services%20Detail/services_detail.dart';
+import 'package:attene_mobile/view/products/product%20details/product_details.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -91,14 +92,28 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
+      color: AppColors.primary400,
       theme: ThemeData(
-        primaryColor: AppColors.primary500,
-        primarySwatch: AppColors.secondary300,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+          primaryColor:AppColors.primary400,
+          canvasColor: Colors.white,
+          colorScheme: ColorScheme(
+              brightness: Brightness.light,
+              primary:AppColors.primary400,
+              onPrimary: Colors.black,
+              secondary: Colors.white,
+              onSecondary: Colors.black12,
+              error: Colors.redAccent,
+              onError: Colors.red,
+              surface: Colors.white,
+              onSurface: AppColors.neutral200)),
+      // theme: ThemeData(
+      //   primaryColor: AppColors.primary500,
+      //   primarySwatch: AppColors.secondary300,
+      //   visualDensity: VisualDensity.adaptivePlatformDensity,
+      // ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () => const ProductDetails()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

@@ -394,7 +394,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                     height: 40,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: AppColors.primary100,
+                      color: AppColors.primary50,
                     ),
                     child: Icon(
                       Icons.edit,
@@ -413,7 +413,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                     height: 40,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: AppColors.error100,
+                      color: Colors.red[50],
                     ),
                     child: Icon(
                       Icons.delete_outline,

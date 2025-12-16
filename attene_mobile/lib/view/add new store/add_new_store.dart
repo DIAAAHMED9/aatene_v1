@@ -62,7 +62,7 @@ class AddNewStore extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextWithStar(text: "اسم المتجر *"),
+              TextWithStar(text: "اسم المتجر", ),
               SizedBox(height: 5),
               TextFiledAatene(
                 heightTextFiled: 50,
@@ -96,15 +96,8 @@ class AddNewStore extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
+              TextWithStar(text: "شعار المتجر", ),
 
-              Text(
-                "شعار المتجر *",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.neutral900,
-                ),
-              ),
               SizedBox(height: 5),
               Text(
                 "اختر صورة أساسية للشعار (حد أقصى 5 صور)",
@@ -116,14 +109,8 @@ class AddNewStore extends StatelessWidget {
 
               SizedBox(height: 20),
 
-              Text(
-                "صور الغلاف *",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.neutral900,
-                ),
-              ),
+              TextWithStar(text: "صور الغلاف", ),
+
               SizedBox(height: 5),
               Text(
                 "اختر صورة واحدة على الأقل للغلاف (حد أقصى 10 صور)",
@@ -144,8 +131,7 @@ class AddNewStore extends StatelessWidget {
                 controller: controller.descriptionController,
               ),
               SizedBox(height: 15),
-
-              TextWithStar(text: "البريد الالكتروني *"),
+              TextWithStar(text: "البريد الالكتروني", ),
               SizedBox(height: 5),
               TextFiledAatene(
                 heightTextFiled: 50,
@@ -266,7 +252,7 @@ class AddNewStore extends StatelessWidget {
               ),
               SizedBox(height: 15),
 
-              TextWithStar(text: "الهاتف المحمول *"),
+              TextWithStar(text: "الهاتف المحمول "),
               SizedBox(height: 5),
               TextFiledAatene(
                 heightTextFiled: 50,

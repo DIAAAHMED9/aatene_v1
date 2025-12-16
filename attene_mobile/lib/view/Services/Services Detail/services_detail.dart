@@ -445,6 +445,8 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                   children: [
                                     CircleAvatar(),
                                     Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "محمد علي",
@@ -1297,7 +1299,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                       //   ),
                       // ],
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.primary400)
+                      border: Border.all(color: AppColors.primary400),
                     ),
                     child: Row(
                       children: [
@@ -1307,9 +1309,15 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
-                            border: Border.all(color: AppColors.primary400)
+                            border: Border.all(color: AppColors.primary400),
                           ),
-                          child: IconButton(onPressed: (){}, icon: Icon(Icons.call_outlined, color: AppColors.primary400,)),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.call_outlined,
+                              color: AppColors.primary400,
+                            ),
+                          ),
                         ),
                       ],
                     ),
