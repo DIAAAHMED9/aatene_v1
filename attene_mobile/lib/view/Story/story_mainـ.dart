@@ -1,150 +1,161 @@
 import 'package:flutter/material.dart';
 
-class ProductCard extends StatefulWidget {
-  const ProductCard({super.key});
-
-  @override
-  State<ProductCard> createState() => _ProductCardState();
-}
-
-class _ProductCardState extends State<ProductCard> {
-  bool isLiked = false;
-
-  void toggleLike() {
-    setState(() => isLiked = !isLiked);
-  }
+class HamburgerHeader extends StatelessWidget {
+  const HamburgerHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 164,
-      height: 260,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        width: double.infinity,
+        height: 267,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F6F8),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(24),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(14),
-                ),
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1520975916090-3105956dac38',
-                  height: 170,
-                  width: double.infinity,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Background Pattern
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.15,
+                child: Image.asset(
+                  'assets/pattern.png', // optional pattern
                   fit: BoxFit.cover,
                 ),
               ),
+            ),
 
-              // Badge
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'جديد',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              ),
+            SafeArea(
+              child: Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Status time (Mock)
+                        const Text(
+                          '9:41',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
 
-              // Love Button (No Animation)
-              Positioned(
-                bottom: -18,
-                left: 10,
-                child: GestureDetector(
-                  onTap: toggleLike,
-                  child: Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isLiked ? Colors.red : Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          blurRadius: 8,
+                        // Logo
+                        Row(
+                          children: [
+                            const Text(
+                              'Ateng',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'A',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    child: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.white : Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
 
-          const SizedBox(height: 26),
+                    const Spacer(),
 
-          // Info
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'T-Shirt Sailing',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: List.generate(
-                    5,
-                        (index) => const Icon(
-                      Icons.star,
-                      size: 14,
-                      color: Colors.amber,
+                    // User Info
+                    Row(
+                      children: [
+                        // Icon Circle
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Z',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // Name & Location
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'jerusalemIII',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'فلسطين ، الخليل',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        // Avatar
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundImage: NetworkImage(
+                            'https://images.unsplash.com/photo-1502685104226-ee32379fefbe',
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: const [
-                    Text(
-                      '14\$',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 6),
-                    Text(
-                      '21\$',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
+
+                    const SizedBox(height: 20),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

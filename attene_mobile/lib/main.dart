@@ -1,6 +1,8 @@
 import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/utlis/app_lifecycle_manager.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:attene_mobile/view/Control_Panal_Vendor/controler_vindor.dart';
+import 'package:attene_mobile/view/Control_Users/home_control.dart';
 import 'package:attene_mobile/view/Services/Services%20Detail/services_detail.dart';
 import 'package:attene_mobile/view/products/product%20details/product_details.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
@@ -113,7 +115,7 @@ class MyApp extends StatelessWidget {
       // ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const ProductDetails()),
+        GetPage(name: '/', page: () => const ControllerVendor()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
