@@ -215,7 +215,7 @@ class MyApp extends StatelessWidget {
       
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const Edit_Profile()),
+        GetPage(name: '/', page: () => const SplashScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
