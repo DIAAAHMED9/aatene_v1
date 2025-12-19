@@ -71,9 +71,9 @@ backgroundColor: Colors.white,
             
             SizedBox(height: ResponsiveDimensions.f(20)),
             
-            NextButtonWidget(selectedSection: selectedSection),
+            // NextButtonWidget(selectedSection: selectedSection),
             
-            SizedBox(height: ResponsiveDimensions.f(20)),
+            // SizedBox(height: ResponsiveDimensions.f(20)),
           ],
         ),
       ),

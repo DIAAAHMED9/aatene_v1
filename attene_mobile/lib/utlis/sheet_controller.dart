@@ -3,7 +3,7 @@ import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:attene_mobile/controller/product_controller.dart';
-import 'package:attene_mobile/demo_stepper_screen.dart';
+import 'package:attene_mobile/add_product_stepper_screen.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';

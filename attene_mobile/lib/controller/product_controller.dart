@@ -40,12 +40,23 @@ class ProductCentralController extends GetxController {
   final RxBool isSubmitting = false.obs;
   final RxBool isUpdatingSection = false.obs;
   final RxBool isProductReadyForSubmission = false.obs;
+  
+  // Validation errors
+  final RxMap<String, String> validationErrors = <String, String>{}.obs;
+  
+  // Step validation status
+  final RxMap<int, bool> stepValidationStatus = <int, bool>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
     print('🔄 [PRODUCT CENTRAL] تهيئة متحكم المنتجات المركزي');
     loadCachedCategories();
+    
+    // Initialize step validation status
+    for (int i = 0; i < 4; i++) {
+      stepValidationStatus[i] = false;
+    }
     
     ever(productName, (_) => _checkProductReadiness());
     ever(productDescription, (_) => _checkProductReadiness());
@@ -73,6 +84,103 @@ class ProductCentralController extends GetxController {
    Section ID: ${selectedSection.value?.id}
    Ready for Submission: ${isProductReadyForSubmission.value}
 ''');
+  }
+  
+  Map<String, dynamic> validateStep(int stepIndex) {
+    validationErrors.clear();
+    
+    switch (stepIndex) {
+      case 0: // Basic info step
+        return _validateBasicInfoStep();
+      case 2: // Variations step
+        return _validateVariationsStep();
+      default:
+        return {'isValid': true, 'errors': {}};
+    }
+  }
+  
+  Map<String, dynamic> _validateBasicInfoStep() {
+    bool isValid = true;
+    
+    if (productName.isEmpty) {
+      validationErrors['productName'] = 'اسم المنتج مطلوب';
+      isValid = false;
+    }
+    
+    if (productDescription.isEmpty) {
+      validationErrors['productDescription'] = 'وصف المنتج مطلوب';
+      isValid = false;
+    }
+    
+    if (price.isEmpty) {
+      validationErrors['price'] = 'سعر المنتج مطلوب';
+      isValid = false;
+    } else {
+      final priceValue = double.tryParse(price.value);
+      if (priceValue == null || priceValue <= 0) {
+        validationErrors['price'] = 'يرجى إدخال سعر صحيح';
+        isValid = false;
+      }
+    }
+    
+    if (selectedCategoryId <= 0) {
+      validationErrors['category'] = 'فئة المنتج مطلوبة';
+      isValid = false;
+    }
+    
+    if (selectedCondition.isEmpty) {
+      validationErrors['condition'] = 'حالة المنتج مطلوبة';
+      isValid = false;
+    }
+    
+    if (selectedMedia.isEmpty) {
+      validationErrors['media'] = 'صور المنتج مطلوبة';
+      isValid = false;
+    }
+    
+    if (selectedSection.value == null) {
+      validationErrors['section'] = 'قسم المنتج مطلوب';
+      isValid = false;
+    }
+    
+    return {
+      'isValid': isValid,
+      'errors': Map<String, String>.from(validationErrors),
+    };
+  }
+  
+  Map<String, dynamic> _validateVariationsStep() {
+    try {
+      if (Get.isRegistered<ProductVariationController>()) {
+        final variationController = Get.find<ProductVariationController>();
+        
+        if (variationController.hasVariations) {
+          final validation = variationController.validateVariations();
+          if (!validation.isValid) {
+            return {
+              'isValid': false,
+              'errors': {'variations': validation.errorMessage}
+            };
+          }
+        }
+      }
+    } catch (e) {
+      print('❌ [VARIATIONS VALIDATION] Error: $e');
+    }
+    
+    return {'isValid': true, 'errors': {}};
+  }
+  
+  void markStepAsValidated(int stepIndex) {
+    stepValidationStatus[stepIndex] = true;
+  }
+  
+  void clearStepValidation(int stepIndex) {
+    stepValidationStatus[stepIndex] = false;
+  }
+  
+  bool isStepValidated(int stepIndex) {
+    return stepValidationStatus[stepIndex] == true;
   }
   
   Future<void> loadCachedCategories() async {
@@ -154,7 +262,7 @@ class ProductCentralController extends GetxController {
     required int categoryId,
     required String condition,
     required List<MediaItem> media,
-     Section? section,
+    Section? section,
   }) {
     productName(name);
     productDescription(description);
@@ -163,10 +271,9 @@ class ProductCentralController extends GetxController {
     selectedCondition(condition);
     selectedMedia.assignAll(media);
     
-if(section!=null){
+    if(section != null){
       updateSelectedSection(section);
-
-}
+    }
  
     print('''
 📦 [PRODUCT] تحديث المعلومات الأساسية:
@@ -492,6 +599,12 @@ if(section!=null){
     selectedMedia.clear();
     keywords.clear();
     variations.clear();
+    validationErrors.clear();
+    
+    // Reset all step validations
+    for (int i = 0; i < 4; i++) {
+      stepValidationStatus[i] = false;
+    }
     
     if (resetSection) {
       selectedSection(null);
@@ -578,6 +691,7 @@ if(section!=null){
    المتغيرات: ${variationController.variations.length}
    المنتجات المرتبطة: $relatedProductsCount
    جاهز للإرسال: ${isProductReadyForSubmission.value}
+   أخطاء التحقق: ${validationErrors.length}
 ''');
     } catch (e) {
       print('⚠️ [PRODUCT] خطأ في طباعة ملخص البيانات: $e');
@@ -597,6 +711,11 @@ if(section!=null){
       
       selectedSection(section);
       print('✅ [PRODUCT] تحديث القسم: ${section.name} (ID: ${section.id})');
+      
+      // Clear section validation error if exists
+      if (validationErrors.containsKey('section')) {
+        validationErrors.remove('section');
+      }
       
       if (Get.isRegistered<BottomSheetController>()) {
         final bottomSheetController = Get.find<BottomSheetController>();
@@ -727,6 +846,7 @@ if(section!=null){
       'variationsCount': variations.length,
       'isReadyForSubmission': isProductReadyForSubmission.value,
       'validation': validateProductData(),
+      'validationErrors': Map<String, String>.from(validationErrors),
     };
   }
   

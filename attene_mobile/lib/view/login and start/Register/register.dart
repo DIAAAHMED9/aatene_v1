@@ -41,7 +41,7 @@ class Register extends StatelessWidget {
                   style: TextStyle(
                     fontSize: ResponsiveDimensions.f(16),
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0071A7),
+                    color: const Color(0xFF0071A7),
                   ),
                   textAlign: isRTL ? TextAlign.right : TextAlign.left,
                 ),
@@ -50,9 +50,8 @@ class Register extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'الاسم الكامل' : 'Full Name',
-                    errorValue: controller.nameError.value,
+                    errorText: controller.nameError.value,
                     onChanged: controller.updateName,
-                    isError: controller.nameError.isNotEmpty,
                     textInputType: TextInputType.name,
                   ),
                 ),
@@ -61,9 +60,8 @@ class Register extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'البريد الإلكتروني' : 'Email',
-                    errorValue: controller.emailError.value,
+                    errorText: controller.emailError.value,
                     onChanged: controller.updateEmail,
-                    isError: controller.emailError.isNotEmpty,
                     textInputType: TextInputType.emailAddress,
                   ),
                 ),
@@ -72,9 +70,8 @@ class Register extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'رقم الجوال' : 'Phone Number',
-                    errorValue: controller.phoneError.value,
+                    errorText: controller.phoneError.value,
                     onChanged: controller.updatePhone,
-                    isError: controller.phoneError.isNotEmpty,
                     textInputType: TextInputType.phone,
                   ),
                 ),
@@ -83,9 +80,8 @@ class Register extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'كلمة المرور' : 'Password',
-                    errorValue: controller.passwordError.value,
+                    errorText: controller.passwordError.value,
                     onChanged: controller.updatePassword,
-                    isError: controller.passwordError.isNotEmpty,
                     obscureText: controller.obscurePassword.value,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -105,9 +101,8 @@ class Register extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'تأكيد كلمة المرور' : 'Confirm Password',
-                    errorValue: controller.confirmPasswordError.value,
+                    errorText: controller.confirmPasswordError.value,
                     onChanged: controller.updateConfirmPassword,
-                    isError: controller.confirmPasswordError.isNotEmpty,
                     obscureText: controller.obscureConfirmPassword.value,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -123,18 +118,16 @@ class Register extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(30)),
-                Obx(
-                  () => AateneButton(
-                    textColor: Colors.white,
-                    color: AppColors.primary400,
-                    borderColor: AppColors.primary400,
-                    isLoading: controller.isLoading.value,
-                    onTap: controller.isLoading.value
-                        ? null
-                        : controller.register,
-                    buttonText: isRTL ? 'إنشاء حساب' : 'Create account',
-                  ),
-                ),
+           Obx(
+  () => AateneButton(
+    textColor: Colors.white,
+    color: AppColors.primary400,
+    borderColor: AppColors.primary400,
+    isLoading: controller.isLoading.value,
+    onTap: controller.isLoading.value ? null : controller.register,
+    buttonText: isRTL ? 'إنشاء حساب' : 'Create account',
+  ),
+),
                 SizedBox(height: ResponsiveDimensions.h(16)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -153,7 +146,7 @@ class Register extends StatelessWidget {
                       child: Text(
                         isRTL ? 'تسجيل الدخول' : 'Login',
                         style: TextStyle(
-                          color: Color(0xFF0071A7),
+                          color: const Color(0xFF0071A7),
                           fontWeight: FontWeight.bold,
                           fontSize: ResponsiveDimensions.f(14),
                         ),

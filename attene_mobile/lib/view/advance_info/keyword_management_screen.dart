@@ -135,7 +135,7 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
                 ),
               ),
             ),
-            KeywordBottomActionsWidget(),
+            // KeywordBottomActionsWidget(),
           ],
         ),
       ),

@@ -26,7 +26,7 @@ class ApiHelper {
           'Accept': 'application/json',
           'Device-Type': 'MOBILE',
           'Accept-Language': 'ar',
-          'storeId': '53',
+          'storeId': '55',
         };
       }
 
@@ -53,7 +53,7 @@ class ApiHelper {
         'Accept': 'application/json',
         'Device-Type': 'MOBILE',
         'Accept-Language': appLanguageController.appLocale.value,
-        'storeId': '53',
+        'storeId': '55',
       };
     } catch (e) {
       print('❌ [API] خطأ في الحصول على رؤوس الطلب: $e');

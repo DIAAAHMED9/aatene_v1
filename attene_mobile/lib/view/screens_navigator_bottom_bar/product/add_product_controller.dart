@@ -21,6 +21,9 @@ class AddProductController extends GetxController {
   final RxString _errorMessage = ''.obs;
   final RxString _selectedCategoryName = ''.obs;
   
+  // Field errors
+  final RxMap<String, String> _fieldErrors = <String, String>{}.obs;
+  
   static const int maxDescriptionLength = 140;
   static const List<String> productConditions = ['جديد', 'مستعمل', 'مجدول'];
   
@@ -58,6 +61,9 @@ class AddProductController extends GetxController {
         _updateSelectedCategoryName();
       }
       
+      // Load validation errors
+      _fieldErrors.addAll(central.validationErrors);
+      
       _validateForm();
       printDataSummary();
       
@@ -67,11 +73,23 @@ class AddProductController extends GetxController {
   }
   
   void _setupListeners() {
-    productNameController.addListener(_onProductNameChanged);
-    productDescriptionController.addListener(_onDescriptionChanged);
-    priceController.addListener(_onPriceChanged);
+    productNameController.addListener(() {
+      _onProductNameChanged();
+      _clearFieldError('productName');
+    });
+    productDescriptionController.addListener(() {
+      _onDescriptionChanged();
+      _clearFieldError('productDescription');
+    });
+    priceController.addListener(() {
+      _onPriceChanged();
+      _clearFieldError('price');
+    });
     
-    ever(_selectedCondition, (_) => _validateForm());
+    ever(_selectedCondition, (_) {
+      _validateForm();
+      _clearFieldError('condition');
+    });
     
     ever(productCentralController.isLoadingCategories, (isLoading) {
       _isLoading.value = isLoading;
@@ -79,6 +97,30 @@ class AddProductController extends GetxController {
         _updateSelectedCategoryName();
       }
     });
+    
+    // Listen to category selection
+    ever(productCentralController.selectedCategoryId, (id) {
+      if (id > 0) {
+        _clearFieldError('category');
+      }
+    });
+    
+    // Listen to media changes
+    ever(productCentralController.selectedMedia, (media) {
+      if (media.isNotEmpty) {
+        _clearFieldError('media');
+      }
+      _validateForm();
+      update();
+    });
+  }
+  
+  void _clearFieldError(String fieldName) {
+    if (_fieldErrors.containsKey(fieldName)) {
+      _fieldErrors.remove(fieldName);
+      productCentralController.validationErrors.remove(fieldName);
+      update();
+    }
   }
   
   void _initializeCategories() {
@@ -159,6 +201,7 @@ class AddProductController extends GetxController {
           onMediaSelected: (selectedMedia) {
             productCentralController.selectedMedia.assignAll(selectedMedia);
             print('✅ [ADD PRODUCT] Media selected: ${selectedMedia.length} items');
+            _clearFieldError('media');
             _validateForm();
             update();
           },
@@ -181,6 +224,10 @@ class AddProductController extends GetxController {
   void removeMedia(int index) {
     if (index >= 0 && index < productCentralController.selectedMedia.length) {
       productCentralController.selectedMedia.removeAt(index);
+      if (productCentralController.selectedMedia.isEmpty) {
+        _fieldErrors['media'] = 'صور المنتج مطلوبة';
+        productCentralController.validationErrors['media'] = 'صور المنتج مطلوبة';
+      }
       _validateForm();
       update();
       print('🗑️ [ADD PRODUCT] Media removed at index $index');
@@ -206,40 +253,67 @@ class AddProductController extends GetxController {
     }
   }
   
+  Map<String, dynamic> validateStep() {
+    _fieldErrors.clear();
+    final validation = productCentralController.validateStep(0);
+    _fieldErrors.addAll(validation['errors'] ?? {});
+    
+    // Mark step as validated if valid
+    if (validation['isValid']) {
+      productCentralController.markStepAsValidated(0);
+    } else {
+      productCentralController.clearStepValidation(0);
+    }
+    
+    return validation;
+  }
+  
   bool validateForm() {
-    final errors = <String>[];
+    final validation = validateStep();
     
-    if (productNameController.text.isEmpty) {
-      errors.add('اسم المنتج');
-    }
-    
-    if (productDescriptionController.text.isEmpty) {
-      errors.add('وصف المنتج');
-    }
-    
-    if (priceController.text.isEmpty) {
-      errors.add('سعر المنتج');
-    }
-    
-    if (_selectedCondition.value.isEmpty) {
-      errors.add('حالة المنتج');
-    }
-    
-    if (productCentralController.selectedCategoryId.value <= 0) {
-      errors.add('فئة المنتج');
-    }
-    
-    if (productCentralController.selectedMedia.isEmpty) {
-      errors.add('صور المنتج');
-    }
-    
-    if (errors.isNotEmpty) {
-      final errorMessage = 'يرجى ملء الحقول التالية: ${errors.join('، ')}';
-      _showValidationError(errorMessage);
+    if (!validation['isValid']) {
+      _showValidationErrors(validation['errors'] ?? {});
       return false;
     }
     
     return true;
+  }
+  
+  void _showValidationErrors(Map<String, String> errors) {
+    if (errors.isNotEmpty) {
+      final errorMessages = errors.entries.map((e) => '• ${e.value}').join('\n');
+      
+      Get.dialog(
+        AlertDialog(
+          title: const Text('أخطاء في المعلومات الأساسية'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('يوجد أخطاء في الحقول التالية:'),
+                const SizedBox(height: 10),
+                Text(
+                  errorMessages,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'يرجى تصحيح هذه الأخطاء قبل المتابعة',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: const Text('حسناً'),
+            ),
+          ],
+        ),
+      );
+    }
   }
   
   void saveBasicInfo(Section selectedSection) {
@@ -269,7 +343,7 @@ class AddProductController extends GetxController {
         duration: const Duration(seconds: 2),
       );
       
-      Get.to(() => ProductVariationsScreen());
+      Get.to(() => const ProductVariationsScreen());
       
     } catch (e) {
       print('❌ [ADD PRODUCT] Error saving basic info: $e');
@@ -290,7 +364,9 @@ class AddProductController extends GetxController {
   }
   
   void navigateToKeywordManagement() {
-    Get.toNamed('/keyword-management');
+    if (validateForm()) {
+      Get.toNamed('/keyword-management');
+    }
   }
   
   void printDataSummary() {
@@ -303,17 +379,8 @@ class AddProductController extends GetxController {
    الحالة: ${_selectedCondition.value}
    الوسائط: ${productCentralController.selectedMedia.length}
    حالة النموذج: ${_isFormValid.value}
+   أخطاء الحقول: ${_fieldErrors.length}
 ''');
-  }
-  
-  void _showValidationError(String message) {
-    Get.snackbar(
-      'خطأ في التحقق',
-      message,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
   }
   
   void _showErrorSnackbar(String message) {
@@ -326,12 +393,14 @@ class AddProductController extends GetxController {
     );
   }
   
+  // Getters
   String get selectedCondition => _selectedCondition.value;
   int get characterCount => _characterCount.value;
   bool get isFormValid => _isFormValid.value;
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
   String get selectedCategoryName => _selectedCategoryName.value;
+  Map<String, String> get fieldErrors => _fieldErrors;
   
   List<String> get conditions => productConditions;
   
@@ -347,9 +416,6 @@ class AddProductController extends GetxController {
   @override
   void onClose() {
     print('🛑 [ADD PRODUCT CONTROLLER] Closing...');
-    productNameController.removeListener(_onProductNameChanged);
-    productDescriptionController.removeListener(_onDescriptionChanged);
-    priceController.removeListener(_onPriceChanged);
     productNameController.dispose();
     productDescriptionController.dispose();
     priceController.dispose();

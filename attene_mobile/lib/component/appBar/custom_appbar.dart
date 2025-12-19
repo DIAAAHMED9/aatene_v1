@@ -232,23 +232,17 @@ class CustomAppBarWithTabs extends StatelessWidget
               tooltip: 'تصفية',
             ),
           ),
+SizedBox(width: 5,),
 
         Expanded(
           child: Container(            height: _getSearchFieldHeight(context),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: Colors.white,
               borderRadius: BorderRadius.circular(_isMobile(context) ? 25 : 25),
-              border: Border.all(color: Colors.grey, width: 1),
+              // border: Border.all(color: Colors.grey, width: 1),
             ),
             child: Row(
               children: [
-                SizedBox(width: _isMobile(context) ? 12 : 16),
-                Icon(
-                  Icons.search,
-                  color: Colors.grey[600],
-                  size: _isMobile(context) ? 20 : 22,
-                ),
-                SizedBox(width: _isMobile(context) ? 8 : 12),
                 Expanded(
                   child: TextField(
                     
@@ -256,6 +250,11 @@ class CustomAppBarWithTabs extends StatelessWidget
                     onChanged: config.onSearchChanged,
                     
                     decoration: InputDecoration(
+                      prefixIcon:    Icon(
+                  Icons.search,
+                  color: Colors.grey[600],
+                  size: _isMobile(context) ? 20 : 22,
+                ),
                       border: InputBorder.none,
                       hintText: isRTL ? 'ابحث عن منتج...' : 'Search products...',
                       hintStyle: TextStyle(
@@ -288,7 +287,7 @@ class CustomAppBarWithTabs extends StatelessWidget
             ),
           ),
         ),
-
+SizedBox(width: 5,),
         if (config.onSortPressed != null)
           Padding(
             padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),

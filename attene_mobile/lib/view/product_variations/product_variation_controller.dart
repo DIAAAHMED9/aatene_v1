@@ -688,7 +688,9 @@ void loadVariationsData(Map<String, dynamic> data) {
 
     return apiVariations;
   }
-
+void reset(){
+  
+}
   bool get hasVariations => _hasVariations.value;
   List<ProductAttribute> get selectedAttributes => _selectedAttributes;
   List<ProductAttribute> get allAttributes => _allAttributes;

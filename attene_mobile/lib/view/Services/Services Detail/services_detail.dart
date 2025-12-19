@@ -865,7 +865,6 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                               color: AppColors.neutral600,
                                             ),
                                           ),
-                                          // زر ابلاغ عن اساءة
                                           MaterialButton(
                                             onPressed: () {},
                                             child: Row(
@@ -1065,7 +1064,6 @@ class _ServicesDetailState extends State<ServicesDetail> {
                             ),
                           ),
                           SizedBox(height: 10),
-                          //title question
                           Text(
                             "1. ما هي خدمة “محامٍ إلى جانبك”؟",
                             style: TextStyle(fontWeight: FontWeight.bold),
@@ -1290,14 +1288,6 @@ class _ServicesDetailState extends State<ServicesDetail> {
                     height: 100,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: AppColors.neutral900.withOpacity(0.3),
-                      //     spreadRadius: 2,
-                      //     blurRadius: 4,
-                      //     offset: Offset(20, 4),
-                      //   ),
-                      // ],
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppColors.primary400),
                     ),

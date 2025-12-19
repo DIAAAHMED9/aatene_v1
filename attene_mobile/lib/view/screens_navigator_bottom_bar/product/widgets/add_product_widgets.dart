@@ -45,34 +45,62 @@ class CategorySectionWidget extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
-      decoration: BoxDecoration(
-        color: AppColors.primary300Alpha10,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            selectedSection.name,
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(16),
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary400,
+    final controller = Get.find<AddProductController>();
+    
+    return GetBuilder<AddProductController>(
+      builder: (_) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
+              decoration: BoxDecoration(
+                color: AppColors.primary300Alpha10,
+                borderRadius: BorderRadius.circular(12),
+                border: controller.fieldErrors.containsKey('section')
+                    ? Border.all(color: Colors.red, width: 1)
+                    : null,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    selectedSection.name,
+                    style: TextStyle(
+                      fontSize: ResponsiveDimensions.f(16),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary400,
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveDimensions.f(8)),
+                  Text(
+                    'منتجات خاصة بالملابس و متعلقاتها',
+                    style: TextStyle(
+                      fontSize: ResponsiveDimensions.f(14),
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: ResponsiveDimensions.f(8)),
-          Text(
-            'منتجات خاصة بالملابس و متعلقاتها',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
+            if (controller.fieldErrors.containsKey('section'))
+              Padding(
+                padding: EdgeInsets.only(
+                  top: ResponsiveDimensions.f(4),
+                  left: ResponsiveDimensions.f(12),
+                ),
+                child: Text(
+                  controller.fieldErrors['section']!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveDimensions.f(12),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -92,7 +120,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'الصوز',
+                  'الصور',
                   style: TextStyle(
                     fontSize: ResponsiveDimensions.f(16),
                     fontWeight: FontWeight.bold,
@@ -138,6 +166,18 @@ class ImageUploadSectionWidget extends StatelessWidget {
             ),
             SizedBox(height: ResponsiveDimensions.f(16)),
             
+            if (controller.fieldErrors.containsKey('media'))
+              Padding(
+                padding: EdgeInsets.only(bottom: ResponsiveDimensions.f(8)),
+                child: Text(
+                  controller.fieldErrors['media']!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveDimensions.f(12),
+                  ),
+                ),
+              ),
+            
             if (controller.selectedMedia.isNotEmpty)
               _buildSelectedMediaPreview(context),
             
@@ -149,6 +189,12 @@ class ImageUploadSectionWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8F8F8),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: controller.fieldErrors.containsKey('media')
+                        ? Colors.red
+                        : Colors.transparent,
+                    width: 1.5,
+                  ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -157,13 +203,19 @@ class ImageUploadSectionWidget extends StatelessWidget {
                       padding: EdgeInsets.all(ResponsiveDimensions.f(7)),
                       decoration: BoxDecoration(
                         color: Colors.transparent,
-                        border: Border.all(color: Colors.black),
+                        border: Border.all(
+                          color: controller.fieldErrors.containsKey('media')
+                              ? Colors.red
+                              : Colors.black,
+                        ),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Icon(
                         Icons.add,
                         size: ResponsiveDimensions.f(25),
-                        color: Colors.black,
+                        color: controller.fieldErrors.containsKey('media')
+                            ? Colors.red
+                            : Colors.black,
                       ),
                     ),
                     SizedBox(height: ResponsiveDimensions.f(8)),
@@ -344,13 +396,41 @@ class ProductNameSectionWidget extends StatelessWidget {
         SizedBox(height: ResponsiveDimensions.f(8)),
         GetBuilder<AddProductController>(
           builder: (_) {
-            return TextFiledAatene(
-              fillColor: Colors.transparent,
-              heightTextFiled: ResponsiveDimensions.f(50),
-              controller: controller.productNameController,
-              isRTL: isRTL,
-              hintText: 'أدخل اسم المنتج',
-              onChanged: (value) {},
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFiledAatene(
+                  fillColor: Colors.transparent,
+                  heightTextFiled: ResponsiveDimensions.f(50),
+                  controller: controller.productNameController,
+                  isRTL: isRTL,
+                  hintText: 'أدخل اسم المنتج',
+                  errorText: controller.fieldErrors.containsKey('productName')
+                      ? controller.fieldErrors['productName']
+                      : null,
+                  onChanged: (value) {
+                    if (controller.fieldErrors.containsKey('productName')) {
+                      controller.fieldErrors.remove('productName');
+                      controller.productCentralController.validationErrors.remove('productName');
+                      controller.update();
+                    }
+                  },
+                ),
+                if (controller.fieldErrors.containsKey('productName'))
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: ResponsiveDimensions.f(4),
+                      left: ResponsiveDimensions.f(12),
+                    ),
+                    child: Text(
+                      controller.fieldErrors['productName']!,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: ResponsiveDimensions.f(12),
+                      ),
+                    ),
+                  ),
+              ],
             );
           },
         ),
@@ -403,23 +483,51 @@ class PriceSectionWidget extends StatelessWidget {
         SizedBox(height: ResponsiveDimensions.f(8)),
         GetBuilder<AddProductController>(
           builder: (_) {
-            return TextFiledAatene(
-              heightTextFiled: ResponsiveDimensions.f(50),
-              controller: controller.priceController,
-              isRTL: isRTL,
-              hintText: 'السعر',
-              onChanged: (value) {},
-              suffixIcon: Padding(
-                padding: EdgeInsets.only(top: ResponsiveDimensions.f(12)),
-                child: Text(
-                  '₪',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFiledAatene(
+                  heightTextFiled: ResponsiveDimensions.f(50),
+                  controller: controller.priceController,
+                  isRTL: isRTL,
+                  hintText: 'السعر',
+                  errorText: controller.fieldErrors.containsKey('price')
+                      ? controller.fieldErrors['price']
+                      : null,
+                  onChanged: (value) {
+                    if (controller.fieldErrors.containsKey('price')) {
+                      controller.fieldErrors.remove('price');
+                      controller.productCentralController.validationErrors.remove('price');
+                      controller.update();
+                    }
+                  },
+                  suffixIcon: Padding(
+                    padding: EdgeInsets.only(top: ResponsiveDimensions.f(12)),
+                    child: Text(
+                      '₪',
+                      style: TextStyle(
+                        fontSize: ResponsiveDimensions.f(16),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
+                  fillColor: Colors.transparent,
                 ),
-              ),
-              fillColor: Colors.transparent,
+                if (controller.fieldErrors.containsKey('price'))
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: ResponsiveDimensions.f(4),
+                      left: ResponsiveDimensions.f(12),
+                    ),
+                    child: Text(
+                      controller.fieldErrors['price']!,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: ResponsiveDimensions.f(12),
+                      ),
+                    ),
+                  ),
+              ],
             );
           },
         ),
@@ -484,7 +592,97 @@ class CategoriesSectionWidget extends StatelessWidget {
               _buildEmptyDropdown('لا توجد فئات متاحة'),
             
             if (!isLoading && !hasError && categories.isNotEmpty)
-              _buildCategoriesDropdown(controller),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: controller.fieldErrors.containsKey('category')
+                            ? Colors.red
+                            : Colors.grey[300]!,
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: controller.selectedCategoryName.isEmpty
+                            ? null
+                            : controller.selectedCategoryName,
+                        decoration: InputDecoration(
+                          hintText: 'اختر فئة المنتج',
+                          hintStyle: TextStyle(
+                            fontSize: ResponsiveDimensions.f(14),
+                            color: Colors.grey[600],
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveDimensions.f(16),
+                            vertical: ResponsiveDimensions.f(16),
+                          ),
+                          isCollapsed: true,
+                        ),
+                        items: categories.map((category) {
+                          final categoryName = category['name'] as String? ?? 'غير معروف';
+                          final categoryId = category['id'] as int? ?? 0;
+                          return DropdownMenuItem(
+                            value: categoryName,
+                            child: Text(
+                              categoryName,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize: ResponsiveDimensions.f(14),
+                                color: categoryId == controller.productCentralController.selectedCategoryId.value
+                                    ? AppColors.primary400
+                                    : Colors.black,
+                                fontWeight: categoryId == controller.productCentralController.selectedCategoryId.value
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            final foundCategory = categories.firstWhere(
+                              (cat) => cat['name'] == value,
+                              orElse: () => {},
+                            );
+                            if (foundCategory.isNotEmpty) {
+                              final categoryId = foundCategory['id'] as int;
+                              controller.updateCategory(categoryId);
+                              
+                              // Clear category error if exists
+                              if (controller.fieldErrors.containsKey('category')) {
+                                controller.fieldErrors.remove('category');
+                                controller.productCentralController.validationErrors.remove('category');
+                                controller.update();
+                              }
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  if (controller.fieldErrors.containsKey('category'))
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: ResponsiveDimensions.f(4),
+                        left: ResponsiveDimensions.f(12),
+                      ),
+                      child: Text(
+                        controller.fieldErrors['category']!,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: ResponsiveDimensions.f(12),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
           ],
         );
       },
@@ -596,69 +794,6 @@ class CategoriesSectionWidget extends StatelessWidget {
       ),
     );
   }
-  
-  Widget _buildCategoriesDropdown(AddProductController controller) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
-          isExpanded: true,
-          value: controller.selectedCategoryName.isEmpty
-              ? null
-              : controller.selectedCategoryName,
-          decoration: InputDecoration(
-            hintText: 'اختر فئة المنتج',
-            hintStyle: TextStyle(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey[600],
-            ),
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: ResponsiveDimensions.f(16),
-              vertical: ResponsiveDimensions.f(16),
-            ),
-            isCollapsed: true,
-          ),
-          items: controller.categories.map((category) {
-            final categoryName = category['name'] as String? ?? 'غير معروف';
-            final categoryId = category['id'] as int? ?? 0;
-            return DropdownMenuItem(
-              value: categoryName,
-              child: Text(
-                categoryName,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(
-                  fontSize: ResponsiveDimensions.f(14),
-                  color: categoryId == controller.productCentralController.selectedCategoryId.value
-                      ? AppColors.primary400
-                      : Colors.black,
-                  fontWeight: categoryId == controller.productCentralController.selectedCategoryId.value
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
-              ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              final foundCategory = controller.categories.firstWhere(
-                (cat) => cat['name'] == value,
-                orElse: () => {},
-              );
-              if (foundCategory.isNotEmpty) {
-                final categoryId = foundCategory['id'] as int;
-                controller.updateCategory(categoryId);
-              }
-            }
-          },
-        ),
-      ),
-    );
-  }
 }
 
 class ProductConditionSectionWidget extends StatelessWidget {
@@ -694,7 +829,12 @@ class ProductConditionSectionWidget extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(
+                  color: controller.fieldErrors.containsKey('condition')
+                      ? Colors.red
+                      : Colors.grey[300]!,
+                  width: 1.5,
+                ),
                 borderRadius: BorderRadius.circular(25),
               ),
               child: DropdownButtonFormField<String>(
@@ -731,9 +871,32 @@ class ProductConditionSectionWidget extends StatelessWidget {
                     ),
                   );
                 }).toList(),
-                onChanged: controller.updateCondition,
+                onChanged: (value) {
+                  controller.updateCondition(value);
+                  
+                  // Clear condition error if exists
+                  if (controller.fieldErrors.containsKey('condition')) {
+                    controller.fieldErrors.remove('condition');
+                    controller.productCentralController.validationErrors.remove('condition');
+                    controller.update();
+                  }
+                },
               ),
             ),
+            if (controller.fieldErrors.containsKey('condition'))
+              Padding(
+                padding: EdgeInsets.only(
+                  top: ResponsiveDimensions.f(4),
+                  left: ResponsiveDimensions.f(12),
+                ),
+                child: Text(
+                  controller.fieldErrors['condition']!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveDimensions.f(12),
+                  ),
+                ),
+              ),
           ],
         );
       },
@@ -774,14 +937,25 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: controller.fieldErrors.containsKey('productDescription')
+                      ? Colors.red
+                      : Colors.grey[300]!,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: TextField(
                 controller: controller.productDescriptionController,
                 maxLines: 4,
                 maxLength: AddProductController.maxDescriptionLength,
-                onChanged: (value) {},
+                onChanged: (value) {
+                  if (controller.fieldErrors.containsKey('productDescription')) {
+                    controller.fieldErrors.remove('productDescription');
+                    controller.productCentralController.validationErrors.remove('productDescription');
+                    controller.update();
+                  }
+                },
                 decoration: InputDecoration(
                   hintText: 'وصف المنتج',
                   hintStyle: TextStyle(
@@ -799,6 +973,20 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                 ),
               ),
             ),
+            if (controller.fieldErrors.containsKey('productDescription'))
+              Padding(
+                padding: EdgeInsets.only(
+                  top: ResponsiveDimensions.f(4),
+                  left: ResponsiveDimensions.f(12),
+                ),
+                child: Text(
+                  controller.fieldErrors['productDescription']!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveDimensions.f(12),
+                  ),
+                ),
+              ),
             if (controller.characterCount > AddProductController.maxDescriptionLength)
               Padding(
                 padding: EdgeInsets.only(top: ResponsiveDimensions.f(4)),
@@ -811,37 +999,6 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                 ),
               ),
           ],
-        );
-      },
-    );
-  }
-}
-
-class NextButtonWidget extends StatelessWidget {
-  final Section selectedSection;
-  
-  const NextButtonWidget({
-    super.key,
-    required this.selectedSection,
-  });
-  
-  @override
-  Widget build(BuildContext context) {
-    final isRTL = LanguageUtils.isRTL;
-    final controller = Get.find<AddProductController>();
-    
-    return GetBuilder<AddProductController>(
-      builder: (_) {
-        return Center(
-          child: AateneButton(
-            color: controller.isFormValid ? AppColors.primary400 : Colors.grey[400]!,
-            textColor: Colors.white,
-            borderColor: Colors.transparent,
-            buttonText: isRTL ? 'التالي' : 'Next',
-            onTap: controller.isFormValid
-                ? () => controller.saveBasicInfo(selectedSection)
-                : null,
-          ),
         );
       },
     );
