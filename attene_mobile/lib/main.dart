@@ -1,3 +1,4 @@
+import 'package:attene_mobile/view/Control_Users/edit%20profile.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -214,7 +215,7 @@ class MyApp extends StatelessWidget {
       
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () => const Edit_Profile()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
