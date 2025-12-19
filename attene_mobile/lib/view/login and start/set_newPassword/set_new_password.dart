@@ -44,7 +44,7 @@ class SetNewPassword extends StatelessWidget {
                           color: Colors.grey[300]!,
                           blurRadius: 1,
                           spreadRadius: 1,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -89,9 +89,8 @@ class SetNewPassword extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'كلمة المرور' : 'Password',
-                    errorValue: controller.passwordError.value,
+                    errorText: controller.passwordError.value,
                     onChanged: controller.updatePassword,
-                    isError: controller.passwordError.isNotEmpty,
                     obscureText: controller.obscurePassword.value,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -111,9 +110,8 @@ class SetNewPassword extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'تأكيد كلمة المرور' : 'Confirm Password',
-                    errorValue: controller.confirmPasswordError.value,
+                    errorText: controller.confirmPasswordError.value,
                     onChanged: controller.updateConfirmPassword,
-                    isError: controller.confirmPasswordError.isNotEmpty,
                     obscureText: controller.obscureConfirmPassword.value,
                     suffixIcon: IconButton(
                       icon: Icon(

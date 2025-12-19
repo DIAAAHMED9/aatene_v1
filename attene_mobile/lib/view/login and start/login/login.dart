@@ -40,7 +40,7 @@ class Login extends StatelessWidget {
                   style: TextStyle(
                     fontSize: ResponsiveDimensions.f(16),
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary400,
+                    color: const Color(0xFF0071A7),
                   ),
                   textAlign: isRTL ? TextAlign.right : TextAlign.left,
                 ),
@@ -66,9 +66,8 @@ class Login extends StatelessWidget {
                     hintText: isRTL
                         ? 'البريد الإلكتروني / رقم الجوال'
                         : 'Email / Phone Number',
-                    errorValue: controller.emailError.value,
+                    errorText: controller.emailError.value,
                     onChanged: controller.updateEmail,
-                    isError: controller.emailError.isNotEmpty,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -76,9 +75,8 @@ class Login extends StatelessWidget {
                   () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'كلمة المرور' : 'Password',
-                    errorValue: controller.passwordError.value,
+                    errorText: controller.passwordError.value,
                     onChanged: controller.updatePassword,
-                    isError: controller.passwordError.isNotEmpty,
                     obscureText: controller.obscurePassword.value,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -100,7 +98,7 @@ class Login extends StatelessWidget {
                     child: Text(
                       isRTL ? 'نسيت كلمة المرور؟' : 'Forgot Password?',
                       style: TextStyle(
-                        color: AppColors.primary400,
+                        color: const Color(0xFF0071A7),
                         fontSize: ResponsiveDimensions.f(14),
                       ),
                     ),
@@ -124,7 +122,7 @@ class Login extends StatelessWidget {
                       child: SizedBox(
                         width: ResponsiveDimensions.w(40),
                         height: ResponsiveDimensions.h(40),
-                        child: Icon(Icons.g_mobiledata),
+                        child: const Icon(Icons.g_mobiledata),
                       ),
                     ),
                     SizedBox(width: ResponsiveDimensions.w(20)),
@@ -133,7 +131,7 @@ class Login extends StatelessWidget {
                       child: Container(
                         width: ResponsiveDimensions.w(40),
                         height: ResponsiveDimensions.h(40),
-                        child: Icon(Icons.apple),
+                        child: const Icon(Icons.apple),
                       ),
                     ),
                   ],
@@ -154,7 +152,7 @@ class Login extends StatelessWidget {
                       child: Text(
                         isRTL ? 'إنشاء حساب جديد' : 'Create new account',
                         style: TextStyle(
-                          color: AppColors.primary400,
+                          color: const Color(0xFF0071A7),
                           fontWeight: FontWeight.bold,
                           fontSize: ResponsiveDimensions.f(14),
                         ),

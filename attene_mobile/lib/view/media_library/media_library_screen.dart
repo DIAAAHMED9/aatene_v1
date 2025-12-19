@@ -9,12 +9,55 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class MediaLibraryScreen extends StatelessWidget {
-  final MediaLibraryController controller = Get.find<MediaLibraryController>();
+class MediaLibraryScreen extends StatefulWidget {
   final bool isSelectionMode;
+  final int? maxSelectionCount;
+  final List<MediaItem>? initialSelectedItems;
   final Function(List<MediaItem>)? onMediaSelected;
 
-  MediaLibraryScreen({this.isSelectionMode = false, this.onMediaSelected});
+  const MediaLibraryScreen({
+    super.key,
+    this.isSelectionMode = false,
+    this.maxSelectionCount,
+    this.initialSelectedItems,
+    this.onMediaSelected,
+  });
+
+  @override
+  State<MediaLibraryScreen> createState() => _MediaLibraryScreenState();
+}
+
+class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
+  final MediaLibraryController controller = Get.find<MediaLibraryController>();
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    if (widget.isSelectionMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.maxSelectionCount != null) {
+          controller.setMaxSelection(widget.maxSelectionCount!);
+        }
+        
+        if (widget.initialSelectedItems != null && widget.initialSelectedItems!.isNotEmpty) {
+          final selectedIds = widget.initialSelectedItems!.map((item) => item.id).toList();
+          controller.selectedMediaIds.assignAll(selectedIds);
+        }
+      });
+    }
+    
+    searchController.addListener(() {
+      controller.searchQuery.value = searchController.text;
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +69,10 @@ class MediaLibraryScreen extends StatelessWidget {
         isRTL: isRTL,
         config: AppBarConfig(
           title: 'مكتبة الوسائط',
-          actionText: isSelectionMode ? 'ادراج' : '',
-          onActionPressed: isSelectionMode ? controller.confirmSelection : null,
+          actionText: widget.isSelectionMode ? 'ادراج' : '',
+          onActionPressed: widget.isSelectionMode ? _confirmSelection : null,
           tabs: controller.tabs,
-          searchController: controller.searchTextController,
+          searchController: searchController,
           onSearchChanged: (value) => controller.searchQuery.value = value,
           tabController: controller.tabController,
           onTabChanged: controller.changeTab,
@@ -59,9 +102,12 @@ class MediaLibraryScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
+          CircularProgressIndicator(color: AppColors.primary400),
           SizedBox(height: 16),
-          Text('جاري تحميل الملفات...'),
+          Text(
+            'جاري تحميل الملفات...',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
         ],
       ),
     );
@@ -106,8 +152,9 @@ class MediaLibraryScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primary100,
+              color: AppColors.primary50,
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.primary100),
             ),
             child: Row(
               children: [
@@ -180,8 +227,10 @@ class MediaLibraryScreen extends StatelessWidget {
   Widget _buildMediaGridItem(MediaItem media) {
     return Obx(() {
       final isSelected = controller.selectedMediaIds.contains(media.id);
-      final isMaxSelected =
-          controller.selectedMediaIds.length >= 10 && !isSelected;
+      final canSelectMore = controller.canSelectMore;
+      final isMaxSelected = widget.isSelectionMode &&
+                           !isSelected &&
+                           !canSelectMore;
       final isUploading =
           media.isLocal == true &&
           controller.temporaryMediaItems.contains(media);
@@ -217,7 +266,7 @@ class MediaLibraryScreen extends StatelessWidget {
           child: Stack(
             children: [
               _buildMediaContent(media),
-              if (isSelected) _buildSelectionIndicator(),
+              if (isSelected && widget.isSelectionMode) _buildSelectionIndicator(),
               if (isUploading) _buildUploadingIndicator(),
             ],
           ),
@@ -245,14 +294,14 @@ class MediaLibraryScreen extends StatelessWidget {
     if (isMaxSelected) {
       Get.snackbar(
         'تنبيه',
-        'يمكن اختيار 10 ملفات كحد أقصى',
+        'يمكن اختيار ${controller.maxSelection.value} ملفات كحد أقصى',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
       );
       return;
     }
 
-    if (isSelectionMode) {
+    if (widget.isSelectionMode) {
       controller.toggleMediaSelection(media.id);
     } else {
       _showMediaPreview(media);
@@ -260,7 +309,7 @@ class MediaLibraryScreen extends StatelessWidget {
   }
 
   void _handleMediaLongPress(MediaItem media, bool isUploading) {
-    if (!isSelectionMode && !isUploading) {
+    if (!widget.isSelectionMode && !isUploading) {
       _showMediaOptions(media);
     }
   }
@@ -413,7 +462,10 @@ class MediaLibraryScreen extends StatelessWidget {
         imageUrl: imageUrl,
         fit: BoxFit.cover,
         placeholder: (context, url) =>
-            Center(child: CircularProgressIndicator()),
+            Center(child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.primary400,
+            )),
         errorWidget: (context, url, error) =>
             Icon(Icons.image, size: 40, color: Colors.grey[400]),
       );
@@ -645,17 +697,30 @@ class MediaLibraryScreen extends StatelessWidget {
   void _showDeleteDialog(MediaItem media) {
     Get.dialog(
       AlertDialog(
-        title: Text('حذف الملف'),
+        title: Row(
+          children: [
+            Icon(Icons.warning, color: Colors.orange),
+            SizedBox(width: 8),
+            Text('حذف الملف'),
+          ],
+        ),
         content: Text('هل أنت متأكد من حذف هذا الملف؟'),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: Text('إلغاء')),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600]))
+          ),
           TextButton(
             onPressed: () {
               Get.back();
+              controller.deleteMediaItem(media);
             },
             child: Text('حذف', style: TextStyle(color: Colors.red)),
           ),
         ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }
@@ -668,14 +733,19 @@ class MediaLibraryScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.delete),
+              leading: Icon(Icons.delete, color: Colors.red),
               title: Text('حذف الملف'),
-              onTap: () => _selectAndDelete(media),
+              onTap: () {
+                Get.back();
+                _showDeleteDialog(media);
+              },
             ),
             ListTile(
-              leading: Icon(Icons.share),
+              leading: Icon(Icons.share, color: AppColors.primary400),
               title: Text('مشاركة'),
-              onTap: () => Get.back(),
+              onTap: () {
+                Get.back();
+              },
             ),
           ],
         ),
@@ -683,8 +753,23 @@ class MediaLibraryScreen extends StatelessWidget {
     );
   }
 
-  void _selectAndDelete(MediaItem media) {
-    Get.back();
-    _showDeleteDialog(media);
+  void _confirmSelection() {
+    final selectedMedia = controller.getSelectedMediaItems();
+    
+    if (selectedMedia.isEmpty) {
+      Get.snackbar(
+        'تنبيه',
+        'لم تقم باختيار أي ملفات',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    if (widget.onMediaSelected != null) {
+      widget.onMediaSelected!(selectedMedia);
+    }
+    
+    Get.back(result: selectedMedia);
   }
 }

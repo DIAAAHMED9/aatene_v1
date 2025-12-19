@@ -58,6 +58,12 @@ class MediaLibraryController extends GetxController
     tabController.addListener(_handleTabChange);
     searchTextController.addListener(_handleSearchChange);
   }
+List<MediaItem> getSelectedMediaItems() {
+  final allMedia = [...temporaryMediaItems, ...uploadedMediaItems];
+  return allMedia
+      .where((item) => selectedMediaIds.contains(item.id))
+      .toList();
+}
 
   void _setupAuthListener() {
     final MyAppController myAppController = Get.find<MyAppController>();
