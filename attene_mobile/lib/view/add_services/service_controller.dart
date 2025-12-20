@@ -14,28 +14,28 @@ class ServiceController extends GetxController {
   static const int maxKeywords = 25;
   static const int maxImages = 10;
   static const int maxFAQs = 5;
-  
+
   RxInt currentStep = 0.obs;
-  
+
   RxString serviceTitle = ''.obs;
   RxString selectedMainCategory = ''.obs;
   RxString selectedCategory = ''.obs;
   RxList<String> specializations = <String>[].obs;
   RxList<String> keywords = <String>[].obs;
   RxList<FAQ> faqs = <FAQ>[].obs;
-  
+
   late QuillController quillController;
   RxString serviceDescriptionPlainText = ''.obs;
   FocusNode editorFocusNode = FocusNode();
   ScrollController editorScrollController = ScrollController();
-  
+
   RxString price = ''.obs;
   RxString executionTimeValue = ''.obs;
   RxString executionTimeUnit = 'ساعة'.obs;
   RxList<Development> developments = <Development>[].obs;
-  
+
   RxList<ServiceImage> serviceImages = <ServiceImage>[].obs;
-  
+
   RxString developmentTitle = ''.obs;
   RxString developmentPrice = ''.obs;
   RxString developmentTimeValue = ''.obs;
@@ -43,39 +43,46 @@ class ServiceController extends GetxController {
   RxString tempSelectedCategory = ''.obs;
   RxInt tempSelectedCategoryId = 0.obs;
   RxString searchCategoryQuery = ''.obs;
-  
+
   RxBool isServiceTitleError = false.obs;
   RxBool isMainCategoryError = false.obs;
   RxBool isCategoryError = false.obs;
   RxBool isPriceError = false.obs;
   RxBool isExecutionTimeError = false.obs;
   RxBool isDescriptionError = false.obs;
-  
+
   RxBool isLoading = false.obs;
   RxBool isSaving = false.obs;
   RxBool isUploading = false.obs;
-  
-  RxList<String> allTimeUnits = ['دقيقة', 'ساعة', 'يوم', 'أسبوع', 'شهر', 'سنة'].obs;
-  
+
+  RxList<String> allTimeUnits = [
+    'دقيقة',
+    'ساعة',
+    'يوم',
+    'أسبوع',
+    'شهر',
+    'سنة',
+  ].obs;
+
   TextEditingController specializationTextController = TextEditingController();
   TextEditingController keywordTextController = TextEditingController();
-  
+
   RxString serviceId = ''.obs;
   RxString serviceSlug = ''.obs;
   RxString serviceStatus = 'pending'.obs;
   RxInt selectedSectionId = 0.obs;
   RxInt selectedCategoryId = 0.obs;
   RxList<String> uploadedImages = <String>[].obs;
-  
+
   RxList<Map<String, dynamic>> sections = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   RxBool isLoadingCategories = false.obs;
   RxString categoriesError = ''.obs;
-  
+
   // RxBool acceptedCopyright = false.obs;
   RxBool acceptedTerms = false.obs;
   RxBool acceptedPrivacy = false.obs;
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -83,50 +90,53 @@ class ServiceController extends GetxController {
     _initializeQuill();
     loadSections();
   }
-  
+
   void _initializeData() {
     specializationTextController.addListener(() {
       update(['specialization_input']);
     });
-    
+
     keywordTextController.addListener(() {
       update(['keyword_input']);
     });
   }
-  
+
   void _initializeQuill() {
     quillController = QuillController(
       document: Document.fromJson([
-        {'insert': 'ابدأ الكتابة هنا...\n'}
+        {'insert': 'ابدأ الكتابة هنا...\n'},
       ]),
       selection: const TextSelection.collapsed(offset: 0),
     );
-    
+
     quillController.document.changes.listen((event) {
-      serviceDescriptionPlainText.value = quillController.document.toPlainText();
-      isDescriptionError.value = serviceDescriptionPlainText.value.trim().isEmpty;
+      serviceDescriptionPlainText.value = quillController.document
+          .toPlainText();
+      isDescriptionError.value = serviceDescriptionPlainText.value
+          .trim()
+          .isEmpty;
       update(['description_field', 'character_counter']);
     });
   }
-  
+
   void goToNextStep() {
     if (currentStep.value < 4) {
       currentStep.value++;
     }
   }
-  
+
   void goToPreviousStep() {
     if (currentStep.value > 0) {
       currentStep.value--;
     }
   }
-  
+
   void goToStep(int step) {
     if (step >= 0 && step <= 4) {
       currentStep.value = step;
     }
   }
-  
+
   bool canGoToNextStep() {
     switch (currentStep.value) {
       case 0:
@@ -143,7 +153,7 @@ class ServiceController extends GetxController {
         return false;
     }
   }
-  
+
   Future<void> navigateToNextStep() async {
     if (canGoToNextStep()) {
       if (currentStep.value < 4) {
@@ -153,131 +163,132 @@ class ServiceController extends GetxController {
       }
     }
   }
-  
+
   void validateServiceTitle(String value) {
     serviceTitle.value = value.trim();
     isServiceTitleError.value = serviceTitle.value.isEmpty;
     update(['service_title_field']);
   }
-  
+
   void selectMainCategory(String category, int sectionId) {
     selectedMainCategory.value = category;
     selectedSectionId.value = sectionId;
     isMainCategoryError.value = false;
-    
+
     loadCategories();
-    
+
     update(['main_category_field', 'category_field']);
   }
-  
+
   void searchCategories(String query) {
     searchCategoryQuery.value = query.trim();
     update(['categories_list']);
   }
-  
+
   void selectTempCategory(int categoryId, String categoryName) {
     tempSelectedCategoryId.value = categoryId;
     tempSelectedCategory.value = categoryName;
     update(['categories_list']);
   }
-  
+
   void saveSelectedCategory() {
-    if (tempSelectedCategory.value.isNotEmpty && tempSelectedCategoryId.value > 0) {
+    if (tempSelectedCategory.value.isNotEmpty &&
+        tempSelectedCategoryId.value > 0) {
       selectedCategory.value = tempSelectedCategory.value;
       selectedCategoryId.value = tempSelectedCategoryId.value;
       isCategoryError.value = false;
       update(['category_field']);
     }
   }
-  
+
   void addSpecialization() {
     final text = specializationTextController.text.trim();
-    
+
     if (text.isEmpty) return;
     if (specializations.contains(text)) return;
     if (specializations.length >= maxSpecializations) return;
-    
+
     specializations.add(text);
     specializationTextController.clear();
     update(['specializations_list', 'specialization_input']);
   }
-  
+
   void removeSpecialization(int index) {
     if (index >= 0 && index < specializations.length) {
       specializations.removeAt(index);
       update(['specializations_list']);
     }
   }
-  
+
   void addKeyword() {
     final text = keywordTextController.text.trim();
-    
+
     if (text.isEmpty) return;
     if (keywords.contains(text)) return;
     if (keywords.length >= maxKeywords) return;
-    
+
     keywords.add(text);
     keywordTextController.clear();
     update(['keywords_list', 'keyword_input']);
   }
-  
+
   void removeKeyword(int index) {
     if (index >= 0 && index < keywords.length) {
       keywords.removeAt(index);
       update(['keywords_list']);
     }
   }
-  
+
   void validatePrice(String value) {
     price.value = value.trim();
     isPriceError.value = price.value.isEmpty;
     update(['price_field']);
   }
-  
+
   void updateExecutionTimeValue(String value) {
     executionTimeValue.value = value.trim();
     isExecutionTimeError.value = executionTimeValue.value.isEmpty;
     update(['execution_time_field']);
   }
-  
+
   void selectTimeUnit(String unit) {
     executionTimeUnit.value = unit;
     update(['execution_time_field']);
   }
-  
+
   void updateDevelopmentTitle(String text) {
     developmentTitle.value = text.trim();
     update(['development_form']);
   }
-  
+
   void updateDevelopmentPrice(String text) {
     developmentPrice.value = text.trim();
     update(['development_form']);
   }
-  
+
   void updateDevelopmentTimeValue(String text) {
     developmentTimeValue.value = text.trim();
     update(['development_form']);
   }
-  
+
   void selectDevelopmentTimeUnit(String unit) {
     developmentTimeUnit.value = unit;
     update(['development_form']);
   }
-  
+
   void addDevelopment() {
     final title = developmentTitle.value.trim();
     final priceText = developmentPrice.value.trim();
     final timeValue = developmentTimeValue.value.trim();
     final timeUnit = developmentTimeUnit.value;
-    
+
     if (title.isEmpty || priceText.isEmpty || timeValue.isEmpty) return;
-    
+
     final price = double.tryParse(priceText) ?? 0.0;
     final executionTime = int.tryParse(timeValue) ?? 0;
-    
+
     if (price <= 0 || executionTime <= 0) return;
-    
+
     final newDevelopment = Development(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
@@ -285,35 +296,35 @@ class ServiceController extends GetxController {
       executionTime: executionTime,
       timeUnit: timeUnit,
     );
-    
+
     developments.add(newDevelopment);
-    
+
     developmentTitle.value = '';
     developmentPrice.value = '';
     developmentTimeValue.value = '';
     developmentTimeUnit.value = 'ساعة';
-    
+
     update(['developments_list', 'development_form']);
   }
-  
+
   void removeDevelopment(String id) {
     developments.removeWhere((dev) => dev.id == id);
     update(['developments_list']);
   }
-  
+
   void addFAQ(String question, String answer) {
     if (faqs.length >= maxFAQs) return;
-    
+
     final newFAQ = FAQ(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       question: question.trim(),
       answer: answer.trim(),
     );
-    
+
     faqs.add(newFAQ);
     update(['faqs_list']);
   }
-  
+
   void updateFAQ(String id, String newQuestion, String newAnswer) {
     final index = faqs.indexWhere((faq) => faq.id == id);
     if (index != -1) {
@@ -325,15 +336,15 @@ class ServiceController extends GetxController {
       update(['faqs_list']);
     }
   }
-  
+
   void removeFAQ(String id) {
     faqs.removeWhere((faq) => faq.id == id);
     update(['faqs_list']);
   }
-  
+
   void addImagesFromMediaLibrary(List<MediaItem> mediaItems) {
     final List<ServiceImage> newImages = [];
-    
+
     for (var mediaItem in mediaItems) {
       if (serviceImages.length >= maxImages) {
         Get.snackbar(
@@ -344,11 +355,13 @@ class ServiceController extends GetxController {
         );
         break;
       }
-      
+
       try {
-        final isDuplicate = serviceImages.any((img) => img.url == mediaItem.path);
+        final isDuplicate = serviceImages.any(
+          (img) => img.url == mediaItem.path,
+        );
         if (isDuplicate) continue;
-        
+
         final isNetworkUrl = mediaItem.path.startsWith('http');
         final serviceImage = ServiceImage(
           id: '${DateTime.now().millisecondsSinceEpoch}_${mediaItem.id}',
@@ -357,88 +370,88 @@ class ServiceController extends GetxController {
           isLocalFile: !isNetworkUrl,
           file: !isNetworkUrl ? File(mediaItem.path) : null,
         );
-        
+
         newImages.add(serviceImage);
       } catch (e) {
         print('خطأ في إضافة الصورة: $e');
       }
     }
-    
+
     if (newImages.isNotEmpty) {
       serviceImages.addAll(newImages);
       update(['images_list']);
     }
   }
-  
+
   void removeImage(String id) {
     final imageIndex = serviceImages.indexWhere((img) => img.id == id);
     if (imageIndex != -1) {
       final wasMain = serviceImages[imageIndex].isMain;
       serviceImages.removeAt(imageIndex);
-      
+
       if (wasMain && serviceImages.isNotEmpty) {
         serviceImages[0] = serviceImages[0].copyWith(isMain: true);
       }
-      
+
       update(['images_list']);
     }
   }
-  
+
   void setMainImage(String id) {
     final updatedImages = serviceImages.map((image) {
       return image.copyWith(isMain: image.id == id);
     }).toList();
-    
+
     serviceImages.assignAll(updatedImages);
     update(['images_list']);
   }
-  
+
   void reorderImages(int oldIndex, int newIndex) {
     if (oldIndex < 0 || oldIndex >= serviceImages.length) return;
     if (newIndex < 0) newIndex = 0;
     if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
-    
-    final List<ServiceImage> updatedList = List<ServiceImage>.from(serviceImages);
+
+    final List<ServiceImage> updatedList = List<ServiceImage>.from(
+      serviceImages,
+    );
     final ServiceImage item = updatedList.removeAt(oldIndex);
-    
+
     if (oldIndex < newIndex) {
       updatedList.insert(newIndex - 1, item);
     } else {
       updatedList.insert(newIndex, item);
     }
-    
+
     serviceImages.assignAll(updatedList);
     update(['images_list']);
   }
-  
+
   bool get allPoliciesAccepted {
-    return 
+    return
     // acceptedCopyright.value &&
-           acceptedTerms.value &&
-           acceptedPrivacy.value;
+    acceptedTerms.value && acceptedPrivacy.value;
   }
-  
+
   // void updateCopyrightAcceptance(bool value) {
   //   acceptedCopyright.value = value;
   //   update(['copyright_section']);
   // }
-  
+
   void updateTermsAcceptance(bool value) {
     acceptedTerms.value = value;
     update(['terms_section']);
   }
-  
+
   void updatePrivacyAcceptance(bool value) {
     acceptedPrivacy.value = value;
     update(['privacy_section']);
   }
-  
+
   bool validatePoliciesForm() {
     final bool allAccepted =
-    //  acceptedCopyright.value &&
-                           acceptedTerms.value &&
-                           acceptedPrivacy.value;
-    
+        //  acceptedCopyright.value &&
+        acceptedTerms.value && acceptedPrivacy.value;
+
     if (!allAccepted) {
       Get.snackbar(
         'تنبيه',
@@ -447,7 +460,7 @@ class ServiceController extends GetxController {
         colorText: Colors.white,
         duration: Duration(seconds: 3),
       );
-      
+
       // تبيان أي السياسات غير موافق عليها
       // if (!acceptedCopyright.value) {
       //   Get.snackbar(
@@ -457,7 +470,7 @@ class ServiceController extends GetxController {
       //     colorText: Colors.white,
       //   );
       // }
-      
+
       if (!acceptedTerms.value) {
         Get.snackbar(
           'شروط الخدمة',
@@ -466,7 +479,7 @@ class ServiceController extends GetxController {
           colorText: Colors.white,
         );
       }
-      
+
       if (!acceptedPrivacy.value) {
         Get.snackbar(
           'سياسة الخصوصية',
@@ -476,73 +489,73 @@ class ServiceController extends GetxController {
         );
       }
     }
-    
+
     return allAccepted;
   }
-  
+
   bool validateServiceForm() {
     bool isValid = true;
-    
+
     if (serviceTitle.value.isEmpty) {
       isServiceTitleError.value = true;
       isValid = false;
     }
-    
+
     if (selectedMainCategory.value.isEmpty) {
       isMainCategoryError.value = true;
       isValid = false;
     }
-    
+
     if (selectedCategory.value.isEmpty || selectedCategoryId.value == 0) {
       isCategoryError.value = true;
       isValid = false;
     }
-    
+
     update(['service_title_field', 'main_category_field', 'category_field']);
     return isValid;
   }
-  
+
   bool validatePriceForm() {
     bool isValid = true;
-    
+
     if (price.value.isEmpty) {
       isPriceError.value = true;
       isValid = false;
     }
-    
+
     if (executionTimeValue.value.isEmpty) {
       isExecutionTimeError.value = true;
       isValid = false;
     }
-    
+
     update(['price_field', 'execution_time_field']);
     return isValid;
   }
-  
+
   bool validateDescriptionForm() {
     final hasContent = serviceDescriptionPlainText.value.trim().isNotEmpty;
     isDescriptionError.value = !hasContent;
     update(['description_field']);
     return hasContent;
   }
-  
+
   bool validateImagesForm() {
     return serviceImages.isNotEmpty;
   }
-  
+
   bool validateAllForms() {
     return validateServiceForm() &&
-           validatePriceForm() &&
-           validateImagesForm() &&
-           validateDescriptionForm() &&
-           validatePoliciesForm();
+        validatePriceForm() &&
+        validateImagesForm() &&
+        validateDescriptionForm() &&
+        validatePoliciesForm();
   }
-  
+
   Future<void> loadSections() async {
     try {
       isLoadingCategories(true);
       categoriesError('');
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/sections',
         withLoading: false,
@@ -550,7 +563,9 @@ class ServiceController extends GetxController {
       );
 
       if (response != null && response['status'] == true) {
-        final sectionsList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        final sectionsList = List<Map<String, dynamic>>.from(
+          response['data'] ?? [],
+        );
         sections.assignAll(sectionsList);
       } else {
         final errorMsg = response?['message'] ?? 'فشل في تحميل الأقسام';
@@ -573,7 +588,7 @@ class ServiceController extends GetxController {
 
       isLoadingCategories(true);
       categoriesError('');
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/categories/select',
         queryParameters: {'section_id': selectedSectionId.value},
@@ -582,9 +597,11 @@ class ServiceController extends GetxController {
       );
 
       if (response != null && response['status'] == true) {
-        final categoriesList = List<Map<String, dynamic>>.from(response['categories'] ?? []);
+        final categoriesList = List<Map<String, dynamic>>.from(
+          response['categories'] ?? [],
+        );
         categories.assignAll(categoriesList);
-        
+
         update(['categories_list', 'category_field']);
       } else {
         final errorMsg = response?['message'] ?? 'فشل في تحميل الفئات';
@@ -597,21 +614,23 @@ class ServiceController extends GetxController {
       isLoadingCategories(false);
     }
   }
-  
+
   List<Map<String, dynamic>> get filteredCategories {
     final List<Map<String, dynamic>> filtered = [];
-    
+
     for (var category in categories) {
       final categoryName = (category['name'] ?? '').toString();
       if (searchCategoryQuery.value.isEmpty ||
-          categoryName.toLowerCase().contains(searchCategoryQuery.value.toLowerCase())) {
+          categoryName.toLowerCase().contains(
+            searchCategoryQuery.value.toLowerCase(),
+          )) {
         filtered.add(category);
       }
     }
-    
+
     return filtered;
   }
-  
+
   bool get canAddSpecialization {
     final text = specializationTextController.text.trim();
     if (text.isEmpty) return false;
@@ -619,7 +638,7 @@ class ServiceController extends GetxController {
     if (specializations.length >= maxSpecializations) return false;
     return true;
   }
-  
+
   bool get canAddKeyword {
     final text = keywordTextController.text.trim();
     if (text.isEmpty) return false;
@@ -627,51 +646,52 @@ class ServiceController extends GetxController {
     if (keywords.length >= maxKeywords) return false;
     return true;
   }
-  
+
   bool get canAddDevelopment {
     final title = developmentTitle.value.trim();
     final priceText = developmentPrice.value.trim();
     final timeValue = developmentTimeValue.value.trim();
-    
+
     return title.isNotEmpty &&
-           priceText.isNotEmpty &&
-           timeValue.isNotEmpty &&
-           (double.tryParse(priceText) ?? 0) > 0 &&
-           (int.tryParse(timeValue) ?? 0) > 0;
+        priceText.isNotEmpty &&
+        timeValue.isNotEmpty &&
+        (double.tryParse(priceText) ?? 0) > 0 &&
+        (int.tryParse(timeValue) ?? 0) > 0;
   }
-  
+
   bool get canAddFAQ {
     return faqs.length < maxFAQs;
   }
-  
+
   Color get specializationsButtonColor {
     if (!canAddSpecialization) return Colors.grey[300]!;
     return AppColors.primary400;
   }
-  
+
   Color get keywordsButtonColor {
     if (!canAddKeyword) return Colors.grey[300]!;
     return AppColors.primary400;
   }
-  
+
   Color get developmentButtonColor {
     if (!canAddDevelopment) return Colors.grey[300]!;
     return AppColors.primary400;
   }
-  
+
   Color get faqButtonColor {
     if (!canAddFAQ) return Colors.grey[300]!;
     return AppColors.primary400;
   }
-  
+
   String get specializationTooltip {
     final text = specializationTextController.text.trim();
     if (text.isEmpty) return 'اكتب تخصصاً لإضافته';
     if (specializations.contains(text)) return 'هذا التخصص موجود بالفعل';
-    if (specializations.length >= maxSpecializations) return 'تم الوصول للحد الأقصى';
+    if (specializations.length >= maxSpecializations)
+      return 'تم الوصول للحد الأقصى';
     return 'إضافة "${text}" إلى التخصصات';
   }
-  
+
   String get keywordTooltip {
     final text = keywordTextController.text.trim();
     if (text.isEmpty) return 'اكتب كلمة مفتاحية لإضافتها';
@@ -679,17 +699,17 @@ class ServiceController extends GetxController {
     if (keywords.length >= maxKeywords) return 'تم الوصول للحد الأقصى';
     return 'إضافة "${text}" إلى الكلمات المفتاحية';
   }
-  
+
   String get developmentTooltip {
     if (!canAddDevelopment) return 'املأ جميع الحقول المطلوبة';
     return 'إضافة التطوير الجديد';
   }
-  
+
   String get faqTooltip {
     if (!canAddFAQ) return 'تم الوصول للحد الأقصى (5 أسئلة)';
     return 'إضافة سؤال شائع جديد';
   }
-  
+
   Map<String, dynamic> getAllData() {
     return {
       'serviceTitle': serviceTitle.value,
@@ -710,11 +730,9 @@ class ServiceController extends GetxController {
         'unit': executionTimeUnit.value,
       },
       'developments': developments.map((dev) => dev.toJson()).toList(),
-      'images': serviceImages.map((img) => ({
-        'id': img.id,
-        'url': img.url,
-        'isMain': img.isMain,
-      })).toList(),
+      'images': serviceImages
+          .map((img) => ({'id': img.id, 'url': img.url, 'isMain': img.isMain}))
+          .toList(),
       'imagesCount': serviceImages.length,
       // 'policies': {
       //   // 'acceptedCopyright': acceptedCopyright.value,
@@ -724,11 +742,11 @@ class ServiceController extends GetxController {
       'timestamp': DateTime.now().toIso8601String(),
     };
   }
-  
+
   String getQuillContentAsJson() {
     return jsonEncode(quillController.document.toDelta().toJson());
   }
-  
+
   void resetAll() {
     currentStep.value = 0;
     serviceTitle.value = '';
@@ -738,14 +756,14 @@ class ServiceController extends GetxController {
     selectedCategoryId.value = 0;
     specializations.clear();
     keywords.clear();
-    
+
     quillController = QuillController(
       document: Document.fromJson([
-        {'insert': 'ابدأ الكتابة هنا...\n'}
+        {'insert': 'ابدأ الكتابة هنا...\n'},
       ]),
       selection: const TextSelection.collapsed(offset: 0),
     );
-    
+
     serviceDescriptionPlainText.value = '';
     faqs.clear();
     isDescriptionError.value = false;
@@ -768,21 +786,21 @@ class ServiceController extends GetxController {
     isExecutionTimeError.value = false;
     specializationTextController.clear();
     keywordTextController.clear();
-    
+
     serviceId.value = '';
     serviceSlug.value = '';
     serviceStatus.value = 'pending';
     uploadedImages.clear();
-    
+
     categories.clear();
-    
+
     // acceptedCopyright.value = false;
     acceptedTerms.value = false;
     acceptedPrivacy.value = false;
-    
+
     update();
   }
-  
+
   Future<Map<String, dynamic>?> addService() async {
     try {
       isSaving.value = true;
@@ -852,7 +870,7 @@ class ServiceController extends GetxController {
     } catch (e) {
       isSaving.value = false;
       update();
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في إضافة الخدمة: ${e.toString()}',
@@ -860,11 +878,8 @@ class ServiceController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
-      
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
+
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -932,7 +947,7 @@ class ServiceController extends GetxController {
     } catch (e) {
       isSaving.value = false;
       update();
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في تحديث الخدمة: ${e.toString()}',
@@ -940,11 +955,8 @@ class ServiceController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
-      
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
+
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -982,7 +994,7 @@ class ServiceController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       update();
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في حذف الخدمة: ${e.toString()}',
@@ -990,11 +1002,8 @@ class ServiceController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
-      
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
+
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -1012,7 +1021,7 @@ class ServiceController extends GetxController {
       if (response != null && response['status'] == true) {
         final data = response['data'] ?? {};
         final service = Service.fromApiJson(data);
-        
+
         _updateControllerFromService(service);
 
         isLoading.value = false;
@@ -1025,14 +1034,14 @@ class ServiceController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       update();
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في جلب الخدمة: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      
+
       return null;
     }
   }
@@ -1048,10 +1057,7 @@ class ServiceController extends GetxController {
       isLoading.value = true;
       update();
 
-      final Map<String, dynamic> queryParams = {
-        'page': page,
-        'limit': limit,
-      };
+      final Map<String, dynamic> queryParams = {'page': page, 'limit': limit};
 
       if (status != null) queryParams['status'] = status;
       if (sectionId != null) queryParams['section_id'] = sectionId;
@@ -1080,14 +1086,14 @@ class ServiceController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       update();
-      
+
       Get.snackbar(
         'خطأ',
         'فشل في جلب الخدمات: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      
+
       return [];
     }
   }
@@ -1111,7 +1117,7 @@ class ServiceController extends GetxController {
     try {
       isUploading.value = true;
       uploadedImages.clear();
-      
+
       for (final image in serviceImages) {
         if (image.isLocalFile && image.file != null) {
           final response = await ApiHelper.uploadMedia(
@@ -1132,7 +1138,7 @@ class ServiceController extends GetxController {
           uploadedImages.add(relativePath);
         }
       }
-      
+
       if (uploadedImages.isEmpty) {
         throw Exception('لم يتم رفع أي صورة بنجاح');
       }
@@ -1146,7 +1152,7 @@ class ServiceController extends GetxController {
 
   Map<String, dynamic> _prepareServiceData({bool forUpdate = false}) {
     final slug = _generateSlug(serviceTitle.value);
-    
+
     final MyAppController myAppController = Get.find<MyAppController>();
     final storeId = myAppController.userData['store_id']?.toString();
 
@@ -1162,17 +1168,17 @@ class ServiceController extends GetxController {
     }).toList();
 
     final questions = faqs.map((faq) {
-      return {
-        'question': faq.question,
-        'answer': faq.answer,
-      };
+      return {'question': faq.question, 'answer': faq.answer};
     }).toList();
 
     final List<String> imagesToSend = uploadedImages.isNotEmpty
-      ? uploadedImages
-      : serviceImages.map((img) {
-          return _extractRelativePath(img.url);
-        }).where((url) => url.isNotEmpty).toList();
+        ? uploadedImages
+        : serviceImages
+              .map((img) {
+                return _extractRelativePath(img.url);
+              })
+              .where((url) => url.isNotEmpty)
+              .toList();
 
     final serviceData = {
       'slug': slug,
@@ -1211,54 +1217,59 @@ class ServiceController extends GetxController {
     keywords.assignAll(service.tags);
     serviceStatus.value = service.status;
     price.value = service.price.toString();
-    
+
     executionTimeValue.value = service.executeCount.toString();
     executionTimeUnit.value = _convertTimeUnitFromApi(service.executeType);
-    
+
     developments.assignAll(service.extras);
-    
+
     faqs.assignAll(service.questions);
-    
+
     serviceDescriptionPlainText.value = service.description;
     quillController.document = Document.fromJson([
-      {'insert': service.description}
+      {'insert': service.description},
     ]);
-    
+
     serviceImages.clear();
     for (int i = 0; i < service.images.length; i++) {
       final imageUrl = service.images[i];
-      serviceImages.add(ServiceImage(
-        id: '${service.id}_$i',
-        url: imageUrl,
-        isMain: i == 0,
-        isLocalFile: false,
-        file: null,
-      ));
+      serviceImages.add(
+        ServiceImage(
+          id: '${service.id}_$i',
+          url: imageUrl,
+          isMain: i == 0,
+          isLocalFile: false,
+          file: null,
+        ),
+      );
     }
-    
+
     // acceptedCopyright.value = service.acceptedCopyright;
     acceptedTerms.value = service.acceptedTerms;
     acceptedPrivacy.value = service.acceptedPrivacy;
-    
+
     _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
   }
 
-  Future<void> _loadCategoryAndSectionNames(int sectionId, int categoryId) async {
+  Future<void> _loadCategoryAndSectionNames(
+    int sectionId,
+    int categoryId,
+  ) async {
     try {
       if (sections.isEmpty) {
         await loadSections();
       }
-      
+
       final section = sections.firstWhere(
         (s) => (s['id'] as int?) == sectionId,
         orElse: () => {'name': ''},
       );
       selectedMainCategory.value = section['name']?.toString() ?? '';
       selectedSectionId.value = sectionId;
-      
+
       if (selectedSectionId.value > 0) {
         await loadCategories();
-        
+
         final category = categories.firstWhere(
           (c) => (c['id'] as int?) == categoryId,
           orElse: () => {'name': ''},
@@ -1301,7 +1312,7 @@ class ServiceController extends GetxController {
         .replaceAll(RegExp(r'[^\w\s-]'), '')
         .replaceAll(RegExp(r'[\s_-]+'), '-')
         .replaceAll(RegExp(r'^-+|-+$'), '');
-    
+
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     return '$slug-$timestamp';
   }
@@ -1318,7 +1329,7 @@ class ServiceController extends GetxController {
       );
       return null;
     }
-    
+
     if (serviceId.value.isNotEmpty) {
       return await updateService(serviceId.value);
     } else {
@@ -1403,11 +1414,11 @@ class ServiceController extends GetxController {
   }
 
   bool get isInEditMode => serviceId.value.isNotEmpty;
-  
+
   String get currentServiceId => serviceId.value;
-  
+
   String get currentServiceTitle => serviceTitle.value;
-  
+
   void setServiceStatus(String status) {
     if (['pending', 'draft', 'rejected', 'active'].contains(status)) {
       serviceStatus.value = status;

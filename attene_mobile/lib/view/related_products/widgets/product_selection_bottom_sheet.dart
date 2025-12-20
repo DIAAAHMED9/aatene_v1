@@ -12,10 +12,12 @@ class ProductSelectionBottomSheet extends StatefulWidget {
   const ProductSelectionBottomSheet({super.key, required this.controller});
 
   @override
-  State<ProductSelectionBottomSheet> createState() => _ProductSelectionBottomSheetState();
+  State<ProductSelectionBottomSheet> createState() =>
+      _ProductSelectionBottomSheetState();
 }
 
-class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomSheet> {
+class _ProductSelectionBottomSheetState
+    extends State<ProductSelectionBottomSheet> {
   @override
   void initState() {
     super.initState();
@@ -86,10 +88,7 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                   );
                 },
               ),
-              IconButton(
-                onPressed: Get.back,
-                icon: const Icon(Icons.close),
-              ),
+              IconButton(onPressed: Get.back, icon: const Icon(Icons.close)),
             ],
           ),
         ],
@@ -171,7 +170,9 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  controller.isSearching ? 'لم يتم العثور على منتجات' : 'لا توجد منتجات',
+                  controller.isSearching
+                      ? 'لم يتم العثور على منتجات'
+                      : 'لا توجد منتجات',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               ],
@@ -228,13 +229,13 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  
+
                   const SizedBox(width: 12),
-                  
+
                   _buildProductImage(product),
-                  
+
                   const SizedBox(width: 12),
-                  
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,10 +250,11 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                             color: Colors.black87,
                           ),
                         ),
-                        
+
                         const SizedBox(height: 4),
-                        
-                        if (product.sectionName != null && product.sectionName!.isNotEmpty)
+
+                        if (product.sectionName != null &&
+                            product.sectionName!.isNotEmpty)
                           Row(
                             children: [
                               Icon(
@@ -270,11 +272,10 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                               ),
                             ],
                           ),
-                        
                       ],
                     ),
                   ),
-                  
+
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -299,7 +300,7 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
 
   Widget _buildProductImage(Product product) {
     final imageSize = ResponsiveDimensions.getProductImageSize(Get.context!);
-    
+
     if (product.coverUrl != null && product.coverUrl!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -322,7 +323,8 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   value: progress.expectedTotalBytes != null
-                      ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                      ? progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes!
                       : null,
                 ),
               ),
@@ -342,11 +344,7 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(
-        Icons.shopping_bag,
-        color: Colors.grey[400],
-        size: 24,
-      ),
+      child: Icon(Icons.shopping_bag, color: Colors.grey[400], size: 24),
     );
   }
 
@@ -420,7 +418,9 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                     SizedBox(width: ResponsiveDimensions.w(8)),
                   Expanded(
                     child: AateneButton(
-                      buttonText: controller.hasSelectedProducts ? 'تأكيد' : 'إغلاق',
+                      buttonText: controller.hasSelectedProducts
+                          ? 'تأكيد'
+                          : 'إغلاق',
                       onTap: () {
                         if (controller.hasSelectedProducts) {
                           controller.calculateTotalPrice();

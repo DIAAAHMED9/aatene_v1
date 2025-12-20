@@ -12,7 +12,7 @@ class VariationToggleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProductVariationController>();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,7 +66,7 @@ class VariationToggleWidget extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildRadioOption({
     required String label,
     required bool isSelected,
@@ -75,9 +75,7 @@ class VariationToggleWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: ResponsiveDimensions.h(8),
-        ),
+        padding: EdgeInsets.symmetric(vertical: ResponsiveDimensions.h(8)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -115,14 +113,14 @@ class AttributesManagementWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProductVariationController>();
-    
-    return   AateneButton(
-          buttonText: '+  إدارة السمات والصفات',
-          color: AppColors.primary100,
-          textColor: AppColors.primary500,
-          borderColor: AppColors.primary300,
-          onTap: controller.openAttributesManagement,
-        );
+
+    return AateneButton(
+      buttonText: '+  إدارة السمات والصفات',
+      color: AppColors.primary100,
+      textColor: AppColors.primary500,
+      borderColor: AppColors.primary300,
+      onTap: controller.openAttributesManagement,
+    );
   }
 }
 
@@ -132,14 +130,14 @@ class SelectedAttributesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProductVariationController>();
-    
+
     return GetBuilder<ProductVariationController>(
       id: 'attributes',
       builder: (_) {
         if (controller.selectedAttributes.isEmpty) {
           return _buildNoAttributesSelected();
         }
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -182,12 +180,13 @@ class SelectedAttributesWidget extends StatelessWidget {
                     .where((value) => value.isSelected.value)
                     .map((value) => value.value)
                     .toList();
-                    
+
                 return Chip(
                   label: Text(attribute.name),
                   backgroundColor: AppColors.primary100,
                   deleteIconColor: AppColors.primary400,
-                  onDeleted: () => controller.removeSelectedAttribute(attribute),
+                  onDeleted: () =>
+                      controller.removeSelectedAttribute(attribute),
                   labelStyle: TextStyle(
                     color: AppColors.primary500,
                     fontWeight: FontWeight.w500,
@@ -204,7 +203,7 @@ class SelectedAttributesWidget extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildNoAttributesSelected() {
     return Container(
       padding: EdgeInsets.all(ResponsiveDimensions.w(20)),
@@ -257,7 +256,7 @@ class VariationsListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProductVariationController>();
-    
+
     return GetBuilder<ProductVariationController>(
       id: 'variations',
       builder: (_) {
@@ -265,7 +264,7 @@ class VariationsListWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildVariationsHeader(controller),
-       
+
             SizedBox(height: ResponsiveDimensions.h(16)),
             _buildVariationsContent(controller),
           ],
@@ -273,12 +272,12 @@ class VariationsListWidget extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildVariationsHeader(ProductVariationController controller) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 500;
-        
+
         return isWide
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,8 +294,8 @@ class VariationsListWidget extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 6,),
-                             Text(
+                          SizedBox(width: 6),
+                          Text(
                             '*',
                             style: TextStyle(
                               color: Colors.red,
@@ -305,61 +304,62 @@ class VariationsListWidget extends StatelessWidget {
                             ),
                           ),
                           Spacer(),
-                               AateneButton(
-                    buttonText: ' قيمة جديدة',
-                    color: AppColors.primary400,
-                    textColor: Colors.white,
-                    borderColor: Colors.transparent,
-                    onTap: () => controller.generateSingleVariation(),
-                  ),
+                          AateneButton(
+                            buttonText: ' قيمة جديدة',
+                            color: AppColors.primary400,
+                            textColor: Colors.white,
+                            borderColor: Colors.transparent,
+                            onTap: () => controller.generateSingleVariation(),
+                          ),
                         ],
                       ),
-                 
                     ],
                   ),
-             
                 ],
               )
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                      Text(
-                            'قيم الاختلافات',
-                            style: TextStyle(
-                              fontSize: ResponsiveDimensions.f(18),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 6,),
-                             Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: ResponsiveDimensions.f(18),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Spacer(),
-                          ElevatedButton(
-                            style:ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary100,
-                           elevation: 0,
-                            ),
-                            onPressed: (){},
-                          
-                           child: Text('+ قيمة جديدة',style: TextStyle(color: AppColors.primary400),))
-                              
+                  Text(
+                    'قيم الاختلافات',
+                    style: TextStyle(
+                      fontSize: ResponsiveDimensions.f(18),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    '*',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: ResponsiveDimensions.f(18),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary100,
+                      elevation: 0,
+                    ),
+                    onPressed: () {},
+
+                    child: Text(
+                      '+ قيمة جديدة',
+                      style: TextStyle(color: AppColors.primary400),
+                    ),
+                  ),
                 ],
               );
       },
     );
   }
-  
+
   Widget _buildVariationsContent(ProductVariationController controller) {
     if (controller.variations.isEmpty) {
       return _buildNoVariations();
     }
-    
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -374,7 +374,7 @@ class VariationsListWidget extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildNoVariations() {
     return Container(
       padding: EdgeInsets.all(ResponsiveDimensions.w(24)),

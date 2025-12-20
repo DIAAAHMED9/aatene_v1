@@ -17,7 +17,7 @@ class RelatedProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<RelatedProductsController>();
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -119,7 +119,10 @@ class RelatedProductsScreen extends StatelessWidget {
                       children: [
                         Icon(Icons.clear_all, color: Colors.red, size: 16),
                         const SizedBox(width: 4),
-                        const Text('مسح الكل', style: TextStyle(color: Colors.red)),
+                        const Text(
+                          'مسح الكل',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -149,7 +152,7 @@ class RelatedProductsScreen extends StatelessWidget {
             color: Colors.grey[400],
           ),
           SizedBox(height: ResponsiveDimensions.h(16)),
-           Text(
+          Text(
             'لم يتم اختيار أي منتجات بعد',
             style: TextStyle(color: Colors.grey[600]),
           ),
@@ -193,9 +196,9 @@ class RelatedProductsScreen extends StatelessWidget {
       child: Row(
         children: [
           _buildProductImage(product),
-          
+
           const SizedBox(width: 12),
-          
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -205,49 +208,52 @@ class RelatedProductsScreen extends StatelessWidget {
                   Text(
                     product.name,
                     style: TextStyle(
-                      fontSize: ResponsiveDimensions.getFontSize(Get.context!, baseSize: 16),
+                      fontSize: ResponsiveDimensions.getFontSize(
+                        Get.context!,
+                        baseSize: 16,
+                      ),
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   const SizedBox(height: 6),
-                   if (product.sectionName != null && product.sectionName!.isNotEmpty)
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.category_outlined,
-                                size: 12,
-                                color: Colors.grey[600],
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                product.sectionName!,
-                                style: TextStyle(
-                                  fontSize: ResponsiveDimensions.f(14),
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          
-                  )
-           
+                  if (product.sectionName != null &&
+                      product.sectionName!.isNotEmpty)
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.category_outlined,
+                          size: 12,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          product.sectionName!,
+                          style: TextStyle(
+                            fontSize: ResponsiveDimensions.f(14),
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
           ),
-            Text(
-                    _formatPrice(product.price ?? '0'),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
+          Text(
+            _formatPrice(product.price ?? '0'),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
+            ),
+          ),
           IconButton(
-            onPressed: () => Get.find<RelatedProductsController>().removeSelectedProduct(product),
+            onPressed: () => Get.find<RelatedProductsController>()
+                .removeSelectedProduct(product),
             icon: const Icon(Icons.close, color: Colors.red),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -259,7 +265,7 @@ class RelatedProductsScreen extends StatelessWidget {
 
   Widget _buildProductImage(Product product) {
     final imageSize = ResponsiveDimensions.getProductImageSize(Get.context!);
-    
+
     return Container(
       width: imageSize,
       height: imageSize,
@@ -280,7 +286,7 @@ class RelatedProductsScreen extends StatelessWidget {
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
+                                loadingProgress.expectedTotalBytes!
                           : null,
                     ),
                   );
@@ -291,7 +297,7 @@ class RelatedProductsScreen extends StatelessWidget {
                     child: Icon(
                       Icons.broken_image,
                       color: Colors.grey[400],
-                      size: 40
+                      size: 40,
                     ),
                   );
                 },
@@ -302,7 +308,7 @@ class RelatedProductsScreen extends StatelessWidget {
               child: Icon(
                 Icons.shopping_bag,
                 color: Colors.grey[400],
-                size: 40
+                size: 40,
               ),
             ),
     );
@@ -391,10 +397,7 @@ class RelatedProductsScreen extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                blurRadius: 8,
-              ),
+              BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 8),
             ],
           ),
           child: Column(
@@ -468,10 +471,7 @@ class RelatedProductsScreen extends StatelessWidget {
         title: const Text('تأكيد الحذف'),
         content: const Text('هل أنت متأكد من حذف هذا التخفيض؟'),
         actions: [
-          TextButton(
-            onPressed: Get.back,
-            child: const Text('إلغاء'),
-          ),
+          TextButton(onPressed: Get.back, child: const Text('إلغاء')),
           TextButton(
             onPressed: () {
               Get.find<RelatedProductsController>().removeDiscount(discount);

@@ -23,29 +23,31 @@ class DataInitializerService extends GetxService {
   RxBool get isOnlineRx => _isOnline;
 
   RxBool get isDataLoadedRx => _isDataLoaded;
-   final RxBool _productsUpdated = false.obs;
-  
+  final RxBool _productsUpdated = false.obs;
+
   RxBool get productsUpdated => _productsUpdated;
-   void notifyProductsUpdated() {
+
+  void notifyProductsUpdated() {
     print('📢 [DATA SERVICE] Notifying products update');
     _productsUpdated.value = !_productsUpdated.value;
   }
-    Future<void> refreshProducts() async {
+
+  Future<void> refreshProducts() async {
     try {
       print('🔄 [DATA SERVICE] Refreshing products...');
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/products',
         withLoading: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final products = response['data'] ?? [];
-        
+
         await _storage.write('products', json.encode(products));
-        
+
         notifyProductsUpdated();
-        
+
         print('✅ [DATA SERVICE] Products refreshed successfully');
       }
     } catch (e) {
@@ -115,7 +117,7 @@ class DataInitializerService extends GetxService {
 
     _initializeStorage();
   }
- 
+
   Future<void> _initializeStorage() async {
     try {
       await GetStorage.init();
@@ -894,6 +896,7 @@ class DataInitializerService extends GetxService {
   Future<void> refreshAttributes() async => await _loadAttributes();
 
   Future<void> refreshCategories() async => await _loadCategories();
+
   Future<void> refreshMedia() async => await _loadMedia();
 
   Future<void> refreshAllData() async =>

@@ -9,7 +9,7 @@ import '../../../utlis/connection_status.dart';
 
 class ChatMassege extends StatefulWidget {
   final ChatConversation conversation;
-  
+
   const ChatMassege({super.key, required this.conversation});
 
   @override
@@ -60,7 +60,7 @@ class _ChatMassegeState extends State<ChatMassege> {
       _isTyping = true;
       chatController.sendTypingStatus(widget.conversation.id, true);
     }
-    
+
     _typingTimer?.cancel();
     _typingTimer = Timer(const Duration(seconds: 2), () {
       if (_isTyping) {
@@ -94,10 +94,7 @@ class _ChatMassegeState extends State<ChatMassege> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-    );
+    return Scaffold(appBar: _buildAppBar(), body: _buildBody());
   }
 
   AppBar _buildAppBar() {
@@ -112,10 +109,7 @@ class _ChatMassegeState extends State<ChatMassege> {
             children: [
               IconButton(
                 onPressed: () => Get.back(),
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                ),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
               ),
               const SizedBox(width: 8),
               _buildUserAvatar(),
@@ -164,12 +158,10 @@ class _ChatMassegeState extends State<ChatMassege> {
               ),
               GetBuilder<ChatController>(
                 builder: (controller) {
-                  if (controller.connectionStatus.value != ConnectionStatus.connected) {
+                  if (controller.connectionStatus.value !=
+                      ConnectionStatus.connected) {
                     return IconButton(
-                      icon: Icon(
-                        Icons.wifi_off,
-                        color: Colors.red.shade400,
-                      ),
+                      icon: Icon(Icons.wifi_off, color: Colors.red.shade400),
                       onPressed: () {
                         controller.reconnectWebSocket();
                       },
@@ -202,10 +194,7 @@ class _ChatMassegeState extends State<ChatMassege> {
           decoration: BoxDecoration(
             color: widget.conversation.isOnline ? Colors.green : Colors.grey,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
+            border: Border.all(color: Colors.white, width: 2),
           ),
         ),
       ],
@@ -237,15 +226,11 @@ class _ChatMassegeState extends State<ChatMassege> {
                     ? Icons.star
                     : Icons.star_outline,
                 size: 20,
-                color: widget.conversation.isInterested
-                    ? Colors.amber
-                    : null,
+                color: widget.conversation.isInterested ? Colors.amber : null,
               ),
               const SizedBox(width: 8),
               Text(
-                widget.conversation.isInterested
-                    ? 'إلغاء المتابعة'
-                    : 'متابعة',
+                widget.conversation.isInterested ? 'إلغاء المتابعة' : 'متابعة',
               ),
             ],
           ),
@@ -287,19 +272,24 @@ class _ChatMassegeState extends State<ChatMassege> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      ConnectionStatusHelper.getIcon(controller.connectionStatus.value),
+                      ConnectionStatusHelper.getIcon(
+                        controller.connectionStatus.value,
+                      ),
                       size: 16,
                       color: Colors.orange,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      ConnectionStatusHelper.getDisplayName(controller.connectionStatus.value),
+                      ConnectionStatusHelper.getDisplayName(
+                        controller.connectionStatus.value,
+                      ),
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.orange,
                       ),
                     ),
-                    if (controller.connectionStatus.value == ConnectionStatus.disconnected)
+                    if (controller.connectionStatus.value ==
+                        ConnectionStatus.disconnected)
                       TextButton(
                         onPressed: () => controller.reconnectWebSocket(),
                         child: const Text(
@@ -310,7 +300,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                   ],
                 ),
               ),
-            
+
             Expanded(
               child: controller.isLoadingMessages.value
                   ? const Center(child: CircularProgressIndicator())
@@ -338,18 +328,12 @@ class _ChatMassegeState extends State<ChatMassege> {
             const SizedBox(height: 16),
             const Text(
               'ابدأ المحادثة الآن',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
             const SizedBox(height: 8),
             const Text(
               'أرسل أول رسالة لك',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
           ],
         ),
@@ -364,7 +348,7 @@ class _ChatMassegeState extends State<ChatMassege> {
         if (index == controller.currentMessages.length) {
           return const SizedBox(height: 20);
         }
-        
+
         final message = controller.currentMessages[index];
         return _buildMessageBubble(message, context);
       },
@@ -373,7 +357,7 @@ class _ChatMassegeState extends State<ChatMassege> {
 
   Widget _buildMessageBubble(ChatMessage message, BuildContext context) {
     final isMe = message.messageType == "sender";
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Align(
@@ -401,9 +385,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: isMe
-                      ? const Color(0xff2176ff)
-                      : Colors.grey.shade200,
+                  color: isMe ? const Color(0xff2176ff) : Colors.grey.shade200,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,9 +413,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                         const SizedBox(width: 4),
                         if (isMe)
                           Icon(
-                            message.isRead
-                                ? Icons.done_all
-                                : Icons.done,
+                            message.isRead ? Icons.done_all : Icons.done,
                             size: 12,
                             color: isMe
                                 ? Colors.white.withOpacity(0.8)
@@ -445,8 +425,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 ),
               ),
             ),
-            if (isMe)
-              const SizedBox(width: 8),
+            if (isMe) const SizedBox(width: 8),
           ],
         ),
       ),
@@ -460,13 +439,10 @@ class _ChatMassegeState extends State<ChatMassege> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(
-              Icons.add_circle_outline,
-              color: Colors.grey.shade600,
-            ),
+            icon: Icon(Icons.add_circle_outline, color: Colors.grey.shade600),
             onPressed: () => _showAttachmentMenu(),
           ),
-          
+
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -488,8 +464,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.emoji_emotions_outlined),
                     color: Colors.grey.shade600,
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                   ),
                 ),
                 maxLines: 5,
@@ -497,7 +472,7 @@ class _ChatMassegeState extends State<ChatMassege> {
               ),
             ),
           ),
-          
+
           const SizedBox(width: 8),
           _isSending
               ? Container(
@@ -529,11 +504,7 @@ class _ChatMassegeState extends State<ChatMassege> {
   String _formatMessageTime(DateTime timestamp) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final messageDay = DateTime(
-      timestamp.year,
-      timestamp.month,
-      timestamp.day,
-    );
+    final messageDay = DateTime(timestamp.year, timestamp.month, timestamp.day);
 
     if (today == messageDay) {
       return '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
@@ -558,10 +529,7 @@ class _ChatMassegeState extends State<ChatMassege> {
               const SizedBox(height: 16),
               const Text(
                 'إرفاق ملف',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Row(
@@ -655,10 +623,7 @@ class _ChatMassegeState extends State<ChatMassege> {
         title: const Text('حظر المستخدم'),
         content: const Text('هل أنت متأكد من حظر هذا المستخدم؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
           TextButton(
             onPressed: () {
               Get.back();
@@ -668,10 +633,7 @@ class _ChatMassegeState extends State<ChatMassege> {
               );
               Get.back();
             },
-            child: const Text(
-              'حظر',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('حظر', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -684,18 +646,12 @@ class _ChatMassegeState extends State<ChatMassege> {
         title: const Text('مسح المحادثة'),
         content: const Text('هل أنت متأكد من مسح جميع الرسائل؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
           TextButton(
             onPressed: () {
               Get.back();
             },
-            child: const Text(
-              'مسح',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('مسح', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

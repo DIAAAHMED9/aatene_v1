@@ -20,12 +20,16 @@ class VariationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(
-        vertical: isSmallScreen ? ResponsiveDimensions.f(8) : ResponsiveDimensions.f(12),
-        horizontal: isSmallScreen ? ResponsiveDimensions.f(4) : ResponsiveDimensions.f(8),
+        vertical: isSmallScreen
+            ? ResponsiveDimensions.f(8)
+            : ResponsiveDimensions.f(12),
+        horizontal: isSmallScreen
+            ? ResponsiveDimensions.f(4)
+            : ResponsiveDimensions.f(8),
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ResponsiveDimensions.f(12)),
@@ -37,7 +41,11 @@ class VariationCard extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16)),
+        padding: EdgeInsets.all(
+          isSmallScreen
+              ? ResponsiveDimensions.f(12)
+              : ResponsiveDimensions.f(16),
+        ),
         decoration: BoxDecoration(
           color: variation.isActive.value
               ? AppColors.primary50.withOpacity(0.3)
@@ -80,7 +88,9 @@ class VariationCard extends StatelessWidget {
                           color: variation.isActive.value
                               ? AppColors.primary400
                               : Colors.grey[400],
-                          borderRadius: BorderRadius.circular(ResponsiveDimensions.f(20)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveDimensions.f(20),
+                          ),
                         ),
                         child: Text(
                           variation.isActive.value ? 'نشط' : 'غير نشط',
@@ -108,14 +118,14 @@ class VariationCard extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             SizedBox(height: ResponsiveDimensions.f(12)),
-            
+
             if (isSmallScreen)
               _buildSmallDetails(variation, context)
             else
               _buildLargeDetails(variation, context),
-            
+
             SizedBox(height: ResponsiveDimensions.f(12)),
             Container(
               padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
@@ -169,9 +179,7 @@ class VariationCard extends StatelessWidget {
                 icon: Icons.inventory_2,
                 label: 'المخزون',
                 value: variation.stock.value.toString(),
-                color: variation.stock.value > 0
-                    ? Colors.green
-                    : Colors.red,
+                color: variation.stock.value > 0 ? Colors.green : Colors.red,
               ),
             ),
           ],
@@ -185,14 +193,10 @@ class VariationCard extends StatelessWidget {
               return Chip(
                 label: Text(
                   '${entry.key}: ${entry.value}',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(10),
-                  ),
+                  style: TextStyle(fontSize: ResponsiveDimensions.f(10)),
                 ),
                 backgroundColor: AppColors.primary100,
-                labelStyle: TextStyle(
-                  color: AppColors.primary500,
-                ),
+                labelStyle: TextStyle(color: AppColors.primary500),
                 visualDensity: VisualDensity.compact,
               );
             }).toList(),
@@ -220,9 +224,7 @@ class VariationCard extends StatelessWidget {
                 icon: Icons.inventory_2,
                 label: 'المخزون',
                 value: variation.stock.value.toString(),
-                color: variation.stock.value > 0
-                    ? Colors.green
-                    : Colors.red,
+                color: variation.stock.value > 0 ? Colors.green : Colors.red,
               ),
             ),
             SizedBox(width: ResponsiveDimensions.f(16)),
@@ -231,16 +233,14 @@ class VariationCard extends StatelessWidget {
                 icon: Icons.tag,
                 label: 'الحالة',
                 value: variation.stockStatus,
-                color: variation.stock.value > 0
-                    ? Colors.green
-                    : Colors.grey,
+                color: variation.stock.value > 0 ? Colors.green : Colors.grey,
               ),
             ),
           ],
         ),
-        
+
         SizedBox(height: ResponsiveDimensions.f(16)),
-        
+
         if (variation.attributes.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,14 +261,10 @@ class VariationCard extends StatelessWidget {
                   return Chip(
                     label: Text(
                       '${entry.key}: ${entry.value}',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.f(12),
-                      ),
+                      style: TextStyle(fontSize: ResponsiveDimensions.f(12)),
                     ),
                     backgroundColor: AppColors.primary100,
-                    labelStyle: TextStyle(
-                      color: AppColors.primary500,
-                    ),
+                    labelStyle: TextStyle(color: AppColors.primary500),
                   );
                 }).toList(),
               ),
@@ -289,18 +285,11 @@ class VariationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(ResponsiveDimensions.f(8)),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: ResponsiveDimensions.f(20),
-            color: color,
-          ),
+          Icon(icon, size: ResponsiveDimensions.f(20), color: color),
           SizedBox(width: ResponsiveDimensions.f(8)),
           Expanded(
             child: Column(

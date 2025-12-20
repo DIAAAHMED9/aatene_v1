@@ -36,7 +36,7 @@ class ProductVariationController extends GetxController {
   void onInit() {
     super.onInit();
     print('🚀 [VARIATION CONTROLLER] Initializing...');
-    
+
     _initializeServices();
     _loadCachedData();
     _setupListeners();
@@ -50,12 +50,16 @@ class ProductVariationController extends GetxController {
   void _setupListeners() {
     ever(_selectedAttributes, (_) {
       _selectedAttributesCount.value = _selectedAttributes.length;
-      print('📊 [VARIATIONS] Selected attributes count updated: ${_selectedAttributesCount.value}');
+      print(
+        '📊 [VARIATIONS] Selected attributes count updated: ${_selectedAttributesCount.value}',
+      );
     });
-    
+
     ever(_variations, (_) {
       _totalVariationsCount.value = _variations.length;
-      _activeVariationsCount.value = _variations.where((v) => v.isActive.value).length;
+      _activeVariationsCount.value = _variations
+          .where((v) => v.isActive.value)
+          .length;
       print('📊 [VARIATIONS] Variations count updated: ${_variations.length}');
     });
   }
@@ -65,7 +69,9 @@ class ProductVariationController extends GetxController {
       final cachedAttributes = _dataService.getAttributesForVariations();
       if (cachedAttributes.isNotEmpty) {
         _allAttributes.assignAll(cachedAttributes);
-        print('📥 [VARIATIONS] Loaded ${cachedAttributes.length} cached attributes');
+        print(
+          '📥 [VARIATIONS] Loaded ${cachedAttributes.length} cached attributes',
+        );
       }
 
       final variationsData = _dataService.getVariationsData();
@@ -108,13 +114,19 @@ class ProductVariationController extends GetxController {
       );
 
       if (response != null && response['status'] == true) {
-        final attributesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
-        final loadedAttributes = attributesList.map(ProductAttribute.fromApiJson).toList();
-        
+        final attributesList = List<Map<String, dynamic>>.from(
+          response['data'] ?? [],
+        );
+        final loadedAttributes = attributesList
+            .map(ProductAttribute.fromApiJson)
+            .toList();
+
         _allAttributes.assignAll(loadedAttributes);
         _lastLoadTime.value = DateTime.now().toIso8601String();
 
-        print('✅ [VARIATIONS] Loaded ${_allAttributes.length} attributes successfully');
+        print(
+          '✅ [VARIATIONS] Loaded ${_allAttributes.length} attributes successfully',
+        );
 
         await _saveAttributesLocally(attributesList);
       } else {
@@ -137,7 +149,9 @@ class ProductVariationController extends GetxController {
     }
   }
 
-  Future<void> _saveAttributesLocally(List<Map<String, dynamic>> attributesList) async {
+  Future<void> _saveAttributesLocally(
+    List<Map<String, dynamic>> attributesList,
+  ) async {
     try {
       await _dataService.saveAttributesForVariations(attributesList);
       print('💾 [VARIATIONS] Saved attributes locally');
@@ -162,15 +176,15 @@ class ProductVariationController extends GetxController {
   void toggleHasVariations(bool value) {
     _hasVariations.value = value;
     print('🎯 [VARIATIONS] Toggle hasVariations to: $value');
-    
+
     if (!value) {
       clearAllData();
     }
-    
+
     _saveCurrentState();
-    
+
     update([attributesUpdateId, variationsUpdateId]);
-    
+
     Get.snackbar(
       value ? 'تم التفعيل' : 'تم التعطيل',
       value ? 'تم تفعيل نظام الاختلافات' : 'تم تعطيل نظام الاختلافات',
@@ -182,7 +196,7 @@ class ProductVariationController extends GetxController {
 
   Future<void> openAttributesManagement() async {
     print('🎯 [VARIATIONS] Opening attributes management');
-    
+
     if (_isLoadingAttributes.value) {
       Get.snackbar('تنبيه', 'جاري تحميل السمات...');
       return;
@@ -192,7 +206,7 @@ class ProductVariationController extends GetxController {
       print('🔄 [VARIATIONS] No attributes found, loading...');
       Get.snackbar('جاري التحميل', 'لا توجد سمات متاحة. جاري التحميل...');
       await loadAttributesOnOpen();
-      
+
       if (_allAttributes.isEmpty) {
         Get.snackbar('خطأ', 'فشل في تحميل السمات. يرجى المحاولة لاحقاً');
         return;
@@ -229,7 +243,9 @@ class ProductVariationController extends GetxController {
     _selectedAttributes.assignAll(attributes);
     _selectedAttributesCount.value = attributes.length;
 
-    print('✅ [VARIATIONS] Updated attributes: ${attributes.length} attributes saved');
+    print(
+      '✅ [VARIATIONS] Updated attributes: ${attributes.length} attributes saved',
+    );
 
     if (oldCount > attributes.length && _variations.isNotEmpty) {
       _regenerateVariationsAfterAttributeChange();
@@ -350,43 +366,41 @@ class ProductVariationController extends GetxController {
 
   Map<String, String> _getCombinedAttributes() {
     final combinedAttributes = <String, String>{};
-    
+
     for (final attribute in _selectedAttributes) {
       final selectedValues = attribute.values
           .where((value) => value.isSelected.value)
           .toList();
-      
+
       if (selectedValues.isNotEmpty) {
         combinedAttributes[attribute.name] = selectedValues.first.value;
       }
     }
-    
+
     return combinedAttributes;
   }
 
   Map<String, String> _getDefaultAttributes() {
     final defaultAttributes = <String, String>{};
-    
+
     for (final attribute in _selectedAttributes) {
       final selectedValues = attribute.values
           .where((value) => value.isSelected.value)
           .toList();
-      
+
       if (selectedValues.isNotEmpty) {
         defaultAttributes[attribute.name] = selectedValues.first.value;
       } else if (attribute.values.isNotEmpty) {
         defaultAttributes[attribute.name] = attribute.values.first.value;
       }
     }
-    
+
     return defaultAttributes;
   }
 
   bool _allAttributesHaveSelectedValues() {
     for (final attribute in _selectedAttributes) {
-      if (attribute.values
-          .where((value) => value.isSelected.value)
-          .isEmpty) {
+      if (attribute.values.where((value) => value.isSelected.value).isEmpty) {
         return false;
       }
     }
@@ -402,7 +416,10 @@ class ProductVariationController extends GetxController {
     return false;
   }
 
-  bool _areAttributesEqual(Map<String, String> attributes1, Map<String, String> attributes2) {
+  bool _areAttributesEqual(
+    Map<String, String> attributes1,
+    Map<String, String> attributes2,
+  ) {
     if (attributes1.length != attributes2.length) return false;
 
     for (final entry in attributes1.entries) {
@@ -415,7 +432,9 @@ class ProductVariationController extends GetxController {
 
   void _updateCounters() {
     _totalVariationsCount.value = _variations.length;
-    _activeVariationsCount.value = _variations.where((v) => v.isActive.value).length;
+    _activeVariationsCount.value = _variations
+        .where((v) => v.isActive.value)
+        .length;
   }
 
   void toggleVariationActive(ProductVariation variation) {
@@ -477,7 +496,8 @@ class ProductVariationController extends GetxController {
         if (!variation.attributes.containsKey(attribute.name)) {
           return ValidationResult(
             isValid: false,
-            errorMessage: 'يرجى اختيار قيمة لـ ${attribute.name} في جميع الاختلافات',
+            errorMessage:
+                'يرجى اختيار قيمة لـ ${attribute.name} في جميع الاختلافات',
           );
         }
       }
@@ -540,51 +560,66 @@ class ProductVariationController extends GetxController {
     });
   }
 
-void loadVariationsData(Map<String, dynamic> data) {
+  void loadVariationsData(Map<String, dynamic> data) {
     try {
       _hasVariations.value = data['hasVariations'] ?? false;
 
       if (data['selectedAttributes'] != null) {
-        final attributesList = (data['selectedAttributes'] as List).map((item) {
-          try {
-            return ProductAttribute.fromJson(item);
-          } catch (e) {
-            print('❌ [VARIATIONS] Error parsing attribute: $e, item: $item');
-            return ProductAttribute(
-              id: '',
-              name: 'خطأ في التحميل',
-              values: [],
-            );
-          }
-        }).where((attr) => attr.id.isNotEmpty).toList();
-        
+        final attributesList = (data['selectedAttributes'] as List)
+            .map((item) {
+              try {
+                return ProductAttribute.fromJson(item);
+              } catch (e) {
+                print(
+                  '❌ [VARIATIONS] Error parsing attribute: $e, item: $item',
+                );
+                return ProductAttribute(
+                  id: '',
+                  name: 'خطأ في التحميل',
+                  values: [],
+                );
+              }
+            })
+            .where((attr) => attr.id.isNotEmpty)
+            .toList();
+
         _selectedAttributes.assignAll(attributesList);
         _selectedAttributesCount.value = _selectedAttributes.length;
       }
 
       if (data['variations'] != null) {
-        final variationsList = (data['variations'] as List).map((item) {
-          try {
-            return ProductVariation.fromJson(item);
-          } catch (e) {
-            print('❌ [VARIATIONS] Error parsing variation: $e, item: $item');
-            return ProductVariation(
-              id: 'error_${DateTime.now().millisecondsSinceEpoch}',
-              attributes: {},
-              price: 0.0,
-              stock: 0,
-              sku: 'ERROR',
-              isActive: false,
-              images: [],
-            );
-          }
-        }).where((variation) => variation.id.isNotEmpty && !variation.id.startsWith('error_')).toList();
-        
+        final variationsList = (data['variations'] as List)
+            .map((item) {
+              try {
+                return ProductVariation.fromJson(item);
+              } catch (e) {
+                print(
+                  '❌ [VARIATIONS] Error parsing variation: $e, item: $item',
+                );
+                return ProductVariation(
+                  id: 'error_${DateTime.now().millisecondsSinceEpoch}',
+                  attributes: {},
+                  price: 0.0,
+                  stock: 0,
+                  sku: 'ERROR',
+                  isActive: false,
+                  images: [],
+                );
+              }
+            })
+            .where(
+              (variation) =>
+                  variation.id.isNotEmpty && !variation.id.startsWith('error_'),
+            )
+            .toList();
+
         _variations.assignAll(variationsList);
         _updateCounters();
       }
 
-      print('📥 [VARIATIONS] Loaded variations data: ${_variations.length} variations, ${_selectedAttributes.length} attributes');
+      print(
+        '📥 [VARIATIONS] Loaded variations data: ${_variations.length} variations, ${_selectedAttributes.length} attributes',
+      );
 
       update([attributesUpdateId, variationsUpdateId]);
     } catch (e) {
@@ -615,7 +650,8 @@ void loadVariationsData(Map<String, dynamic> data) {
       'selected_attributes_count': _selectedAttributesCount.value,
       'total_variations': _totalVariationsCount.value,
       'active_variations': _activeVariationsCount.value,
-      'inactive_variations': _totalVariationsCount.value - _activeVariationsCount.value,
+      'inactive_variations':
+          _totalVariationsCount.value - _activeVariationsCount.value,
       'total_images': totalImages,
       'is_offline': _isOfflineMode.value,
       'last_load_time': _lastLoadTime.value,
@@ -688,21 +724,33 @@ void loadVariationsData(Map<String, dynamic> data) {
 
     return apiVariations;
   }
-void reset(){
-  
-}
+
+  void reset() {}
+
   bool get hasVariations => _hasVariations.value;
+
   List<ProductAttribute> get selectedAttributes => _selectedAttributes;
+
   List<ProductAttribute> get allAttributes => _allAttributes;
+
   List<ProductVariation> get variations => _variations;
+
   bool get isLoadingAttributes => _isLoadingAttributes.value;
+
   String get attributesError => _attributesError.value;
+
   int get selectedAttributesCount => _selectedAttributesCount.value;
+
   int get totalVariationsCount => _totalVariationsCount.value;
+
   int get activeVariationsCount => _activeVariationsCount.value;
+
   bool get isOfflineMode => _isOfflineMode.value;
+
   bool get isGeneratingVariations => _isGeneratingVariations.value;
+
   bool get isSavingData => _isSavingData.value;
+
   String get lastLoadTime => _lastLoadTime.value;
 
   @override
@@ -716,6 +764,6 @@ void reset(){
 class ValidationResult {
   final bool isValid;
   final String errorMessage;
-  
+
   ValidationResult({required this.isValid, required this.errorMessage});
 }

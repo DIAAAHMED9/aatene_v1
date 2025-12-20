@@ -10,7 +10,7 @@ class CategoryBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ServiceController controller = Get.find<ServiceController>();
-    
+
     return Container(
       height: ResponsiveDimensions.responsiveHeight(600),
       decoration: const BoxDecoration(
@@ -35,21 +35,25 @@ class CategoryBottomSheet extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close,
-                      size: ResponsiveDimensions.responsiveFontSize(24)),
+                  icon: Icon(
+                    Icons.close,
+                    size: ResponsiveDimensions.responsiveFontSize(24),
+                  ),
                   onPressed: () => Get.back(),
                 ),
               ],
             ),
           ),
-          
+
           if (controller.selectedMainCategory.value.isNotEmpty)
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: ResponsiveDimensions.responsiveWidth(16),
               ),
               child: Container(
-                padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),
+                padding: EdgeInsets.all(
+                  ResponsiveDimensions.responsiveWidth(12),
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primary50,
                   borderRadius: BorderRadius.circular(8),
@@ -77,9 +81,9 @@ class CategoryBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-          
+
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: ResponsiveDimensions.responsiveWidth(16),
@@ -91,17 +95,19 @@ class CategoryBottomSheet extends StatelessWidget {
                 hintStyle: TextStyle(
                   fontSize: ResponsiveDimensions.responsiveFontSize(14),
                 ),
-                prefixIcon: Icon(Icons.search,
-                    size: ResponsiveDimensions.responsiveFontSize(20)),
+                prefixIcon: Icon(
+                  Icons.search,
+                  size: ResponsiveDimensions.responsiveFontSize(20),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
           ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
-          
+
           Expanded(
             child: GetBuilder<ServiceController>(
               id: 'categories_list',
@@ -116,11 +122,15 @@ class CategoryBottomSheet extends StatelessWidget {
                           size: ResponsiveDimensions.responsiveFontSize(48),
                           color: Colors.grey[400],
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(16),
+                        ),
                         Text(
                           'يرجى اختيار قسم أولاً',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(16),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              16,
+                            ),
                             color: Colors.grey[600],
                           ),
                         ),
@@ -134,14 +144,16 @@ class CategoryBottomSheet extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(
-                          color: AppColors.primary400,
+                        CircularProgressIndicator(color: AppColors.primary400),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(16),
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
                         Text(
                           'جاري تحميل الفئات...',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              14,
+                            ),
                             color: Colors.grey[600],
                           ),
                         ),
@@ -160,16 +172,22 @@ class CategoryBottomSheet extends StatelessWidget {
                           size: ResponsiveDimensions.responsiveFontSize(40),
                           color: Colors.red,
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(16),
+                        ),
                         Text(
                           controller.categoriesError.value,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              14,
+                            ),
                             color: Colors.red,
                           ),
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(16),
+                        ),
                         ElevatedButton(
                           onPressed: () {
                             controller.loadCategories();
@@ -194,11 +212,15 @@ class CategoryBottomSheet extends StatelessWidget {
                           size: ResponsiveDimensions.responsiveFontSize(48),
                           color: Colors.grey[400],
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(16),
+                        ),
                         Text(
                           'لا توجد فئات',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(16),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              16,
+                            ),
                             color: Colors.grey[600],
                           ),
                         ),
@@ -206,14 +228,15 @@ class CategoryBottomSheet extends StatelessWidget {
                     ),
                   );
                 }
-                
+
                 return ListView.builder(
                   itemCount: controller.filteredCategories.length,
                   itemBuilder: (context, index) {
                     final category = controller.filteredCategories[index];
-                    final categoryId = int.tryParse(category['id'].toString()) ?? 0;
+                    final categoryId =
+                        int.tryParse(category['id'].toString()) ?? 0;
                     final categoryName = (category['name'] ?? '').toString();
-                    
+
                     return ListTile(
                       title: Text(
                         categoryName,
@@ -221,10 +244,13 @@ class CategoryBottomSheet extends StatelessWidget {
                           fontSize: ResponsiveDimensions.responsiveFontSize(14),
                         ),
                       ),
-                      trailing: controller.tempSelectedCategoryId.value == categoryId
-                          ? Icon(Icons.check,
+                      trailing:
+                          controller.tempSelectedCategoryId.value == categoryId
+                          ? Icon(
+                              Icons.check,
                               color: AppColors.primary400,
-                              size: ResponsiveDimensions.responsiveFontSize(20))
+                              size: ResponsiveDimensions.responsiveFontSize(20),
+                            )
                           : null,
                       onTap: () {
                         controller.selectTempCategory(categoryId, categoryName);
@@ -235,14 +261,15 @@ class CategoryBottomSheet extends StatelessWidget {
               },
             ),
           ),
-          
+
           Padding(
             padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (controller.tempSelectedCategoryId.value > 0 && controller.tempSelectedCategory.value.isNotEmpty) {
+                  if (controller.tempSelectedCategoryId.value > 0 &&
+                      controller.tempSelectedCategory.value.isNotEmpty) {
                     controller.saveSelectedCategory();
                     Get.back();
                   } else {

@@ -22,18 +22,19 @@ class ServiceStepperScreen extends StepperScreenBase {
     this.isEditMode = false,
     this.serviceId,
   }) : super(
-          key: key,
-          appBarTitle: isEditMode ? 'تعديل الخدمة' : 'إضافة خدمة جديدة',
-          primaryColor: Colors.blue,
-          showBackButton: true,
-          isLinear: true,
-        );
+         key: key,
+         appBarTitle: isEditMode ? 'تعديل الخدمة' : 'إضافة خدمة جديدة',
+         primaryColor: Colors.blue,
+         showBackButton: true,
+         isLinear: true,
+       );
 
   @override
   State<ServiceStepperScreen> createState() => _ServiceStepperScreenState();
 }
 
-class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperScreen> {
+class _ServiceStepperScreenState
+    extends StepperScreenBaseState<ServiceStepperScreen> {
   @override
   List<StepperStep> getSteps() {
     return [
@@ -45,10 +46,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
         title: 'السعر والتطويرات',
         subtitle: 'تحديد السعر ومدة التنفيذ',
       ),
-      const StepperStep(
-        title: 'صور الخدمة',
-        subtitle: 'إضافة صور للخدمة',
-      ),
+      const StepperStep(title: 'صور الخدمة', subtitle: 'إضافة صور للخدمة'),
       const StepperStep(
         title: 'الوصف والأسئلة الشائعة',
         subtitle: 'وصف الخدمة والأسئلة المتكررة',
@@ -63,12 +61,18 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   @override
   Widget buildStepContent(int stepIndex) {
     switch (stepIndex) {
-      case 0: return ServiceScreen();
-      case 1: return PriceScreen();
-      case 2: return ImagesScreen();
-      case 3: return DescriptionScreen();
-      case 4: return const PolicyScreen();
-      default: return ServiceScreen();
+      case 0:
+        return ServiceScreen();
+      case 1:
+        return PriceScreen();
+      case 2:
+        return ImagesScreen();
+      case 3:
+        return DescriptionScreen();
+      case 4:
+        return const PolicyScreen();
+      default:
+        return ServiceScreen();
     }
   }
 
@@ -78,9 +82,9 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
       if (!Get.isRegistered<ServiceController>()) {
         Get.put(ServiceController(), permanent: true);
       }
-      
+
       final controller = Get.find<ServiceController>();
-      
+
       if (widget.isEditMode && widget.serviceId != null) {
         controller.loadServiceForEditing(widget.serviceId!);
       }
@@ -90,7 +94,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   @override
   Future<bool> onWillPop() async {
     final controller = Get.find<ServiceController>();
-    
+
     if (currentStep > 0 || controller.serviceTitle.value.isNotEmpty) {
       final result = await Get.defaultDialog<bool>(
         title: 'تأكيد',
@@ -112,7 +116,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   @override
   void onStepChanged(int oldStep, int newStep) {
     final controller = Get.find<ServiceController>();
-    
+
     if (oldStep < newStep) {
       switch (oldStep) {
         case 0:
@@ -174,7 +178,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   @override
   bool validateStep(int stepIndex) {
     final controller = Get.find<ServiceController>();
-    
+
     switch (stepIndex) {
       case 0:
         if (!controller.validateServiceForm()) {
@@ -187,7 +191,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
           return false;
         }
         return true;
-        
+
       case 1:
         if (!controller.validatePriceForm()) {
           Get.snackbar(
@@ -199,7 +203,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
           return false;
         }
         return true;
-        
+
       case 2:
         if (!controller.validateImagesForm()) {
           Get.snackbar(
@@ -211,7 +215,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
           return false;
         }
         return true;
-        
+
       case 3:
         if (!controller.validateDescriptionForm()) {
           Get.snackbar(
@@ -223,13 +227,13 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
           return false;
         }
         return true;
-        
+
       case 4:
         if (!controller.validatePoliciesForm()) {
           return false;
         }
         return true;
-        
+
       default:
         return true;
     }
@@ -259,22 +263,24 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   @override
   Widget buildNextButton() {
     final controller = Get.find<ServiceController>();
-    
+
     return Obx(() {
       final isSubmitting = controller.isSaving.value;
       final isLastStep = currentStep == steps.length - 1;
       final isEditMode = controller.isInEditMode;
-      
+
       return ElevatedButton(
-        onPressed: isSubmitting || controller.isUploading.value ? null : () {
-          if (validateStep(currentStep)) {
-            if (isLastStep) {
-              onFinish();
-            } else {
-              nextStep();
-            }
-          }
-        },
+        onPressed: isSubmitting || controller.isUploading.value
+            ? null
+            : () {
+                if (validateStep(currentStep)) {
+                  if (isLastStep) {
+                    onFinish();
+                  } else {
+                    nextStep();
+                  }
+                }
+              },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           backgroundColor: widget.primaryColor,
@@ -297,10 +303,10 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
                   isLastStep
-                    ? isEditMode
-                      ? 'تحديث الخدمة'
-                      : 'إنهاء ونشر الخدمة'
-                    : 'التالي',
+                      ? isEditMode
+                            ? 'تحديث الخدمة'
+                            : 'إنهاء ونشر الخدمة'
+                      : 'التالي',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -314,9 +320,9 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   Future<void> _saveProgress() async {
     final controller = Get.find<ServiceController>();
     final data = controller.getAllData();
-    
+
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     Get.snackbar(
       'تم الحفظ',
       'تم حفظ التقدم بنجاح',
@@ -341,7 +347,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
       }
 
       final result = await controller.saveService();
-      
+
       if (result == null) {
         Get.snackbar(
           'خطأ',
@@ -362,7 +368,6 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
           colorText: Colors.white,
         );
       }
-
     } catch (e) {
       Get.snackbar(
         'خطأ',
@@ -374,30 +379,23 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
   }
 
   void _showSuccessDialog(Map<String, dynamic> result, bool isEditMode) {
-
     Get.bottomSheet(
       Container(
         height: ResponsiveDimensions.h(500),
 
         decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25))
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
 
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.rocket_launch,
-              size: 250,
-              color: Colors.green,
-            ),
+            Icon(Icons.rocket_launch, size: 250, color: Colors.green),
             const SizedBox(height: 20),
             Text(
-              isEditMode
-                ? 'تم تحديث خدمتك بنجاح'
-                : 'تم رفع خدمتك بنجاح',
-              style:  TextStyle(
+              isEditMode ? 'تم تحديث خدمتك بنجاح' : 'تم رفع خدمتك بنجاح',
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: AppColors.primary400,
@@ -405,33 +403,33 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 15),
-        
+
             Text(
               'تم رفع الخدمة بنجاح، وهي الآن قيد المراجعة من قبل الفريق المختص. سنوافيكم بالرد خلال 24 إلى 48 ساعة.',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-                        const SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-          AateneButton(
-            buttonText: 'قائمة الرغبات',
-            color: AppColors.primary400,
-            textColor: Colors.white,
-            onTap: () {
-              Get.until((route) => route.isFirst);
-              Get.find<ServiceController>().resetAll();
-              setState(() {
-                currentStep = 0;
-              });
-            },
-          )
+            AateneButton(
+              buttonText: 'قائمة الرغبات',
+              color: AppColors.primary400,
+              textColor: Colors.white,
+              onTap: () {
+                Get.until((route) => route.isFirst);
+                Get.find<ServiceController>().resetAll();
+                setState(() {
+                  currentStep = 0;
+                });
+              },
+            ),
           ],
         ),
-      )
+      ),
     );
     // Get.dialog(
     //   AlertDialog(
@@ -528,19 +526,14 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
         padding: const EdgeInsets.symmetric(vertical: 16),
         backgroundColor: Colors.grey[300],
         foregroundColor: Colors.grey[700],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 1,
       ),
       child: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Text(
           'السابق',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -554,10 +547,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
       },
       child: const Text(
         'حفظ مؤقت',
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.grey,
-        ),
+        style: TextStyle(fontSize: 14, color: Colors.grey),
       ),
     );
   }

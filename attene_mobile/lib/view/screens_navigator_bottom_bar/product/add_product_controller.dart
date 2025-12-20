@@ -8,25 +8,27 @@ import 'package:attene_mobile/view/product_variations/product_variations_screen.
 import '../../../controller/product_controller.dart';
 
 class AddProductController extends GetxController {
-  final ProductCentralController productCentralController = Get.find<ProductCentralController>();
-  
+  final ProductCentralController productCentralController =
+      Get.find<ProductCentralController>();
+
   final TextEditingController productNameController = TextEditingController();
-  final TextEditingController productDescriptionController = TextEditingController();
+  final TextEditingController productDescriptionController =
+      TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  
+
   final RxString _selectedCondition = ''.obs;
   final RxInt _characterCount = 0.obs;
   final RxBool _isFormValid = false.obs;
   final RxBool _isLoading = false.obs;
   final RxString _errorMessage = ''.obs;
   final RxString _selectedCategoryName = ''.obs;
-  
+
   // Field errors
   final RxMap<String, String> _fieldErrors = <String, String>{}.obs;
-  
+
   static const int maxDescriptionLength = 140;
   static const List<String> productConditions = ['جديد', 'مستعمل', 'مجدول'];
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -35,43 +37,42 @@ class AddProductController extends GetxController {
     _setupListeners();
     _initializeCategories();
   }
-  
+
   void _loadStoredData() {
     try {
       final central = productCentralController;
-      
+
       if (central.productName.isNotEmpty) {
         productNameController.text = central.productName.value;
       }
-      
+
       if (central.productDescription.isNotEmpty) {
         productDescriptionController.text = central.productDescription.value;
         _characterCount.value = central.productDescription.value.length;
       }
-      
+
       if (central.price.isNotEmpty) {
         priceController.text = central.price.value;
       }
-      
+
       if (central.selectedCondition.isNotEmpty) {
         _selectedCondition.value = central.selectedCondition.value;
       }
-      
+
       if (central.selectedCategoryId.value > 0) {
         _updateSelectedCategoryName();
       }
-      
+
       // Load validation errors
       _fieldErrors.addAll(central.validationErrors);
-      
+
       _validateForm();
       printDataSummary();
-      
     } catch (e) {
       print('❌ [ADD PRODUCT] Error loading stored data: $e');
     }
   }
-  
+
   void _setupListeners() {
     productNameController.addListener(() {
       _onProductNameChanged();
@@ -85,26 +86,26 @@ class AddProductController extends GetxController {
       _onPriceChanged();
       _clearFieldError('price');
     });
-    
+
     ever(_selectedCondition, (_) {
       _validateForm();
       _clearFieldError('condition');
     });
-    
+
     ever(productCentralController.isLoadingCategories, (isLoading) {
       _isLoading.value = isLoading;
       if (!isLoading) {
         _updateSelectedCategoryName();
       }
     });
-    
+
     // Listen to category selection
     ever(productCentralController.selectedCategoryId, (id) {
       if (id > 0) {
         _clearFieldError('category');
       }
     });
-    
+
     // Listen to media changes
     ever(productCentralController.selectedMedia, (media) {
       if (media.isNotEmpty) {
@@ -114,7 +115,7 @@ class AddProductController extends GetxController {
       update();
     });
   }
-  
+
   void _clearFieldError(String fieldName) {
     if (_fieldErrors.containsKey(fieldName)) {
       _fieldErrors.remove(fieldName);
@@ -122,7 +123,7 @@ class AddProductController extends GetxController {
       update();
     }
   }
-  
+
   void _initializeCategories() {
     if (productCentralController.categories.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -132,14 +133,14 @@ class AddProductController extends GetxController {
       _updateSelectedCategoryName();
     }
   }
-  
+
   void _onProductNameChanged() {
     final value = productNameController.text.trim();
     productCentralController.productName.value = value;
     _validateForm();
     update();
   }
-  
+
   void _onDescriptionChanged() {
     final value = productDescriptionController.text.trim();
     _characterCount.value = value.length;
@@ -147,14 +148,14 @@ class AddProductController extends GetxController {
     _validateForm();
     update();
   }
-  
+
   void _onPriceChanged() {
     final value = priceController.text.trim();
     productCentralController.price.value = value;
     _validateForm();
     update();
   }
-  
+
   void _validateForm() {
     final hasName = productNameController.text.trim().isNotEmpty;
     final hasDescription = productDescriptionController.text.trim().isNotEmpty;
@@ -162,24 +163,29 @@ class AddProductController extends GetxController {
     final hasCondition = _selectedCondition.value.isNotEmpty;
     final hasCategory = productCentralController.selectedCategoryId.value > 0;
     final hasMedia = productCentralController.selectedMedia.isNotEmpty;
-    
-    _isFormValid.value = hasName && hasDescription && hasPrice &&
-                         hasCondition && hasCategory && hasMedia;
+
+    _isFormValid.value =
+        hasName &&
+        hasDescription &&
+        hasPrice &&
+        hasCondition &&
+        hasCategory &&
+        hasMedia;
   }
-  
+
   void _updateSelectedCategoryName() {
     final categoryId = productCentralController.selectedCategoryId.value;
     if (categoryId <= 0) {
       _selectedCategoryName.value = '';
       return;
     }
-    
+
     try {
       final category = productCentralController.categories.firstWhere(
         (cat) => cat['id'] == categoryId,
         orElse: () => {},
       );
-      
+
       if (category.isNotEmpty) {
         _selectedCategoryName.value = category['name'] as String? ?? '';
       } else {
@@ -190,24 +196,26 @@ class AddProductController extends GetxController {
       _selectedCategoryName.value = '';
     }
   }
-  
+
   Future<void> openMediaLibrary() async {
     try {
       print('🖼️ [ADD PRODUCT] Opening media library');
-      
+
       final List<MediaItem>? result = await Get.to(
         () => MediaLibraryScreen(
           isSelectionMode: true,
           onMediaSelected: (selectedMedia) {
             productCentralController.selectedMedia.assignAll(selectedMedia);
-            print('✅ [ADD PRODUCT] Media selected: ${selectedMedia.length} items');
+            print(
+              '✅ [ADD PRODUCT] Media selected: ${selectedMedia.length} items',
+            );
             _clearFieldError('media');
             _validateForm();
             update();
           },
         ),
       );
-      
+
       if (result != null) {
         productCentralController.selectedMedia.assignAll(result);
         _validateForm();
@@ -220,20 +228,21 @@ class AddProductController extends GetxController {
       _showErrorSnackbar(_errorMessage.value);
     }
   }
-  
+
   void removeMedia(int index) {
     if (index >= 0 && index < productCentralController.selectedMedia.length) {
       productCentralController.selectedMedia.removeAt(index);
       if (productCentralController.selectedMedia.isEmpty) {
         _fieldErrors['media'] = 'صور المنتج مطلوبة';
-        productCentralController.validationErrors['media'] = 'صور المنتج مطلوبة';
+        productCentralController.validationErrors['media'] =
+            'صور المنتج مطلوبة';
       }
       _validateForm();
       update();
       print('🗑️ [ADD PRODUCT] Media removed at index $index');
     }
   }
-  
+
   void updateCondition(String? condition) {
     if (condition != null && condition.isNotEmpty) {
       _selectedCondition.value = condition;
@@ -242,7 +251,7 @@ class AddProductController extends GetxController {
       update();
     }
   }
-  
+
   void updateCategory(int? categoryId) {
     if (categoryId != null && categoryId > 0) {
       productCentralController.selectedCategoryId.value = categoryId;
@@ -252,37 +261,39 @@ class AddProductController extends GetxController {
       print('✅ [ADD PRODUCT] Category updated: $categoryId');
     }
   }
-  
+
   Map<String, dynamic> validateStep() {
     _fieldErrors.clear();
     final validation = productCentralController.validateStep(0);
     _fieldErrors.addAll(validation['errors'] ?? {});
-    
+
     // Mark step as validated if valid
     if (validation['isValid']) {
       productCentralController.markStepAsValidated(0);
     } else {
       productCentralController.clearStepValidation(0);
     }
-    
+
     return validation;
   }
-  
+
   bool validateForm() {
     final validation = validateStep();
-    
+
     if (!validation['isValid']) {
       _showValidationErrors(validation['errors'] ?? {});
       return false;
     }
-    
+
     return true;
   }
-  
+
   void _showValidationErrors(Map<String, String> errors) {
     if (errors.isNotEmpty) {
-      final errorMessages = errors.entries.map((e) => '• ${e.value}').join('\n');
-      
+      final errorMessages = errors.entries
+          .map((e) => '• ${e.value}')
+          .join('\n');
+
       Get.dialog(
         AlertDialog(
           title: const Text('أخطاء في المعلومات الأساسية'),
@@ -293,10 +304,7 @@ class AddProductController extends GetxController {
               children: [
                 const Text('يوجد أخطاء في الحقول التالية:'),
                 const SizedBox(height: 10),
-                Text(
-                  errorMessages,
-                  style: const TextStyle(color: Colors.red),
-                ),
+                Text(errorMessages, style: const TextStyle(color: Colors.red)),
                 const SizedBox(height: 20),
                 const Text(
                   'يرجى تصحيح هذه الأخطاء قبل المتابعة',
@@ -306,22 +314,19 @@ class AddProductController extends GetxController {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Get.back(),
-              child: const Text('حسناً'),
-            ),
+            TextButton(onPressed: () => Get.back(), child: const Text('حسناً')),
           ],
         ),
       );
     }
   }
-  
+
   void saveBasicInfo(Section selectedSection) {
     try {
       if (!validateForm()) {
         return;
       }
-      
+
       productCentralController.updateBasicInfo(
         name: productNameController.text.trim(),
         description: productDescriptionController.text.trim(),
@@ -331,10 +336,10 @@ class AddProductController extends GetxController {
         media: productCentralController.selectedMedia,
         section: selectedSection,
       );
-      
+
       print('💾 [ADD PRODUCT] Basic info saved successfully');
       productCentralController.printDataSummary();
-      
+
       Get.snackbar(
         'نجاح',
         'تم حفظ المعلومات الأساسية بنجاح',
@@ -342,16 +347,15 @@ class AddProductController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(seconds: 2),
       );
-      
+
       Get.to(() => const ProductVariationsScreen());
-      
     } catch (e) {
       print('❌ [ADD PRODUCT] Error saving basic info: $e');
       _errorMessage.value = 'فشل في حفظ المعلومات';
       _showErrorSnackbar(_errorMessage.value);
     }
   }
-  
+
   Future<void> reloadCategories() async {
     try {
       await productCentralController.reloadCategories();
@@ -362,13 +366,13 @@ class AddProductController extends GetxController {
       _showErrorSnackbar(_errorMessage.value);
     }
   }
-  
+
   void navigateToKeywordManagement() {
     if (validateForm()) {
       Get.toNamed('/keyword-management');
     }
   }
-  
+
   void printDataSummary() {
     print('''
 📊 [ADD PRODUCT SUMMARY]:
@@ -382,7 +386,7 @@ class AddProductController extends GetxController {
    أخطاء الحقول: ${_fieldErrors.length}
 ''');
   }
-  
+
   void _showErrorSnackbar(String message) {
     Get.snackbar(
       'خطأ',
@@ -392,27 +396,34 @@ class AddProductController extends GetxController {
       duration: const Duration(seconds: 3),
     );
   }
-  
+
   // Getters
   String get selectedCondition => _selectedCondition.value;
+
   int get characterCount => _characterCount.value;
+
   bool get isFormValid => _isFormValid.value;
+
   bool get isLoading => _isLoading.value;
+
   String get errorMessage => _errorMessage.value;
+
   String get selectedCategoryName => _selectedCategoryName.value;
+
   Map<String, String> get fieldErrors => _fieldErrors;
-  
+
   List<String> get conditions => productConditions;
-  
+
   List<Map<String, dynamic>> get categories =>
       productCentralController.categories;
+
   bool get isLoadingCategories =>
       productCentralController.isLoadingCategories.value;
-  String get categoriesError =>
-      productCentralController.categoriesError.value;
-  List<MediaItem> get selectedMedia =>
-      productCentralController.selectedMedia;
-  
+
+  String get categoriesError => productCentralController.categoriesError.value;
+
+  List<MediaItem> get selectedMedia => productCentralController.selectedMedia;
+
   @override
   void onClose() {
     print('🛑 [ADD PRODUCT CONTROLLER] Closing...');

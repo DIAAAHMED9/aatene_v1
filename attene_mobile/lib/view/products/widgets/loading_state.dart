@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 class LoadingStateWidget extends StatelessWidget {
   final String message;
-  
-  const LoadingStateWidget({
-    Key? key,
-    this.message = 'جاري التحميل...',
-  }) : super(key: key);
+
+  const LoadingStateWidget({Key? key, this.message = 'جاري التحميل...'})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +20,7 @@ class LoadingStateWidget extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             message,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
       ),

@@ -118,16 +118,18 @@ class Register extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(30)),
-           Obx(
-  () => AateneButton(
-    textColor: Colors.white,
-    color: AppColors.primary400,
-    borderColor: AppColors.primary400,
-    isLoading: controller.isLoading.value,
-    onTap: controller.isLoading.value ? null : controller.register,
-    buttonText: isRTL ? 'إنشاء حساب' : 'Create account',
-  ),
-),
+                Obx(
+                  () => AateneButton(
+                    textColor: Colors.white,
+                    color: AppColors.primary400,
+                    borderColor: AppColors.primary400,
+                    isLoading: controller.isLoading.value,
+                    onTap: controller.isLoading.value
+                        ? null
+                        : controller.register,
+                    buttonText: isRTL ? 'إنشاء حساب' : 'Create account',
+                  ),
+                ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

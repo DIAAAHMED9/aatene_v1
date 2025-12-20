@@ -7,7 +7,7 @@ class EmptyStateWidget extends StatelessWidget {
   final String buttonText;
   final VoidCallback onButtonPressed;
   final String? imageAsset;
-  
+
   const EmptyStateWidget({
     Key? key,
     required this.title,
@@ -26,11 +26,7 @@ class EmptyStateWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             imageAsset != null
-                ? Image.asset(
-                    imageAsset!,
-                    height: 150,
-                    fit: BoxFit.contain,
-                  )
+                ? Image.asset(imageAsset!, height: 150, fit: BoxFit.contain)
                 : Icon(
                     Icons.inventory_2_outlined,
                     size: 100,

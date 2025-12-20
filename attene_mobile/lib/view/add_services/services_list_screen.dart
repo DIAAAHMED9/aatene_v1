@@ -97,10 +97,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
 
   void _navigateToEditService(Service service) {
     _controller.setEditMode(service.id!, service.title);
-    Get.to(() => ServiceStepperScreen(
-      isEditMode: true,
-      serviceId: service.id,
-    ));
+    Get.to(() => ServiceStepperScreen(isEditMode: true, serviceId: service.id));
   }
 
   Future<void> _deleteService(Service service) async {
@@ -169,7 +166,9 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                             return Container(
                               width: 200,
                               margin: EdgeInsets.only(
-                                right: index < service.images.length - 1 ? 8 : 0,
+                                right: index < service.images.length - 1
+                                    ? 8
+                                    : 0,
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
@@ -212,10 +211,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
 
                     Text(
                       'مدة التنفيذ: ${service.executeCount} ${_convertTimeUnit(service.executeType)}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
 
@@ -231,10 +227,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                         spacing: 8,
                         runSpacing: 4,
                         children: service.specialties
-                            .map((specialty) => Chip(
-                                  label: Text(specialty),
-                                  backgroundColor: AppColors.primary50,
-                                ))
+                            .map(
+                              (specialty) => Chip(
+                                label: Text(specialty),
+                                backgroundColor: AppColors.primary50,
+                              ),
+                            )
                             .toList(),
                       ),
                       const SizedBox(height: 16),
@@ -252,10 +250,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                         spacing: 8,
                         runSpacing: 4,
                         children: service.tags
-                            .map((tag) => Chip(
-                                  label: Text(tag),
-                                  backgroundColor: Colors.grey[200],
-                                ))
+                            .map(
+                              (tag) => Chip(
+                                label: Text(tag),
+                                backgroundColor: Colors.grey[200],
+                              ),
+                            )
                             .toList(),
                       ),
                       const SizedBox(height: 16),
@@ -270,10 +270,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                     ),
                     Text(
                       service.description,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
+                      style: const TextStyle(fontSize: 14, height: 1.5),
                     ),
                     const SizedBox(height: 16),
 
@@ -285,13 +282,16 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ...service.extras.map((extra) => ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.add, size: 20),
-                            title: Text(extra.title),
-                            subtitle: Text(
-                                '${extra.price} ₪ - ${extra.executionTime} ${extra.timeUnit}'),
-                          )),
+                      ...service.extras.map(
+                        (extra) => ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.add, size: 20),
+                          title: Text(extra.title),
+                          subtitle: Text(
+                            '${extra.price} ₪ - ${extra.executionTime} ${extra.timeUnit}',
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                     ],
 
@@ -303,15 +303,17 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ...service.questions.map((faq) => ExpansionTile(
-                            title: Text(faq.question),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Text(faq.answer),
-                              ),
-                            ],
-                          )),
+                      ...service.questions.map(
+                        (faq) => ExpansionTile(
+                          title: Text(faq.question),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(faq.answer),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ],
                 ),
@@ -437,10 +439,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                           const Text(
                             'انقر على زر "إضافة خدمة جديدة" لبدء إنشاء خدمتك الأولى',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -476,9 +475,13 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
 
   Widget _buildServiceItem(Service service) {
     return Card(
-      margin: EdgeInsets.only(bottom: ResponsiveDimensions.responsiveHeight(12)),
+      margin: EdgeInsets.only(
+        bottom: ResponsiveDimensions.responsiveHeight(12),
+      ),
       child: ListTile(
-        contentPadding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
+        contentPadding: EdgeInsets.all(
+          ResponsiveDimensions.responsiveWidth(16),
+        ),
         leading: Container(
           width: 50,
           height: 50,
@@ -492,16 +495,11 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                   child: Image.network(
                     service.images.first,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.work_outline,
-                      color: AppColors.primary500,
-                    ),
+                    errorBuilder: (context, error, stackTrace) =>
+                        Icon(Icons.work_outline, color: AppColors.primary500),
                   ),
                 )
-              : Icon(
-                  Icons.work_outline,
-                  color: AppColors.primary500,
-                ),
+              : Icon(Icons.work_outline, color: AppColors.primary500),
         ),
         title: Text(
           service.title,

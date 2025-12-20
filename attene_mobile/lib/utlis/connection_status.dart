@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum ConnectionStatus {
-  connecting,
-  connected,
-  disconnected,
-  error,
-}
+enum ConnectionStatus { connecting, connected, disconnected, error }
 
 class ConnectionStatusHelper {
   static String getDisplayName(ConnectionStatus status) {

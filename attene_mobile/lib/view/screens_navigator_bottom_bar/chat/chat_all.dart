@@ -16,10 +16,7 @@ class ChatAll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-    );
+    return Scaffold(appBar: _buildAppBar(), body: _buildBody());
   }
 
   AppBar _buildAppBar() {
@@ -73,7 +70,8 @@ class ChatAll extends StatelessWidget {
       actions: [
         GetBuilder<ChatController>(
           builder: (controller) {
-            if (controller.connectionStatus.value == ConnectionStatus.disconnected ||
+            if (controller.connectionStatus.value ==
+                    ConnectionStatus.disconnected ||
                 controller.connectionStatus.value == ConnectionStatus.error) {
               return IconButton(
                 icon: const Icon(Icons.refresh, color: Colors.blue),
@@ -98,20 +96,16 @@ class ChatAll extends StatelessWidget {
             children: [
               _buildSearchBar(controller),
               const SizedBox(height: 10),
-              
+
               _buildTabButtons(controller),
               const Divider(color: Colors.grey, height: 15),
-              
+
               if (controller.isLoading.value)
                 const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 )
               else
-                Expanded(
-                  child: _buildConversationsList(controller),
-                ),
+                Expanded(child: _buildConversationsList(controller)),
             ],
           ),
         );
@@ -142,9 +136,7 @@ class ChatAll extends StatelessWidget {
             ),
             onPressed: () {},
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(40.0)),
         ),
       ),
     );
@@ -163,7 +155,7 @@ class ChatAll extends StatelessWidget {
           },
         ),
         const SizedBox(width: 10),
-        
+
         _buildTabButton(
           label: "غير مقروء",
           isActive: controller.currentTab.value == ChatTab.unread,
@@ -173,7 +165,7 @@ class ChatAll extends StatelessWidget {
           },
         ),
         const SizedBox(width: 10),
-        
+
         _buildTabButton(
           label: "المهتمين",
           isActive: controller.currentTab.value == ChatTab.interested,
@@ -223,10 +215,7 @@ class ChatAll extends StatelessWidget {
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                constraints: const BoxConstraints(
-                  minWidth: 16,
-                  minHeight: 16,
-                ),
+                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                 child: Text(
                   badgeCount > 99 ? '99+' : badgeCount.toString(),
                   style: const TextStyle(
@@ -245,26 +234,19 @@ class ChatAll extends StatelessWidget {
 
   Widget _buildConversationsList(ChatController controller) {
     final conversations = controller.getFilteredConversations();
-    
+
     if (conversations.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.chat_outlined,
-              size: 80,
-              color: Colors.grey.shade300,
-            ),
+            Icon(Icons.chat_outlined, size: 80, color: Colors.grey.shade300),
             const SizedBox(height: 16),
             Text(
               controller.searchQuery.value.isNotEmpty
                   ? 'لا توجد نتائج بحث'
                   : 'لا توجد محادثات',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
+              style: const TextStyle(color: Colors.grey, fontSize: 16),
             ),
             if (controller.searchQuery.value.isEmpty)
               TextButton(
@@ -293,7 +275,10 @@ class ChatAll extends StatelessWidget {
     );
   }
 
-  Widget _buildConversationItem(ChatConversation conversation, ChatController controller) {
+  Widget _buildConversationItem(
+    ChatConversation conversation,
+    ChatController controller,
+  ) {
     return MaterialButton(
       onPressed: () {
         controller.setCurrentConversation(conversation);
@@ -307,7 +292,7 @@ class ChatAll extends StatelessWidget {
         children: [
           _buildUserAvatar(conversation),
           const SizedBox(width: 12),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,12 +364,10 @@ class ChatAll extends StatelessWidget {
               ],
             ),
           ),
-          
+
           IconButton(
             icon: Icon(
-              conversation.isInterested
-                  ? Icons.star
-                  : Icons.star_outline,
+              conversation.isInterested ? Icons.star : Icons.star_outline,
               color: conversation.isInterested
                   ? Colors.amber
                   : Colors.grey.shade400,
@@ -417,10 +400,7 @@ class ChatAll extends StatelessWidget {
           decoration: BoxDecoration(
             color: conversation.isOnline ? Colors.green : Colors.grey,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
+            border: Border.all(color: Colors.white, width: 2),
           ),
         ),
       ],
@@ -429,10 +409,10 @@ class ChatAll extends StatelessWidget {
 
   String _formatTime(DateTime? time) {
     if (time == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(time);
-    
+
     if (difference.inSeconds < 60) {
       return 'الآن';
     } else if (difference.inMinutes < 60) {

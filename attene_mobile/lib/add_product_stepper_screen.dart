@@ -15,26 +15,27 @@ import 'view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 
 class DemoStepperScreen extends StepperScreenBase {
   const DemoStepperScreen({Key? key})
-      : super(
-          key: key,
-          appBarTitle: 'إضافة منتج جديد',
-          primaryColor: Colors.blue,
-          showBackButton: true,
-          isLinear: true,
-        );
+    : super(
+        key: key,
+        appBarTitle: 'إضافة منتج جديد',
+        primaryColor: Colors.blue,
+        showBackButton: true,
+        isLinear: true,
+      );
 
   @override
   State<DemoStepperScreen> createState() => _DemoStepperScreenState();
 }
 
-class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> {
+class _DemoStepperScreenState
+    extends StepperScreenBaseState<DemoStepperScreen> {
   final Map<int, bool> _stepValidationStatus = {
     0: false,
     1: false,
     2: false,
     3: false,
   };
-  
+
   @override
   void initState() {
     super.initState();
@@ -75,9 +76,7 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
       case 3:
         return const RelatedProductsScreen();
       default:
-        return Center(
-          child: Text('محتوى الخطوة ${stepIndex + 1}'),
-        );
+        return Center(child: Text('محتوى الخطوة ${stepIndex + 1}'));
     }
   }
 
@@ -115,7 +114,7 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
   @override
   void onStepChanged(int oldStep, int newStep) {
     print('تم الانتقال من الخطوة $oldStep إلى الخطوة $newStep');
-    
+
     // Validate current step before moving forward
     if (oldStep < newStep && !validateStep(oldStep)) {
       // Prevent moving to next step
@@ -124,12 +123,12 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
       });
       return;
     }
-    
+
     // Mark step as validated if moving forward successfully
     if (oldStep < newStep && validateStep(oldStep)) {
       _stepValidationStatus[oldStep] = true;
     }
-    
+
     super.onStepChanged(oldStep, newStep);
   }
 
@@ -138,53 +137,53 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
     switch (stepIndex) {
       case 0:
         return _validateBasicInfoStep();
-        
+
       case 2:
         return _validateVariationsStep();
-        
+
       default:
         return true;
     }
   }
-  
+
   bool _validateBasicInfoStep() {
     try {
       // Try to use AddProductController first
       if (Get.isRegistered<AddProductController>()) {
         final addProductController = Get.find<AddProductController>();
         final validation = addProductController.validateStep();
-        
+
         if (!validation['isValid']) {
           _showStepErrors(validation['errors'] ?? {}, 'المعلومات الأساسية');
           return false;
         }
         return true;
       }
-      
+
       // Fallback to ProductCentralController
       if (Get.isRegistered<ProductCentralController>()) {
         final productController = Get.find<ProductCentralController>();
         final validation = productController.validateStep(0);
-        
+
         if (!validation['isValid']) {
           _showStepErrors(validation['errors'] ?? {}, 'المعلومات الأساسية');
           return false;
         }
         return true;
       }
-      
+
       return false;
     } catch (e) {
       print('❌ [STEP VALIDATION] Error validating step 0: $e');
       return false;
     }
   }
-  
+
   bool _validateVariationsStep() {
     try {
       if (Get.isRegistered<ProductVariationController>()) {
         final variationController = Get.find<ProductVariationController>();
-        
+
         if (variationController.hasVariations) {
           final validation = variationController.validateVariations();
           if (!validation.isValid) {
@@ -206,15 +205,17 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
       return false;
     }
   }
-  
+
   void _showStepErrors(Map<String, String> errors, String stepName) {
     if (errors.isEmpty) return;
-    
-    final errorMessages = errors.entries.map((e) {
-      final fieldName = _getFieldDisplayName(e.key);
-      return '• ${e.value} ($fieldName)';
-    }).join('\n');
-    
+
+    final errorMessages = errors.entries
+        .map((e) {
+          final fieldName = _getFieldDisplayName(e.key);
+          return '• ${e.value} ($fieldName)';
+        })
+        .join('\n');
+
     Get.dialog(
       AlertDialog(
         title: Text('أخطاء في $stepName'),
@@ -225,10 +226,7 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
             children: [
               const Text('يوجد أخطاء في الحقول التالية:'),
               const SizedBox(height: 10),
-              Text(
-                errorMessages,
-                style: const TextStyle(color: Colors.red),
-              ),
+              Text(errorMessages, style: const TextStyle(color: Colors.red)),
               const SizedBox(height: 20),
               const Text(
                 'يرجى تصحيح هذه الأخطاء قبل المتابعة',
@@ -238,26 +236,32 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('حسناً'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('حسناً')),
         ],
       ),
     );
   }
-  
+
   String _getFieldDisplayName(String fieldKey) {
     switch (fieldKey) {
-      case 'productName': return 'اسم المنتج';
-      case 'productDescription': return 'وصف المنتج';
-      case 'price': return 'السعر';
-      case 'category': return 'الفئة';
-      case 'condition': return 'الحالة';
-      case 'media': return 'الصور';
-      case 'section': return 'القسم';
-      case 'variations': return 'المتغيرات';
-      default: return fieldKey;
+      case 'productName':
+        return 'اسم المنتج';
+      case 'productDescription':
+        return 'وصف المنتج';
+      case 'price':
+        return 'السعر';
+      case 'category':
+        return 'الفئة';
+      case 'condition':
+        return 'الحالة';
+      case 'media':
+        return 'الصور';
+      case 'section':
+        return 'القسم';
+      case 'variations':
+        return 'المتغيرات';
+      default:
+        return fieldKey;
     }
   }
 
@@ -274,7 +278,7 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
         break;
       }
     }
-    
+
     if (allValid) {
       await _submitProduct();
     }
@@ -299,20 +303,22 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
   @override
   Widget buildNextButton() {
     final productController = Get.find<ProductCentralController>();
-    
+
     return Obx(() {
       final isSubmitting = productController.isSubmitting.value;
-      
+
       return ElevatedButton(
-        onPressed: isSubmitting ? null : () {
-          if (currentStep < steps.length - 1) {
-            if (validateStep(currentStep)) {
-              nextStep();
-            }
-          } else {
-            onFinish();
-          }
-        },
+        onPressed: isSubmitting
+            ? null
+            : () {
+                if (currentStep < steps.length - 1) {
+                  if (validateStep(currentStep)) {
+                    nextStep();
+                  }
+                } else {
+                  onFinish();
+                }
+              },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           backgroundColor: widget.primaryColor,
@@ -373,7 +379,8 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
       if (result['success'] == true) {
         _showSuccessDialog(result);
       } else {
-        final errorMessage = result['message']?.toString() ?? 'فشل في إضافة المنتج';
+        final errorMessage =
+            result['message']?.toString() ?? 'فشل في إضافة المنتج';
         Get.snackbar('خطأ', errorMessage);
       }
     } catch (e) {
@@ -385,9 +392,7 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Row(
           children: [
             Icon(Icons.check_circle, color: Colors.green, size: 28),
@@ -463,10 +468,10 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
   void _resetControllers() {
     final productController = Get.find<ProductCentralController>();
     productController.reset();
-    
+
     final variationController = Get.find<ProductVariationController>();
     variationController.resetAllData();
-    
+
     setState(() {
       currentStep = 0;
       _stepValidationStatus.clear();
@@ -476,61 +481,54 @@ class _DemoStepperScreenState extends StepperScreenBaseState<DemoStepperScreen> 
       _stepValidationStatus[3] = false;
     });
   }
-  
- @override
-void initializeControllers() {
-  print('🚀 [DEMO STEPPER] Initializing all required controllers');
-  
-  try {
-    // تهيئة ProductCentralController (المتحكم الرئيسي)
-    if (!Get.isRegistered<ProductCentralController>()) {
-      Get.put<ProductCentralController>(
-        ProductCentralController(),
-        permanent: true,
-      );
-      print('✅ [DEMO STEPPER] ProductCentralController initialized');
+
+  @override
+  void initializeControllers() {
+    print('🚀 [DEMO STEPPER] Initializing all required controllers');
+
+    try {
+      // تهيئة ProductCentralController (المتحكم الرئيسي)
+      if (!Get.isRegistered<ProductCentralController>()) {
+        Get.put<ProductCentralController>(
+          ProductCentralController(),
+          permanent: true,
+        );
+        print('✅ [DEMO STEPPER] ProductCentralController initialized');
+      }
+
+      // تهيئة ProductVariationController (للمتغيرات)
+      if (!Get.isRegistered<ProductVariationController>()) {
+        Get.put<ProductVariationController>(
+          ProductVariationController(),
+          permanent: true,
+        );
+        print('✅ [DEMO STEPPER] ProductVariationController initialized');
+      }
+
+      // تهيئة AddProductController (للمعلومات الأساسية)
+      if (!Get.isRegistered<AddProductController>()) {
+        Get.put<AddProductController>(AddProductController(), permanent: true);
+        print('✅ [DEMO STEPPER] AddProductController initialized');
+      }
+
+      // تهيئة KeywordController (للكلمات المفتاحية)
+      if (!Get.isRegistered<KeywordController>()) {
+        Get.put<KeywordController>(KeywordController(), permanent: true);
+        print('✅ [DEMO STEPPER] KeywordController initialized');
+      }
+
+      // تهيئة RelatedProductsController (للمنتجات المرتبطة)
+      if (!Get.isRegistered<RelatedProductsController>()) {
+        Get.put<RelatedProductsController>(
+          RelatedProductsController(),
+          permanent: true,
+        );
+        print('✅ [DEMO STEPPER] RelatedProductsController initialized');
+      }
+
+      print('✅ [DEMO STEPPER] All controllers initialized successfully');
+    } catch (e) {
+      print('❌ [DEMO STEPPER] Error initializing controllers: $e');
     }
-    
-    // تهيئة ProductVariationController (للمتغيرات)
-    if (!Get.isRegistered<ProductVariationController>()) {
-      Get.put<ProductVariationController>(
-        ProductVariationController(),
-        permanent: true,
-      );
-      print('✅ [DEMO STEPPER] ProductVariationController initialized');
-    }
-    
-    // تهيئة AddProductController (للمعلومات الأساسية)
-    if (!Get.isRegistered<AddProductController>()) {
-      Get.put<AddProductController>(
-        AddProductController(),
-        permanent: true,
-      );
-      print('✅ [DEMO STEPPER] AddProductController initialized');
-    }
-    
-    // تهيئة KeywordController (للكلمات المفتاحية)
-    if (!Get.isRegistered<KeywordController>()) {
-      Get.put<KeywordController>(
-        KeywordController(),
-        permanent: true,
-      );
-      print('✅ [DEMO STEPPER] KeywordController initialized');
-    }
-    
-    // تهيئة RelatedProductsController (للمنتجات المرتبطة)
-    if (!Get.isRegistered<RelatedProductsController>()) {
-      Get.put<RelatedProductsController>(
-        RelatedProductsController(),
-        permanent: true,
-      );
-      print('✅ [DEMO STEPPER] RelatedProductsController initialized');
-    }
-    
-    print('✅ [DEMO STEPPER] All controllers initialized successfully');
-    
-  } catch (e) {
-    print('❌ [DEMO STEPPER] Error initializing controllers: $e');
   }
-}
 }

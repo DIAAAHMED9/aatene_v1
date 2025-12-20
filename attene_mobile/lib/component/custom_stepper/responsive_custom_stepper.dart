@@ -19,7 +19,8 @@ class ResponsiveCustomStepper extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ResponsiveCustomStepperState createState() => _ResponsiveCustomStepperState();
+  _ResponsiveCustomStepperState createState() =>
+      _ResponsiveCustomStepperState();
 }
 
 class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
@@ -59,22 +60,24 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 600;
     final isTablet = screenWidth >= 600 && screenWidth < 1024;
-    
+
     return Column(
       children: [
         _buildResponsiveStepperHeader(isMobile, isTablet),
-        
-        Expanded(
-          child: widget.builder(context, widget.currentStep),
-        ),
+
+        Expanded(child: widget.builder(context, widget.currentStep)),
       ],
     );
   }
 
   Widget _buildResponsiveStepperHeader(bool isMobile, bool isTablet) {
-    final maxVisibleSteps = isMobile ? 3 : isTablet ? 4 : 6;
+    final maxVisibleSteps = isMobile
+        ? 3
+        : isTablet
+        ? 4
+        : 6;
     final shouldScroll = widget.steps.length > maxVisibleSteps;
-    
+
     Widget stepperContent = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(widget.steps.length, (index) {
@@ -147,7 +150,7 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
             },
             isMobile: isMobile,
           ),
-          
+
           if (!isLast)
             Container(
               width: isMobile ? 15 : 20,
@@ -195,7 +198,7 @@ class _AnimatedStepCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final circleSize = isMobile ? 36.0 : 40.0;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -207,15 +210,15 @@ class _AnimatedStepCircle extends StatelessWidget {
           builder: (context, child) {
             final scale = isActive || isNext
                 ? Tween<double>(begin: 0.8, end: 1.0)
-                    .animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: isActive
-                            ? Curves.elasticOut
-                            : Curves.easeInOut,
-                      ),
-                    )
-                    .value
+                      .animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: isActive
+                              ? Curves.elasticOut
+                              : Curves.easeInOut,
+                        ),
+                      )
+                      .value
                 : 1.0;
 
             return Transform.scale(
@@ -281,33 +284,33 @@ class _AnimatedStepCircle extends StatelessWidget {
                             key: ValueKey('check_$stepNumber'),
                           )
                         : (isActive
-                            ? Container(
-                                width: isMobile ? 10 : 12,
-                                height: isMobile ? 10 : 12,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.blue.withOpacity(0.5),
-                                      blurRadius: isMobile ? 3 : 4,
-                                      spreadRadius: isMobile ? 0.5 : 1,
-                                    ),
-                                  ],
-                                ),
-                                key: ValueKey('dot_$stepNumber'),
-                              )
-                            : Text(
-                                stepNumber.toString(),
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: isMobile ? 13 : 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                key: ValueKey('number_$stepNumber'),
-                              )),
+                              ? Container(
+                                  width: isMobile ? 10 : 12,
+                                  height: isMobile ? 10 : 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.blue.withOpacity(0.5),
+                                        blurRadius: isMobile ? 3 : 4,
+                                        spreadRadius: isMobile ? 0.5 : 1,
+                                      ),
+                                    ],
+                                  ),
+                                  key: ValueKey('dot_$stepNumber'),
+                                )
+                              : Text(
+                                  stepNumber.toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: isMobile ? 13 : 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  key: ValueKey('number_$stepNumber'),
+                                )),
                   ),
-                  
+
                   if (!isMobile)
                     Positioned(
                       bottom: -25,
@@ -317,8 +320,12 @@ class _AnimatedStepCircle extends StatelessWidget {
                             step.title,
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                              color: isActive || isCompleted ? Colors.blue : Colors.grey[600],
+                              fontWeight: isActive
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color: isActive || isCompleted
+                                  ? Colors.blue
+                                  : Colors.grey[600],
                             ),
                           ),
                           if (step.subtitle.isNotEmpty)
@@ -364,7 +371,7 @@ class _AnimatedStepConnector extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool shouldAnimate =
         (isPrevious && stepIndex == currentStep - 1) ||
-            (isNext && stepIndex == currentStep);
+        (isNext && stepIndex == currentStep);
 
     return AnimatedBuilder(
       animation: animation,
@@ -448,9 +455,5 @@ class StepperStep {
   final String subtitle;
   final IconData? icon;
 
-  const StepperStep({
-    required this.title,
-    required this.subtitle,
-    this.icon,
-  });
+  const StepperStep({required this.title, required this.subtitle, this.icon});
 }

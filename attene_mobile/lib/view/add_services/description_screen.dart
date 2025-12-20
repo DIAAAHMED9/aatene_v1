@@ -23,7 +23,7 @@ class DescriptionScreen extends StatefulWidget {
 class _DescriptionScreenState extends State<DescriptionScreen> {
   final ServiceController controller = Get.find<ServiceController>();
   final ImagePicker _picker = ImagePicker();
-  
+
   @override
   void initState() {
     super.initState();
@@ -52,16 +52,16 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           children: [
             // معلومات عن قسم الوصف
             _buildDescriptionInfo(),
-            
+
             // محرر النص الثري مع شريط الأدوات المحسّن
             _buildEnhancedEditor(),
-            
+
             // عداد الأحرف
             // _buildCharacterCounter(),
-            
+
             // قسم الأسئلة الشائعة
             _buildFAQsSection(),
-            
+
             // أزرار التنقل
             // _buildNavigationButtons(),
           ],
@@ -154,22 +154,22 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
         children: [
           // الصف الأول: التنسيقات الأساسية
           _buildBasicFormattingRow(),
-                    Divider(color: Colors.grey.shade300,),
+          Divider(color: Colors.grey.shade300),
 
           // SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
-          
+
           // الصف الثاني: التنسيقات المتقدمة (الألوان والمحاذاة)
           _buildAdvancedFormattingRow(),
-                    Divider(color: Colors.grey.shade300,),
+          Divider(color: Colors.grey.shade300),
 
           // SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
-          
+
           // الصف الثالث: العناوين والكتل الخاصة
           _buildHeadingsAndSpecialRow(),
-                    Divider(color: Colors.grey.shade300,),
+          Divider(color: Colors.grey.shade300),
 
           // SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
-          
+
           // الصف الرابع: أدوات الإدراج
           // _buildInsertToolsRow(),
         ],
@@ -193,7 +193,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           //     _updateToolbarState();
           //   } : null,
           // ),
-          
+
           // _buildToolbarButton(
           //   icon: Icons.redo,
           //   tooltip: 'إعادة',
@@ -203,21 +203,21 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           //     _updateToolbarState();
           //   } : null,
           // ),
-          
+
           // SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-           _buildToolbarButton(
+          _buildToolbarButton(
             icon: Icons.strikethrough_s,
             tooltip: 'يتوسطه خط',
             isActive: false,
             onPressed: () => _toggleFormat('strikethrough'),
           ),
-            _buildToolbarButton(
+          _buildToolbarButton(
             icon: Icons.format_underlined,
             tooltip: 'تحته خط',
             isActive: false,
             onPressed: () => _toggleFormat('underline'),
           ),
-           _buildToolbarButton(
+          _buildToolbarButton(
             icon: Icons.format_italic,
             tooltip: 'مائل',
             isActive: false,
@@ -230,8 +230,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             isActive: false,
             onPressed: () => _toggleFormat('bold'),
           ),
-          
-         _buildToolbarButton(
+
+          _buildToolbarButton(
             icon: Icons.format_color_fill,
             tooltip: 'لون الخلفية',
             isActive: false,
@@ -242,13 +242,11 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             tooltip: 'لون النص',
             isActive: false,
             onPressed: () => _showColorPickerDialog(isTextColor: true),
-          ),  
+          ),
           _buildFontSizeDropdown(),
-        
-         
-          
+
           // SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-          
+
           // _buildToolbarButton(
           //   icon: Icons.format_clear,
           //   tooltip: 'مسح التنسيق',
@@ -266,8 +264,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-        
-          
           // المحاذاة
           _buildAlignmentButtons(),
           _buildHeadingButton(5, 'H5'),
@@ -286,21 +282,19 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-   
-          
-            _buildToolbarButton(
+          _buildToolbarButton(
             icon: Icons.image,
             tooltip: 'إدراج صورة',
             isActive: false,
             onPressed: _showImageInsertDialog,
           ),
-           _buildToolbarButton(
+          _buildToolbarButton(
             icon: Icons.code,
             tooltip: 'كتلة كود',
             isActive: false,
             onPressed: _insertCodeBlock,
           ),
-           _buildToolbarButton(
+          _buildToolbarButton(
             icon: Icons.attach_file,
             tooltip: 'إرفاق ملف',
             isActive: false,
@@ -308,21 +302,22 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           ),
           SizedBox(
             height: 30,
-            child: VerticalDivider(color: Colors.grey.shade300,)),
-            _buildToolbarButton(
+            child: VerticalDivider(color: Colors.grey.shade300),
+          ),
+          _buildToolbarButton(
             icon: Icons.format_list_bulleted,
             tooltip: 'قائمة نقطية',
             isActive: false,
             onPressed: () => _toggleFormat('bullet'),
           ),
-          
+
           _buildToolbarButton(
             icon: Icons.format_list_numbered,
             tooltip: 'قائمة رقمية',
             isActive: false,
             onPressed: () => _toggleFormat('ordered'),
           ),
-          
+
           // خط أفقي
           // _buildToolbarButton(
           //   icon: Icons.horizontal_rule,
@@ -330,10 +325,9 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           //   isActive: false,
           //   onPressed: _insertHorizontalRule,
           // ),
-          
+
           // كود بلوك
-         
-          
+
           // // كتلة اقتباس
           // _buildToolbarButton(
           //   icon: Icons.format_quote,
@@ -341,7 +335,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           //   isActive: false,
           //   onPressed: _insertBlockQuote,
           // ),
-          
+
           // إزالة المسافة
           // _buildToolbarButton(
           //   icon: Icons.space_bar,
@@ -366,33 +360,30 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
   //           isActive: false,
   //           onPressed: () => _toggleFormat('bullet'),
   //         ),
-          
+
   //         _buildToolbarButton(
   //           icon: Icons.format_list_numbered,
   //           tooltip: 'قائمة رقمية',
   //           isActive: false,
   //           onPressed: () => _toggleFormat('ordered'),
   //         ),
-          
+
   //         SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-          
+
   //         _buildToolbarButton(
   //           icon: Icons.link,
   //           tooltip: 'إدراج رابط',
   //           isActive: false,
   //           onPressed: _showLinkDialog,
   //         ),
-          
-        
-          
-         
+
   //         _buildToolbarButton(
   //           icon: Icons.table_chart,
   //           tooltip: 'إدراج جدول',
   //           isActive: false,
   //           onPressed: _showTableDialog,
   //         ),
-          
+
   //         _buildToolbarButton(
   //           icon: Icons.emoji_emotions,
   //           tooltip: 'إدراج إيموجي',
@@ -442,46 +433,43 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       {'value': 32.0, 'label': '32px'},
       {'value': 36.0, 'label': '36px'},
     ];
-double fontSelected=10.0;
+    double fontSelected = 10.0;
     return PopupMenuButton<double>(
       tooltip: 'حجم الخط',
-      onSelected: (value)  {
+      onSelected: (value) {
         setState(() {
-        fontSelected==value;
-          
+          fontSelected == value;
         });
         _setFontSize(value);
-        },
+      },
       itemBuilder: (context) {
         return fontSizes.map((size) {
           return PopupMenuItem<double>(
             value: size['value'],
-            child:
-             Text(
+            child: Text(
               size['label'],
               style: TextStyle(fontSize: size['value']),
             ),
           );
         }).toList();
       },
-      child:  Row(
-          children: [
-            Icon(
-              Icons.unfold_more_sharp,
-              size: ResponsiveDimensions.responsiveFontSize(18),
+      child: Row(
+        children: [
+          Icon(
+            Icons.unfold_more_sharp,
+            size: ResponsiveDimensions.responsiveFontSize(18),
+            color: Colors.grey[700],
+          ),
+          SizedBox(width: ResponsiveDimensions.responsiveWidth(6)),
+          Text(
+            fontSelected.toString(),
+            style: TextStyle(
+              fontSize: ResponsiveDimensions.responsiveFontSize(14),
               color: Colors.grey[700],
             ),
-            SizedBox(width: ResponsiveDimensions.responsiveWidth(6)),
-            Text(
-              fontSelected.toString(),
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                color: Colors.grey[700],
-              ),
-            ),
-          ],
-        ),
-      
+          ),
+        ],
+      ),
     );
   }
 
@@ -496,9 +484,15 @@ double fontSelected=10.0;
     );
   }
 
-  Widget _buildAlignmentButton(IconData icon, String tooltip, String alignment) {
+  Widget _buildAlignmentButton(
+    IconData icon,
+    String tooltip,
+    String alignment,
+  ) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: ResponsiveDimensions.responsiveWidth(2)),
+      margin: EdgeInsets.symmetric(
+        horizontal: ResponsiveDimensions.responsiveWidth(2),
+      ),
       child: Tooltip(
         message: tooltip,
         child: Material(
@@ -530,7 +524,9 @@ double fontSelected=10.0;
     required VoidCallback? onPressed,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: ResponsiveDimensions.responsiveWidth(2)),
+      margin: EdgeInsets.symmetric(
+        horizontal: ResponsiveDimensions.responsiveWidth(2),
+      ),
       child: Tooltip(
         message: tooltip,
         child: Material(
@@ -558,10 +554,12 @@ double fontSelected=10.0;
   Widget _buildCharacterCounter() {
     return Obx(() {
       final text = controller.serviceDescriptionPlainText.value;
-      final wordCount = text.trim().isEmpty ? 0 : text.trim().split(RegExp(r'\s+')).length;
+      final wordCount = text.trim().isEmpty
+          ? 0
+          : text.trim().split(RegExp(r'\s+')).length;
       final charCount = text.length;
       final maxChars = 5000;
-      
+
       return Container(
         margin: EdgeInsets.symmetric(
           horizontal: ResponsiveDimensions.responsiveWidth(16),
@@ -601,18 +599,20 @@ double fontSelected=10.0;
               value: charCount / maxChars,
               backgroundColor: Colors.grey[300],
               valueColor: AlwaysStoppedAnimation<Color>(
-                charCount > maxChars 
-                    ? Colors.red 
-                    : charCount > maxChars * 0.7 
-                        ? Colors.orange 
-                        : Colors.green,
+                charCount > maxChars
+                    ? Colors.red
+                    : charCount > maxChars * 0.7
+                    ? Colors.orange
+                    : Colors.green,
               ),
               minHeight: 6,
               borderRadius: BorderRadius.circular(3),
             ),
             if (charCount > maxChars * 0.7)
               Padding(
-                padding: EdgeInsets.only(top: ResponsiveDimensions.responsiveHeight(8)),
+                padding: EdgeInsets.only(
+                  top: ResponsiveDimensions.responsiveHeight(8),
+                ),
                 child: Text(
                   charCount > maxChars
                       ? '⚠️ تجاوزت الحد الأقصى لعدد الأحرف'
@@ -635,34 +635,35 @@ double fontSelected=10.0;
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: ResponsiveDimensions.responsiveHeight(7),),
-            Text(
-                'الأسئلة الشائعة (اختياري)',
-                style: TextStyle(
-                  fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-          SizedBox(height: ResponsiveDimensions.responsiveHeight(4),),
-      
-        Text(
-                'اكتب إجابات للأسئلة الشائعة التي يطرحها عميلك. أضف حتى خمسة أسئلة.',
-                style: TextStyle(
-                  fontSize: ResponsiveDimensions.responsiveFontSize(10),
-                  fontWeight: FontWeight.w300,
-                  color: Colors.grey.shade500
-                ),
-              ),
-      
+          SizedBox(height: ResponsiveDimensions.responsiveHeight(7)),
+          Text(
+            'الأسئلة الشائعة (اختياري)',
+            style: TextStyle(
+              fontSize: ResponsiveDimensions.responsiveFontSize(18),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
+
+          Text(
+            'اكتب إجابات للأسئلة الشائعة التي يطرحها عميلك. أضف حتى خمسة أسئلة.',
+            style: TextStyle(
+              fontSize: ResponsiveDimensions.responsiveFontSize(10),
+              fontWeight: FontWeight.w300,
+              color: Colors.grey.shade500,
+            ),
+          ),
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-            Obx(()
-            {
-                        final canAdd = controller.faqs.length < ServiceController.maxFAQs;
-      
-              return  InkWell(
-              onTap:canAdd ? _showAddFAQDialog : null,
+          Obx(() {
+            final canAdd = controller.faqs.length < ServiceController.maxFAQs;
+
+            return InkWell(
+              onTap: canAdd ? _showAddFAQDialog : null,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical:  ResponsiveDimensions.responsiveWidth(6)),
+                padding: EdgeInsets.symmetric(
+                  vertical: ResponsiveDimensions.responsiveWidth(6),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -671,8 +672,12 @@ double fontSelected=10.0;
                       height: ResponsiveDimensions.responsiveWidth(24),
                       decoration: BoxDecoration(
                         // color: AppColors.primary400,
-                        border: Border.all(color: canAdd ? AppColors.primary400 : Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8)
+                        border: Border.all(
+                          color: canAdd
+                              ? AppColors.primary400
+                              : Colors.grey[300]!,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
                         // shape: BoxShape.tr,
                       ),
                       child: Icon(
@@ -687,16 +692,17 @@ double fontSelected=10.0;
                       style: TextStyle(
                         fontSize: ResponsiveDimensions.responsiveFontSize(16),
                         fontWeight: FontWeight.w600,
-                        color: canAdd ? AppColors.primary400 : Colors.grey[300]
+                        color: canAdd ? AppColors.primary400 : Colors.grey[300],
                       ),
                     ),
                   ],
                 ),
               ),
-                      );}
-            ),
-        
-         Obx(()=>   ListView.separated(
+            );
+          }),
+
+          Obx(
+            () => ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: controller.faqs.length,
@@ -708,11 +714,10 @@ double fontSelected=10.0;
                 final faq = controller.faqs[index];
                 return _buildFAQItem(faq, index);
               },
-            )),
-          
+            ),
+          ),
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
-          
-      
         ],
       ),
     );
@@ -728,11 +733,9 @@ double fontSelected=10.0;
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-           
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              
                   Text(
                     '${index + 1}. ${faq.question}',
                     style: TextStyle(
@@ -752,44 +755,45 @@ double fontSelected=10.0;
                 ],
               ),
               Spacer(),
-              IconButton(onPressed: (){
-          Get.bottomSheet(
-            Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(25))
-          
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-          onTap:()=> _showEditFAQDialog(faq),
-          title: Text('تعديل السؤال'),
-          leading: Icon(
-                          Icons.edit,
-                          size: ResponsiveDimensions.responsiveFontSize(18),
-                          color: AppColors.primary500,
+              IconButton(
+                onPressed: () {
+                  Get.bottomSheet(
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(25),
                         ),
-                  ),
-           ListTile(
-          onTap:()=> _showDeleteFAQDialog(faq.id),
-          title: Text('حذف السؤال'),
-          leading: Icon(
-                          Icons.delete_outline,
-                          size: ResponsiveDimensions.responsiveFontSize(18),
-                          color: Colors.red,
-                        ),
-                  )
-          
-                ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            onTap: () => _showEditFAQDialog(faq),
+                            title: Text('تعديل السؤال'),
+                            leading: Icon(
+                              Icons.edit,
+                              size: ResponsiveDimensions.responsiveFontSize(18),
+                              color: AppColors.primary500,
+                            ),
+                          ),
+                          ListTile(
+                            onTap: () => _showDeleteFAQDialog(faq.id),
+                            title: Text('حذف السؤال'),
+                            leading: Icon(
+                              Icons.delete_outline,
+                              size: ResponsiveDimensions.responsiveFontSize(18),
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.more_horiz),
               ),
-            )
-          );
-          
-              }, icon: Icon(Icons.more_horiz))
-                       
             ],
           ),
         ),
@@ -843,21 +847,24 @@ double fontSelected=10.0;
               ),
             ),
           ),
-          
+
           SizedBox(width: ResponsiveDimensions.responsiveWidth(16)),
-          
+
           // زر التالي
           Expanded(
             child: Obx(() {
-              final isValid = controller.serviceDescriptionPlainText.value.isNotEmpty;
+              final isValid =
+                  controller.serviceDescriptionPlainText.value.isNotEmpty;
               return Material(
                 color: isValid ? AppColors.primary500 : Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
-                  onTap: isValid ? () {
-                    Get.to(() => const ImagesScreen());
-                  } : null,
+                  onTap: isValid
+                      ? () {
+                          Get.to(() => const ImagesScreen());
+                        }
+                      : null,
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       vertical: ResponsiveDimensions.responsiveHeight(16),
@@ -869,12 +876,16 @@ double fontSelected=10.0;
                         Text(
                           'التالي',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(16),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              16,
+                            ),
                             fontWeight: FontWeight.w600,
                             color: isValid ? Colors.white : Colors.grey[600],
                           ),
                         ),
-                        SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
+                        SizedBox(
+                          width: ResponsiveDimensions.responsiveWidth(8),
+                        ),
                         Icon(
                           Icons.arrow_forward,
                           color: isValid ? Colors.white : Colors.grey[600],
@@ -932,7 +943,7 @@ double fontSelected=10.0;
   void _toggleHeading(int level) {
     final selection = controller.quillController.selection;
     if (selection.isValid) {
-controller.quillController.formatSelection(HeaderAttribute(level: level));
+      controller.quillController.formatSelection(HeaderAttribute(level: level));
       _updateToolbarState();
     }
   }
@@ -941,7 +952,7 @@ controller.quillController.formatSelection(HeaderAttribute(level: level));
     final selection = controller.quillController.selection;
     if (selection.isValid) {
       final hexColor = '#${color.value.toRadixString(16).substring(2)}';
-controller.quillController.formatSelection(ColorAttribute(hexColor));
+      controller.quillController.formatSelection(ColorAttribute(hexColor));
       _updateToolbarState();
     }
   }
@@ -950,7 +961,7 @@ controller.quillController.formatSelection(ColorAttribute(hexColor));
     final selection = controller.quillController.selection;
     if (selection.isValid) {
       final hexColor = '#${color.value.toRadixString(16).substring(2)}';
-controller.quillController.formatSelection(BackgroundAttribute(hexColor));
+      controller.quillController.formatSelection(BackgroundAttribute(hexColor));
       _updateToolbarState();
     }
   }
@@ -958,7 +969,9 @@ controller.quillController.formatSelection(BackgroundAttribute(hexColor));
   void _setFontSize(double size) {
     final selection = controller.quillController.selection;
     if (selection.isValid) {
-controller.quillController.formatSelection(SizeAttribute(size.toString()));
+      controller.quillController.formatSelection(
+        SizeAttribute(size.toString()),
+      );
       _updateToolbarState();
     }
   }
@@ -967,23 +980,22 @@ controller.quillController.formatSelection(SizeAttribute(size.toString()));
     final selection = controller.quillController.selection;
     if (selection.isValid) {
       Attribute? alignAttr;
-      
-switch (alignment) {
-  case 'right':
-    alignAttr = Attribute.rightAlignment;
-    break;
-  case 'center':
-    alignAttr = Attribute.centerAlignment;
-    break;
-  case 'left':
-    alignAttr = Attribute.leftAlignment;
-    break;
-  case 'justify':
-    alignAttr = Attribute.justifyAlignment;
-    break;
-}
 
-      
+      switch (alignment) {
+        case 'right':
+          alignAttr = Attribute.rightAlignment;
+          break;
+        case 'center':
+          alignAttr = Attribute.centerAlignment;
+          break;
+        case 'left':
+          alignAttr = Attribute.leftAlignment;
+          break;
+        case 'justify':
+          alignAttr = Attribute.justifyAlignment;
+          break;
+      }
+
       if (alignAttr != null) {
         controller.quillController.formatSelection(alignAttr);
         _updateToolbarState();
@@ -1010,7 +1022,7 @@ switch (alignment) {
   void _insertHorizontalRule() {
     final index = controller.quillController.selection.start;
     controller.quillController.document.insert(index, {
-      'insert': {'hr': ''}
+      'insert': {'hr': ''},
     });
     _updateToolbarState();
   }
@@ -1089,10 +1101,7 @@ switch (alignment) {
                       decoration: BoxDecoration(
                         color: color,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.grey[300]!,
-                          width: 1,
-                        ),
+                        border: Border.all(color: Colors.grey[300]!, width: 1),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.2),
@@ -1176,7 +1185,7 @@ switch (alignment) {
   void _showLinkDialog() {
     TextEditingController linkController = TextEditingController();
     TextEditingController textController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) {
@@ -1215,20 +1224,24 @@ switch (alignment) {
               onPressed: () {
                 final text = textController.text.trim();
                 final link = linkController.text.trim();
-                
+
                 if (text.isNotEmpty && link.isNotEmpty) {
-                  final fullLink = link.startsWith('http') ? link : 'https://$link';
+                  final fullLink = link.startsWith('http')
+                      ? link
+                      : 'https://$link';
                   final index = controller.quillController.selection.start;
-                  
+
                   controller.quillController.replaceText(
                     index,
                     0,
                     text,
                     TextSelection.collapsed(offset: index + text.length),
                   );
-                  controller.quillController.formatSelection(LinkAttribute(fullLink));
+                  controller.quillController.formatSelection(
+                    LinkAttribute(fullLink),
+                  );
                   _updateToolbarState();
-                  
+
                   Get.snackbar(
                     'نجاح',
                     'تم إدراج الرابط بنجاح',
@@ -1243,7 +1256,7 @@ switch (alignment) {
                     colorText: Colors.white,
                   );
                 }
-                
+
                 Navigator.pop(context);
               },
               child: const Text('إدراج'),
@@ -1353,18 +1366,18 @@ switch (alignment) {
         type: FileType.image,
         allowMultiple: false,
       );
-      
+
       if (result != null && result.files.isNotEmpty) {
         final file = File(result.files.first.path!);
         final bytes = await file.readAsBytes();
         final base64Image = 'data:image/png;base64,${base64Encode(bytes)}';
-        
+
         final index = controller.quillController.selection.start;
         controller.quillController.document.insert(index, {
-          'insert': {'image': base64Image}
+          'insert': {'image': base64Image},
         });
         _updateToolbarState();
-        
+
         Get.snackbar(
           'نجاح',
           'تم إدراج الصورة من المعرض',
@@ -1385,18 +1398,18 @@ switch (alignment) {
   Future<void> _pickImageFromCamera() async {
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-      
+
       if (pickedFile != null) {
         final file = File(pickedFile.path);
         final bytes = await file.readAsBytes();
         final base64Image = 'data:image/png;base64,${base64Encode(bytes)}';
-        
+
         final index = controller.quillController.selection.start;
         controller.quillController.document.insert(index, {
-          'insert': {'image': base64Image}
+          'insert': {'image': base64Image},
         });
         _updateToolbarState();
-        
+
         Get.snackbar(
           'نجاح',
           'تم إدراج الصورة من الكاميرا',
@@ -1416,7 +1429,7 @@ switch (alignment) {
 
   void _showImageLinkDialog() {
     TextEditingController linkController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) {
@@ -1440,13 +1453,15 @@ switch (alignment) {
               onPressed: () {
                 final link = linkController.text.trim();
                 if (link.isNotEmpty) {
-                  final fullLink = link.startsWith('http') ? link : 'https://$link';
+                  final fullLink = link.startsWith('http')
+                      ? link
+                      : 'https://$link';
                   final index = controller.quillController.selection.start;
                   controller.quillController.document.insert(index, {
-                    'insert': {'image': fullLink}
+                    'insert': {'image': fullLink},
                   });
                   _updateToolbarState();
-                  
+
                   Get.snackbar(
                     'نجاح',
                     'تم إدراج الصورة من الرابط',
@@ -1466,10 +1481,8 @@ switch (alignment) {
 
   Future<void> _pickFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        allowMultiple: false,
-      );
-      
+      final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
       if (result != null && result.files.isNotEmpty) {
         final file = result.files.first;
         // يمكن إضافة معالجة الملف هنا
@@ -1479,11 +1492,11 @@ switch (alignment) {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        
+
         // إدراج رابط للملف في المحرر
         final index = controller.quillController.selection.start;
         controller.quillController.document.insert(index, {
-          'insert': '📎 ${file.name}\n'
+          'insert': '📎 ${file.name}\n',
         });
         _updateToolbarState();
       }
@@ -1572,32 +1585,69 @@ switch (alignment) {
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 6,
-                  children: [
-                    '😀', '😃', '😄', '😁', '😆', '😅',
-                    '😂', '🤣', '😊', '😇', '🙂', '🙃',
-                    '😉', '😌', '😍', '🥰', '😘', '😗',
-                    '😙', '😚', '😋', '😛', '😝', '😜',
-                    '🤪', '🤨', '🧐', '🤓', '😎', '🤩',
-                    '🥳', '😏', '😒', '😞', '😔', '😟',
-                  ].map((emoji) {
-                    return GestureDetector(
-                      onTap: () {
-                        final index = controller.quillController.selection.start;
-                        controller.quillController.document.insert(index, {
-                          'insert': emoji
-                        });
-                        _updateToolbarState();
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(4)),
-                        child: Text(
-                          emoji,
-                          style: TextStyle(fontSize: ResponsiveDimensions.responsiveFontSize(24)),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                  children:
+                      [
+                        '😀',
+                        '😃',
+                        '😄',
+                        '😁',
+                        '😆',
+                        '😅',
+                        '😂',
+                        '🤣',
+                        '😊',
+                        '😇',
+                        '🙂',
+                        '🙃',
+                        '😉',
+                        '😌',
+                        '😍',
+                        '🥰',
+                        '😘',
+                        '😗',
+                        '😙',
+                        '😚',
+                        '😋',
+                        '😛',
+                        '😝',
+                        '😜',
+                        '🤪',
+                        '🤨',
+                        '🧐',
+                        '🤓',
+                        '😎',
+                        '🤩',
+                        '🥳',
+                        '😏',
+                        '😒',
+                        '😞',
+                        '😔',
+                        '😟',
+                      ].map((emoji) {
+                        return GestureDetector(
+                          onTap: () {
+                            final index =
+                                controller.quillController.selection.start;
+                            controller.quillController.document.insert(index, {
+                              'insert': emoji,
+                            });
+                            _updateToolbarState();
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.all(
+                              ResponsiveDimensions.responsiveWidth(4),
+                            ),
+                            child: Text(
+                              emoji,
+                              style: TextStyle(
+                                fontSize:
+                                    ResponsiveDimensions.responsiveFontSize(24),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                 ),
               ),
             ],
@@ -1610,16 +1660,17 @@ switch (alignment) {
   // ============ دوال الأسئلة الشائعة ============
 
   void _showAddFAQDialog() {
-    Get.bottomSheet(
-      const FAQBottomSheet(),
-      isScrollControlled: true,
-    );
+    Get.bottomSheet(const FAQBottomSheet(), isScrollControlled: true);
   }
 
   void _showEditFAQDialog(FAQ faq) {
-    TextEditingController questionController = TextEditingController(text: faq.question);
-    TextEditingController answerController = TextEditingController(text: faq.answer);
-    
+    TextEditingController questionController = TextEditingController(
+      text: faq.question,
+    );
+    TextEditingController answerController = TextEditingController(
+      text: faq.answer,
+    );
+
     showDialog(
       context: context,
       builder: (context) {
@@ -1656,11 +1707,11 @@ switch (alignment) {
               onPressed: () {
                 final newQuestion = questionController.text.trim();
                 final newAnswer = answerController.text.trim();
-                
+
                 if (newQuestion.isNotEmpty && newAnswer.isNotEmpty) {
                   controller.updateFAQ(faq.id, newQuestion, newAnswer);
                   Navigator.pop(context);
-                  
+
                   Get.snackbar(
                     'نجاح',
                     'تم تحديث السؤال بنجاح',
@@ -1687,7 +1738,7 @@ switch (alignment) {
       onConfirm: () {
         controller.removeFAQ(id);
         Get.back();
-        
+
         Get.snackbar(
           'نجاح',
           'تم حذف السؤال بنجاح',

@@ -25,7 +25,7 @@ class ServiceScreen extends StatelessWidget {
             'المعلومات الاساسية',
             style: TextStyle(
               fontSize: ResponsiveDimensions.responsiveFontSize(25),
-              fontWeight: FontWeight.bold
+              fontWeight: FontWeight.bold,
             ),
           ),
           _buildServiceTitleField(),
@@ -42,7 +42,6 @@ class ServiceScreen extends StatelessWidget {
 
           _buildKeywordsField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(40)),
-
         ],
       ),
     );
@@ -88,8 +87,7 @@ class ServiceScreen extends StatelessWidget {
                 maxLines: 3,
                 maxLength: 140,
                 decoration: InputDecoration(
-                  hintText:
-                      'اكتب اسم الخدمة',
+                  hintText: 'اكتب اسم الخدمة',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(
                     ResponsiveDimensions.responsiveWidth(12),
@@ -394,7 +392,6 @@ class ServiceScreen extends StatelessWidget {
             return SizedBox(
               height: ResponsiveDimensions.responsiveHeight(50),
               child: TextField(
-                
                 controller: controller.specializationTextController,
                 onSubmitted: (value) {
                   if (controller.canAddSpecialization) {
@@ -410,37 +407,37 @@ class ServiceScreen extends StatelessWidget {
                   border: InputBorder.none,
                   hintStyle: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: ResponsiveDimensions.responsiveFontSize(
-                      14,
+                    fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                  ),
+                  suffixIcon: Tooltip(
+                    message: controller.specializationTooltip,
+                    child: InkWell(
+                      onTap: controller.canAddSpecialization
+                          ? () {
+                              controller.addSpecialization();
+                            }
+                          : null,
+                      borderRadius: BorderRadius.circular(25),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: ResponsiveDimensions.responsiveWidth(2),
+                        ),
+                        width: ResponsiveDimensions.responsiveWidth(45),
+                        height: ResponsiveDimensions.responsiveWidth(45),
+                        decoration: BoxDecoration(
+                          color: controller.specializationsButtonColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: controller.canAddSpecialization
+                              ? Colors.white
+                              : Colors.grey[500],
+                          size: ResponsiveDimensions.responsiveFontSize(20),
+                        ),
+                      ),
                     ),
                   ),
-                  suffixIcon:     Tooltip(
-              message: controller.specializationTooltip,
-              child: InkWell(
-                onTap: controller.canAddSpecialization
-                    ? () {
-                        controller.addSpecialization();
-                      }
-                    : null,
-                borderRadius: BorderRadius.circular(25),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: ResponsiveDimensions.responsiveWidth(2)),
-                  width: ResponsiveDimensions.responsiveWidth(45),
-                  height: ResponsiveDimensions.responsiveWidth(45),
-                  decoration: BoxDecoration(
-                    color: controller.specializationsButtonColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.add,
-                    color: controller.canAddSpecialization
-                        ? Colors.white
-                        : Colors.grey[500],
-                    size: ResponsiveDimensions.responsiveFontSize(20),
-                  ),
-                ),
-              ),
-                          ),
                 ),
               ),
             );
@@ -573,43 +570,42 @@ class ServiceScreen extends StatelessWidget {
                   border: InputBorder.none,
                   hintStyle: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: ResponsiveDimensions.responsiveFontSize(
-                      14,
+                    fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                  ),
+                  suffixIcon: Tooltip(
+                    message: controller.keywordTooltip,
+                    child: Container(
+                      // margin: EdgeInsets.only(
+                      //   right: ResponsiveDimensions.responsiveWidth(8),
+                      // ),
+                      child: InkWell(
+                        onTap: controller.canAddKeyword
+                            ? () {
+                                controller.addKeyword();
+                              }
+                            : null,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: ResponsiveDimensions.responsiveWidth(2),
+                          ),
+                          width: ResponsiveDimensions.responsiveWidth(45),
+                          height: ResponsiveDimensions.responsiveWidth(45),
+                          decoration: BoxDecoration(
+                            color: controller.keywordsButtonColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: controller.canAddKeyword
+                                ? Colors.white
+                                : Colors.grey[500],
+                            size: ResponsiveDimensions.responsiveFontSize(20),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  suffixIcon: 
-                      Tooltip(
-                          message: controller.keywordTooltip,
-                          child: Container(
-              // margin: EdgeInsets.only(
-              //   right: ResponsiveDimensions.responsiveWidth(8),
-              // ),
-              child: InkWell(
-                onTap: controller.canAddKeyword
-                    ? () {
-                        controller.addKeyword();
-                      }
-                    : null,
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal:  ResponsiveDimensions.responsiveWidth(2)),
-                  width: ResponsiveDimensions.responsiveWidth(45),
-                  height: ResponsiveDimensions.responsiveWidth(45),
-                  decoration: BoxDecoration(
-                    color: controller.keywordsButtonColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.add,
-                    color: controller.canAddKeyword
-                        ? Colors.white
-                        : Colors.grey[500],
-                    size: ResponsiveDimensions.responsiveFontSize(20),
-                  ),
-                ),
-              ),
-                          ),
-                            ),
                 ),
               ),
             );

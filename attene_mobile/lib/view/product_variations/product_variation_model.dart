@@ -44,9 +44,11 @@ class ProductAttribute {
   }
 
   factory ProductAttribute.fromJson(Map<String, dynamic> json) {
-    final valuesList = (json['values'] as List?)?.map((value) {
-      return AttributeValue.fromJson(value);
-    }).toList() ?? [];
+    final valuesList =
+        (json['values'] as List?)?.map((value) {
+          return AttributeValue.fromJson(value);
+        }).toList() ??
+        [];
 
     return ProductAttribute(
       id: json['id']?.toString() ?? '',
@@ -76,9 +78,9 @@ class ProductAttribute {
   }
 
   String get displayName => name;
-  
+
   bool get hasSelectedValues => values.any((value) => value.isSelected.value);
-  
+
   List<String> get selectedValueNames => values
       .where((value) => value.isSelected.value)
       .map((value) => value.value)
@@ -261,15 +263,15 @@ class ProductVariation {
   }
 
   String get formattedPrice => '${price.value.toStringAsFixed(2)} ر.س';
-  
+
   String get stockStatus {
     if (stock.value <= 0) return 'غير متوفر';
     if (stock.value < 10) return 'كمية محدودة';
     return 'متوفر';
   }
-  
+
   bool get hasImages => images.isNotEmpty;
-  
+
   void toggleActive() => isActive.toggle();
 
   ProductVariation copyWith({

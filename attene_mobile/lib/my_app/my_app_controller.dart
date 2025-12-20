@@ -300,8 +300,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
 
       print('🔄 بدء عملية تسجيل الخروج...');
 
-      try {
-      } catch (e) {
+      try {} catch (e) {
         print('⚠️ خطأ في طلب تسجيل الخروج للخادم: $e');
       }
 
@@ -470,7 +469,7 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
     try {
       final connectivityResult = await _connectivity.checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
-  
+
       if (_isInternetConnect.value != isConnected) {
         _isInternetConnect.value = isConnected;
         print('📶 تحديث حالة الاتصال: ${isConnected ? 'متصل' : 'غير متصل'}');

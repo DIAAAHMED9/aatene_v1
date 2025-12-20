@@ -7,7 +7,7 @@ import 'service_controller.dart';
 
 class FAQBottomSheet extends StatefulWidget {
   final FAQ? faq;
-  
+
   const FAQBottomSheet({super.key, this.faq});
 
   @override
@@ -21,7 +21,9 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
   @override
   void initState() {
     super.initState();
-    questionController = TextEditingController(text: widget.faq?.question ?? '');
+    questionController = TextEditingController(
+      text: widget.faq?.question ?? '',
+    );
     answerController = TextEditingController(text: widget.faq?.answer ?? '');
   }
 
@@ -53,15 +55,19 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.faq == null ? 'إضافة سؤال شائع' : 'تعديل السؤال الشائع',
+                  widget.faq == null
+                      ? 'إضافة سؤال شائع'
+                      : 'تعديل السؤال الشائع',
                   style: TextStyle(
                     fontSize: ResponsiveDimensions.responsiveFontSize(18),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close,
-                      size: ResponsiveDimensions.responsiveFontSize(24)),
+                  icon: Icon(
+                    Icons.close,
+                    size: ResponsiveDimensions.responsiveFontSize(24),
+                  ),
                   onPressed: () => Get.back(),
                 ),
               ],
@@ -90,7 +96,8 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                       hintText: 'اكتب السؤال هنا',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(
-                          ResponsiveDimensions.responsiveWidth(12)),
+                        ResponsiveDimensions.responsiveWidth(12),
+                      ),
                     ),
                   ),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
@@ -109,7 +116,8 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                       hintText: 'اكتب الجواب هنا',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(
-                          ResponsiveDimensions.responsiveWidth(12)),
+                        ResponsiveDimensions.responsiveWidth(12),
+                      ),
                     ),
                   ),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(40)),
@@ -139,7 +147,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                   if (widget.faq == null) {
                     controller.addFAQ(question, answer);
                     Get.back();
-                    
+
                     Get.snackbar(
                       'تمت الإضافة',
                       'تم إضافة السؤال بنجاح',
@@ -149,7 +157,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                   } else {
                     controller.updateFAQ(widget.faq!.id, question, answer);
                     Get.back();
-                    
+
                     Get.snackbar(
                       'تم التحديث',
                       'تم تحديث السؤال بنجاح',
@@ -178,8 +186,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
               ),
             ),
           ),
-                            SizedBox(height: ResponsiveDimensions.responsiveHeight(20)),
-
+          SizedBox(height: ResponsiveDimensions.responsiveHeight(20)),
         ],
       ),
     );

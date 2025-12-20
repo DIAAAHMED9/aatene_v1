@@ -55,7 +55,7 @@ class Edit_Profile extends StatelessWidget {
                     ),
                   ),
                 ),
-        
+
                 // Edit Cover Button
                 Positioned(
                   top: 12,
@@ -66,7 +66,7 @@ class Edit_Profile extends StatelessWidget {
                     },
                   ),
                 ),
-        
+
                 // Profile Image + Edit Button
                 Positioned(
                   bottom: -50,
@@ -119,14 +119,14 @@ class Edit_Profile extends StatelessWidget {
               'فلسطين، الخليل',
               style: TextStyle(fontSize: 14, color: AppColors.neutral200),
             ),
-        
+
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: AppColors.light1000,
-        
+
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(color: AppColors.primary50),
                   boxShadow: [
@@ -160,7 +160,7 @@ class Edit_Profile extends StatelessWidget {
                             EditProfileLabel(
                               title: "المعلومات الشخصية",
                               subtitle: "تعديل معلومات حسابك",
-        
+
                               icon: Icon(
                                 Icons.person_rounded,
                                 size: 20,

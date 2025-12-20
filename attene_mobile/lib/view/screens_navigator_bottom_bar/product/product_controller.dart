@@ -12,26 +12,28 @@ import '../../../my_app/my_app_controller.dart';
 import '../../Services/data_lnitializer_service.dart';
 import '../../Services/unified_loading_screen.dart';
 
-class ProductController extends GetxController with SingleGetTickerProviderMixin {
+class ProductController extends GetxController
+    with SingleGetTickerProviderMixin {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   final MyAppController myAppController = Get.find<MyAppController>();
   late BottomSheetController bottomSheetController;
-  
+
   late TabController tabController;
   final TextEditingController searchTextController = TextEditingController();
   final RxInt currentTabIndex = 0.obs;
   final RxString searchQuery = ''.obs;
-  
+
   final List<TabData> tabs = <TabData>[].obs;
-  
+
   final RxList<Product> _products = <Product>[].obs;
   final RxList<Product> _filteredProducts = <Product>[].obs;
   final RxBool _isLoadingProducts = false.obs;
   final RxString _productsErrorMessage = ''.obs;
   final RxMap<String, int> _productsCountBySection = <String, int>{}.obs;
-  final RxMap<String, List<Product>> _productsBySection = <String, List<Product>>{}.obs;
+  final RxMap<String, List<Product>> _productsBySection =
+      <String, List<Product>>{}.obs;
   final RxList<Section> _allSections = <Section>[].obs;
-  
+
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   final RxBool _isInitialized = false.obs;
@@ -41,16 +43,16 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
   void onInit() {
     super.onInit();
     bottomSheetController = Get.find<BottomSheetController>();
-    
+
     _initializeDefaultTabs();
-    
+
     _initializeBasicControllers();
     _setupAuthListener();
     _setupProductsListener();
     _setupSectionsListener();
     _setupRefreshListener();
   }
-  
+
   void _initializeDefaultTabs() {
     tabs.clear();
     tabs.addAll([
@@ -59,7 +61,7 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       TabData(label: 'مراجعات', viewName: 'مراجعات'),
     ]);
   }
-  
+
   void _setupRefreshListener() {
     ever(dataService.productsUpdated, (bool updated) {
       if (updated && _isInitialized.value) {
@@ -67,7 +69,7 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         _loadProducts();
       }
     });
-    
+
     ever(bottomSheetController.sectionsUpdated, (bool updated) {
       if (updated && _isInitialized.value) {
         print('🔄 [PRODUCTS] تم استلام إشعار تحديث الأقسام');
@@ -75,24 +77,24 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
   }
-  
+
   void _initializeBasicControllers() {
     tabController = TabController(
       length: tabs.length,
       vsync: this,
-      initialIndex: currentTabIndex.value
+      initialIndex: currentTabIndex.value,
     );
     tabController.addListener(_handleTabChange);
     searchTextController.addListener(_handleSearchChange);
   }
-  
+
   void _setupAuthListener() {
     ever(myAppController.isAppInitialized, (bool initialized) {
       if (initialized) {
         _checkAndInitialize();
       }
     });
-    
+
     ever(myAppController.isLoggedIn, (bool isLoggedIn) {
       if (isLoggedIn) {
         _initializeProductController();
@@ -100,12 +102,12 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         _resetProductController();
       }
     });
-    
+
     if (myAppController.isAppInitialized.value) {
       _checkAndInitialize();
     }
   }
-  
+
   void _setupSectionsListener() {
     ever(bottomSheetController.sectionsRx, (List<Section> sections) {
       _allSections.assignAll(sections);
@@ -114,12 +116,12 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
   }
-  
+
   void _setupProductsListener() {
     ever(searchQuery, (_) {
       _filterProducts();
     });
-    
+
     ever(_products, (List<Product> products) {
       _updateProductsCountBySection();
       if (_isInitialized.value) {
@@ -127,7 +129,7 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
   }
-  
+
   void _checkAndInitialize() {
     if (myAppController.isLoggedIn.value) {
       _initializeProductController();
@@ -135,39 +137,39 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       print('⏸️ [PRODUCTS] المستخدم غير مسجل دخول، إيقاف متحكم المنتجات');
     }
   }
-  
+
   void _initializeProductController() {
     if (_isInitialized.value) return;
-    
+
     print('🔄 [PRODUCTS] تهيئة متحكم المنتجات للمستخدم المسجل');
-    
+
     _isInitialized.value = true;
-    
+
     if (bottomSheetController.sections.isNotEmpty) {
       _updateTabsWithSections();
     }
-    
+
     _loadProducts();
   }
-  
+
   void _resetProductController() {
     if (!_isInitialized.value) return;
-    
+
     print('🔁 [PRODUCTS] إعادة تعيين متحكم المنتجات بسبب تسجيل الخروج');
-    
+
     _isInitialized.value = false;
     _initializeDefaultTabs();
-    
+
     _products.clear();
     _filteredProducts.clear();
     _productsCountBySection.clear();
     _productsBySection.clear();
     _allSections.clear();
-    
+
     _resetTabController();
     update();
   }
-  
+
   void _resetTabController() {
     try {
       if (tabController.hasListeners) {
@@ -177,59 +179,62 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     } catch (e) {
       print('⚠️ [PRODUCTS] خطأ في التخلص من متحكم التبويب: $e');
     }
-    
+
     tabController = TabController(
       length: tabs.length,
       vsync: this,
-      initialIndex: 0
+      initialIndex: 0,
     );
     tabController.addListener(_handleTabChange);
   }
-  
+
   void _updateTabsWithSections({bool forceUpdate = false}) {
     if (!_isInitialized.value || _isUpdatingTabs.value) return;
-    
+
     _isUpdatingTabs.value = true;
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         final sections = bottomSheetController.getSections();
         _allSections.assignAll(sections);
-        
+
         final updatedTabs = <TabData>[
           TabData(label: 'جميع المنتجات', viewName: 'جميع المنتجات'),
           TabData(label: 'عروض', viewName: 'عروض'),
           TabData(label: 'مراجعات', viewName: 'مراجعات'),
         ];
-        
+
         for (final section in sections) {
-          final productCount = _productsCountBySection[section.id.toString()] ?? 0;
-          updatedTabs.add(TabData(
-            label: '${section.name} ($productCount)',
-            viewName: section.name,
-            sectionId: section.id,
-          ));
+          final productCount =
+              _productsCountBySection[section.id.toString()] ?? 0;
+          updatedTabs.add(
+            TabData(
+              label: '${section.name} ($productCount)',
+              viewName: section.name,
+              sectionId: section.id,
+            ),
+          );
         }
-        
+
         final needsUpdate = forceUpdate || _needsTabUpdate(tabs, updatedTabs);
-        
+
         if (needsUpdate) {
           print('🔄 [PRODUCTS] تحديث التبويبات: ${updatedTabs.length} تبويب');
-          
+
           tabs.clear();
           tabs.addAll(updatedTabs);
-          
+
           if (tabController.length != updatedTabs.length) {
             final oldIndex = tabController.index;
             tabController.dispose();
             tabController = TabController(
               length: updatedTabs.length,
               vsync: this,
-              initialIndex: oldIndex.clamp(0, updatedTabs.length - 1)
+              initialIndex: oldIndex.clamp(0, updatedTabs.length - 1),
             );
             tabController.addListener(_handleTabChange);
           }
-          
+
           update();
           print('✅ [PRODUCTS] تم تحديث التبويبات بـ ${sections.length} قسم');
         }
@@ -240,72 +245,75 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       }
     });
   }
-  
+
   bool _needsTabUpdate(List<TabData> oldTabs, List<TabData> newTabs) {
     if (oldTabs.length != newTabs.length) return true;
-    
+
     for (int i = 0; i < oldTabs.length; i++) {
       if (oldTabs[i].label != newTabs[i].label) return true;
       if (oldTabs[i].viewName != newTabs[i].viewName) return true;
       if (oldTabs[i].sectionId != newTabs[i].sectionId) return true;
     }
-    
+
     return false;
   }
-  
+
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {
       currentTabIndex.value = tabController.index;
       _loadTabData(tabController.index);
     }
   }
-  
+
   void _handleSearchChange() {
     searchQuery.value = searchTextController.text;
     _filterProducts();
   }
-  
+
   Future<void> _loadProducts() async {
     return UnifiedLoadingScreen.showWithFuture<void>(
       _performLoadProducts(),
       message: 'جاري تحميل المنتجات...',
     );
   }
-  
+
   Future<void> _performLoadProducts() async {
     try {
       if (!_isUserAuthenticated()) {
         print('⚠️ [PRODUCTS] المستخدم غير مصادق عليه');
         return;
       }
-  
+
       _isLoadingProducts(true);
       _productsErrorMessage('');
-      
+
       print('📡 [PRODUCTS] جلب المنتجات من API');
-      
+
       await _loadCachedProducts();
-      
+
       final response = await ApiHelper.get(
         path: '/merchants/products',
         withLoading: false,
       );
-      
+
       if (response != null && response['status'] == true) {
         final List<dynamic> data = response['data'] ?? [];
-        _products.assignAll(data.map((product) => Product.fromJson(product)).toList());
+        _products.assignAll(
+          data.map((product) => Product.fromJson(product)).toList(),
+        );
         _filteredProducts.assignAll(_products);
-        
+
         _updateProductsCountBySection();
         _groupProductsBySection();
-        
+
         await dataService.refreshProducts();
-        
+
         _updateTabsWithSections();
-        
+
         print('✅ [PRODUCTS] تم تحميل ${_products.length} منتج بنجاح');
       } else {
-        _productsErrorMessage.value = response?['message'] ?? 'فشل في تحميل المنتجات';
+        _productsErrorMessage.value =
+            response?['message'] ?? 'فشل في تحميل المنتجات';
         print('❌ [PRODUCTS] فشل في التحميل: ${_productsErrorMessage.value}');
       }
     } catch (e) {
@@ -315,30 +323,34 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       _isLoadingProducts(false);
     }
   }
-  
+
   Future<void> _loadCachedProducts() async {
     try {
       final cachedProducts = dataService.getProducts();
       if (cachedProducts.isNotEmpty) {
-        _products.assignAll(cachedProducts.map((product) => Product.fromJson(product)).toList());
+        _products.assignAll(
+          cachedProducts.map((product) => Product.fromJson(product)).toList(),
+        );
         _filteredProducts.assignAll(_products);
         _updateProductsCountBySection();
         _groupProductsBySection();
-        print('📂 [PRODUCTS] تم تحميل ${_products.length} منتج من التخزين المحلي');
+        print(
+          '📂 [PRODUCTS] تم تحميل ${_products.length} منتج من التخزين المحلي',
+        );
       }
     } catch (e) {
       print('⚠️ [PRODUCTS] خطأ في تحميل المنتجات المخزنة: $e');
     }
   }
-  
+
   void debugProductsInfo() {
     print('🔍 [PRODUCTS] معلومات المنتجات');
     print('📊 إجمالي المنتجات: ${_products.length}');
     print('📊 المنتجات المصفاة: ${_filteredProducts.length}');
-    
+
     int uncategorized = 0;
     Map<String, int> sectionCounts = {};
-    
+
     for (final product in _products) {
       final sectionId = product.sectionId ?? '0';
       if (sectionId == '0' || sectionId.isEmpty) {
@@ -347,115 +359,128 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         sectionCounts[sectionId] = (sectionCounts[sectionId] ?? 0) + 1;
       }
     }
-    
+
     print('📊 المنتجات غير المصنفة: $uncategorized');
     print('📊 المنتجات حسب القسم: $sectionCounts');
-    
+
     print('📊 الأقسام المتاحة:');
     for (final section in _allSections) {
       print('   - ${section.name} (ID: ${section.id})');
     }
   }
-  
+
   void _updateProductsCountBySection() {
     _productsCountBySection.clear();
-    
+
     for (final product in _filteredProducts) {
       final sectionId = product.sectionId ?? '0';
-      _productsCountBySection[sectionId] = (_productsCountBySection[sectionId] ?? 0) + 1;
+      _productsCountBySection[sectionId] =
+          (_productsCountBySection[sectionId] ?? 0) + 1;
     }
-    
+
     print('📊 [PRODUCTS] عدد المنتجات حسب القسم: $_productsCountBySection');
   }
-  
+
   void _groupProductsBySection() {
     _productsBySection.clear();
-    
+
     print('🔍 [PRODUCTS] تجميع المنتجات حسب القسم');
     print('📊 إجمالي المنتجات: ${_products.length}');
-    
+
     for (final product in _filteredProducts) {
       final sectionId = product.sectionId ?? '0';
-      
+
       if (!_productsBySection.containsKey(sectionId)) {
         _productsBySection[sectionId] = [];
       }
       _productsBySection[sectionId]!.add(product);
     }
-    
-    print('📊 [PRODUCTS] المنتجات المجمعة حسب القسم: ${_productsBySection.length} قسم');
+
+    print(
+      '📊 [PRODUCTS] المنتجات المجمعة حسب القسم: ${_productsBySection.length} قسم',
+    );
     _productsBySection.forEach((key, value) {
       print('   القسم $key: ${value.length} منتج');
     });
   }
-  
+
   void _filterProducts() {
     if (searchQuery.value.isEmpty) {
       _filteredProducts.assignAll(_products);
     } else {
-      final filtered = _products.where((product) =>
-        product.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-        (product.sku?.toLowerCase().contains(searchQuery.value.toLowerCase()) ?? false)
-      ).toList();
+      final filtered = _products
+          .where(
+            (product) =>
+                product.name.toLowerCase().contains(
+                  searchQuery.value.toLowerCase(),
+                ) ||
+                (product.sku?.toLowerCase().contains(
+                      searchQuery.value.toLowerCase(),
+                    ) ??
+                    false),
+          )
+          .toList();
       _filteredProducts.assignAll(filtered);
     }
     _groupProductsBySection();
   }
-  
+
   Map<String, List<Product>> getFilteredProductsBySection() {
     final Map<String, List<Product>> result = {};
-    
+
     for (final product in _filteredProducts) {
       final sectionId = product.sectionId ?? '0';
-      
+
       if (!result.containsKey(sectionId)) {
         result[sectionId] = [];
       }
       result[sectionId]!.add(product);
     }
-    
+
     return result;
   }
-  
+
   Future<void> _loadTabData(int tabIndex) async {
     try {
       if (tabIndex < tabs.length) {
-        print('📊 [PRODUCTS] جاري تحميل بيانات التبويب: ${tabs[tabIndex].label}');
+        print(
+          '📊 [PRODUCTS] جاري تحميل بيانات التبويب: ${tabs[tabIndex].label}',
+        );
       }
     } catch (e) {
       errorMessage.value = 'فشل في تحميل بيانات التبويب: $e';
     }
   }
-  
+
   void clearSearch() {
     searchTextController.clear();
     searchQuery.value = '';
     _filterProducts();
   }
-  
+
   void changeTab(int index) {
     if (index >= 0 && index < tabs.length) {
       tabController.animateTo(index);
       currentTabIndex.value = index;
     }
   }
-  
+
   Future<void> reloadProducts() async {
     await _loadProducts();
   }
-  
+
   void notifyProductsUpdated() {
     print('📢 [PRODUCTS] تنبيه بتحديث المنتجات');
     _loadProducts();
   }
-  
+
   Map<String, List<Product>> getAllProductsGrouped() {
     final Map<String, List<Product>> result = {};
     final uncategorizedProducts = <Product>[];
-    
+
     for (final product in _filteredProducts) {
       final sectionId = product.sectionId;
-      
+
       if (sectionId == null || sectionId.isEmpty || sectionId == '0') {
         uncategorizedProducts.add(product);
       } else {
@@ -465,18 +490,18 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         result[sectionId]!.add(product);
       }
     }
-    
+
     if (uncategorizedProducts.isNotEmpty) {
       result['0'] = uncategorizedProducts;
     }
-    
+
     return result;
   }
-  
+
   List<Map<String, dynamic>> getDisplaySections() {
     final sections = <Map<String, dynamic>>[];
     final groupedProducts = getAllProductsGrouped();
-    
+
     if (groupedProducts.containsKey('0') && groupedProducts['0']!.isNotEmpty) {
       sections.add({
         'id': '0',
@@ -485,11 +510,11 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         'isUncategorized': true,
       });
     }
-    
+
     for (final section in _allSections) {
       final sectionId = section.id.toString();
       final products = groupedProducts[sectionId] ?? [];
-      
+
       if (products.isNotEmpty) {
         sections.add({
           'id': sectionId,
@@ -499,10 +524,10 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
         });
       }
     }
-    
+
     return sections;
   }
-  
+
   List<Product> getProductsForTab(int tabIndex) {
     if (tabIndex == 0) {
       return _filteredProducts.toList();
@@ -513,61 +538,59 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     } else if (tabIndex == 2) {
       return _filteredProducts.where((product) {
         return int.tryParse(product.messagesCount) != null &&
-               int.tryParse(product.messagesCount)! > 0;
+            int.tryParse(product.messagesCount)! > 0;
       }).toList();
     } else if (tabIndex >= 3) {
       final sectionTab = tabs[tabIndex];
       if (sectionTab.sectionId != null) {
-        return _filteredProducts.where((product) =>
-            product.sectionId == sectionTab.sectionId.toString()
-        ).toList();
+        return _filteredProducts
+            .where(
+              (product) => product.sectionId == sectionTab.sectionId.toString(),
+            )
+            .toList();
       }
     }
     return [];
   }
-  
+
   Map<String, List<Product>> getProductsGroupedBySection() {
     return Map.from(_productsBySection);
   }
-  
+
   String getSectionName(String sectionId) {
     if (sectionId == '0') return 'غير مصنف';
-    
+
     final section = _allSections.firstWhere(
       (s) => s.id.toString() == sectionId,
-      orElse: () => Section(
-        id: 0,
-        name: 'غير معروف',
-        storeId: '',
-      ),
+      orElse: () => Section(id: 0, name: 'غير معروف', storeId: ''),
     );
     return section.name;
   }
-  
+
   List<Section> getAllSections() {
     return _allSections.toList();
   }
-  
+
   int _getTotalProductsCount() {
     return _products.length;
   }
-  
+
   void openManageSections() {
     bottomSheetController.openManageSections();
   }
-  
+
   void openAddNewSection() {
     bottomSheetController.openAddNewSection();
   }
-  
+
   void navigateToAddProduct() {
     if (!_isUserAuthenticated()) {
       _showLoginRequiredMessage();
       return;
     }
-  
+
     final hasSections = bottomSheetController.sections.isNotEmpty;
-    
+
     if (!hasSections) {
       Get.snackbar(
         'تنبيه',
@@ -586,12 +609,12 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       bottomSheetController.openAddProductScreen();
     }
   }
-  
+
   bool _isUserAuthenticated() {
     final userData = myAppController.userData;
     return userData.isNotEmpty && userData['token'] != null;
   }
-  
+
   void _showLoginRequiredMessage() {
     Get.snackbar(
       'يجب تسجيل الدخول',
@@ -601,12 +624,15 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
       duration: const Duration(seconds: 3),
     );
   }
-  
+
   void openFilter() => bottomSheetController.openFilter();
+
   void openSort() => bottomSheetController.openSort();
+
   void openMultiSelect() => bottomSheetController.openMultiSelect();
+
   void openSingleSelect() => bottomSheetController.openSingleSelect();
-  
+
   @override
   void onClose() {
     if (tabController.hasListeners) {
@@ -616,12 +642,18 @@ class ProductController extends GetxController with SingleGetTickerProviderMixin
     searchTextController.dispose();
     super.onClose();
   }
-  
+
   bool get isControllerInitialized => _isInitialized.value;
+
   RxBool get isLoadingProducts => _isLoadingProducts;
+
   RxString get productsErrorMessage => _productsErrorMessage;
+
   List<Product> get allProducts => _products.toList();
+
   List<Product> get filteredProducts => _filteredProducts.toList();
+
   int get totalProductsCount => _products.length;
+
   RxMap<String, List<Product>> get productsBySection => _productsBySection;
 }

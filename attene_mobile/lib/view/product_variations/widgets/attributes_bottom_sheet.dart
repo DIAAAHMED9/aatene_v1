@@ -69,9 +69,9 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
       return widget.allAttributes;
     }
     return widget.allAttributes.where((attribute) {
-      return attribute.name
-          .toLowerCase()
-          .contains(_attributeSearchQuery.toLowerCase());
+      return attribute.name.toLowerCase().contains(
+        _attributeSearchQuery.toLowerCase(),
+      );
     }).toList();
   }
 
@@ -80,9 +80,9 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
       return attribute.values;
     }
     return attribute.values.where((value) {
-      return value.value
-          .toLowerCase()
-          .contains(_valueSearchQuery.toLowerCase());
+      return value.value.toLowerCase().contains(
+        _valueSearchQuery.toLowerCase(),
+      );
     }).toList();
   }
 
@@ -126,8 +126,8 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
             ],
           ),
         ),
-        SizedBox(height: 15,),
-    Padding(
+        SizedBox(height: 15),
+        Padding(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveDimensions.f(16),
             vertical: ResponsiveDimensions.f(8),
@@ -173,10 +173,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${filteredAttributes.length} نتيجة',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ),
           ),
@@ -442,10 +439,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${filteredValues.length} نتيجة',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ),
           ),
@@ -580,8 +574,9 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                     attribute.name,
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.grey[700],
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       fontSize: 13,
                     ),
                   ),
@@ -682,8 +677,9 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
 
   void _saveAndClose() {
     for (var attribute in _tempSelectedAttributes) {
-      final hasSelectedValue =
-          attribute.values.any((value) => value.isSelected.value);
+      final hasSelectedValue = attribute.values.any(
+        (value) => value.isSelected.value,
+      );
 
       if (!hasSelectedValue) {
         final index = _tempSelectedAttributes.indexOf(attribute);

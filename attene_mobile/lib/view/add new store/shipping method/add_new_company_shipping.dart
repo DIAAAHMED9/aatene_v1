@@ -72,8 +72,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
 
   void _loadCitiesFromCache() {
     final cachedCities = dataService.getCities();
-    if (cachedCities.isNotEmpty) {
-    }
+    if (cachedCities.isNotEmpty) {}
   }
 
   @override
@@ -103,9 +102,11 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               borderRadius: BorderRadius.circular(12),
               color: AppColors.neutral100,
             ),
-            child: Icon(Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: AppColors.neutral700),
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 18,
+              color: AppColors.neutral700,
+            ),
           ),
         ),
       ),
@@ -130,7 +131,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 controller: nameController,
               ),
               SizedBox(height: 20),
-              
+
               Text(
                 "رقم الهاتف",
                 style: TextStyle(
@@ -150,18 +151,17 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Icon(Icons.phone_outlined,
-                          size: 20,
-                          color: AppColors.neutral500),
+                      child: Icon(
+                        Icons.phone_outlined,
+                        size: 20,
+                        color: AppColors.neutral500,
+                      ),
                     ),
                     Expanded(
                       child: TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        ),
+                        style: TextStyle(fontSize: 15, color: Colors.black),
                         decoration: InputDecoration(
                           hintText: "0999988888",
                           hintStyle: TextStyle(
@@ -184,9 +184,11 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: selectedCountryCode,
-                          icon: Icon(Icons.arrow_drop_down,
-                              color: AppColors.primary500,
-                              size: 24),
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: AppColors.primary500,
+                            size: 24,
+                          ),
                           isExpanded: true,
                           style: TextStyle(
                             color: AppColors.primary400,
@@ -198,7 +200,9 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                               selectedCountryCode = newValue!;
                             });
                           },
-                          items: countryCodes.map<DropdownMenuItem<String>>((Map<String, String> code) {
+                          items: countryCodes.map<DropdownMenuItem<String>>((
+                            Map<String, String> code,
+                          ) {
                             return DropdownMenuItem<String>(
                               value: code['code'],
                               child: Row(
@@ -206,8 +210,11 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                                 children: [
                                   Text(code['code']!),
                                   SizedBox(width: 4),
-                                  Icon(Icons.flag, size: 16,
-                                      color: AppColors.primary400),
+                                  Icon(
+                                    Icons.flag,
+                                    size: 16,
+                                    color: AppColors.primary400,
+                                  ),
                                 ],
                               ),
                             );
@@ -218,11 +225,11 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   ],
                 ),
               ),
-              
+
               SizedBox(height: 24),
               Divider(color: AppColors.neutral800, height: 1),
               SizedBox(height: 24),
-              
+
               Text(
                 "المدن التي ترسل لها المنتجات",
                 style: TextStyle(
@@ -232,7 +239,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 ),
               ),
               SizedBox(height: 16),
-              
+
               Column(
                 children: predefinedCities.map((city) {
                   return Row(
@@ -251,9 +258,11 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                                   'type': 'predefined',
                                 });
                               } else {
-                                selectedCities.removeWhere((c) =>
-                                    c['city_id'] == city['id'] &&
-                                    c['type'] == 'predefined');
+                                selectedCities.removeWhere(
+                                  (c) =>
+                                      c['city_id'] == city['id'] &&
+                                      c['type'] == 'predefined',
+                                );
                               }
                             });
                           },
@@ -280,7 +289,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   );
                 }).toList(),
               ),
-              
+
               SizedBox(height: 16),
               GestureDetector(
                 onTap: () {
@@ -310,7 +319,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   ],
                 ),
               ),
-              
+
               if (showAddCityField) ...[
                 SizedBox(height: 16),
                 Column(
@@ -348,24 +357,27 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           ),
                           icon: Padding(
                             padding: const EdgeInsets.only(right: 16),
-                            child: Icon(Icons.arrow_drop_down,
-                                color: AppColors.primary500,
-                                size: 24),
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                              color: AppColors.primary500,
+                              size: 24,
+                            ),
                           ),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                          ),
+                          style: TextStyle(color: Colors.black, fontSize: 15),
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedCity = newValue;
                             });
                           },
-                          items: citiesList.map<DropdownMenuItem<String>>((String city) {
+                          items: citiesList.map<DropdownMenuItem<String>>((
+                            String city,
+                          ) {
                             return DropdownMenuItem<String>(
                               value: city,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
                                 child: Text(city),
                               ),
                             );
@@ -386,7 +398,9 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
                           ),
                           child: Text(
                             "إلغاء",
@@ -400,8 +414,9 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                         ElevatedButton(
                           onPressed: selectedCity != null
                               ? () {
-                                  if (!selectedCities.any((c) =>
-                                      c['name'] == selectedCity)) {
+                                  if (!selectedCities.any(
+                                    (c) => c['name'] == selectedCity,
+                                  )) {
                                     setState(() {
                                       selectedCities.add({
                                         'city_id': selectedCities.length + 10,
@@ -417,7 +432,9 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary500,
                             padding: EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -437,7 +454,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   ],
                 ),
               ],
-              
+
               if (selectedCities.isNotEmpty) ...[
                 SizedBox(height: 24),
                 Text(
@@ -510,7 +527,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                   );
                 }).toList(),
               ],
-              
+
               SizedBox(height: 32),
               AateneButton(
                 buttonText: 'التالي',
@@ -541,7 +558,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
       );
       return;
     }
-    
+
     if (phoneController.text.isEmpty) {
       Get.snackbar(
         'خطأ',
@@ -552,7 +569,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
       );
       return;
     }
-    
+
     if (selectedCities.isEmpty) {
       Get.snackbar(
         'خطأ',
@@ -563,11 +580,13 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
       );
       return;
     }
-    
-    Get.to(() => ShippingPricingSettings(
-      companyName: nameController.text,
-      companyPhone: '$selectedCountryCode${phoneController.text}',
-      selectedCities: selectedCities,
-    ));
+
+    Get.to(
+      () => ShippingPricingSettings(
+        companyName: nameController.text,
+        companyPhone: '$selectedCountryCode${phoneController.text}',
+        selectedCities: selectedCities,
+      ),
+    );
   }
 }

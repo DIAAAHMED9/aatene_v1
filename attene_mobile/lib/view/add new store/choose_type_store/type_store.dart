@@ -21,17 +21,18 @@ class TypeStore extends GetView<CreateStoreController> {
     final CreateStoreController controller = Get.put(CreateStoreController());
     final isRTL = LanguageUtils.isRTL;
     final MyAppController myAppController = Get.find<MyAppController>();
-    final DataInitializerService dataService = Get.find<DataInitializerService>();
+    final DataInitializerService dataService =
+        Get.find<DataInitializerService>();
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('نوع المتجر', style: TextStyle(
-          fontWeight: FontWeight.w500,
-          color: Colors.black
-        )),
+        title: Text(
+          'نوع المتجر',
+          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+        ),
         centerTitle: false,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -48,7 +49,11 @@ class TypeStore extends GetView<CreateStoreController> {
     );
   }
 
-  Widget _buildBody(CreateStoreController controller, bool isRTL, MyAppController myAppController) {
+  Widget _buildBody(
+    CreateStoreController controller,
+    bool isRTL,
+    MyAppController myAppController,
+  ) {
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
     }
@@ -93,7 +98,8 @@ class TypeStore extends GetView<CreateStoreController> {
           controller: controller,
           type: 'products',
           title: 'متجر بيع المنتجات',
-          description: 'بيع المنتجات المادية مثل الملابس، الإلكترونيات، الأثاث، وغيرها',
+          description:
+              'بيع المنتجات المادية مثل الملابس، الإلكترونيات، الأثاث، وغيرها',
           icon: Icons.store,
           isSelected: controller.storeType.value == 'products',
         ),
@@ -102,7 +108,8 @@ class TypeStore extends GetView<CreateStoreController> {
           controller: controller,
           type: 'services',
           title: 'متجر تقديم الخدمات',
-          description: 'تقديم الخدمات مثل التصميم، البرمجة، الاستشارات، التعليم، وغيرها',
+          description:
+              'تقديم الخدمات مثل التصميم، البرمجة، الاستشارات، التعليم، وغيرها',
           icon: Icons.home_repair_service,
           isSelected: controller.storeType.value == 'services',
         ),
@@ -181,11 +188,7 @@ class TypeStore extends GetView<CreateStoreController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.login_rounded,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.login_rounded, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 24),
             Text(
               'يجب تسجيل الدخول',
@@ -198,10 +201,7 @@ class TypeStore extends GetView<CreateStoreController> {
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إضافة المتاجر',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
