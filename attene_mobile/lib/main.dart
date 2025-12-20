@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/Control_Users/block_screen.dart';
+import 'package:attene_mobile/view/Control_Users/change%20password.dart';
 import 'package:attene_mobile/view/Control_Users/edit%20profile.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
@@ -229,7 +231,7 @@ class MyApp extends StatelessWidget {
 
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () => const ChangePassword()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 
 import '../../utlis/colors/app_color.dart';
 
-class Block extends StatelessWidget {
-  const Block({super.key});
+class ChangeMobileNumber extends StatelessWidget {
+  const ChangeMobileNumber({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class Block extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          "قائمة الحظر",
+          "تغيير كلمة المرور",
           style: TextStyle(
             color: AppColors.neutral100,
             fontWeight: FontWeight.bold,
@@ -33,6 +33,7 @@ class Block extends StatelessWidget {
           ),
         ),
       ),
+      body: Column(),
     );
   }
 }
