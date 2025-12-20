@@ -10,7 +10,14 @@ class TextWithStar extends StatelessWidget {
     return Row(
       spacing: 5,
       children: [
-        Text(text, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold , color: Colors.black)),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
         Text('*', style: TextStyle(color: Colors.red)),
       ],
     );

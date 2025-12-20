@@ -23,7 +23,8 @@ class TabData {
           sectionId == other.sectionId;
 
   @override
-  int get hashCode => label.hashCode ^ viewName.hashCode ^ (sectionId?.hashCode ?? 0);
+  int get hashCode =>
+      label.hashCode ^ viewName.hashCode ^ (sectionId?.hashCode ?? 0);
 }
 
 class AppBarConfig {

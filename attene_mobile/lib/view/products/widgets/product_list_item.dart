@@ -22,7 +22,7 @@ class ProductListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelectionMode = controller.isSelectionMode;
-    
+
     return GestureDetector(
       onLongPress: () {
         if (!isSelectionMode) {
@@ -39,7 +39,9 @@ class ProductListItem extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary400.withOpacity(0.1) : Colors.white,
+          color: isSelected
+              ? AppColors.primary400.withOpacity(0.1)
+              : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? Border.all(color: AppColors.primary400, width: 2)
@@ -65,11 +67,11 @@ class ProductListItem extends StatelessWidget {
                   activeColor: AppColors.primary400,
                 ),
               ),
-            
+
             _buildProductImage(context),
-            
+
             const SizedBox(width: 16),
-            
+
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -79,47 +81,51 @@ class ProductListItem extends StatelessWidget {
                     Text(
                       product.name,
                       style: TextStyle(
-                        fontSize: ResponsiveWidgets.getFontSize(context, baseSize: 16),
+                        fontSize: ResponsiveWidgets.getFontSize(
+                          context,
+                          baseSize: 16,
+                        ),
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 6),
-                    
+
                     if (product.sectionId != null && product.sectionId != '0')
                       Row(
                         children: [
-                          Icon(Icons.local_offer_outlined,
-                               color: Colors.grey[600],
-                               size: 14),
+                          Icon(
+                            Icons.local_offer_outlined,
+                            color: Colors.grey[600],
+                            size: 14,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             controller.getSectionName(product.sectionId!),
-                            style:  TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
                             ),
                           ),
                         ],
                       ),
-                    
                   ],
                 ),
               ),
             ),
-                 const SizedBox(height: 8),
-                    
-                    Text(
-                      '${product.price ?? '0.0'} ₪',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                      ),
-                    ),
+            const SizedBox(height: 8),
+
+            Text(
+              '${product.price ?? '0.0'} ₪',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
             if (!isSelectionMode)
               IconButton(
                 onPressed: _showProductOptions,
@@ -127,7 +133,6 @@ class ProductListItem extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
-
           ],
         ),
       ),
@@ -136,7 +141,7 @@ class ProductListItem extends StatelessWidget {
 
   Widget _buildProductImage(BuildContext context) {
     final imageSize = ResponsiveWidgets.getProductImageSize(context);
-    
+
     return Container(
       width: imageSize,
       height: imageSize,
@@ -157,7 +162,7 @@ class ProductListItem extends StatelessWidget {
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
+                                loadingProgress.expectedTotalBytes!
                           : null,
                     ),
                   );
@@ -165,18 +170,18 @@ class ProductListItem extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey[200],
-                    child: Icon(Icons.broken_image,
+                    child: Icon(
+                      Icons.broken_image,
                       color: Colors.grey[400],
-                      size: 40),
+                      size: 40,
+                    ),
                   );
                 },
               ),
             )
           : Container(
               color: Colors.grey[200],
-              child: Icon(Icons.image,
-                color: Colors.grey[400],
-                size: 40),
+              child: Icon(Icons.image, color: Colors.grey[400], size: 40),
             ),
     );
   }
@@ -244,10 +249,7 @@ class ProductListItem extends StatelessWidget {
         title: const Text('حذف المنتج'),
         content: Text('هل أنت متأكد من حذف المنتج "${product.name}"؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () {
               Get.back();

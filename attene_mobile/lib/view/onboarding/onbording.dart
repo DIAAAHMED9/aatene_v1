@@ -90,7 +90,7 @@ class Onbording extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
-    
+
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -125,7 +125,10 @@ class Onbording extends StatelessWidget {
     );
   }
 
-  Widget _buildResponsiveContent(BuildContext context, BoxConstraints constraints) {
+  Widget _buildResponsiveContent(
+    BuildContext context,
+    BoxConstraints constraints,
+  ) {
     final isRTL = LanguageUtils.isRTL;
     final isMobile = ResponsiveDimensions.isMobile;
     final isTablet = ResponsiveDimensions.isTablet;
@@ -136,16 +139,23 @@ class Onbording extends StatelessWidget {
         // Language Selector Row
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveDimensions.getContentPadding(context).horizontal,
+            horizontal: ResponsiveDimensions.getContentPadding(
+              context,
+            ).horizontal,
             vertical: ResponsiveDimensions.h(isMobile ? 10 : 20),
           ),
           child: Row(
-            mainAxisAlignment: isMobile ? MainAxisAlignment.center : MainAxisAlignment.end,
+            mainAxisAlignment: isMobile
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.end,
             children: [
               Text(
                 isRTL ? 'اللغة: العربية' : 'Language: English',
                 style: TextStyle(
-                  fontSize: ResponsiveDimensions.getFontSize(context, baseSize: 14),
+                  fontSize: ResponsiveDimensions.getFontSize(
+                    context,
+                    baseSize: 14,
+                  ),
                   color: Colors.grey.shade600,
                 ),
               ),
@@ -155,7 +165,10 @@ class Onbording extends StatelessWidget {
                 child: Text(
                   isRTL ? 'تغيير' : 'Change',
                   style: TextStyle(
-                    fontSize: ResponsiveDimensions.getFontSize(context, baseSize: 14),
+                    fontSize: ResponsiveDimensions.getFontSize(
+                      context,
+                      baseSize: 14,
+                    ),
                     color: Colors.blue,
                     fontWeight: FontWeight.bold,
                   ),
@@ -166,14 +179,22 @@ class Onbording extends StatelessWidget {
         ),
 
         Expanded(
-          child: _buildMainContent(context, isRTL, isMobile, isTablet, isLaptop),
+          child: _buildMainContent(
+            context,
+            isRTL,
+            isMobile,
+            isTablet,
+            isLaptop,
+          ),
         ),
 
         // Description Text
         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveDimensions.getContentPadding(context).horizontal,
+            horizontal: ResponsiveDimensions.getContentPadding(
+              context,
+            ).horizontal,
             vertical: ResponsiveDimensions.h(20),
           ),
           margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(20)),
@@ -194,7 +215,13 @@ class Onbording extends StatelessWidget {
     );
   }
 
-  Widget _buildMainContent(BuildContext context, bool isRTL, bool isMobile, bool isTablet, bool isLaptop) {
+  Widget _buildMainContent(
+    BuildContext context,
+    bool isRTL,
+    bool isMobile,
+    bool isTablet,
+    bool isLaptop,
+  ) {
     if (isLaptop) {
       return _buildLaptopLayout(context, isRTL);
     } else if (isTablet) {
@@ -230,12 +257,16 @@ class Onbording extends StatelessWidget {
           left: isRTL ? null : ResponsiveDimensions.w(20),
           right: isRTL ? ResponsiveDimensions.w(20) : null,
           child: SizedBox(
-            width: isRTL ? ResponsiveDimensions.w(120) : ResponsiveDimensions.w(154),
+            width: isRTL
+                ? ResponsiveDimensions.w(120)
+                : ResponsiveDimensions.w(154),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Align(
-                  alignment: isRTL ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: isRTL
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Image.asset(
                     'assets/images/png/aatene_black_text.png',
                     width: ResponsiveDimensions.w(120),
@@ -249,7 +280,10 @@ class Onbording extends StatelessWidget {
                         ? 'مزيج من الخدمات المتنوعة متواجدة في مكان '
                         : 'A mix of diverse services available in one ',
                     style: TextStyle(
-                      fontSize: ResponsiveDimensions.getFontSize(context, baseSize: 35),
+                      fontSize: ResponsiveDimensions.getFontSize(
+                        context,
+                        baseSize: 35,
+                      ),
                       fontWeight: FontWeight.w800,
                       color: const Color(0xFF383838),
                       height: 1.4,
@@ -258,7 +292,10 @@ class Onbording extends StatelessWidget {
                       TextSpan(
                         text: isRTL ? 'واحد' : 'place',
                         style: TextStyle(
-                          fontSize: ResponsiveDimensions.getFontSize(context, baseSize: 32),
+                          fontSize: ResponsiveDimensions.getFontSize(
+                            context,
+                            baseSize: 32,
+                          ),
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary400,
                         ),
@@ -372,12 +409,18 @@ class Onbording extends StatelessWidget {
   Widget _buildTextContent(BuildContext context, bool isRTL, bool isTablet) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: isRTL ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isRTL
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Image.asset(
           'assets/images/png/aatene_black_text.png',
-          width: isTablet ? ResponsiveDimensions.w(150) : ResponsiveDimensions.w(180),
-          height: isTablet ? ResponsiveDimensions.h(60) : ResponsiveDimensions.h(70),
+          width: isTablet
+              ? ResponsiveDimensions.w(150)
+              : ResponsiveDimensions.w(180),
+          height: isTablet
+              ? ResponsiveDimensions.h(60)
+              : ResponsiveDimensions.h(70),
         ),
         SizedBox(height: ResponsiveDimensions.h(30)),
         Text.rich(
@@ -386,7 +429,7 @@ class Onbording extends StatelessWidget {
                 ? 'مزيج من الخدمات المتنوعة متواجدة في مكان '
                 : 'A mix of diverse services available in one ',
             style: TextStyle(
-              fontSize: isTablet 
+              fontSize: isTablet
                   ? ResponsiveDimensions.getFontSize(context, baseSize: 40)
                   : ResponsiveDimensions.getFontSize(context, baseSize: 48),
               fontWeight: FontWeight.w800,

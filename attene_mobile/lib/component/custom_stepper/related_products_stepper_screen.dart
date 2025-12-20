@@ -7,7 +7,7 @@ import '../../view/Services/data_lnitializer_service.dart';
 
 class RelatedProductsController extends GetxController {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
-  
+
   final RxList<Product> _allProducts = <Product>[].obs;
   final RxList<Product> _selectedProducts = <Product>[].obs;
   final RxList<ProductDiscount> _discounts = <ProductDiscount>[].obs;
@@ -16,46 +16,74 @@ class RelatedProductsController extends GetxController {
   final RxDouble _discountedPrice = 0.0.obs;
   final RxString _discountNote = ''.obs;
   final Rx<DateTime> _discountDate = DateTime.now().obs;
-  
+
   List<Product> get allProducts => _allProducts;
+
   List<Product> get selectedProducts => _selectedProducts;
+
   List<ProductDiscount> get discounts => _discounts;
+
   String get searchQuery => _searchQuery.value;
+
   double get originalPrice => _originalPrice.value;
+
   double get discountedPrice => _discountedPrice.value;
+
   String get discountNote => _discountNote.value;
+
   DateTime get discountDate => _discountDate.value;
+
   int get selectedProductsCount => _selectedProducts.length;
+
   bool get hasSelectedProducts => _selectedProducts.isNotEmpty;
-  bool get hasDiscount => _discountedPrice.value > 0 && _discountedPrice.value < _originalPrice.value;
+
+  bool get hasDiscount =>
+      _discountedPrice.value > 0 &&
+      _discountedPrice.value < _originalPrice.value;
+
   int get discountCount => _discounts.length;
-  
+
   late TextEditingController dateController;
   late TextEditingController searchController;
-  
+
   @override
   void onInit() {
     super.onInit();
     initializeControllers();
     loadProducts();
   }
-  
+
   void initializeControllers() {
-    dateController = TextEditingController(text: _formatDateTime(DateTime.now()));
+    dateController = TextEditingController(
+      text: _formatDateTime(DateTime.now()),
+    );
     searchController = TextEditingController();
     searchController.addListener(() {
       _searchQuery.value = searchController.text;
     });
   }
-  
+
   String _formatDateTime(DateTime date) {
-    final months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    final months = [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ];
     final hour = date.hour;
     final period = hour < 12 ? 'ص' : 'م';
     final displayHour = hour <= 12 ? hour : hour - 12;
     return '${months[date.month - 1]} ${date.day}, ${date.year} $displayHour:${date.minute.toString().padLeft(2, '0')} $period';
   }
-  
+
   void loadProducts() {
     try {
       final productsData = dataService.getProducts();
@@ -69,22 +97,23 @@ class RelatedProductsController extends GetxController {
       _showErrorSnackbar('خطأ في تحميل المنتجات');
     }
   }
-  
+
   void setSearchQuery(String query) {
     _searchQuery.value = query;
     update(['products']);
   }
-  
+
   List<Product> get filteredProducts {
     if (_searchQuery.value.isEmpty) return _allProducts;
     final searchLower = _searchQuery.value.toLowerCase();
     return _allProducts.where((product) {
       final nameMatch = product.name.toLowerCase().contains(searchLower);
-      final skuMatch = product.sku?.toLowerCase().contains(searchLower) ?? false;
+      final skuMatch =
+          product.sku?.toLowerCase().contains(searchLower) ?? false;
       return nameMatch || skuMatch;
     }).toList();
   }
-  
+
   void toggleProductSelection(Product product) {
     if (isProductSelected(product)) {
       _selectedProducts.removeWhere((p) => p.id == product.id);
@@ -94,17 +123,17 @@ class RelatedProductsController extends GetxController {
     _calculateTotalPrice();
     update(['selected', 'summary']);
   }
-  
+
   bool isProductSelected(Product product) {
     return _selectedProducts.any((p) => p.id == product.id);
   }
-  
+
   void removeSelectedProduct(Product product) {
     _selectedProducts.removeWhere((p) => p.id == product.id);
     _calculateTotalPrice();
     update(['selected', 'summary']);
   }
-  
+
   void clearAllSelections() {
     _selectedProducts.clear();
     _originalPrice.value = 0.0;
@@ -114,7 +143,7 @@ class RelatedProductsController extends GetxController {
     _discountDate.value = DateTime.now();
     update(['selected', 'summary', 'discounts']);
   }
-  
+
   void calculateTotalPrice() {
     double total = 0.0;
     for (final product in _selectedProducts) {
@@ -133,26 +162,26 @@ class RelatedProductsController extends GetxController {
     }
     update(['summary']);
   }
-  
+
   void _calculateTotalPrice() {
     calculateTotalPrice();
   }
-  
+
   void setDiscountDate(DateTime date) {
     _discountDate.value = date;
     dateController.text = _formatDateTime(date);
     update(['discount']);
   }
-  
+
   void setDiscountedPrice(double price) {
     _discountedPrice.value = price;
     update(['discount']);
   }
-  
+
   void setDiscountNote(String note) {
     _discountNote.value = note;
   }
-  
+
   bool _validateDiscount() {
     if (_selectedProducts.isEmpty) {
       _showErrorSnackbar('يرجى اختيار منتجات أولاً');
@@ -168,10 +197,10 @@ class RelatedProductsController extends GetxController {
     }
     return true;
   }
-  
+
   void addDiscount() {
     if (!_validateDiscount()) return;
-    
+
     final newDiscount = ProductDiscount(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       originalPrice: _originalPrice.value,
@@ -181,25 +210,25 @@ class RelatedProductsController extends GetxController {
       productCount: _selectedProducts.length,
       products: _selectedProducts.toList(),
     );
-    
+
     _discounts.add(newDiscount);
     clearDiscountFields();
     _showSuccessSnackbar('تم إضافة التخفيض بنجاح');
     update(['discounts', 'summary']);
   }
-  
+
   void removeDiscount(ProductDiscount discount) {
     _discounts.removeWhere((d) => d.id == discount.id);
     _showSuccessSnackbar('تم حذف التخفيض بنجاح');
     update(['discounts', 'summary']);
   }
-  
+
   void clearDiscountFields() {
     _discountedPrice.value = 0.0;
     _discountNote.value = '';
     update(['discount']);
   }
-  
+
   void linkToProductCentral() {
     try {
       if (Get.isRegistered<ProductCentralController>()) {
@@ -211,35 +240,38 @@ class RelatedProductsController extends GetxController {
       _showErrorSnackbar('خطأ في الربط');
     }
   }
-  
+
   Map<String, dynamic> getCrossSellData() {
     try {
       print('🔗 [CROSS SELL] جلب بيانات المنتجات المختارة للتسويق المتقاطع');
-      print('🔗 [CROSS SELL] عدد المنتجات المختارة: ${_selectedProducts.length}');
-      
+      print(
+        '🔗 [CROSS SELL] عدد المنتجات المختارة: ${_selectedProducts.length}',
+      );
+
       final List<int> productIds = _selectedProducts
           .where((product) => product.id > 0)
           .map((product) => product.id)
           .toList();
-      
+
       double crossSellPrice = _discountedPrice.value > 0
           ? _discountedPrice.value
           : _originalPrice.value;
-      
+
       final DateTime dueDate = _discountDate.value;
-      final String formattedDueDate = '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}';
-      
+      final String formattedDueDate =
+          '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}';
+
       final data = {
         'crossSells': productIds,
         'cross_sells_price': crossSellPrice,
         'cross_sells_due_date': formattedDueDate,
       };
-      
+
       print('📊 [CROSS SELL] بيانات التسويق المتقاطع:');
       print('   - Product IDs: $productIds');
       print('   - Price: $crossSellPrice');
       print('   - Due Date: $formattedDueDate');
-      
+
       return data;
     } catch (e) {
       print('⚠️ [CROSS SELL] خطأ في جلب بيانات التسويق المتقاطع: $e');
@@ -250,21 +282,27 @@ class RelatedProductsController extends GetxController {
       };
     }
   }
-  
+
   void _showErrorSnackbar(String message) {
-    Get.snackbar('خطأ', message,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2));
+    Get.snackbar(
+      'خطأ',
+      message,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
   }
-  
+
   void _showSuccessSnackbar(String message) {
-    Get.snackbar('نجاح', message,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2));
+    Get.snackbar(
+      'نجاح',
+      message,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
   }
-  
+
   @override
   void onClose() {
     dateController.dispose();

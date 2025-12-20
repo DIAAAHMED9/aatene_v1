@@ -34,7 +34,9 @@ class ControllerVendor extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(30.0),
-                        child: Image.asset("assets/images/png/aatene_logo_horiz.png"),
+                        child: Image.asset(
+                          "assets/images/png/aatene_logo_horiz.png",
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(30.0),
@@ -85,11 +87,9 @@ class ControllerVendor extends StatelessWidget {
                 ],
               ),
             ),
-            
           ],
         ),
       ),
-
     );
   }
 }

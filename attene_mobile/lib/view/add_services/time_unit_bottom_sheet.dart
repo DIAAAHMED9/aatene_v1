@@ -7,13 +7,13 @@ import 'service_controller.dart';
 
 class TimeUnitBottomSheet extends StatelessWidget {
   final bool isForDevelopment;
-  
+
   const TimeUnitBottomSheet({super.key, this.isForDevelopment = false});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ServiceController>();
-    
+
     return Container(
       height: ResponsiveDimensions.responsiveHeight(500),
       decoration: const BoxDecoration(
@@ -38,14 +38,16 @@ class TimeUnitBottomSheet extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close,
-                      size: ResponsiveDimensions.responsiveFontSize(24)),
+                  icon: Icon(
+                    Icons.close,
+                    size: ResponsiveDimensions.responsiveFontSize(24),
+                  ),
                   onPressed: () => Get.back(),
                 ),
               ],
             ),
           ),
-          
+
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: ResponsiveDimensions.responsiveWidth(16),
@@ -61,9 +63,11 @@ class TimeUnitBottomSheet extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.search,
-                        color: Colors.grey[500],
-                        size: ResponsiveDimensions.responsiveFontSize(20)),
+                    Icon(
+                      Icons.search,
+                      color: Colors.grey[500],
+                      size: ResponsiveDimensions.responsiveFontSize(20),
+                    ),
                     SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                     Expanded(
                       child: TextField(
@@ -71,7 +75,9 @@ class TimeUnitBottomSheet extends StatelessWidget {
                           hintText: 'بحث...',
                           border: InputBorder.none,
                           hintStyle: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              14,
+                            ),
                             color: Colors.grey[500],
                           ),
                         ),
@@ -82,16 +88,14 @@ class TimeUnitBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
-          
+
           Expanded(
             child: ListView.separated(
               itemCount: controller.allTimeUnits.length,
-              separatorBuilder: (context, index) => Divider(
-                height: 1,
-                color: Colors.grey[200],
-              ),
+              separatorBuilder: (context, index) =>
+                  Divider(height: 1, color: Colors.grey[200]),
               itemBuilder: (context, index) {
                 final unit = controller.allTimeUnits[index];
                 return GetBuilder<ServiceController>(
@@ -99,7 +103,7 @@ class TimeUnitBottomSheet extends StatelessWidget {
                     final isSelected = isForDevelopment
                         ? controller.developmentTimeUnit.value == unit
                         : controller.executionTimeUnit.value == unit;
-                    
+
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: ResponsiveDimensions.responsiveWidth(16),
@@ -109,7 +113,9 @@ class TimeUnitBottomSheet extends StatelessWidget {
                         unit,
                         style: TextStyle(
                           fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       trailing: isSelected
@@ -123,7 +129,9 @@ class TimeUnitBottomSheet extends StatelessWidget {
                               child: Icon(
                                 Icons.check,
                                 color: Colors.white,
-                                size: ResponsiveDimensions.responsiveFontSize(16),
+                                size: ResponsiveDimensions.responsiveFontSize(
+                                  16,
+                                ),
                               ),
                             )
                           : null,
@@ -136,12 +144,12 @@ class TimeUnitBottomSheet extends StatelessWidget {
                         Get.back();
                       },
                     );
-                  }
+                  },
                 );
               },
             ),
           ),
-          
+
           Padding(
             padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
             child: SizedBox(

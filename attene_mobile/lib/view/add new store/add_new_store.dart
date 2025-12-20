@@ -19,7 +19,8 @@ class AddNewStore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CreateStoreController controller = Get.find<CreateStoreController>();
-    final DataInitializerService dataService = Get.find<DataInitializerService>();
+    final DataInitializerService dataService =
+        Get.find<DataInitializerService>();
     final isRTL = LanguageUtils.isRTL;
     final arguments = Get.arguments;
     final int? storeId = arguments != null ? arguments['storeId'] : null;
@@ -62,7 +63,7 @@ class AddNewStore extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextWithStar(text: "اسم المتجر", ),
+              TextWithStar(text: "اسم المتجر"),
               SizedBox(height: 5),
               TextFiledAatene(
                 heightTextFiled: 50,
@@ -96,7 +97,7 @@ class AddNewStore extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
-              TextWithStar(text: "شعار المتجر", ),
+              TextWithStar(text: "شعار المتجر"),
 
               SizedBox(height: 5),
               Text(
@@ -109,7 +110,7 @@ class AddNewStore extends StatelessWidget {
 
               SizedBox(height: 20),
 
-              TextWithStar(text: "صور الغلاف", ),
+              TextWithStar(text: "صور الغلاف"),
 
               SizedBox(height: 5),
               Text(
@@ -131,7 +132,7 @@ class AddNewStore extends StatelessWidget {
                 controller: controller.descriptionController,
               ),
               SizedBox(height: 15),
-              TextWithStar(text: "البريد الالكتروني", ),
+              TextWithStar(text: "البريد الالكتروني"),
               SizedBox(height: 5),
               TextFiledAatene(
                 heightTextFiled: 50,
@@ -195,7 +196,8 @@ class AddNewStore extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Obx(() {
-                            final districtName = controller.selectedDistrictName.value;
+                            final districtName =
+                                controller.selectedDistrictName.value;
                             return Text(
                               districtName,
                               style: TextStyle(
@@ -232,7 +234,8 @@ class AddNewStore extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Obx(() {
-                            final currencyName = controller.selectedCurrencyName.value;
+                            final currencyName =
+                                controller.selectedCurrencyName.value;
                             return Text(
                               currencyName,
                               style: TextStyle(
@@ -931,7 +934,7 @@ class AddNewStore extends StatelessWidget {
           if (await _validateForm(controller)) {
             if (controller.isEditMode.value) {
               final success = await controller.updateStoreBasicInfo();
-              if (success??false) {
+              if (success ?? false) {
                 Get.to(() => AddShippingMethod());
               }
             } else {

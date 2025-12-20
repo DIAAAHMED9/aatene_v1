@@ -10,7 +10,8 @@ class KeywordManagementScreen extends StatefulWidget {
   const KeywordManagementScreen({super.key});
 
   @override
-  State<KeywordManagementScreen> createState() => _KeywordManagementScreenState();
+  State<KeywordManagementScreen> createState() =>
+      _KeywordManagementScreenState();
 }
 
 class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
@@ -27,14 +28,13 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
   void _initializeScreen() async {
     try {
       controller = Get.put(KeywordController());
-      
+
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await controller.loadStoresOnOpen();
         setState(() {
           _isInitialized = true;
         });
       });
-      
     } catch (e) {
       setState(() {
         _errorMessage = 'خطأ في تحميل البيانات: $e';
@@ -49,7 +49,6 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
 
     if (!_isInitialized) {
       return Scaffold(
-      
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -71,7 +70,6 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
 
     if (_errorMessage != null) {
       return Scaffold(
-     
         body: Center(
           child: Padding(
             padding: EdgeInsets.all(ResponsiveDimensions.f(20)),
@@ -110,7 +108,7 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-  
+
       body: SafeArea(
         child: Column(
           children: [

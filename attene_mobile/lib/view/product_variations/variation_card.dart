@@ -41,9 +41,11 @@ class _VariationCardState extends State<VariationCard> {
   void _initializeData() {
     for (final entry in widget.variation.attributes.entries) {
       _selectedValues[entry.key] = entry.value;
-      _attributeControllers[entry.key] = TextEditingController(text: entry.value);
+      _attributeControllers[entry.key] = TextEditingController(
+        text: entry.value,
+      );
     }
-    
+
     _priceController.text = widget.variation.price.value.toString();
     _skuController.text = widget.variation.sku.value;
     _stockController.text = widget.variation.stock.value.toString();
@@ -65,7 +67,7 @@ class _VariationCardState extends State<VariationCard> {
     final controller = widget.controller;
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Card(
       color: Colors.white,
       elevation: 2,
@@ -102,7 +104,7 @@ class _VariationCardState extends State<VariationCard> {
                       widget.variation.isActive.value ? 'مفعل' : 'غير مفعل',
                       style: TextStyle(
                         fontSize: ResponsiveDimensions.f(14),
-                        color:Colors.black,
+                        color: Colors.black,
                         fontWeight: FontWeight.w300,
                       ),
                     ),
@@ -120,7 +122,7 @@ class _VariationCardState extends State<VariationCard> {
                     ),
                   ],
                 ),
-                
+
                 IconButton(
                   icon: Container(
                     padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
@@ -138,16 +140,16 @@ class _VariationCardState extends State<VariationCard> {
                 ),
               ],
             ),
-            
+
             if (controller.selectedAttributes.isNotEmpty)
               _buildAttributesSection(controller, isSmallScreen),
-            
+
             SizedBox(height: ResponsiveDimensions.f(16)),
-            
+
             _buildPriceSection(),
-            
+
             SizedBox(height: ResponsiveDimensions.f(16)),
-            
+
             _buildImagesSection(),
           ],
         ),
@@ -162,24 +164,24 @@ class _VariationCardState extends State<VariationCard> {
     if (isSmallScreen) {
       return _buildSmallScreenAttributes(controller);
     }
-    
+
     return _buildLargeScreenAttributes(controller);
   }
 
   Widget _buildSmallScreenAttributes(ProductVariationController controller) {
     List<List<ProductAttribute>> attributePairs = [];
-    
+
     for (int i = 0; i < controller.selectedAttributes.length; i += 2) {
       if (i + 1 < controller.selectedAttributes.length) {
         attributePairs.add([
           controller.selectedAttributes[i],
-          controller.selectedAttributes[i + 1]
+          controller.selectedAttributes[i + 1],
         ]);
       } else {
         attributePairs.add([controller.selectedAttributes[i]]);
       }
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -192,7 +194,7 @@ class _VariationCardState extends State<VariationCard> {
           ),
         ),
         SizedBox(height: ResponsiveDimensions.f(12)),
-        
+
         ...attributePairs.map((pair) {
           return Column(
             children: [
@@ -202,17 +204,21 @@ class _VariationCardState extends State<VariationCard> {
                     child: _buildAttributeField(
                       pair[0],
                       _selectedValues[pair[0].name] ??
-                          (pair[0].values.isNotEmpty ? pair[0].values.first.value : ''),
+                          (pair[0].values.isNotEmpty
+                              ? pair[0].values.first.value
+                              : ''),
                     ),
                   ),
-                  
+
                   if (pair.length > 1) ...[
                     SizedBox(width: ResponsiveDimensions.f(12)),
                     Expanded(
                       child: _buildAttributeField(
                         pair[1],
                         _selectedValues[pair[1].name] ??
-                            (pair[1].values.isNotEmpty ? pair[1].values.first.value : ''),
+                            (pair[1].values.isNotEmpty
+                                ? pair[1].values.first.value
+                                : ''),
                       ),
                     ),
                   ],
@@ -240,17 +246,20 @@ class _VariationCardState extends State<VariationCard> {
           ),
         ),
         SizedBox(height: ResponsiveDimensions.f(12)),
-        
+
         Wrap(
           spacing: ResponsiveDimensions.f(12),
           runSpacing: ResponsiveDimensions.f(12),
           children: controller.selectedAttributes.map((attribute) {
-            final selectedValue = _selectedValues[attribute.name] ??
-                (attribute.values.isNotEmpty ? attribute.values.first.value : '');
-            
+            final selectedValue =
+                _selectedValues[attribute.name] ??
+                (attribute.values.isNotEmpty
+                    ? attribute.values.first.value
+                    : '');
+
             final attributeCount = controller.selectedAttributes.length;
             double itemWidth;
-            
+
             if (attributeCount == 1) {
               itemWidth = double.infinity;
             } else if (attributeCount == 2) {
@@ -258,7 +267,7 @@ class _VariationCardState extends State<VariationCard> {
             } else {
               itemWidth = (MediaQuery.of(context).size.width - 60) / 3;
             }
-            
+
             return SizedBox(
               width: itemWidth,
               child: _buildAttributeField(attribute, selectedValue),
@@ -315,7 +324,7 @@ class _VariationCardState extends State<VariationCard> {
                         value.value,
                         style: TextStyle(
                           fontSize: ResponsiveDimensions.f(13),
-                          color: Colors.black
+                          color: Colors.black,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -339,9 +348,7 @@ class _VariationCardState extends State<VariationCard> {
               ),
               border: InputBorder.none,
               hintText: 'اختر ${attribute.name}',
-              hintStyle: TextStyle(
-                fontSize: ResponsiveDimensions.f(13),
-              ),
+              hintStyle: TextStyle(fontSize: ResponsiveDimensions.f(13)),
             ),
             icon: Icon(
               Icons.arrow_drop_down,
@@ -349,9 +356,7 @@ class _VariationCardState extends State<VariationCard> {
               size: ResponsiveDimensions.f(20),
             ),
             isExpanded: true,
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(13),
-            ),
+            style: TextStyle(fontSize: ResponsiveDimensions.f(13)),
           ),
         ),
       ],
@@ -379,18 +384,14 @@ class _VariationCardState extends State<VariationCard> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide(color: Colors.grey[300]!),
-              
             ),
-                focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-                borderSide: BorderSide(
-                  color:  AppColors.primary300,
-                  width:  1.0,
-                ),
-              ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+              borderSide: BorderSide(color: AppColors.primary300, width: 1.0),
+            ),
             suffixText: '₪',
           ),
-          
+
           onChanged: (value) {
             final price = double.tryParse(value) ?? 0.0;
             widget.variation.price.value = price;
@@ -501,7 +502,7 @@ class _VariationCardState extends State<VariationCard> {
           ],
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
-        
+
         if (widget.variation.images.isNotEmpty)
           Column(
             children: [
@@ -519,35 +520,34 @@ class _VariationCardState extends State<VariationCard> {
               SizedBox(height: ResponsiveDimensions.f(12)),
             ],
           ),
-         OutlinedButton.icon(
-                onPressed: () => _addImageFromMediaLibrary(),
-                style: OutlinedButton.styleFrom(
-                  backgroundColor:AppColors.primary100 ,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveDimensions.f(12),
-                    vertical: ResponsiveDimensions.f(10),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    
-                  ),
-                  side: BorderSide(color:Colors.transparent, width: 1.5),
-                ),
-                icon: Icon(
-                  Icons.image_outlined,
-                  color: AppColors.primary400,
-                  size: ResponsiveDimensions.f(18),
-                ),
-                label: Text(
-                  'قم برفع الصور',
-                  style: TextStyle(
-                    color: AppColors.primary400,
-                    fontSize: ResponsiveDimensions.f(13),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-        
+        OutlinedButton.icon(
+          onPressed: () => _addImageFromMediaLibrary(),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: AppColors.primary100,
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveDimensions.f(12),
+              vertical: ResponsiveDimensions.f(10),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            side: BorderSide(color: Colors.transparent, width: 1.5),
+          ),
+          icon: Icon(
+            Icons.image_outlined,
+            color: AppColors.primary400,
+            size: ResponsiveDimensions.f(18),
+          ),
+          label: Text(
+            'قم برفع الصور',
+            style: TextStyle(
+              color: AppColors.primary400,
+              fontSize: ResponsiveDimensions.f(13),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+
         if (widget.variation.images.isEmpty)
           Padding(
             padding: EdgeInsets.only(top: ResponsiveDimensions.f(8)),
@@ -587,7 +587,7 @@ class _VariationCardState extends State<VariationCard> {
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
+                                loadingProgress.expectedTotalBytes!
                           : null,
                     ),
                   );
@@ -615,18 +615,14 @@ class _VariationCardState extends State<VariationCard> {
                   color: Colors.red,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.close,
-                  size: 14,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.close, size: 14, color: Colors.white),
               ),
               onPressed: () {
                 setState(() {
                   widget.variation.images.remove(imageUrl);
                   widget.controller.saveCurrentState();
                 });
-                
+
                 Get.snackbar(
                   'تم الحذف',
                   'تم حذف الصورة',
@@ -645,12 +641,12 @@ class _VariationCardState extends State<VariationCard> {
   Future<void> _addImageFromMediaLibrary() async {
     try {
       _mediaController.clearSelection();
-      
+
       final List<MediaItem>? selectedMedia = await Get.to<List<MediaItem>>(
         () => MediaLibraryScreen(isSelectionMode: true),
-        arguments: {'maxSelection': 10 - widget.variation.images.length}
+        arguments: {'maxSelection': 10 - widget.variation.images.length},
       );
-      
+
       if (selectedMedia != null && selectedMedia.isNotEmpty) {
         final remainingSlots = 10 - widget.variation.images.length;
         if (selectedMedia.length > remainingSlots) {
@@ -662,7 +658,7 @@ class _VariationCardState extends State<VariationCard> {
           );
           return;
         }
-        
+
         for (var media in selectedMedia) {
           final mediaUrl = _mediaController.getMediaDisplayUrl(media);
           if (mediaUrl.isNotEmpty && mediaUrl.startsWith('http')) {
@@ -673,10 +669,10 @@ class _VariationCardState extends State<VariationCard> {
             await _uploadLocalImage(media);
           }
         }
-        
+
         widget.controller.saveCurrentState();
         setState(() {});
-        
+
         Get.snackbar(
           'نجاح',
           'تم إضافة ${selectedMedia.length} صورة',
@@ -699,7 +695,7 @@ class _VariationCardState extends State<VariationCard> {
   Future<void> _takePhotoFromCamera() async {
     try {
       _mediaController.clearSelection();
-      
+
       if (widget.variation.images.length >= 10) {
         Get.snackbar(
           'تنبيه',
@@ -709,26 +705,26 @@ class _VariationCardState extends State<VariationCard> {
         );
         return;
       }
-      
+
       await _mediaController.takePhoto();
-      
+
       await Future.delayed(Duration(seconds: 2));
-      
+
       if (_mediaController.uploadedMediaItems.isNotEmpty) {
         final uploadedItems = _mediaController.uploadedMediaItems
             .where((item) => item.type == MediaType.image)
             .toList();
-        
+
         if (uploadedItems.isNotEmpty) {
           final latestMedia = uploadedItems.last;
           final mediaUrl = _mediaController.getMediaDisplayUrl(latestMedia);
-          
+
           if (mediaUrl.isNotEmpty && mediaUrl.startsWith('http')) {
             if (!widget.variation.images.contains(mediaUrl)) {
               widget.variation.images.add(mediaUrl);
               widget.controller.saveCurrentState();
               setState(() {});
-              
+
               Get.snackbar(
                 'نجاح',
                 'تم إضافة الصورة الملتقطة',
@@ -754,16 +750,14 @@ class _VariationCardState extends State<VariationCard> {
   Future<void> _uploadLocalImage(MediaItem media) async {
     try {
       Get.dialog(
-        Center(
-          child: CircularProgressIndicator(),
-        ),
+        Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
-      
+
       await Future.delayed(Duration(seconds: 3));
-      
+
       Get.back();
-      
+
       Get.snackbar(
         'ملاحظة',
         'يجب رفع الصور المحلية أولاً من خلال مكتبة الوسائط',
@@ -789,10 +783,7 @@ class _VariationCardState extends State<VariationCard> {
       AlertDialog(
         title: Text(
           'تأكيد الحذف',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
         ),
         content: Text(
           'هل أنت متأكد من حذف هذا الاختلاف؟',
@@ -801,20 +792,14 @@ class _VariationCardState extends State<VariationCard> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(color: Colors.grey[700]),
-            ),
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[700])),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               widget.controller.removeVariation(widget.variation);
             },
-            child: Text(
-              'حذف',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: Text('حذف', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

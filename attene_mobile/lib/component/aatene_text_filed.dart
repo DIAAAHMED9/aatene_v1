@@ -64,7 +64,7 @@ class TextFiledAatene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasError = errorText != null && errorText!.isNotEmpty;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -89,10 +89,12 @@ class TextFiledAatene extends StatelessWidget {
             focusNode: focusNode,
             validator: validator,
             autovalidateMode: autovalidateMode,
-            style: style ?? TextStyle(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.black87,
-            ),
+            style:
+                style ??
+                TextStyle(
+                  fontSize: ResponsiveDimensions.f(14),
+                  color: Colors.black87,
+                ),
             decoration: InputDecoration(
               hintText: hintText,
               labelText: labelText,
@@ -136,10 +138,12 @@ class TextFiledAatene extends StatelessWidget {
                 horizontal: ResponsiveDimensions.w(20),
                 vertical: ResponsiveDimensions.h(16),
               ),
-              hintStyle: hintStyle ?? TextStyle(
-                color: Colors.grey[500],
-                fontSize: ResponsiveDimensions.f(14),
-              ),
+              hintStyle:
+                  hintStyle ??
+                  TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: ResponsiveDimensions.f(14),
+                  ),
               errorText: hasError ? errorText : null,
               errorStyle: TextStyle(
                 color: Colors.red,

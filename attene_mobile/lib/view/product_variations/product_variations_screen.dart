@@ -32,10 +32,10 @@ class ProductVariationsScreen extends StatelessWidget {
                       children: [
                         _buildHeader(),
                         SizedBox(height: ResponsiveDimensions.h(24)),
-                        
+
                         VariationToggleWidget(),
                         SizedBox(height: ResponsiveDimensions.h(15)),
-                        
+
                         GetBuilder<ProductVariationController>(
                           id: 'variations',
                           builder: (_) {
@@ -48,7 +48,6 @@ class ProductVariationsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                
               ],
             ),
           ),
@@ -65,12 +64,7 @@ class ProductVariationsScreen extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey[300]!,
-            width: 1,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -176,9 +170,9 @@ class ProductVariationsScreen extends StatelessWidget {
       children: [
         AttributesManagementWidget(),
         SizedBox(height: ResponsiveDimensions.h(20)),
-        
+
         SelectedAttributesWidget(),
-        
+
         SizedBox(height: ResponsiveDimensions.h(32)),
         VariationsListWidget(),
       ],
@@ -187,14 +181,12 @@ class ProductVariationsScreen extends StatelessWidget {
 
   Widget _buildBottomActions(ProductVariationController controller) {
     final productController = Get.find<ProductCentralController>();
-    
+
     return Container(
       padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.grey[300]!),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey[300]!)),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -231,7 +223,8 @@ class ProductVariationsScreen extends StatelessWidget {
             child: GetBuilder<ProductVariationController>(
               builder: (_) {
                 return ElevatedButton(
-                  onPressed: () => _saveVariationsAndContinue(controller, productController),
+                  onPressed: () =>
+                      _saveVariationsAndContinue(controller, productController),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary400,
                     foregroundColor: Colors.white,
@@ -287,14 +280,17 @@ class ProductVariationsScreen extends StatelessWidget {
     }
 
     final variationsData = controller.getVariationsData();
-    final variationsList = (variationsData['variations'] as List<Map<String, dynamic>> ?) ?? [];
-    
+    final variationsList =
+        (variationsData['variations'] as List<Map<String, dynamic>>?) ?? [];
+
     productController.addVariations(variationsList);
-    
+
     controller.saveCurrentState();
 
     print('✅ [VARIATIONS SAVED]: ${variationsList.length} اختلاف محفوظ');
-    print('✅ [SELECTED SECTION]: ${productController.selectedSection.value?.name}');
+    print(
+      '✅ [SELECTED SECTION]: ${productController.selectedSection.value?.name}',
+    );
 
     Get.snackbar(
       'نجاح',

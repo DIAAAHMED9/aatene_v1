@@ -24,13 +24,12 @@ class PriceScreen extends StatelessWidget {
         children: [
           _buildPriceField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(24)),
-          
+
           _buildExecutionTimeField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(24)),
-          
+
           _buildDevelopmentsSection(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(40)),
-          
         ],
       ),
     );
@@ -53,10 +52,7 @@ class PriceScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text(
-                  '*',
-                  style: TextStyle(color: Colors.red),
-                ),
+                const Text('*', style: TextStyle(color: Colors.red)),
               ],
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
@@ -75,33 +71,41 @@ class PriceScreen extends StatelessWidget {
                   Expanded(
                     child: TextField(
                       onChanged: controller.validatePrice,
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       decoration: InputDecoration(
                         hintText: '0.00',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),
-                        suffixIcon:  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveDimensions.responsiveWidth(16),
-                      vertical: ResponsiveDimensions.responsiveHeight(8),
-                    ),
-              
-                    child: Text(
-                      '₪',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                      ),
-                      controller: TextEditingController(text: controller.price.value)
-                        ..selection = TextSelection.collapsed(
-                          offset: controller.price.value.length,
+                        contentPadding: EdgeInsets.all(
+                          ResponsiveDimensions.responsiveWidth(12),
                         ),
+                        suffixIcon: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveDimensions.responsiveWidth(
+                              16,
+                            ),
+                            vertical: ResponsiveDimensions.responsiveHeight(8),
+                          ),
+
+                          child: Text(
+                            '₪',
+                            style: TextStyle(
+                              fontSize: ResponsiveDimensions.responsiveFontSize(
+                                16,
+                              ),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      controller:
+                          TextEditingController(text: controller.price.value)
+                            ..selection = TextSelection.collapsed(
+                              offset: controller.price.value.length,
+                            ),
                     ),
                   ),
-                 
                 ],
               ),
             ),
@@ -119,10 +123,9 @@ class PriceScreen extends StatelessWidget {
                   ),
                 ),
               ),
-       
           ],
         );
-      }
+      },
     );
   }
 
@@ -143,10 +146,7 @@ class PriceScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text(
-                  '*',
-                  style: TextStyle(color: Colors.red),
-                ),
+                const Text('*', style: TextStyle(color: Colors.red)),
               ],
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
@@ -170,25 +170,28 @@ class PriceScreen extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'مثال: 3',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),
-                      ),
-                      controller: TextEditingController(text: controller.executionTimeValue.value)
-                        ..selection = TextSelection.collapsed(
-                          offset: controller.executionTimeValue.value.length,
+                        contentPadding: EdgeInsets.all(
+                          ResponsiveDimensions.responsiveWidth(12),
                         ),
+                      ),
+                      controller:
+                          TextEditingController(
+                              text: controller.executionTimeValue.value,
+                            )
+                            ..selection = TextSelection.collapsed(
+                              offset:
+                                  controller.executionTimeValue.value.length,
+                            ),
                     ),
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-                
+
                 Expanded(
                   flex: 1,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 1,
-                      ),
+                      border: Border.all(color: Colors.grey[300]!, width: 1),
                       borderRadius: BorderRadius.circular(25),
                     ),
                     child: InkWell(
@@ -200,7 +203,9 @@ class PriceScreen extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),
+                        padding: EdgeInsets.all(
+                          ResponsiveDimensions.responsiveWidth(12),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -208,13 +213,18 @@ class PriceScreen extends StatelessWidget {
                               child: Text(
                                 controller.executionTimeUnit.value,
                                 style: TextStyle(
-                                  fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                                  fontSize:
+                                      ResponsiveDimensions.responsiveFontSize(
+                                        14,
+                                      ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
-                            Icon(Icons.arrow_drop_down,
-                                size: ResponsiveDimensions.responsiveFontSize(24)),
+                            Icon(
+                              Icons.arrow_drop_down,
+                              size: ResponsiveDimensions.responsiveFontSize(24),
+                            ),
                           ],
                         ),
                       ),
@@ -237,16 +247,15 @@ class PriceScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
           ],
         );
-      }
+      },
     );
   }
 
   Widget _buildDevelopmentsSection() {
     final controller = Get.find<ServiceController>();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -262,18 +271,17 @@ class PriceScreen extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-               'تطويرات الخدمة اختيارية بالكامل، ولا يجوز إلزام المشتري بطلبها. يُرجى التعرف على كيفية استخدامها بالشكل الصحيح.',
+                'تطويرات الخدمة اختيارية بالكامل، ولا يجوز إلزام المشتري بطلبها. يُرجى التعرف على كيفية استخدامها بالشكل الصحيح.',
                 style: TextStyle(
                   fontSize: ResponsiveDimensions.responsiveFontSize(11),
-                  color: Colors.grey.shade500
-              
+                  color: Colors.grey.shade500,
                 ),
               ),
             ),
           ],
         ),
         SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
-        
+
         InkWell(
           onTap: () {
             Get.bottomSheet(
@@ -292,7 +300,7 @@ class PriceScreen extends StatelessWidget {
                   height: ResponsiveDimensions.responsiveWidth(24),
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.primary400),
-                    borderRadius: BorderRadius.circular(8)
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.add,
@@ -313,7 +321,7 @@ class PriceScreen extends StatelessWidget {
             ),
           ),
         ),
-        
+
         SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
         GetBuilder<ServiceController>(
           id: 'developments_list',
@@ -331,7 +339,10 @@ class PriceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDevelopmentItem(Development development, ServiceController controller) {
+  Widget _buildDevelopmentItem(
+    Development development,
+    ServiceController controller,
+  ) {
     return Dismissible(
       key: Key(development.id.toString()),
       direction: DismissDirection.endToStart,
@@ -341,7 +352,9 @@ class PriceScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: ResponsiveDimensions.responsiveWidth(20)),
+        padding: EdgeInsets.only(
+          right: ResponsiveDimensions.responsiveWidth(20),
+        ),
         child: Icon(
           Icons.delete,
           color: Colors.red[400],
@@ -362,7 +375,9 @@ class PriceScreen extends StatelessWidget {
         controller.removeDevelopment(development.id);
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: ResponsiveDimensions.responsiveHeight(12)),
+        margin: EdgeInsets.only(
+          bottom: ResponsiveDimensions.responsiveHeight(12),
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -382,13 +397,12 @@ class PriceScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                 Icon(
-                      Icons.menu,
-                      size: ResponsiveDimensions.responsiveFontSize(19),
-                      color: AppColors.primary500,
-                      
-                    ),
-                  
+                  Icon(
+                    Icons.menu,
+                    size: ResponsiveDimensions.responsiveFontSize(19),
+                    color: AppColors.primary500,
+                  ),
+
                   SizedBox(width: ResponsiveDimensions.responsiveWidth(12)),
                   Expanded(
                     child: Column(
@@ -397,32 +411,39 @@ class PriceScreen extends StatelessWidget {
                         Text(
                           development.title,
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              14,
+                            ),
                             fontWeight: FontWeight.w600,
                             color: Colors.grey[800],
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(4),
+                        ),
                         Row(
                           children: [
-                        Text(
-                                '${development.price} ₪',
-                                style: TextStyle(
-                                  fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                                  fontWeight: FontWeight.w500,
-                                ),
+                            Text(
+                              '${development.price} ₪',
+                              style: TextStyle(
+                                fontSize:
+                                    ResponsiveDimensions.responsiveFontSize(12),
+                                fontWeight: FontWeight.w500,
                               ),
-                            
-                            SizedBox(width: ResponsiveDimensions.responsiveWidth(13)),
-                        
-                             Text(
-                                '${development.executionTime} ${development.timeUnit}',
-                                style: TextStyle(
-                                  fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                                ),
-                              
+                            ),
+
+                            SizedBox(
+                              width: ResponsiveDimensions.responsiveWidth(13),
+                            ),
+
+                            Text(
+                              '${development.executionTime} ${development.timeUnit}',
+                              style: TextStyle(
+                                fontSize:
+                                    ResponsiveDimensions.responsiveFontSize(12),
+                              ),
                             ),
                           ],
                         ),
@@ -514,11 +535,15 @@ class PriceScreen extends StatelessWidget {
                           size: ResponsiveDimensions.responsiveFontSize(20),
                           color: Colors.grey[600],
                         ),
-                        SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
+                        SizedBox(
+                          width: ResponsiveDimensions.responsiveWidth(8),
+                        ),
                         Text(
                           'السابق',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(16),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              16,
+                            ),
                             fontWeight: FontWeight.w600,
                             color: Colors.grey[600],
                           ),
@@ -574,7 +599,7 @@ class PriceScreen extends StatelessWidget {
             ),
           ],
         );
-      }
+      },
     );
   }
 }

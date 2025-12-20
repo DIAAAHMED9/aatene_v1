@@ -20,10 +20,7 @@ class ChatInterested extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
         title: Row(
           children: [
@@ -55,7 +52,8 @@ class ChatInterested extends StatelessWidget {
         actions: [
           GetBuilder<ChatController>(
             builder: (controller) {
-              if (controller.connectionStatus.value == ConnectionStatus.disconnected ||
+              if (controller.connectionStatus.value ==
+                      ConnectionStatus.disconnected ||
                   controller.connectionStatus.value == ConnectionStatus.error) {
                 return IconButton(
                   icon: const Icon(Icons.refresh, color: Colors.blue),
@@ -77,10 +75,10 @@ class ChatInterested extends StatelessWidget {
               children: [
                 _buildSearchBar(controller),
                 const SizedBox(height: 10),
-                
+
                 _buildTabButtons(controller),
                 const Divider(color: Colors.grey, height: 15),
-                
+
                 Expanded(
                   child: controller.interestedConversations.isEmpty
                       ? _buildEmptyState()
@@ -117,9 +115,7 @@ class ChatInterested extends StatelessWidget {
             ),
             onPressed: () {},
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(40.0)),
         ),
       ),
     );
@@ -147,11 +143,7 @@ class ChatInterested extends StatelessWidget {
           },
         ),
         const SizedBox(width: 10),
-        _buildTabButton(
-          label: "المهتمين",
-          isActive: true,
-          onTap: () {},
-        ),
+        _buildTabButton(label: "المهتمين", isActive: true, onTap: () {}),
       ],
     );
   }
@@ -188,26 +180,16 @@ class ChatInterested extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.star_outline,
-            size: 80,
-            color: Colors.grey.shade300,
-          ),
+          Icon(Icons.star_outline, size: 80, color: Colors.grey.shade300),
           const SizedBox(height: 16),
           const Text(
             'لا توجد محادثات مهتم بها',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.grey, fontSize: 16),
           ),
           const SizedBox(height: 8),
           const Text(
             'يمكنك متابعة المحادثات المهمة لك',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey, fontSize: 14),
           ),
         ],
       ),
@@ -232,7 +214,10 @@ class ChatInterested extends StatelessWidget {
     );
   }
 
-  Widget _buildInterestedItem(ChatConversation conversation, ChatController controller) {
+  Widget _buildInterestedItem(
+    ChatConversation conversation,
+    ChatController controller,
+  ) {
     return MaterialButton(
       onPressed: () {
         controller.setCurrentConversation(conversation);
@@ -246,7 +231,7 @@ class ChatInterested extends StatelessWidget {
         children: [
           _buildUserAvatar(conversation),
           const SizedBox(width: 12),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,20 +263,14 @@ class ChatInterested extends StatelessWidget {
                   conversation.lastMessage ?? 'لا توجد رسائل',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ],
             ),
           ),
-          
+
           IconButton(
-            icon: Icon(
-              Icons.star,
-              color: Colors.amber.shade700,
-            ),
+            icon: Icon(Icons.star, color: Colors.amber.shade700),
             onPressed: () {
               controller.toggleInterest(conversation.id, false);
             },
@@ -317,10 +296,7 @@ class ChatInterested extends StatelessWidget {
           decoration: BoxDecoration(
             color: conversation.isOnline ? Colors.green : Colors.grey,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
+            border: Border.all(color: Colors.white, width: 2),
           ),
         ),
       ],
@@ -329,10 +305,10 @@ class ChatInterested extends StatelessWidget {
 
   String _formatTime(DateTime? time) {
     if (time == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(time);
-    
+
     if (difference.inSeconds < 60) {
       return 'الآن';
     } else if (difference.inMinutes < 60) {

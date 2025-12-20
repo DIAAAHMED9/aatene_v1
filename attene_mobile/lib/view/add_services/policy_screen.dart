@@ -25,7 +25,7 @@ class PolicyScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildHeader() {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -55,7 +55,7 @@ class PolicyScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildCopyrightSection() {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -74,7 +74,7 @@ class PolicyScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-          
+
           Text(
             'بإرسال خدمتك، تُقرّ بملكيتك أو حقوقك في المواد المنشورة، وأن نشر هذه المواد لا ينتهك حقوق أي طرف ثالث. كما تُقرّ بفهمك أن مشروعك سيخضع للمراجعة والتقييم من قِبل المنصة لضمان استيفائه للمتطلبات.',
             style: TextStyle(
@@ -84,7 +84,7 @@ class PolicyScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.right,
           ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
           // GetBuilder<ServiceController>(
           //   id: 'copyright_section',
@@ -120,7 +120,7 @@ class PolicyScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildTermsSection() {
     return Padding(
       padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
@@ -136,7 +136,7 @@ class PolicyScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-          
+
           Text(
             'يوافق المستخدم على شروط استخدام المنصة بما في ذلك الالتزام بمعايير الجودة والاستجابة للعملاء في الأوقات المحددة. يحق للمنصة إزالة أي خدمة تنتهك الشروط دون سابق إنذار.',
             style: TextStyle(
@@ -146,9 +146,9 @@ class PolicyScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.right,
           ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-          
+
           GetBuilder<ServiceController>(
             id: 'terms_section',
             builder: (controller) {
@@ -173,11 +173,15 @@ class PolicyScreen extends StatelessWidget {
                         Text(
                           'أفهم وأوافق على شروط خدمة المنصة، بما في ذلك اتفاقية المستخدم',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              14,
+                            ),
                             color: Colors.grey[800],
                           ),
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(4),
+                        ),
                         InkWell(
                           onTap: () {
                             Get.snackbar(
@@ -189,12 +193,15 @@ class PolicyScreen extends StatelessWidget {
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                              vertical: ResponsiveDimensions.responsiveHeight(4),
+                              vertical: ResponsiveDimensions.responsiveHeight(
+                                4,
+                              ),
                             ),
                             child: Text(
                               'اتفاقية المستخدم وسياسة الخصوصية',
                               style: TextStyle(
-                                fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                                fontSize:
+                                    ResponsiveDimensions.responsiveFontSize(14),
                                 color: AppColors.primary400,
                                 fontWeight: FontWeight.w500,
                                 decoration: TextDecoration.underline,
@@ -213,7 +220,7 @@ class PolicyScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildPrivacySection() {
     return Padding(
       padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
@@ -229,7 +236,7 @@ class PolicyScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-          
+
           Text(
             'ستكون الخدمة مرئية للعامة في نتائج البحث. سيتم جمع ومعالجة البيانات المقدمة وفقًا لسياسة الخصوصية. يتحمل المستخدم المسؤولية الكاملة عن أي معلومات شخصية يشاركها في وصف الخدمة.',
             style: TextStyle(
@@ -239,9 +246,9 @@ class PolicyScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.right,
           ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
-          
+
           GetBuilder<ServiceController>(
             id: 'privacy_section',
             builder: (controller) {
@@ -266,11 +273,15 @@ class PolicyScreen extends StatelessWidget {
                         Text(
                           'من خلال إرسال هذه الخدمة وتفعيلها، أفهم أنها ستظهر في نتائج البحث للعامة وستكون مرئية للمستخدمين الآخرين.',
                           style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(
+                              14,
+                            ),
                             color: Colors.grey[800],
                           ),
                         ),
-                        SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
+                        SizedBox(
+                          height: ResponsiveDimensions.responsiveHeight(4),
+                        ),
                         InkWell(
                           onTap: () {
                             Get.snackbar(
@@ -283,7 +294,9 @@ class PolicyScreen extends StatelessWidget {
                           child: Text(
                             'قراءة سياسة الخصوصية الكاملة',
                             style: TextStyle(
-                              fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                              fontSize: ResponsiveDimensions.responsiveFontSize(
+                                14,
+                              ),
                               color: AppColors.primary400,
                               fontWeight: FontWeight.w500,
                               decoration: TextDecoration.underline,
@@ -301,7 +314,7 @@ class PolicyScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildFooter() {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -332,30 +345,46 @@ class PolicyScreen extends StatelessWidget {
                   ),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
                   Container(
-                    padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),
+                    padding: EdgeInsets.all(
+                      ResponsiveDimensions.responsiveWidth(12),
+                    ),
                     decoration: BoxDecoration(
-                      color: controller.allPoliciesAccepted ? Colors.green[50] : Colors.orange[50],
+                      color: controller.allPoliciesAccepted
+                          ? Colors.green[50]
+                          : Colors.orange[50],
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: controller.allPoliciesAccepted ? Colors.green[200]! : Colors.orange[200]!,
+                        color: controller.allPoliciesAccepted
+                            ? Colors.green[200]!
+                            : Colors.orange[200]!,
                       ),
                     ),
                     child: Row(
                       children: [
                         Icon(
-                          controller.allPoliciesAccepted ? Icons.check_circle : Icons.warning,
-                          color: controller.allPoliciesAccepted ? Colors.green : Colors.orange,
+                          controller.allPoliciesAccepted
+                              ? Icons.check_circle
+                              : Icons.warning,
+                          color: controller.allPoliciesAccepted
+                              ? Colors.green
+                              : Colors.orange,
                           size: ResponsiveDimensions.responsiveFontSize(20),
                         ),
-                        SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
+                        SizedBox(
+                          width: ResponsiveDimensions.responsiveWidth(8),
+                        ),
                         Expanded(
                           child: Text(
                             controller.allPoliciesAccepted
                                 ? '✓ جميع السياسات موافق عليها - يمكنك نشر الخدمة'
                                 : 'لم تتم الموافقة على جميع السياسات بعد',
                             style: TextStyle(
-                              fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                              color: controller.allPoliciesAccepted ? Colors.green[800] : Colors.orange[800],
+                              fontSize: ResponsiveDimensions.responsiveFontSize(
+                                14,
+                              ),
+                              color: controller.allPoliciesAccepted
+                                  ? Colors.green[800]
+                                  : Colors.orange[800],
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -367,7 +396,7 @@ class PolicyScreen extends StatelessWidget {
               );
             },
           ),
-          
+
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
           Container(
             padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),

@@ -281,10 +281,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
 
                     Text(
                       'مدة التنفيذ: ${service.executeCount} ${_convertTimeUnit(service.executeType)}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
 
@@ -300,10 +297,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                         spacing: 8,
                         runSpacing: 4,
                         children: service.specialties
-                            .map((specialty) => Chip(
-                                  label: Text(specialty),
-                                  backgroundColor: AppColors.primary50,
-                                ))
+                            .map(
+                              (specialty) => Chip(
+                                label: Text(specialty),
+                                backgroundColor: AppColors.primary50,
+                              ),
+                            )
                             .toList(),
                       ),
                       const SizedBox(height: 16),
@@ -321,10 +320,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                         spacing: 8,
                         runSpacing: 4,
                         children: service.tags
-                            .map((tag) => Chip(
-                                  label: Text(tag),
-                                  backgroundColor: Colors.grey[200],
-                                ))
+                            .map(
+                              (tag) => Chip(
+                                label: Text(tag),
+                                backgroundColor: Colors.grey[200],
+                              ),
+                            )
                             .toList(),
                       ),
                       const SizedBox(height: 16),
@@ -354,13 +355,16 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ...service.extras.map((extra) => ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.add, size: 20),
-                            title: Text(extra.title),
-                            subtitle: Text(
-                                '${extra.price} ₪ - ${extra.executionTime} ${extra.timeUnit}'),
-                          )),
+                      ...service.extras.map(
+                        (extra) => ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.add, size: 20),
+                          title: Text(extra.title),
+                          subtitle: Text(
+                            '${extra.price} ₪ - ${extra.executionTime} ${extra.timeUnit}',
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                     ],
 
@@ -372,15 +376,17 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ...service.questions.map((faq) => ExpansionTile(
-                            title: Text(faq.question),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Text(faq.answer),
-                              ),
-                            ],
-                          )),
+                      ...service.questions.map(
+                        (faq) => ExpansionTile(
+                          title: Text(faq.question),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(faq.answer),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ],
                 ),

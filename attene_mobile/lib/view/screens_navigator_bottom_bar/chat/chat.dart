@@ -13,26 +13,32 @@ class ChatScreen extends StatelessWidget {
     final ChatController chatController = Get.find<ChatController>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('الدردشة'),
-      ),
+      appBar: AppBar(title: const Text('الدردشة')),
       body: GetBuilder<ChatController>(
         builder: (controller) {
-          if (controller.connectionStatus.value == ConnectionStatus.disconnected ||
+          if (controller.connectionStatus.value ==
+                  ConnectionStatus.disconnected ||
               controller.connectionStatus.value == ConnectionStatus.error) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    ConnectionStatusHelper.getIcon(controller.connectionStatus.value),
+                    ConnectionStatusHelper.getIcon(
+                      controller.connectionStatus.value,
+                    ),
                     size: 80,
                     color: Colors.grey,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    ConnectionStatusHelper.getDisplayName(controller.connectionStatus.value),
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ConnectionStatusHelper.getDisplayName(
+                      controller.connectionStatus.value,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -54,18 +60,14 @@ class ChatScreen extends StatelessWidget {
           return GetBuilder<ChatController>(
             builder: (controller) {
               if (controller.isLoading.value) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
-              
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Get.offAll(() => ChatAll());
               });
-              
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+
+              return const Center(child: CircularProgressIndicator());
             },
           );
         },

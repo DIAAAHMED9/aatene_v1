@@ -1,3 +1,4 @@
+import 'package:attene_mobile/view/Control_Users/edit%20profile.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,7 +17,8 @@ import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_service.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
-import 'package:attene_mobile/view/Services/data_sync_service.dart' show DataSyncService;
+import 'package:attene_mobile/view/Services/data_sync_service.dart'
+    show DataSyncService;
 import 'package:attene_mobile/view/add_services/service_controller.dart';
 import 'package:attene_mobile/view/advance_info/keyword_controller.dart';
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
@@ -41,26 +43,26 @@ import 'package:attene_mobile/add_product_stepper_screen.dart';
 import 'view/related_products/related_products_screen.dart';
 
 class AppBindings extends Bindings {
-    static bool _initialized = false;
+  static bool _initialized = false;
 
   @override
   void dependencies() {
     if (_initialized) return;
     print('🔄 [APP BINDINGS] تسجيل المتحكمات...');
-    
+
     Get.lazyPut(() => GetStorage(), fenix: true);
-    
+
     Get.lazyPut(() => MyAppController(), fenix: true);
-    
+
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
-    
+
     Get.lazyPut(() => DataInitializerService(), fenix: true);
-    
+
     Get.lazyPut(() => BottomSheetController(), fenix: true);
     Get.lazyPut(() => CreateStoreController(), fenix: true);
-    Get.lazyPut(()=> DataSyncService(), fenix: true);
-    Get.lazyPut(()=>ChatController(), fenix: true);
+    Get.lazyPut(() => DataSyncService(), fenix: true);
+    Get.lazyPut(() => ChatController(), fenix: true);
 
     Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
     Get.lazyPut(() => ProductCentralController(), fenix: true);
@@ -68,14 +70,14 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => KeywordController(), fenix: true);
     Get.lazyPut(() => AddProductController(), fenix: true);
     Get.lazyPut(() => MediaLibraryController(), fenix: true);
-    Get.lazyPut(()=>RelatedProductsController(), fenix: true);
+    Get.lazyPut(() => RelatedProductsController(), fenix: true);
     Get.lazyPut(() => ProductController(), fenix: true);
     Get.lazyPut(() => ProductService(), fenix: true);
     Get.lazyPut(() => SectionController(), fenix: true);
     Get.lazyPut(() => ServiceController(), fenix: true);
-    
+
     print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات بنجاح');
-     _initialized = true;
+    _initialized = true;
   }
 }
 
@@ -99,8 +101,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // الألوان الأساسية
         primaryColor: AppColors.primary500,
-        scaffoldBackgroundColor: AppColors.light1000, // لون الخلفية العام
-        
+        scaffoldBackgroundColor: AppColors.light1000,
+        // لون الخلفية العام
+
         // الحوارات (Dialogs)
         dialogBackgroundColor: AppColors.light1000,
         dialogTheme: DialogThemeData(
@@ -110,7 +113,7 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(25.0),
           ),
         ),
-        
+
         // الـ Bottom Sheets
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: AppColors.light1000,
@@ -121,7 +124,7 @@ class MyApp extends StatelessWidget {
           modalBackgroundColor: AppColors.light1000,
           modalElevation: 8.0,
         ),
-        
+
         // البطاقات (Cards)
         cardTheme: CardThemeData(
           color: AppColors.light1000,
@@ -130,7 +133,7 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(25),
           ),
         ),
-        
+
         // AppBar
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.light1000,
@@ -143,7 +146,7 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         // الأزرار
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -152,17 +155,18 @@ class MyApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 12.0,
+              horizontal: 24.0,
+            ),
           ),
         ),
-        
+
         // Text Buttons
         textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.primary500,
-          ),
+          style: TextButton.styleFrom(foregroundColor: AppColors.primary500),
         ),
-        
+
         // Input Fields
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -184,34 +188,45 @@ class MyApp extends StatelessWidget {
             borderSide: BorderSide(color: AppColors.error200),
           ),
         ),
-        
+
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        useMaterial3: false, colorScheme: ColorScheme.light(
-          primary: AppColors.primary500,
-          secondary: AppColors.primary200,
-          background: AppColors.light1000,
-          surface: AppColors.light1000,
-          onBackground: AppColors.neutral200,
-          onSurface: AppColors.neutral200,
-          error: AppColors.error200,
-          onError: AppColors.light1000,
-        ).copyWith(primary: AppColors.primary300, surface: AppColors.light1000), // يمكنك تغيير هذا إلى true إذا كنت تستخدم Material 3
+        useMaterial3: false,
+        colorScheme:
+            ColorScheme.light(
+              primary: AppColors.primary500,
+              secondary: AppColors.primary200,
+              background: AppColors.light1000,
+              surface: AppColors.light1000,
+              onBackground: AppColors.neutral200,
+              onSurface: AppColors.neutral200,
+              error: AppColors.error200,
+              onError: AppColors.light1000,
+            ).copyWith(
+              primary: AppColors.primary300,
+              surface: AppColors.light1000,
+            ), // يمكنك تغيير هذا إلى true إذا كنت تستخدم Material 3
       ),
-      
+
       // Dark Theme (اختياري)
       darkTheme: ThemeData(
         primaryColor: AppColors.primary500,
         scaffoldBackgroundColor: AppColors.neutral200,
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: AppColors.neutral300,
-        ), colorScheme: ColorScheme.dark(
-          primary: AppColors.primary500,
-          secondary: AppColors.primary200,
-          background: AppColors.neutral200,
-          surface: AppColors.neutral300,
-        ).copyWith(primary: AppColors.primary400, surface: AppColors.neutral200), dialogTheme: DialogThemeData(backgroundColor: AppColors.neutral300),
+        ),
+        colorScheme:
+            ColorScheme.dark(
+              primary: AppColors.primary500,
+              secondary: AppColors.primary200,
+              background: AppColors.neutral200,
+              surface: AppColors.neutral300,
+            ).copyWith(
+              primary: AppColors.primary400,
+              surface: AppColors.neutral200,
+            ),
+        dialogTheme: DialogThemeData(backgroundColor: AppColors.neutral300),
       ),
-      
+
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => const SplashScreen()),
@@ -234,13 +249,13 @@ class MyApp extends StatelessWidget {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await GetStorage.init();
   print('✅ [MAIN] تم تهيئة GetStorage بنجاح');
-  
+
   // تفعيل التحسينات للرسومات
   // Paint.enableDithering = true;
-  
+
   // تهيئة مدير دورة حياة التطبيق
   Get.put(AppLifecycleManager());
 

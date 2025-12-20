@@ -126,12 +126,12 @@ class RegisterController extends GetxController {
       print('Register Failed - Validation failed');
       return;
     }
-    
+
     isLoading.value = true;
-    
+
     try {
       print('Sending registration request...');
-      
+
       final response = await ApiHelper.post(
         path: '/auth/register',
         body: {
@@ -145,20 +145,20 @@ class RegisterController extends GetxController {
         withLoading: false,
         shouldShowMessage: false,
       );
-      
+
       print('API Response: $response');
-      
+
       // التعديل هنا: استخدم response['status'] بدلاً من response['success']
       if (response != null && response['status'] == true) {
         print('Registration successful');
-        
+
         final userData = response['user'];
         final token = response['token'];
-        
+
         final MyAppController myAppController = Get.find<MyAppController>();
         // تأكد أن updateUserData تأخذ userData و token
         myAppController.updateUserData(userData);
-        
+
         // عرض رسالة النجاح أولاً
         Get.snackbar(
           'نجاح',
@@ -168,14 +168,13 @@ class RegisterController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 2),
         );
-        
+
         // الانتقال بعد فترة قصيرة
         await Future.delayed(const Duration(milliseconds: 1500));
-        
+
         // استخدم offAllNamed لإزالة شاشة التسجيل من المكدس
         print('Navigating to login screen...');
         Get.offAllNamed('/login');
-        
       } else {
         print('Registration failed with response: $response');
         _handleApiError(response);
@@ -190,9 +189,9 @@ class RegisterController extends GetxController {
 
   void _handleApiError(dynamic response) {
     print('Handling API error: $response');
-    
+
     String errorMessage = 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.';
-    
+
     if (response != null && response['errors'] != null) {
       final errors = response['errors'];
       if (errors['email'] != null) {
@@ -215,7 +214,7 @@ class RegisterController extends GetxController {
     } else if (response != null && response['message'] != null) {
       errorMessage = response['message'];
     }
-    
+
     Get.snackbar(
       'خطأ',
       errorMessage,
@@ -228,7 +227,7 @@ class RegisterController extends GetxController {
   void _handleGeneralError(dynamic error) {
     print('Register error: $error');
     String errorMessage = 'حدث خطأ أثناء إنشاء الحساب. ';
-    
+
     if (error is DioException) {
       switch (error.type) {
         case DioExceptionType.connectionTimeout:
@@ -253,7 +252,7 @@ class RegisterController extends GetxController {
           errorMessage += 'خطأ غير معروف.';
       }
     }
-    
+
     Get.snackbar(
       'خطأ',
       errorMessage,

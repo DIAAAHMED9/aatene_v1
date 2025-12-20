@@ -22,7 +22,8 @@ class ShippingPricingSettings extends StatefulWidget {
   });
 
   @override
-  State<ShippingPricingSettings> createState() => _ShippingPricingSettingsState();
+  State<ShippingPricingSettings> createState() =>
+      _ShippingPricingSettingsState();
 }
 
 class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
@@ -30,7 +31,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   late List<TextEditingController> daysControllers;
   late List<TextEditingController> priceControllers;
-  
+
   final List<String> citiesList = [
     'القدس',
     'رام الله',
@@ -47,7 +48,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
     'طوباس',
     'جنين',
   ];
-  
+
   String? selectedNewCity;
   bool showAddCityField = false;
   List<Map<String, dynamic>> workingCities = [];
@@ -55,17 +56,21 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
   @override
   void initState() {
     super.initState();
-    
+
     workingCities = List.from(widget.selectedCities);
-    
+
     daysControllers = List.generate(
       workingCities.length,
-      (index) => TextEditingController(text: workingCities[index]['days']?.toString() ?? '')
+      (index) => TextEditingController(
+        text: workingCities[index]['days']?.toString() ?? '',
+      ),
     );
-    
+
     priceControllers = List.generate(
       workingCities.length,
-      (index) => TextEditingController(text: workingCities[index]['price']?.toString() ?? '')
+      (index) => TextEditingController(
+        text: workingCities[index]['price']?.toString() ?? '',
+      ),
     );
   }
 
@@ -89,7 +94,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         'days': 0,
         'price': 0.0,
       };
-      
+
       workingCities.add(newCity);
       daysControllers.add(TextEditingController(text: ''));
       priceControllers.add(TextEditingController(text: ''));
@@ -138,9 +143,11 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
               borderRadius: BorderRadius.circular(25),
               color: AppColors.neutral700,
             ),
-            child: Icon(Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: Colors.black),
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 18,
+              color: Colors.black,
+            ),
           ),
         ),
       ),
@@ -229,24 +236,27 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                           icon: Padding(
                             padding: const EdgeInsets.only(right: 16),
-                            child: Icon(Icons.arrow_drop_down,
-                                color: AppColors.primary500,
-                                size: 24),
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                              color: AppColors.primary500,
+                              size: 24,
+                            ),
                           ),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                          ),
+                          style: TextStyle(color: Colors.black, fontSize: 15),
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedNewCity = newValue;
                             });
                           },
-                          items: citiesList.map<DropdownMenuItem<String>>((String city) {
+                          items: citiesList.map<DropdownMenuItem<String>>((
+                            String city,
+                          ) {
                             return DropdownMenuItem<String>(
                               value: city,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
                                 child: Text(city),
                               ),
                             );
@@ -266,7 +276,10 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             });
                           },
                           style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
                           ),
                           child: Text(
                             "إلغاء",
@@ -278,16 +291,21 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                         ),
                         SizedBox(width: 8),
                         ElevatedButton(
-                          onPressed: selectedNewCity != null ? () {
-                            _addCity(selectedNewCity!);
-                            setState(() {
-                              showAddCityField = false;
-                              selectedNewCity = null;
-                            });
-                          } : null,
+                          onPressed: selectedNewCity != null
+                              ? () {
+                                  _addCity(selectedNewCity!);
+                                  setState(() {
+                                    showAddCityField = false;
+                                    selectedNewCity = null;
+                                  });
+                                }
+                              : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary500,
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
                             ),
@@ -308,13 +326,13 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                 ),
                 SizedBox(height: 16),
               ],
-              
+
               ...workingCities.asMap().entries.map((entry) {
                 int index = entry.key;
                 Map<String, dynamic> city = entry.value;
-                
+
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical:20 ),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -359,9 +377,9 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                         ],
                       ),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       Text(
                         "موعد التسليم",
                         style: TextStyle(
@@ -376,12 +394,16 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                         hintText: "عدد الأيام",
                         controller: daysControllers[index],
                         onChanged: (value) {
-                          _updateCityData(index, value, priceControllers[index].text);
+                          _updateCityData(
+                            index,
+                            value,
+                            priceControllers[index].text,
+                          );
                         },
                       ),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       Text(
                         "سعر التوصيل",
                         style: TextStyle(
@@ -395,16 +417,23 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                         isRTL: isRTL,
                         hintText: "السعر",
                         controller: priceControllers[index],
-                        prefixIcon: Icon(Icons.attach_money, color: AppColors.neutral500),
+                        prefixIcon: Icon(
+                          Icons.attach_money,
+                          color: AppColors.neutral500,
+                        ),
                         onChanged: (value) {
-                          _updateCityData(index, daysControllers[index].text, value);
+                          _updateCityData(
+                            index,
+                            daysControllers[index].text,
+                            value,
+                          );
                         },
                       ),
                     ],
                   ),
                 );
               }).toList(),
-              
+
               SizedBox(height: 32),
               AateneButton(
                 buttonText: 'حفظ ملف التوصيل',
@@ -443,7 +472,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         );
         return;
       }
-      
+
       if (priceControllers[i].text.isEmpty) {
         Get.snackbar(
           'خطأ',
@@ -454,10 +483,10 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         );
         return;
       }
-      
+
       final days = int.tryParse(daysControllers[i].text);
       final price = double.tryParse(priceControllers[i].text);
-      
+
       if (days == null || days <= 0) {
         Get.snackbar(
           'خطأ',
@@ -468,7 +497,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         );
         return;
       }
-      
+
       if (price == null || price <= 0) {
         Get.snackbar(
           'خطأ',
@@ -480,7 +509,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         return;
       }
     }
-    
+
     final List<Map<String, dynamic>> prices = [];
     for (int i = 0; i < workingCities.length; i++) {
       prices.add({
@@ -490,15 +519,15 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         'price': double.parse(priceControllers[i].text),
       });
     }
-    
+
     final company = {
       'name': widget.companyName,
       'phone': widget.companyPhone,
       'prices': prices,
     };
-    
+
     controller.addShippingCompany(company);
-    
+
     Get.back();
     Get.back();
     Get.snackbar(

@@ -12,13 +12,9 @@ import '../add_product_controller.dart';
 class SectionTitleWidget extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
-  
-  const SectionTitleWidget({
-    super.key,
-    required this.title,
-    this.onTap,
-  });
-  
+
+  const SectionTitleWidget({super.key, required this.title, this.onTap});
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -37,16 +33,13 @@ class SectionTitleWidget extends StatelessWidget {
 
 class CategorySectionWidget extends StatelessWidget {
   final Section selectedSection;
-  
-  const CategorySectionWidget({
-    super.key,
-    required this.selectedSection,
-  });
-  
+
+  const CategorySectionWidget({super.key, required this.selectedSection});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return GetBuilder<AddProductController>(
       builder: (_) {
         return Column(
@@ -107,11 +100,11 @@ class CategorySectionWidget extends StatelessWidget {
 
 class ImageUploadSectionWidget extends StatelessWidget {
   const ImageUploadSectionWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return GetBuilder<AddProductController>(
       builder: (_) {
         return Column(
@@ -126,7 +119,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                   Text(
+                Text(
                   '*',
                   style: TextStyle(
                     color: Colors.red,
@@ -165,7 +158,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: ResponsiveDimensions.f(16)),
-            
+
             if (controller.fieldErrors.containsKey('media'))
               Padding(
                 padding: EdgeInsets.only(bottom: ResponsiveDimensions.f(8)),
@@ -177,15 +170,17 @@ class ImageUploadSectionWidget extends StatelessWidget {
                   ),
                 ),
               ),
-            
+
             if (controller.selectedMedia.isNotEmpty)
               _buildSelectedMediaPreview(context),
-            
+
             InkWell(
               onTap: controller.openMediaLibrary,
               child: Container(
                 height: ResponsiveDimensions.f(120),
-                padding: EdgeInsets.symmetric(horizontal: ResponsiveDimensions.f(15)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveDimensions.f(15),
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8F8F8),
                   borderRadius: BorderRadius.circular(8),
@@ -243,10 +238,10 @@ class ImageUploadSectionWidget extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildSelectedMediaPreview(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return Container(
       height: ResponsiveDimensions.f(100),
       margin: EdgeInsets.only(bottom: ResponsiveDimensions.f(16)),
@@ -276,10 +271,10 @@ class ImageUploadSectionWidget extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildSelectedMediaItem(MediaItem media, int index) {
     final controller = Get.find<AddProductController>();
-    
+
     return Container(
       width: ResponsiveDimensions.f(80),
       height: ResponsiveDimensions.f(80),
@@ -307,7 +302,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
               },
             ),
           ),
-          
+
           Positioned(
             top: ResponsiveDimensions.f(4),
             left: ResponsiveDimensions.f(4),
@@ -328,7 +323,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
               ),
             ),
           ),
-          
+
           Positioned(
             bottom: 0,
             left: 0,
@@ -362,16 +357,13 @@ class ImageUploadSectionWidget extends StatelessWidget {
 
 class ProductNameSectionWidget extends StatelessWidget {
   final bool isRTL;
-  
-  const ProductNameSectionWidget({
-    super.key,
-    required this.isRTL,
-  });
-  
+
+  const ProductNameSectionWidget({super.key, required this.isRTL});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -385,12 +377,7 @@ class ProductNameSectionWidget extends StatelessWidget {
               ),
             ),
             SizedBox(width: ResponsiveDimensions.f(4)),
-            Text(
-              '*',
-              style: TextStyle(
-                color: Colors.red[400],
-              ),
-            ),
+            Text('*', style: TextStyle(color: Colors.red[400])),
           ],
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
@@ -411,7 +398,8 @@ class ProductNameSectionWidget extends StatelessWidget {
                   onChanged: (value) {
                     if (controller.fieldErrors.containsKey('productName')) {
                       controller.fieldErrors.remove('productName');
-                      controller.productCentralController.validationErrors.remove('productName');
+                      controller.productCentralController.validationErrors
+                          .remove('productName');
                       controller.update();
                     }
                   },
@@ -449,16 +437,13 @@ class ProductNameSectionWidget extends StatelessWidget {
 
 class PriceSectionWidget extends StatelessWidget {
   final bool isRTL;
-  
-  const PriceSectionWidget({
-    super.key,
-    required this.isRTL,
-  });
-  
+
+  const PriceSectionWidget({super.key, required this.isRTL});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -472,12 +457,7 @@ class PriceSectionWidget extends StatelessWidget {
               ),
             ),
             SizedBox(width: ResponsiveDimensions.f(4)),
-            Text(
-              '*',
-              style: TextStyle(
-                color: Colors.red[400],
-              ),
-            ),
+            Text('*', style: TextStyle(color: Colors.red[400])),
           ],
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
@@ -497,7 +477,8 @@ class PriceSectionWidget extends StatelessWidget {
                   onChanged: (value) {
                     if (controller.fieldErrors.containsKey('price')) {
                       controller.fieldErrors.remove('price');
-                      controller.productCentralController.validationErrors.remove('price');
+                      controller.productCentralController.validationErrors
+                          .remove('price');
                       controller.update();
                     }
                   },
@@ -538,17 +519,17 @@ class PriceSectionWidget extends StatelessWidget {
 
 class CategoriesSectionWidget extends StatelessWidget {
   const CategoriesSectionWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return GetBuilder<AddProductController>(
       builder: (_) {
         final isLoading = controller.isLoadingCategories;
         final hasError = controller.categoriesError.isNotEmpty;
         final categories = controller.categories;
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -562,35 +543,26 @@ class CategoriesSectionWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.f(4)),
-                Text(
-                  '*',
-                  style: TextStyle(
-                    color: Colors.red[400],
-                  ),
-                ),
+                Text('*', style: TextStyle(color: Colors.red[400])),
                 const Spacer(),
                 if (hasError || (categories.isEmpty && !isLoading))
                   IconButton(
-                    icon: Icon(
-                      Icons.refresh,
-                      size: ResponsiveDimensions.f(20),
-                    ),
+                    icon: Icon(Icons.refresh, size: ResponsiveDimensions.f(20)),
                     onPressed: controller.reloadCategories,
                     tooltip: 'إعادة تحميل الفئات',
                   ),
               ],
             ),
             SizedBox(height: ResponsiveDimensions.f(8)),
-            
-            if (isLoading)
-              _buildLoadingDropdown('جاري تحميل الفئات...'),
-            
+
+            if (isLoading) _buildLoadingDropdown('جاري تحميل الفئات...'),
+
             if (!isLoading && hasError)
               _buildErrorDropdown(controller.categoriesError),
-            
+
             if (!isLoading && !hasError && categories.isEmpty)
               _buildEmptyDropdown('لا توجد فئات متاحة'),
-            
+
             if (!isLoading && !hasError && categories.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -625,7 +597,8 @@ class CategoriesSectionWidget extends StatelessWidget {
                           isCollapsed: true,
                         ),
                         items: categories.map((category) {
-                          final categoryName = category['name'] as String? ?? 'غير معروف';
+                          final categoryName =
+                              category['name'] as String? ?? 'غير معروف';
                           final categoryId = category['id'] as int? ?? 0;
                           return DropdownMenuItem(
                             value: categoryName,
@@ -635,10 +608,20 @@ class CategoriesSectionWidget extends StatelessWidget {
                               maxLines: 1,
                               style: TextStyle(
                                 fontSize: ResponsiveDimensions.f(14),
-                                color: categoryId == controller.productCentralController.selectedCategoryId.value
+                                color:
+                                    categoryId ==
+                                        controller
+                                            .productCentralController
+                                            .selectedCategoryId
+                                            .value
                                     ? AppColors.primary400
                                     : Colors.black,
-                                fontWeight: categoryId == controller.productCentralController.selectedCategoryId.value
+                                fontWeight:
+                                    categoryId ==
+                                        controller
+                                            .productCentralController
+                                            .selectedCategoryId
+                                            .value
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                               ),
@@ -654,11 +637,16 @@ class CategoriesSectionWidget extends StatelessWidget {
                             if (foundCategory.isNotEmpty) {
                               final categoryId = foundCategory['id'] as int;
                               controller.updateCategory(categoryId);
-                              
+
                               // Clear category error if exists
-                              if (controller.fieldErrors.containsKey('category')) {
+                              if (controller.fieldErrors.containsKey(
+                                'category',
+                              )) {
                                 controller.fieldErrors.remove('category');
-                                controller.productCentralController.validationErrors.remove('category');
+                                controller
+                                    .productCentralController
+                                    .validationErrors
+                                    .remove('category');
                                 controller.update();
                               }
                             }
@@ -688,7 +676,7 @@ class CategoriesSectionWidget extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildLoadingDropdown(String text) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -718,7 +706,7 @@ class CategoriesSectionWidget extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildErrorDropdown(String error) {
     return Column(
       children: [
@@ -764,7 +752,7 @@ class CategoriesSectionWidget extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildEmptyDropdown(String text) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -798,11 +786,11 @@ class CategoriesSectionWidget extends StatelessWidget {
 
 class ProductConditionSectionWidget extends StatelessWidget {
   const ProductConditionSectionWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return GetBuilder<AddProductController>(
       builder: (_) {
         return Column(
@@ -818,12 +806,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.f(4)),
-                Text(
-                  '*',
-                  style: TextStyle(
-                    color: Colors.red[400],
-                  ),
-                ),
+                Text('*', style: TextStyle(color: Colors.red[400])),
               ],
             ),
             SizedBox(height: ResponsiveDimensions.f(8)),
@@ -873,11 +856,13 @@ class ProductConditionSectionWidget extends StatelessWidget {
                 }).toList(),
                 onChanged: (value) {
                   controller.updateCondition(value);
-                  
+
                   // Clear condition error if exists
                   if (controller.fieldErrors.containsKey('condition')) {
                     controller.fieldErrors.remove('condition');
-                    controller.productCentralController.validationErrors.remove('condition');
+                    controller.productCentralController.validationErrors.remove(
+                      'condition',
+                    );
                     controller.update();
                   }
                 },
@@ -906,11 +891,11 @@ class ProductConditionSectionWidget extends StatelessWidget {
 
 class ProductDescriptionSectionWidget extends StatelessWidget {
   const ProductDescriptionSectionWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddProductController>();
-    
+
     return GetBuilder<AddProductController>(
       builder: (_) {
         return Column(
@@ -926,19 +911,15 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: ResponsiveDimensions.f(4)),
-                Text(
-                  '*',
-                  style: TextStyle(
-                    color: Colors.red[400],
-                  ),
-                ),
+                Text('*', style: TextStyle(color: Colors.red[400])),
               ],
             ),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: controller.fieldErrors.containsKey('productDescription')
+                  color:
+                      controller.fieldErrors.containsKey('productDescription')
                       ? Colors.red
                       : Colors.grey[300]!,
                   width: 1.5,
@@ -950,9 +931,13 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                 maxLines: 4,
                 maxLength: AddProductController.maxDescriptionLength,
                 onChanged: (value) {
-                  if (controller.fieldErrors.containsKey('productDescription')) {
+                  if (controller.fieldErrors.containsKey(
+                    'productDescription',
+                  )) {
                     controller.fieldErrors.remove('productDescription');
-                    controller.productCentralController.validationErrors.remove('productDescription');
+                    controller.productCentralController.validationErrors.remove(
+                      'productDescription',
+                    );
                     controller.update();
                   }
                 },
@@ -964,9 +949,12 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(ResponsiveDimensions.f(12)),
-                  counterText: '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
+                  counterText:
+                      '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
                   counterStyle: TextStyle(
-                    color: controller.characterCount > AddProductController.maxDescriptionLength
+                    color:
+                        controller.characterCount >
+                            AddProductController.maxDescriptionLength
                         ? Colors.red
                         : Colors.grey,
                   ),
@@ -987,7 +975,8 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                   ),
                 ),
               ),
-            if (controller.characterCount > AddProductController.maxDescriptionLength)
+            if (controller.characterCount >
+                AddProductController.maxDescriptionLength)
               Padding(
                 padding: EdgeInsets.only(top: ResponsiveDimensions.f(4)),
                 child: Text(

@@ -34,20 +34,23 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     if (widget.isSelectionMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.maxSelectionCount != null) {
           controller.setMaxSelection(widget.maxSelectionCount!);
         }
-        
-        if (widget.initialSelectedItems != null && widget.initialSelectedItems!.isNotEmpty) {
-          final selectedIds = widget.initialSelectedItems!.map((item) => item.id).toList();
+
+        if (widget.initialSelectedItems != null &&
+            widget.initialSelectedItems!.isNotEmpty) {
+          final selectedIds = widget.initialSelectedItems!
+              .map((item) => item.id)
+              .toList();
           controller.selectedMediaIds.assignAll(selectedIds);
         }
       });
     }
-    
+
     searchController.addListener(() {
       controller.searchQuery.value = searchController.text;
     });
@@ -228,9 +231,8 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
     return Obx(() {
       final isSelected = controller.selectedMediaIds.contains(media.id);
       final canSelectMore = controller.canSelectMore;
-      final isMaxSelected = widget.isSelectionMode &&
-                           !isSelected &&
-                           !canSelectMore;
+      final isMaxSelected =
+          widget.isSelectionMode && !isSelected && !canSelectMore;
       final isUploading =
           media.isLocal == true &&
           controller.temporaryMediaItems.contains(media);
@@ -266,7 +268,8 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
           child: Stack(
             children: [
               _buildMediaContent(media),
-              if (isSelected && widget.isSelectionMode) _buildSelectionIndicator(),
+              if (isSelected && widget.isSelectionMode)
+                _buildSelectionIndicator(),
               if (isUploading) _buildUploadingIndicator(),
             ],
           ),
@@ -461,11 +464,12 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
       return CachedNetworkImage(
         imageUrl: imageUrl,
         fit: BoxFit.cover,
-        placeholder: (context, url) =>
-            Center(child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: AppColors.primary400,
-            )),
+        placeholder: (context, url) => Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.primary400,
+          ),
+        ),
         errorWidget: (context, url, error) =>
             Icon(Icons.image, size: 40, color: Colors.grey[400]),
       );
@@ -708,7 +712,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600]))
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600])),
           ),
           TextButton(
             onPressed: () {
@@ -718,9 +722,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
             child: Text('حذف', style: TextStyle(color: Colors.red)),
           ),
         ],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -755,7 +757,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
 
   void _confirmSelection() {
     final selectedMedia = controller.getSelectedMediaItems();
-    
+
     if (selectedMedia.isEmpty) {
       Get.snackbar(
         'تنبيه',
@@ -765,11 +767,11 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
       );
       return;
     }
-    
+
     if (widget.onMediaSelected != null) {
       widget.onMediaSelected!(selectedMedia);
     }
-    
+
     Get.back(result: selectedMedia);
   }
 }

@@ -38,8 +38,10 @@ class HamburgerHeader extends StatelessWidget {
 
             SafeArea(
               child: Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -50,9 +52,7 @@ class HamburgerHeader extends StatelessWidget {
                         // Status time (Mock)
                         const Text(
                           '9:41',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w600),
                         ),
 
                         // Logo

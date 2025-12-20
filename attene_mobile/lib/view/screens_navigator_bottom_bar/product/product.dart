@@ -42,11 +42,15 @@ class ProductScreen extends GetView<ProductController> {
           ),
           body: Obx(() => _buildBody(controller, isRTL, myAppController)),
         );
-      }
+      },
     );
   }
 
-  Widget _buildBody(ProductController controller, bool isRTL, MyAppController myAppController) {
+  Widget _buildBody(
+    ProductController controller,
+    bool isRTL,
+    MyAppController myAppController,
+  ) {
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
     }
@@ -56,7 +60,9 @@ class ProductScreen extends GetView<ProductController> {
         Expanded(
           child: TabBarView(
             controller: controller.tabController,
-            children: controller.tabs.map((tab) => _buildTabContent(tab, controller, isRTL)).toList(),
+            children: controller.tabs
+                .map((tab) => _buildTabContent(tab, controller, isRTL))
+                .toList(),
           ),
         ),
       ],
@@ -70,11 +76,7 @@ class ProductScreen extends GetView<ProductController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.login_rounded,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.login_rounded, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 24),
             Text(
               'يجب تسجيل الدخول',
@@ -87,10 +89,7 @@ class ProductScreen extends GetView<ProductController> {
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إدارة المنتجات والأقسام',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -101,7 +100,10 @@ class ProductScreen extends GetView<ProductController> {
               icon: const Icon(Icons.login_rounded),
               label: const Text('تسجيل الدخول'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
@@ -114,7 +116,10 @@ class ProductScreen extends GetView<ProductController> {
               icon: const Icon(Icons.person_add_rounded),
               label: const Text('إنشاء حساب جديد'),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
             ),
           ],
@@ -123,215 +128,259 @@ class ProductScreen extends GetView<ProductController> {
     );
   }
 
-Widget _buildTabContent(TabData tab, ProductController controller, bool isRTL) {
-  final MyAppController myAppController = Get.find<MyAppController>();
-  
-  if (!myAppController.isLoggedIn.value) {
-    return _buildEmptyTabContent(tab);
+  Widget _buildTabContent(
+    TabData tab,
+    ProductController controller,
+    bool isRTL,
+  ) {
+    final MyAppController myAppController = Get.find<MyAppController>();
+
+    if (!myAppController.isLoggedIn.value) {
+      return _buildEmptyTabContent(tab);
+    }
+
+    if (controller.isLoadingProducts.value) {
+      return _buildLoadingView();
+    }
+
+    if (controller.productsErrorMessage.isNotEmpty) {
+      return _buildErrorView(controller);
+    }
+
+    final tabIndex = controller.tabs.indexOf(tab);
+    final products = controller.getProductsForTab(tabIndex);
+
+    print(
+      '🔍 [TAB CONTENT] Tab: ${tab.label}, Index: $tabIndex, Products: ${products.length}',
+    );
+
+    if (products.isEmpty) {
+      return _buildEmptyProductsView(
+        controller,
+        isRTL,
+        sectionName: tab.viewName,
+      );
+    }
+
+    if (tabIndex == 0) {
+      return _buildAllProductsView(controller, isRTL);
+    } else {
+      return _buildProductsListView(
+        controller,
+        products,
+        isRTL,
+        sectionName: tab.viewName,
+      );
+    }
   }
 
-  if (controller.isLoadingProducts.value) {
-    return _buildLoadingView();
-  }
+  Widget _buildAllProductsView(ProductController controller, bool isRTL) {
+    final displaySections = controller.getDisplaySections();
 
-  if (controller.productsErrorMessage.isNotEmpty) {
-    return _buildErrorView(controller);
-  }
+    print('🔍 [DEBUG] Display sections count: ${displaySections.length}');
+    print('🔍 [DEBUG] Total products count: ${controller.totalProductsCount}');
 
-  final tabIndex = controller.tabs.indexOf(tab);
-  final products = controller.getProductsForTab(tabIndex);
-  
-  print('🔍 [TAB CONTENT] Tab: ${tab.label}, Index: $tabIndex, Products: ${products.length}');
-  
-  if (products.isEmpty) {
-    return _buildEmptyProductsView(controller, isRTL, sectionName: tab.viewName);
-  }
+    if (controller.totalProductsCount == 0) {
+      return _buildEmptyProductsView(controller, isRTL);
+    }
 
-  if (tabIndex == 0) {
-    return _buildAllProductsView(controller, isRTL);
-  } else {
-    return _buildProductsListView(controller, products, isRTL, sectionName: tab.viewName);
-  }
-}
+    if (displaySections.isEmpty) {
+      return _buildProductsListView(
+        controller,
+        controller.filteredProducts,
+        isRTL,
+      );
+    }
 
-Widget _buildAllProductsView(ProductController controller, bool isRTL) {
-  final displaySections = controller.getDisplaySections();
-  
-  print('🔍 [DEBUG] Display sections count: ${displaySections.length}');
-  print('🔍 [DEBUG] Total products count: ${controller.totalProductsCount}');
-  
-  if (controller.totalProductsCount == 0) {
-    return _buildEmptyProductsView(controller, isRTL);
-  }
-  
-  if (displaySections.isEmpty) {
-    return _buildProductsListView(controller, controller.filteredProducts , isRTL);
-  }
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: displaySections.length,
+            itemBuilder: (context, index) {
+              final section = displaySections[index];
+              final sectionName = section['name'] as String;
+              final products = section['products'] as List<Product>;
+              final isUncategorized = section['isUncategorized'] as bool;
 
-  return Column(
-    children: [
-    
-      Expanded(
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: displaySections.length,
-          itemBuilder: (context, index) {
-            final section = displaySections[index];
-            final sectionName = section['name'] as String;
-            final products = section['products'] as List<Product>;
-            final isUncategorized = section['isUncategorized'] as bool;
-            
-            print('🔍 [DEBUG] Section $sectionName has ${products.length} products');
-            
-            if (products.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            
-            return _buildSectionWithProducts(
-              sectionName,
-              products,
-              controller,
-              isRTL,
-              isUncategorized: isUncategorized,
-            );
-          },
+              print(
+                '🔍 [DEBUG] Section $sectionName has ${products.length} products',
+              );
+
+              if (products.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return _buildSectionWithProducts(
+                sectionName,
+                products,
+                controller,
+                isRTL,
+                isUncategorized: isUncategorized,
+              );
+            },
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-Widget _buildSectionWithProducts(String sectionName, List<Product> products, ProductController controller, bool isRTL, {bool isUncategorized = false}) {
-  print('🎨 [DEBUG] Building section: $sectionName with ${products.length} products');
-  
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16),
-        itemCount: products.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return _buildProductItem(product, controller, isRTL);
-        },
-      ),
-    ],
-  );
-}
+  Widget _buildSectionWithProducts(
+    String sectionName,
+    List<Product> products,
+    ProductController controller,
+    bool isRTL, {
+    bool isUncategorized = false,
+  }) {
+    print(
+      '🎨 [DEBUG] Building section: $sectionName with ${products.length} products',
+    );
 
-Widget _buildProductsListView(ProductController controller, List<Product> products, bool isRTL, {String? sectionName}) {
-  return Column(
-    children: [
-      Expanded(
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16),
           itemCount: products.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final product = products[index];
             return _buildProductItem(product, controller, isRTL);
           },
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-Widget _buildProductItem(Product product, ProductController controller, bool isRTL, {bool showSection = true}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12),
-    child: Row(
+  Widget _buildProductsListView(
+    ProductController controller,
+    List<Product> products,
+    bool isRTL, {
+    String? sectionName,
+  }) {
+    return Column(
       children: [
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.grey[200],
-          ),
-          child: product.coverUrl != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    product.coverUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.image, color: Colors.grey[400]);
-                    },
-                  ),
-                )
-              : Icon(Icons.image, color: Colors.grey[400]),
-        ),
-        
-        const SizedBox(width: 12),
-        
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                product.name,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              
-              const SizedBox(height: 4),
-              
-                              if (showSection && product.sectionId != null && product.sectionId != '0')
-                   Row(
-                     children: [
-                      Icon(Icons.local_offer_outlined,color: Colors.grey[600],size: 18,),
-                      SizedBox(width: 5,),
-                       Text(
-                            controller.getSectionName(product.sectionId!),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                     ],
-                   ),
-                    
-              const SizedBox(height: 8),
-            ],
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return _buildProductItem(product, controller, isRTL);
+            },
           ),
-        ),
-        
-        Row(
-          children: [
-           Text(product.price??'0.0',style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700
-           ),),
-             IconButton(
-              onPressed: () {
-                _editProduct(product);
-              },
-              icon: Icon(Icons.more_horiz, color: AppColors.primary400),
-            ),
-          ],
         ),
       ],
-    ),
-  );
-}
-
-Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
-  final products = controller.filteredProducts;
-  
-  if (products.isEmpty) {
-    return _buildEmptyProductsView(controller, isRTL);
+    );
   }
-  
-  return _buildProductsListView(controller, products as List<Product> , isRTL);
-}
+
+  Widget _buildProductItem(
+    Product product,
+    ProductController controller,
+    bool isRTL, {
+    bool showSection = true,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey[200],
+            ),
+            child: product.coverUrl != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      product.coverUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.image, color: Colors.grey[400]);
+                      },
+                    ),
+                  )
+                : Icon(Icons.image, color: Colors.grey[400]),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                const SizedBox(height: 4),
+
+                if (showSection &&
+                    product.sectionId != null &&
+                    product.sectionId != '0')
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.local_offer_outlined,
+                        color: Colors.grey[600],
+                        size: 18,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        controller.getSectionName(product.sectionId!),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+
+          Row(
+            children: [
+              Text(
+                product.price ?? '0.0',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              ),
+              IconButton(
+                onPressed: () {
+                  _editProduct(product);
+                },
+                icon: Icon(Icons.more_horiz, color: AppColors.primary400),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAllProductsViewFallback(
+    ProductController controller,
+    bool isRTL,
+  ) {
+    final products = controller.filteredProducts;
+
+    if (products.isEmpty) {
+      return _buildEmptyProductsView(controller, isRTL);
+    }
+
+    return _buildProductsListView(controller, products as List<Product>, isRTL);
+  }
 
   Widget _buildNoSectionsView(ProductController controller, bool isRTL) {
     return Container(
@@ -347,7 +396,7 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
               style: TextStyle(
                 fontSize: 22,
                 color: Color(0xFF555555),
-                fontWeight: FontWeight.w700
+                fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 12),
@@ -358,14 +407,16 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
                 style: TextStyle(
                   fontSize: 14,
                   color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.w500
+                  fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 32),
             AateneButton(
-              buttonText: isRTL ? 'إضافة قسم جديد للمتجر' : 'Add new Section for Store',
+              buttonText: isRTL
+                  ? 'إضافة قسم جديد للمتجر'
+                  : 'Add new Section for Store',
               textColor: Colors.white,
               color: AppColors.primary400,
               borderColor: AppColors.primary400,
@@ -381,7 +432,11 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
     );
   }
 
-  Widget _buildEmptyProductsView(ProductController controller, bool isRTL, {String? sectionName}) {
+  Widget _buildEmptyProductsView(
+    ProductController controller,
+    bool isRTL, {
+    String? sectionName,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Center(
@@ -391,11 +446,13 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
             Image(image: AssetImage('assets/images/png/empty_store.png')),
             const SizedBox(height: 24),
             Text(
-              sectionName != null ? 'لا يوجد منتجات في قسم $sectionName' : 'لا يوجد لديك أي منتجات',
+              sectionName != null
+                  ? 'لا يوجد منتجات في قسم $sectionName'
+                  : 'لا يوجد لديك أي منتجات',
               style: TextStyle(
                 fontSize: 22,
                 color: Color(0xFF555555),
-                fontWeight: FontWeight.w700
+                fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 12),
@@ -403,12 +460,12 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
               width: 280,
               child: Text(
                 sectionName != null
-                  ? 'يمكنك البدء بإضافة منتجات جديدة إلى هذا القسم'
-                  : 'يمكنك البدء بإضافة منتجات جديدة إلى الأقسام التي قمت بإنشائها',
+                    ? 'يمكنك البدء بإضافة منتجات جديدة إلى هذا القسم'
+                    : 'يمكنك البدء بإضافة منتجات جديدة إلى الأقسام التي قمت بإنشائها',
                 style: TextStyle(
                   fontSize: 14,
                   color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.w500
+                  fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -515,25 +572,16 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.inventory_2_outlined,
-              size: 80,
-              color: Colors.grey[300],
-            ),
+            Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
               '${tab.label}',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[400],
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey[400]),
             ),
             const SizedBox(height: 8),
             Text(
               'تسجيل الدخول مطلوب لعرض المحتوى',
-              style: TextStyle(
-                color: Colors.grey[400],
-              ),
+              style: TextStyle(color: Colors.grey[400]),
             ),
           ],
         ),
@@ -556,10 +604,7 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
         title: Text('حذف المنتج'),
         content: Text('هل أنت متأكد من حذف المنتج "${product.name}"؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               Get.back();
@@ -573,10 +618,13 @@ Widget _buildAllProductsViewFallback(ProductController controller, bool isRTL) {
     );
   }
 
-  Future<void> _performDeleteProduct(Product product, ProductController controller) async {
+  Future<void> _performDeleteProduct(
+    Product product,
+    ProductController controller,
+  ) async {
     try {
       await controller.reloadProducts();
-      
+
       Get.snackbar(
         'تم الحذف',
         'تم حذف المنتج بنجاح',

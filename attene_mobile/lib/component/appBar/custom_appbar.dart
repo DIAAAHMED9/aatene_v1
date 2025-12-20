@@ -18,18 +18,22 @@ class CustomAppBarWithTabs extends StatelessWidget
     required this.isRTL,
   }) : super(key: key);
 
-  bool _isMobile(BuildContext context) => MediaQuery.of(context).size.width < 768;
+  bool _isMobile(BuildContext context) =>
+      MediaQuery.of(context).size.width < 768;
+
   bool _isTablet(BuildContext context) =>
       MediaQuery.of(context).size.width >= 768 &&
       MediaQuery.of(context).size.width < 1024;
-  bool _isDesktop(BuildContext context) => MediaQuery.of(context).size.width >= 1024;
+
+  bool _isDesktop(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 1024;
 
   @override
   Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
 
   double _calculateHeight(BuildContext context) {
     double baseHeight;
-    
+
     if (_isMobile(context)) {
       baseHeight = 140;
     } else if (_isTablet(context)) {
@@ -37,15 +41,15 @@ class CustomAppBarWithTabs extends StatelessWidget
     } else {
       baseHeight = 180;
     }
-    
+
     if (config.showTabs && (config.tabs?.isNotEmpty ?? false)) {
       baseHeight += _getTabBarHeight(context);
     }
-    
+
     if (config.showSearch) {
       baseHeight += _getSearchFieldHeight(context) + 16;
     }
-    
+
     return baseHeight;
   }
 
@@ -71,7 +75,11 @@ class CustomAppBarWithTabs extends StatelessWidget
     final List<Widget> children = [
       Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: _isMobile(context) ? 12 : _isTablet(context) ? 20 : 28,
+          horizontal: _isMobile(context)
+              ? 12
+              : _isTablet(context)
+              ? 20
+              : 28,
         ),
         child: _buildTopBar(context),
       ),
@@ -89,7 +97,11 @@ class CustomAppBarWithTabs extends StatelessWidget
       children.add(
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: _isMobile(context) ? 12 : _isTablet(context) ? 20 : 28,
+            horizontal: _isMobile(context)
+                ? 12
+                : _isTablet(context)
+                ? 20
+                : 28,
           ),
           child: _buildSearchBox(context),
         ),
@@ -162,7 +174,7 @@ class CustomAppBarWithTabs extends StatelessWidget
 
   Widget _buildActionButton(BuildContext context) {
     final isSmallMobile = MediaQuery.of(context).size.width < 400;
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -187,7 +199,9 @@ class CustomAppBarWithTabs extends StatelessWidget
   }
 
   Widget _buildTabBar(BuildContext context) {
-    if (config.tabController == null || config.tabs == null || config.tabs!.isEmpty) {
+    if (config.tabController == null ||
+        config.tabs == null ||
+        config.tabs!.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -232,10 +246,11 @@ class CustomAppBarWithTabs extends StatelessWidget
               tooltip: 'تصفية',
             ),
           ),
-SizedBox(width: 5,),
+        SizedBox(width: 5),
 
         Expanded(
-          child: Container(            height: _getSearchFieldHeight(context),
+          child: Container(
+            height: _getSearchFieldHeight(context),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(_isMobile(context) ? 25 : 25),
@@ -245,18 +260,19 @@ SizedBox(width: 5,),
               children: [
                 Expanded(
                   child: TextField(
-                    
                     controller: config.searchController,
                     onChanged: config.onSearchChanged,
-                    
+
                     decoration: InputDecoration(
-                      prefixIcon:    Icon(
-                  Icons.search,
-                  color: Colors.grey[600],
-                  size: _isMobile(context) ? 20 : 22,
-                ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey[600],
+                        size: _isMobile(context) ? 20 : 22,
+                      ),
                       border: InputBorder.none,
-                      hintText: isRTL ? 'ابحث عن منتج...' : 'Search products...',
+                      hintText: isRTL
+                          ? 'ابحث عن منتج...'
+                          : 'Search products...',
                       hintStyle: TextStyle(
                         color: Colors.grey[500],
                         fontSize: _isMobile(context) ? 14 : 15,
@@ -270,7 +286,9 @@ SizedBox(width: 5,),
                 ),
                 if (config.searchController?.text.isNotEmpty ?? false)
                   Padding(
-                    padding: EdgeInsets.only(right: _isMobile(context) ? 8 : 12),
+                    padding: EdgeInsets.only(
+                      right: _isMobile(context) ? 8 : 12,
+                    ),
                     child: GestureDetector(
                       onTap: () {
                         config.searchController?.clear();
@@ -287,7 +305,7 @@ SizedBox(width: 5,),
             ),
           ),
         ),
-SizedBox(width: 5,),
+        SizedBox(width: 5),
         if (config.onSortPressed != null)
           Padding(
             padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
@@ -443,19 +461,25 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
       indicatorSize: TabBarIndicatorSize.tab,
       labelColor: Colors.white,
       unselectedLabelColor: Colors.grey[600],
-      labelPadding: EdgeInsets.symmetric(
-        horizontal: widget.isMobile ? 12 : 16,
-      ),
+      labelPadding: EdgeInsets.symmetric(horizontal: widget.isMobile ? 12 : 16),
       padding: EdgeInsets.only(
         left: widget.isRTL ? 0 : (widget.isMobile ? 12 : 20),
         right: widget.isRTL ? (widget.isMobile ? 12 : 20) : 0,
       ),
       labelStyle: TextStyle(
-        fontSize: widget.isMobile ? 13 : widget.isTablet ? 14 : 15,
+        fontSize: widget.isMobile
+            ? 13
+            : widget.isTablet
+            ? 14
+            : 15,
         fontWeight: FontWeight.w600,
       ),
       unselectedLabelStyle: TextStyle(
-        fontSize: widget.isMobile ? 13 : widget.isTablet ? 14 : 15,
+        fontSize: widget.isMobile
+            ? 13
+            : widget.isTablet
+            ? 14
+            : 15,
         fontWeight: FontWeight.w500,
       ),
       tabs: widget.tabs.map((tab) {
@@ -469,20 +493,27 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
     return Tab(
       child: Container(
         constraints: BoxConstraints(
-          minWidth: widget.isMobile ? 80 : widget.isTablet ? 100 : 120,
+          minWidth: widget.isMobile
+              ? 80
+              : widget.isTablet
+              ? 100
+              : 120,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (tab.icon != null && !widget.isMobile)
-              ...[
-                Icon(
-                  tab.icon,
-                  size: widget.isMobile ? 14 : widget.isTablet ? 16 : 18,
-                ),
-                SizedBox(width: widget.isMobile ? 4 : 6),
-              ],
+            if (tab.icon != null && !widget.isMobile) ...[
+              Icon(
+                tab.icon,
+                size: widget.isMobile
+                    ? 14
+                    : widget.isTablet
+                    ? 16
+                    : 18,
+              ),
+              SizedBox(width: widget.isMobile ? 4 : 6),
+            ],
             Flexible(
               child: Text(
                 _getTabLabel(tab.label),
@@ -490,7 +521,11 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontSize: widget.isMobile ? 13 : widget.isTablet ? 14 : 15,
+                  fontSize: widget.isMobile
+                      ? 13
+                      : widget.isTablet
+                      ? 14
+                      : 15,
                   fontWeight: FontWeight.w600,
                 ),
               ),

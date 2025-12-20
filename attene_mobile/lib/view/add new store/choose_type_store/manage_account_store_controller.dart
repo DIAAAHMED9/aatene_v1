@@ -10,7 +10,8 @@ import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
 import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
 
-class ManageAccountStoreController extends GetxController with GetTickerProviderStateMixin {
+class ManageAccountStoreController extends GetxController
+    with GetTickerProviderStateMixin {
   final MyAppController myAppController = Get.find<MyAppController>();
   final DataInitializerService dataService = Get.find<DataInitializerService>();
   final RxBool isLoading = false.obs;
@@ -18,9 +19,9 @@ class ManageAccountStoreController extends GetxController with GetTickerProvider
   final RxList<Store> stores = <Store>[].obs;
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
-  
+
   late TabController tabController;
-  
+
   final List<TabData> tabs = [
     TabData(label: 'جميع المتاجر', viewName: 'all_stores'),
     TabData(label: 'المتاجر النشطة', viewName: 'active_stores'),
@@ -39,44 +40,49 @@ class ManageAccountStoreController extends GetxController with GetTickerProvider
     tabController.dispose();
     super.onClose();
   }
-Future<void> loadStores() async {
-  return UnifiedLoadingScreen.showWithFuture<void>(
-    _performLoadStores(),
-    message: 'جاري تحميل المتاجر...',
-  );
-}
 
-Future<void> _performLoadStores() async {
-  try {
-    isLoading.value = true;
-    errorMessage.value = '';
-    
-    final cachedStores = dataService.getStores();
-    if (cachedStores.isNotEmpty) {
-      stores.assignAll(cachedStores.map((storeData) => Store.fromJson(storeData)).toList());
-    }
-    
-    final response = await ApiHelper.get(
-      path: '/merchants/stores',
-      queryParameters: {'orderDir': 'asc'},
-      withLoading: false,
-      shouldShowMessage: false,
+  Future<void> loadStores() async {
+    return UnifiedLoadingScreen.showWithFuture<void>(
+      _performLoadStores(),
+      message: 'جاري تحميل المتاجر...',
     );
-
-    if (response != null && response['status'] == true) {
-      final List<dynamic> data = response['data'];
-      stores.assignAll(data.map((storeData) => Store.fromJson(storeData)).toList());
-      
-      await dataService.refreshStores();
-    } else {
-      errorMessage.value = response?['message'] ?? 'فشل تحميل المتاجر';
-    }
-  } catch (e) {
-    errorMessage.value = 'حدث خطأ في تحميل المتاجر: $e';
-  } finally {
-    isLoading.value = false;
   }
-}
+
+  Future<void> _performLoadStores() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final cachedStores = dataService.getStores();
+      if (cachedStores.isNotEmpty) {
+        stores.assignAll(
+          cachedStores.map((storeData) => Store.fromJson(storeData)).toList(),
+        );
+      }
+
+      final response = await ApiHelper.get(
+        path: '/merchants/stores',
+        queryParameters: {'orderDir': 'asc'},
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+
+      if (response != null && response['status'] == true) {
+        final List<dynamic> data = response['data'];
+        stores.assignAll(
+          data.map((storeData) => Store.fromJson(storeData)).toList(),
+        );
+
+        await dataService.refreshStores();
+      } else {
+        errorMessage.value = response?['message'] ?? 'فشل تحميل المتاجر';
+      }
+    } catch (e) {
+      errorMessage.value = 'حدث خطأ في تحميل المتاجر: $e';
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   void addNewStore() {
     Get.to(() => TypeStore());
@@ -92,10 +98,7 @@ Future<void> _performLoadStores() async {
         title: Text('حذف المتجر'),
         content: Text('هل أنت متأكد من حذف المتجر "${store.name}"؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               Get.back();
@@ -123,14 +126,14 @@ Future<void> _performLoadStores() async {
         Get.snackbar('خطأ', 'معرف المتجر غير صالح');
         return;
       }
-      
+
       final response = await ApiHelper.deleteStore(storeId);
-      
+
       if (response != null && response['status'] == true) {
         stores.removeWhere((s) => s.id == store.id);
-        
+
         await dataService.deleteStore(storeId);
-        
+
         Get.snackbar(
           'تم الحذف',
           'تم حذف المتجر بنجاح',
@@ -154,7 +157,7 @@ Future<void> _performLoadStores() async {
       );
     }
   }
-  
+
   void navigateBack() {
     Get.back();
   }

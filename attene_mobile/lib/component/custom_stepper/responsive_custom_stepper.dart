@@ -21,7 +21,8 @@ class ResponsiveCustomStepper extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ResponsiveCustomStepperState createState() => _ResponsiveCustomStepperState();
+  _ResponsiveCustomStepperState createState() =>
+      _ResponsiveCustomStepperState();
 }
 
 class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
@@ -78,9 +79,13 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
   }
 
   Widget _buildResponsiveStepperHeader(bool isMobile, bool isTablet) {
-    final maxVisibleSteps = isMobile ? 3 : isTablet ? 4 : 6;
+    final maxVisibleSteps = isMobile
+        ? 3
+        : isTablet
+        ? 4
+        : 6;
     final shouldScroll = widget.steps.length > maxVisibleSteps;
-    
+
     Widget stepperContent = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(widget.steps.length, (index) {
@@ -153,7 +158,7 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
             },
             isMobile: isMobile,
           ),
-          
+
           if (!isLast)
             Container(
               width: isMobile ? 15 : 20,
@@ -201,7 +206,7 @@ class _AnimatedStepCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final circleSize = isMobile ? 36.0 : 40.0;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -213,15 +218,15 @@ class _AnimatedStepCircle extends StatelessWidget {
           builder: (context, child) {
             final scale = isActive || isNext
                 ? Tween<double>(begin: 0.8, end: 1.0)
-                    .animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: isActive
-                            ? Curves.elasticOut
-                            : Curves.easeInOut,
-                      ),
-                    )
-                    .value
+                      .animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: isActive
+                              ? Curves.elasticOut
+                              : Curves.easeInOut,
+                        ),
+                      )
+                      .value
                 : 1.0;
 
             return Transform.scale(
@@ -313,7 +318,7 @@ class _AnimatedStepCircle extends StatelessWidget {
                                 key: ValueKey('number_$stepNumber'),
                               )),
                   ),
-                  
+
                   if (!isMobile)
                     Positioned(
                       bottom: -25,
@@ -370,7 +375,7 @@ class _AnimatedStepConnector extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool shouldAnimate =
         (isPrevious && stepIndex == currentStep - 1) ||
-            (isNext && stepIndex == currentStep);
+        (isNext && stepIndex == currentStep);
 
     return AnimatedBuilder(
       animation: animation,
@@ -454,9 +459,5 @@ class StepperStep {
   final String subtitle;
   final IconData? icon;
 
-  const StepperStep({
-    required this.title,
-    required this.subtitle,
-    this.icon,
-  });
+  const StepperStep({required this.title, required this.subtitle, this.icon});
 }

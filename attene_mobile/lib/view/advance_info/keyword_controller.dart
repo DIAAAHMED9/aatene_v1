@@ -19,35 +19,49 @@ class KeywordController extends GetxController {
   final RxString storesError = ''.obs;
   final RxBool hasAttemptedLoad = false.obs;
   final RxBool isInitialized = false.obs;
-  
+
   final RxList<String> availableKeywords = <String>[].obs;
   final RxList<String> selectedKeywords = <String>[].obs;
   final RxList<String> filteredKeywords = <String>[].obs;
-  
+
   final TextEditingController searchController = TextEditingController();
   final RxBool isSearchInputEmpty = true.obs;
   final RxBool isLoadingKeywords = false.obs;
-  
+
   static const int maxKeywords = 15;
   static const List<String> defaultKeywords = [
-    'ملابس', 'أحذية', 'إلكترونيات', 'هواتف', 'لابتوبات',
-    'إكسسوارات', 'منزلية', 'رياضية', 'عطور', 'جمال',
-    'أطفال', 'رجال', 'نساء', 'رياضة', 'موضة',
-    'ديكور', 'مطبخ', 'أجهزة',
+    'ملابس',
+    'أحذية',
+    'إلكترونيات',
+    'هواتف',
+    'لابتوبات',
+    'إكسسوارات',
+    'منزلية',
+    'رياضية',
+    'عطور',
+    'جمال',
+    'أطفال',
+    'رجال',
+    'نساء',
+    'رياضة',
+    'موضة',
+    'ديكور',
+    'مطبخ',
+    'أجهزة',
   ];
 
   @override
   void onInit() {
     super.onInit();
     print('🚀 [KEYWORD CONTROLLER] Initializing...');
-    
+
     _setupListeners();
     _initializeController();
   }
 
   void _setupListeners() {
     searchController.addListener(_onSearchChanged);
-    
+
     ever(myAppController.isLoggedIn, (isLoggedIn) {
       if (isLoggedIn && !isInitialized.value) {
         _initializeController();
@@ -57,20 +71,19 @@ class KeywordController extends GetxController {
 
   Future<void> _initializeController() async {
     if (isInitialized.value) return;
-    
+
     try {
       print('🔄 [KEYWORD CONTROLLER] Initializing data...');
-      
+
       _syncWithProductController();
       _loadDefaultKeywords();
-      
+
       if (myAppController.isLoggedIn.value) {
         await loadStores();
       }
-      
+
       isInitialized.value = true;
       print('✅ [KEYWORD CONTROLLER] Initialization completed');
-      
     } catch (e) {
       print('❌ [KEYWORD CONTROLLER] Initialization error: $e');
       storesError('فشل في تهيئة البيانات: $e');
@@ -79,7 +92,9 @@ class KeywordController extends GetxController {
 
   void _syncWithProductController() {
     selectedKeywords.assignAll(productController.keywords);
-    print('🔄 [KEYWORD] Synced with product controller: ${selectedKeywords.length} keywords');
+    print(
+      '🔄 [KEYWORD] Synced with product controller: ${selectedKeywords.length} keywords',
+    );
   }
 
   Future<void> loadStoresOnOpen() async {
@@ -87,7 +102,7 @@ class KeywordController extends GetxController {
       storesError('يجب تسجيل الدخول أولاً');
       return;
     }
-    
+
     if (hasAttemptedLoad.value && stores.isNotEmpty) return;
     await loadStores();
   }
@@ -112,16 +127,18 @@ class KeywordController extends GetxController {
       );
 
       if (response != null && response['status'] == true) {
-        final storesList = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        final storesList = List<Map<String, dynamic>>.from(
+          response['data'] ?? [],
+        );
         final loadedStores = storesList.map(Store.fromJson).toList();
 
         stores.assignAll(loadedStores);
-        
+
         if (stores.isNotEmpty) {
           selectedStore.value = stores.first;
           print('✅ [KEYWORD] Auto-selected store: ${stores.first.name}');
         }
-        
+
         print('✅ [KEYWORD] Loaded ${stores.length} stores');
       } else {
         final errorMessage = response?['message'] ?? 'فشل في تحميل المتاجر';
@@ -160,35 +177,35 @@ class KeywordController extends GetxController {
 
     filteredKeywords.assignAll(
       query.isEmpty
-        ? availableKeywords
-        : availableKeywords.where((k) => k.contains(query)).toList()
+          ? availableKeywords
+          : availableKeywords.where((k) => k.contains(query)).toList(),
     );
     update();
   }
 
   void addCustomKeyword() {
     final text = searchController.text.trim();
-    
+
     if (text.isEmpty) {
       _showErrorSnackbar('يرجى إدخال كلمة مفتاحية');
       return;
     }
-    
+
     if (selectedKeywords.contains(text)) {
       _showWarningSnackbar('هذه الكلمة مضافة مسبقاً');
       return;
     }
-    
+
     if (selectedKeywords.length >= maxKeywords) {
       _showErrorSnackbar('تم الوصول للحد الأقصى ($maxKeywords كلمة)');
       return;
     }
-    
+
     selectedKeywords.add(text);
     searchController.clear();
     _updateProductControllerKeywords();
     update();
-    
+
     print('✅ [KEYWORD] Custom keyword added: $text');
   }
 
@@ -197,16 +214,16 @@ class KeywordController extends GetxController {
       _showWarningSnackbar('هذه الكلمة مضافة مسبقاً');
       return;
     }
-    
+
     if (selectedKeywords.length >= maxKeywords) {
       _showErrorSnackbar('تم الوصول للحد الأقصى ($maxKeywords كلمة)');
       return;
     }
-    
+
     selectedKeywords.add(keyword);
     _updateProductControllerKeywords();
     update();
-    
+
     print('✅ [KEYWORD] Keyword added: $keyword');
   }
 
@@ -214,13 +231,15 @@ class KeywordController extends GetxController {
     selectedKeywords.remove(keyword);
     _updateProductControllerKeywords();
     update();
-    
+
     print('🗑️ [KEYWORD] Keyword removed: $keyword');
   }
 
   void _updateProductControllerKeywords() {
     productController.addKeywords(selectedKeywords);
-    print('🔄 [KEYWORD] Updated product controller with ${selectedKeywords.length} keywords');
+    print(
+      '🔄 [KEYWORD] Updated product controller with ${selectedKeywords.length} keywords',
+    );
   }
 
   void confirmSelection() {
@@ -228,7 +247,7 @@ class KeywordController extends GetxController {
       _showErrorSnackbar('يرجى اختيار متجر');
       return;
     }
-    
+
     try {
       productController.updateSelectedStore({
         'id': selectedStore.value!.id,
@@ -236,17 +255,18 @@ class KeywordController extends GetxController {
         'logo_url': selectedStore.value!.logoUrl,
         'status': selectedStore.value!.status,
       });
-      
+
       Get.back();
       _showSuccessSnackbar('تم حفظ الكلمات المفتاحية بنجاح');
-      
     } catch (e) {
       _showErrorSnackbar('حدث خطأ أثناء الحفظ: $e');
     }
   }
 
   void _showErrorSnackbar(String message) {
-    Get.snackbar('خطأ', message,
+    Get.snackbar(
+      'خطأ',
+      message,
       backgroundColor: Colors.red,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
@@ -254,7 +274,9 @@ class KeywordController extends GetxController {
   }
 
   void _showWarningSnackbar(String message) {
-    Get.snackbar('تنبيه', message,
+    Get.snackbar(
+      'تنبيه',
+      message,
       backgroundColor: Colors.orange,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
@@ -262,7 +284,9 @@ class KeywordController extends GetxController {
   }
 
   void _showSuccessSnackbar(String message) {
-    Get.snackbar('نجاح', message,
+    Get.snackbar(
+      'نجاح',
+      message,
       backgroundColor: Colors.green,
       colorText: Colors.white,
       duration: const Duration(seconds: 2),
@@ -270,28 +294,40 @@ class KeywordController extends GetxController {
   }
 
   bool get canAddMoreKeywords => selectedKeywords.length < maxKeywords;
-  bool get isFormValid => selectedStore.value != null && selectedKeywords.isNotEmpty;
+
+  bool get isFormValid =>
+      selectedStore.value != null && selectedKeywords.isNotEmpty;
+
   bool get hasStoresError => storesError.value.isNotEmpty;
+
   bool get hasStores => stores.isNotEmpty;
-  
+
   String getStoreStatusText(String status) {
     switch (status) {
-      case 'active': return 'نشط';
-      case 'not-active': return 'غير نشط';
-      case 'pending': return 'قيد المراجعة';
-      default: return status;
+      case 'active':
+        return 'نشط';
+      case 'not-active':
+        return 'غير نشط';
+      case 'pending':
+        return 'قيد المراجعة';
+      default:
+        return status;
     }
   }
-  
+
   Color getStoreStatusColor(String status) {
     switch (status) {
-      case 'active': return Colors.green;
-      case 'not-active': return Colors.red;
-      case 'pending': return Colors.orange;
-      default: return Colors.grey;
+      case 'active':
+        return Colors.green;
+      case 'not-active':
+        return Colors.red;
+      case 'pending':
+        return Colors.orange;
+      default:
+        return Colors.grey;
     }
   }
-  
+
   @override
   void onClose() {
     searchController.dispose();

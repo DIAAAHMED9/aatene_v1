@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
 
 class BottomSheetController extends GetxController {
-  final RxList<ProductAttribute> selectedAttributesRx = <ProductAttribute>[].obs;
+  final RxList<ProductAttribute> selectedAttributesRx =
+      <ProductAttribute>[].obs;
 
   void openManageAttributes(
     List<ProductAttribute> allAttributes,
@@ -27,10 +28,7 @@ class BottomSheetController extends GetxController {
               children: [
                 const Text(
                   'إدارة السمات والصفات',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -53,19 +51,24 @@ class BottomSheetController extends GetxController {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Obx(() => Text(
-                    '${selectedAttributesRx.length} مختارة',
-                    style: TextStyle(
-                      color: Colors.blue[700],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                  child: Obx(
+                    () => Text(
+                      '${selectedAttributesRx.length} مختارة',
+                      style: TextStyle(
+                        color: Colors.blue[700],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  )),
+                  ),
                 ),
               ],
             ),
@@ -76,8 +79,9 @@ class BottomSheetController extends GetxController {
                 itemCount: allAttributes.length,
                 itemBuilder: (context, index) {
                   final attribute = allAttributes[index];
-                  final isSelected = selectedAttributesRx
-                      .any((attr) => attr.id == attribute.id);
+                  final isSelected = selectedAttributesRx.any(
+                    (attr) => attr.id == attribute.id,
+                  );
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8),
@@ -96,16 +100,18 @@ class BottomSheetController extends GetxController {
                           if (value == true) {
                             selectedAttributesRx.add(attribute);
                           } else {
-                            selectedAttributesRx
-                                .removeWhere((attr) => attr.id == attribute.id);
+                            selectedAttributesRx.removeWhere(
+                              (attr) => attr.id == attribute.id,
+                            );
                           }
                         },
                         activeColor: Colors.blue,
                       ),
                       onTap: () {
                         if (isSelected) {
-                          selectedAttributesRx
-                              .removeWhere((attr) => attr.id == attribute.id);
+                          selectedAttributesRx.removeWhere(
+                            (attr) => attr.id == attribute.id,
+                          );
                         } else {
                           selectedAttributesRx.add(attribute);
                         }
@@ -137,7 +143,7 @@ class BottomSheetController extends GetxController {
                     onPressed: () {
                       onSelected(selectedAttributesRx.toList());
                       Get.back();
-                      
+
                       Get.snackbar(
                         'تم الحفظ',
                         'تم حفظ السمات المختارة',

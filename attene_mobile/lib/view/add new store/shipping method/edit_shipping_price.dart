@@ -94,7 +94,10 @@ class EditShippingPrice extends StatelessWidget {
                 hintText: "٣",
                 suffixIcon: Padding(
                   padding: const EdgeInsets.only(top: 5),
-                  child: Text("₪", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                  child: Text(
+                    "₪",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
                 ),
               ),
               AateneButtonWithIcon(buttonText: "حفظ ملف التوصيل"),

@@ -19,7 +19,7 @@ class ProductScreen extends GetView<ProductController> {
     final isRTL = LanguageUtils.isRTL;
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(isRTL, context),
@@ -32,9 +32,9 @@ class ProductScreen extends GetView<ProductController> {
       preferredSize: Size.fromHeight(_calculateAppBarHeight(context)),
       child: GetBuilder<ProductController>(
         builder: (controller) {
-          final bool shouldShowTabs = controller.tabs.isNotEmpty &&
-                                     controller.isTabControllerReady;
-          
+          final bool shouldShowTabs =
+              controller.tabs.isNotEmpty && controller.isTabControllerReady;
+
           return CustomAppBarWithTabs(
             isRTL: isRTL,
             config: AppBarConfig(
@@ -70,20 +70,21 @@ class ProductScreen extends GetView<ProductController> {
   double _calculateAppBarHeight(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     double height = ResponsiveDimensions.f(175);
-    
+
     final controller = Get.find<ProductController>();
-    final shouldShowTabs = controller.tabs.isNotEmpty && controller.isTabControllerReady;
-    
+    final shouldShowTabs =
+        controller.tabs.isNotEmpty && controller.isTabControllerReady;
+
     if (shouldShowTabs) {
       height += ResponsiveDimensions.f(45);
       height += ResponsiveDimensions.f(15);
     }
-    
+
     height += ResponsiveDimensions.f(60);
     height += ResponsiveDimensions.f(15);
-    
+
     return height;
   }
 
@@ -154,7 +155,11 @@ class ProductScreen extends GetView<ProductController> {
     );
   }
 
-  Widget _buildTabContentInternal(TabData tab, int tabIndex, BuildContext context) {
+  Widget _buildTabContentInternal(
+    TabData tab,
+    int tabIndex,
+    BuildContext context,
+  ) {
     return GetBuilder<ProductController>(
       builder: (controller) {
         if (controller.isLoadingProducts && controller.allProducts.isEmpty) {
@@ -179,11 +184,11 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildProductsView(List<Product> products, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return GetBuilder<ProductController>(
       builder: (controller) {
         final isGridMode = controller.viewMode == 'grid' && screenWidth > 768;
-        
+
         if (isGridMode) {
           return _buildGridLayout(products, context);
         } else {
@@ -262,7 +267,7 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildLoginRequiredView(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
@@ -322,10 +327,14 @@ class ProductScreen extends GetView<ProductController> {
     );
   }
 
-  Widget _buildEmptyView(String sectionName, int tabIndex, BuildContext context) {
+  Widget _buildEmptyView(
+    String sectionName,
+    int tabIndex,
+    BuildContext context,
+  ) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
@@ -418,14 +427,12 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildLoadingView(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AppColors.primary400,
-          ),
+          CircularProgressIndicator(color: AppColors.primary400),
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'جاري تحميل المنتجات...',
@@ -444,7 +451,7 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildErrorView(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
@@ -468,16 +475,18 @@ class ProductScreen extends GetView<ProductController> {
             ),
           ),
           SizedBox(height: ResponsiveDimensions.f(8)),
-          Obx(() => Text(
-            controller.productsErrorMessage,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: isSmallScreen
-                  ? ResponsiveDimensions.f(12)
-                  : ResponsiveDimensions.f(14),
-              color: Colors.grey,
+          Obx(
+            () => Text(
+              controller.productsErrorMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isSmallScreen
+                    ? ResponsiveDimensions.f(12)
+                    : ResponsiveDimensions.f(14),
+                color: Colors.grey,
+              ),
             ),
-          )),
+          ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           ElevatedButton(
             onPressed: controller.reloadProducts,
@@ -491,9 +500,7 @@ class ProductScreen extends GetView<ProductController> {
             ),
             child: Text(
               'إعادة المحاولة',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(14),
-              ),
+              style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
             ),
           ),
           // مساحة إضافية للكيبورد
@@ -506,7 +513,7 @@ class ProductScreen extends GetView<ProductController> {
   Widget? _buildFloatingActionButton(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return GetBuilder<MyAppController>(
       builder: (myAppController) {
         if (!myAppController.isLoggedIn.value) return const SizedBox();

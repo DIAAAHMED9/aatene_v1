@@ -54,7 +54,8 @@ class ChatUnread extends StatelessWidget {
         actions: [
           GetBuilder<ChatController>(
             builder: (controller) {
-              if (controller.connectionStatus.value == ConnectionStatus.disconnected ||
+              if (controller.connectionStatus.value ==
+                      ConnectionStatus.disconnected ||
                   controller.connectionStatus.value == ConnectionStatus.error) {
                 return IconButton(
                   icon: const Icon(Icons.refresh, color: Colors.blue),
@@ -76,10 +77,10 @@ class ChatUnread extends StatelessWidget {
               children: [
                 _buildSearchBar(controller),
                 const SizedBox(height: 10),
-                
+
                 _buildTabButtons(controller),
                 const Divider(color: Colors.grey, height: 15),
-                
+
                 Expanded(
                   child: controller.unreadConversations.isEmpty
                       ? _buildEmptyState()
@@ -116,9 +117,7 @@ class ChatUnread extends StatelessWidget {
             ),
             onPressed: () {},
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(40.0)),
         ),
       ),
     );
@@ -137,11 +136,7 @@ class ChatUnread extends StatelessWidget {
           },
         ),
         const SizedBox(width: 10),
-        _buildTabButton(
-          label: "غير مقروء",
-          isActive: true,
-          onTap: () {},
-        ),
+        _buildTabButton(label: "غير مقروء", isActive: true, onTap: () {}),
         const SizedBox(width: 10),
         _buildTabButton(
           label: "المهتمين",
@@ -178,8 +173,8 @@ class ChatUnread extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-      )
-      );
+      ),
+    );
   }
 
   Widget _buildEmptyState() {
@@ -195,18 +190,12 @@ class ChatUnread extends StatelessWidget {
           const SizedBox(height: 16),
           const Text(
             'لا توجد رسائل غير مقروءة',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.grey, fontSize: 16),
           ),
           const SizedBox(height: 8),
           const Text(
             'جميع رسائلك مقروءة',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey, fontSize: 14),
           ),
         ],
       ),
@@ -231,7 +220,10 @@ class ChatUnread extends StatelessWidget {
     );
   }
 
-  Widget _buildUnreadItem(ChatConversation conversation, ChatController controller) {
+  Widget _buildUnreadItem(
+    ChatConversation conversation,
+    ChatController controller,
+  ) {
     return MaterialButton(
       onPressed: () {
         controller.setCurrentConversation(conversation);
@@ -245,7 +237,7 @@ class ChatUnread extends StatelessWidget {
         children: [
           _buildUnreadAvatar(conversation),
           const SizedBox(width: 12),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,12 +282,10 @@ class ChatUnread extends StatelessWidget {
               ],
             ),
           ),
-          
+
           IconButton(
             icon: Icon(
-              conversation.isInterested
-                  ? Icons.star
-                  : Icons.star_outline,
+              conversation.isInterested ? Icons.star : Icons.star_outline,
               color: conversation.isInterested
                   ? Colors.amber
                   : Colors.grey.shade400,
@@ -322,7 +312,7 @@ class ChatUnread extends StatelessWidget {
               ? NetworkImage(conversation.avatar!)
               : const AssetImage("assets/image/1.png") as ImageProvider,
         ),
-        
+
         Positioned(
           bottom: 0,
           right: 0,
@@ -332,14 +322,11 @@ class ChatUnread extends StatelessWidget {
             decoration: BoxDecoration(
               color: conversation.isOnline ? Colors.green : Colors.grey,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white,
-                width: 2,
-              ),
+              border: Border.all(color: Colors.white, width: 2),
             ),
           ),
         ),
-        
+
         if (conversation.unreadCount > 0)
           Positioned(
             top: -5,
@@ -349,15 +336,9 @@ class ChatUnread extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.red,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2,
-                ),
+                border: Border.all(color: Colors.white, width: 2),
               ),
-              constraints: const BoxConstraints(
-                minWidth: 20,
-                minHeight: 20,
-              ),
+              constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
               child: Text(
                 conversation.unreadCount > 99
                     ? '99+'
@@ -377,10 +358,10 @@ class ChatUnread extends StatelessWidget {
 
   String _formatTime(DateTime? time) {
     if (time == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(time);
-    
+
     if (difference.inSeconds < 60) {
       return 'الآن';
     } else if (difference.inMinutes < 60) {

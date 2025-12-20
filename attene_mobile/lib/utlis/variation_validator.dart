@@ -17,7 +17,7 @@ class VariationValidator {
         errorMessage: 'يرجى إضافة السمات أولاً',
       );
     }
-    
+
     if (hasVariations && variations.isEmpty) {
       return ValidationResult(
         isValid: false,
@@ -33,7 +33,7 @@ class VariationValidator {
         );
       }
     }
-    
+
     return ValidationResult(isValid: true, errorMessage: '');
   }
 }

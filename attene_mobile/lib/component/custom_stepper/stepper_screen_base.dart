@@ -25,7 +25,8 @@ abstract class StepperScreenBase extends StatefulWidget {
   }) : super(key: key);
 }
 
-abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State<T> {
+abstract class StepperScreenBaseState<T extends StepperScreenBase>
+    extends State<T> {
   late int currentStep;
   late List<StepperStep> steps;
   final PageController _pageController = PageController();
@@ -45,17 +46,27 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
   }
 
   List<StepperStep> getSteps();
+
   Widget buildStepContent(int stepIndex);
+
   void initializeControllers();
-  
+
   int getInitialStep() => 0;
+
   Future<bool> onWillPop() async => true;
+
   void onStepChanged(int oldStep, int newStep) {}
+
   bool validateStep(int stepIndex) => true;
+
   Future<void> onFinish() async {}
+
   Future<void> onCancel() async {}
+
   Widget buildNextButton() => _buildDefaultNextButton();
+
   Widget buildBackButton() => _buildDefaultBackButton();
+
   Widget buildStepNavigation() => _buildDefaultStepNavigation();
 
   String _getCurrentStepTitle() {
@@ -124,11 +135,11 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
 
   PreferredSizeWidget? _buildAppBar(BuildContext context) {
     if (!widget.showAppBar) return null;
-    
+
     if (widget.customAppBar != null) {
       return widget.customAppBar as PreferredSizeWidget;
     }
-    
+
     return AppBar(
       title: Text(
         _getCurrentStepTitle(), // استخدام عنوان الخطوة الحالية
@@ -190,7 +201,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
   void nextStep() {
     print('press next');
     if (!validateStep(currentStep)) return;
-    
+
     if (currentStep < steps.length - 1) {
       _animateToStep(currentStep + 1);
     } else {
@@ -215,9 +226,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.grey[300]!, width: 1.5),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -266,19 +275,14 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
         padding: const EdgeInsets.symmetric(vertical: 16),
         backgroundColor: widget.primaryColor,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 3,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Text(
           currentStep == steps.length - 1 ? 'إنهاء' : 'التالي',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );

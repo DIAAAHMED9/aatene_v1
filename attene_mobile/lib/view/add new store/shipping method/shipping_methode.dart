@@ -47,15 +47,15 @@ class AddShippingMethod extends StatelessWidget {
       body: Column(
         children: [
           _buildShippingMethodSection(),
-          
+
           Container(
             height: 1,
             color: Colors.grey[300],
             margin: EdgeInsets.symmetric(vertical: 20),
           ),
-          
+
           _buildShippingCompaniesSection(),
-          
+
           _buildSaveButton(),
           SizedBox(height: 20),
         ],
@@ -78,35 +78,37 @@ class AddShippingMethod extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15),
-          
-          Obx(() => Column(
-            children: [
-              _buildShippingOption(
-                value: 'free',
-                title: 'مجاني',
-                subtitle: 'توصيل مجاني للمنتجات',
-                icon: Icons.local_shipping,
-              ),
-              
-              SizedBox(height: 12),
-              
-              _buildShippingOption(
-                value: 'shipping',
-                title: 'من خلال شركة التوصيل',
-                subtitle: 'استخدام شركات الشحن المتاحة',
-                icon: Icons.business,
-              ),
-              
-              SizedBox(height: 12),
-              
-              _buildShippingOption(
-                value: 'hand',
-                title: 'من يد ليد',
-                subtitle: 'دون شركة توصيل',
-                icon: Icons.handshake,
-              ),
-            ],
-          )),
+
+          Obx(
+            () => Column(
+              children: [
+                _buildShippingOption(
+                  value: 'free',
+                  title: 'مجاني',
+                  subtitle: 'توصيل مجاني للمنتجات',
+                  icon: Icons.local_shipping,
+                ),
+
+                SizedBox(height: 12),
+
+                _buildShippingOption(
+                  value: 'shipping',
+                  title: 'من خلال شركة التوصيل',
+                  subtitle: 'استخدام شركات الشحن المتاحة',
+                  icon: Icons.business,
+                ),
+
+                SizedBox(height: 12),
+
+                _buildShippingOption(
+                  value: 'hand',
+                  title: 'من يد ليد',
+                  subtitle: 'دون شركة توصيل',
+                  icon: Icons.handshake,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -142,15 +144,11 @@ class AddShippingMethod extends StatelessWidget {
                     : Colors.white,
               ),
               child: controller.deliveryType.value == value
-                  ? Icon(
-                      Icons.check,
-                      size: 16,
-                      color: Colors.white,
-                    )
+                  ? Icon(Icons.check, size: 16, color: Colors.white)
                   : null,
             ),
             SizedBox(width: 12),
-            
+
             Text(
               title,
               style: TextStyle(
@@ -170,7 +168,7 @@ class AddShippingMethod extends StatelessWidget {
       if (controller.deliveryType.value != 'shipping') {
         return SizedBox();
       }
-      
+
       return Expanded(
         child: Column(
           children: [
@@ -187,7 +185,7 @@ class AddShippingMethod extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  
+
                   GestureDetector(
                     onTap: () {
                       Get.to(() => AddNewShippingCompany());
@@ -210,7 +208,7 @@ class AddShippingMethod extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             Expanded(
               child: controller.shippingCompanies.isEmpty
                   ? Center(
@@ -261,7 +259,7 @@ class AddShippingMethod extends StatelessWidget {
 
   Widget _buildShippingCompanyCard(Map<String, dynamic> company, int index) {
     final isPrimary = company['is_primary'] == true || index == 0;
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -297,9 +295,9 @@ class AddShippingMethod extends StatelessWidget {
               ),
             ),
           ),
-          
+
           SizedBox(width: 12),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,30 +310,24 @@ class AddShippingMethod extends StatelessWidget {
                     color: AppColors.neutral900,
                   ),
                 ),
-                
+
                 SizedBox(height: 4),
-                
+
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
-                
+
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey[500],
-                    ),
+                    style: TextStyle(fontSize: 10, color: Colors.grey[500]),
                   ),
               ],
             ),
           ),
-          
+
           Row(
             children: [
               GestureDetector(
@@ -349,16 +341,12 @@ class AddShippingMethod extends StatelessWidget {
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    Icons.edit,
-                    size: 18,
-                    color: Colors.blue,
-                  ),
+                  child: Icon(Icons.edit, size: 18, color: Colors.blue),
                 ),
               ),
-              
+
               SizedBox(width: 8),
-              
+
               GestureDetector(
                 onTap: () {
                   _deleteShippingCompany(index);
@@ -370,11 +358,7 @@ class AddShippingMethod extends StatelessWidget {
                     color: Colors.red[50],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    Icons.delete,
-                    size: 18,
-                    color: Colors.red,
-                  ),
+                  child: Icon(Icons.delete, size: 18, color: Colors.red),
                 ),
               ),
             ],
@@ -439,7 +423,7 @@ class AddShippingMethod extends StatelessWidget {
       );
       return;
     }
-    
+
     if (controller.deliveryType.value == 'shipping' &&
         controller.shippingCompanies.isEmpty) {
       Get.snackbar(
@@ -450,7 +434,7 @@ class AddShippingMethod extends StatelessWidget {
       );
       return;
     }
-    
+
     Get.defaultDialog(
       title: 'حفظ المتجر',
       middleText: controller.isEditMode.value
@@ -463,9 +447,9 @@ class AddShippingMethod extends StatelessWidget {
       buttonColor: AppColors.primary400,
       onConfirm: () async {
         Get.back();
-        
+
         final success = await controller.saveCompleteStore();
-        if (success??false) {
+        if (success ?? false) {
           Get.until((route) => route.isFirst);
         }
       },

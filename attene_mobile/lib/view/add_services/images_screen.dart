@@ -131,7 +131,10 @@ class ImagesScreenBody extends StatelessWidget {
             ),
           ),
 
-          DraggableImageGrid(controller: controller,buttonAddImage:_buildAddImagesButton(controller) ,),
+          DraggableImageGrid(
+            controller: controller,
+            buttonAddImage: _buildAddImagesButton(controller),
+          ),
 
           SizedBox(height: ResponsiveDimensions.responsiveHeight(20)),
         ],
@@ -145,56 +148,55 @@ class ImagesScreenBody extends StatelessWidget {
         final canAddMoreImages =
             controller.serviceImages.length < ServiceController.maxImages;
 
-        return    InkWell(
-              onTap:  canAddMoreImages
-                    ? () {
-                        _openMediaLibrary(controller);
-                      }
-                    : null,
-              child: Container(
-                height: ResponsiveDimensions.responsiveHeight(120),
-                padding:  ResponsiveDimensions.responsivePadding(mobile: 15),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8F8F8),
-                  borderRadius: BorderRadius.circular(8),
+        return InkWell(
+          onTap: canAddMoreImages
+              ? () {
+                  _openMediaLibrary(controller);
+                }
+              : null,
+          child: Container(
+            height: ResponsiveDimensions.responsiveHeight(120),
+            padding: ResponsiveDimensions.responsivePadding(mobile: 15),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F8F8),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: ResponsiveDimensions.responsivePadding(mobile: 7),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    size: ResponsiveDimensions.responsiveFontSize(25),
+                    color: Colors.black,
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: ResponsiveDimensions.responsivePadding(mobile: 7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.transparent,
-                        border: Border.all(color: Colors.black),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        size: ResponsiveDimensions.responsiveFontSize(25),
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
-                    Text(
-                      'اضف او اسحب صورة او فيديو',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
-                    Text(
-                      'png , jpg , svg',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+                SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
+                Text(
+                  'اضف او اسحب صورة او فيديو',
+                  style: TextStyle(
+                    fontSize: ResponsiveDimensions.responsiveFontSize(14),
+                    color: Colors.grey[600],
+                  ),
                 ),
-              ),
-            );
-        
+                SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
+                Text(
+                  'png , jpg , svg',
+                  style: TextStyle(
+                    fontSize: ResponsiveDimensions.responsiveFontSize(12),
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

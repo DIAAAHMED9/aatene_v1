@@ -32,11 +32,14 @@ class ResponsiveStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isVertical = direction == Axis.vertical || DeviceType.isMobile(context);
-    
+    final isVertical =
+        direction == Axis.vertical || DeviceType.isMobile(context);
+
     return Container(
       padding: padding,
-      child: isVertical ? _buildVerticalStepper(context) : _buildHorizontalStepper(context),
+      child: isVertical
+          ? _buildVerticalStepper(context)
+          : _buildHorizontalStepper(context),
     );
   }
 
@@ -54,9 +57,7 @@ class ResponsiveStepper extends StatelessWidget {
     if (showScroll) {
       stepperContent = SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: _buildStepItems(context, false),
-        ),
+        child: Row(children: _buildStepItems(context, false)),
       );
     }
 
@@ -64,16 +65,14 @@ class ResponsiveStepper extends StatelessWidget {
       height: isMobile
           ? StepperConstants.mobileStepHeight
           : isTablet
-            ? StepperConstants.tabletStepHeight
-            : StepperConstants.desktopStepHeight,
+          ? StepperConstants.tabletStepHeight
+          : StepperConstants.desktopStepHeight,
       child: stepperContent,
     );
   }
 
   Widget _buildVerticalStepper(BuildContext context) {
-    return Column(
-      children: _buildStepItems(context, true),
-    );
+    return Column(children: _buildStepItems(context, true));
   }
 
   List<Widget> _buildStepItems(BuildContext context, bool isVertical) {
@@ -84,9 +83,23 @@ class ResponsiveStepper extends StatelessWidget {
       final isEnabled = !isLinear || index <= currentStep;
 
       if (isVertical) {
-        return _buildVerticalStepItem(context, index, step, isActive, isCompleted, isEnabled);
+        return _buildVerticalStepItem(
+          context,
+          index,
+          step,
+          isActive,
+          isCompleted,
+          isEnabled,
+        );
       } else {
-        return _buildHorizontalStepItem(context, index, step, isActive, isCompleted, isEnabled);
+        return _buildHorizontalStepItem(
+          context,
+          index,
+          step,
+          isActive,
+          isCompleted,
+          isEnabled,
+        );
       }
     });
   }
@@ -103,8 +116,8 @@ class ResponsiveStepper extends StatelessWidget {
     final circleSize = isMobile
         ? StepperConstants.stepCircleSizeMobile
         : DeviceType.isTablet(context)
-          ? StepperConstants.stepCircleSizeTablet
-          : StepperConstants.stepCircleSizeDesktop;
+        ? StepperConstants.stepCircleSizeTablet
+        : StepperConstants.stepCircleSizeDesktop;
 
     return GestureDetector(
       onTap: isEnabled ? () => onStepTapped?.call(index) : null,
@@ -113,8 +126,8 @@ class ResponsiveStepper extends StatelessWidget {
         padding: isMobile
             ? StepperConstants.stepPaddingMobile
             : DeviceType.isTablet(context)
-              ? StepperConstants.stepPaddingTablet
-              : StepperConstants.stepPaddingDesktop,
+            ? StepperConstants.stepPaddingTablet
+            : StepperConstants.stepPaddingDesktop,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -143,7 +156,7 @@ class ResponsiveStepper extends StatelessWidget {
               ),
             ),
             SizedBox(width: spacing),
-            
+
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,9 +245,9 @@ class ResponsiveStepper extends StatelessWidget {
                   ),
               ],
             ),
-            
+
             SizedBox(width: spacing * 2),
-            
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,17 +256,16 @@ class ResponsiveStepper extends StatelessWidget {
                     step.title,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isActive
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: _getStepTextColor(isActive, isCompleted),
                     ),
                   ),
                   if (step.subtitle.isNotEmpty)
                     Text(
                       step.subtitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                 ],
               ),
@@ -301,15 +313,16 @@ class ResponsiveStepper extends StatelessWidget {
         : null;
   }
 
-  Widget _buildStepIcon(int index, bool isActive, bool isCompleted, double size) {
+  Widget _buildStepIcon(
+    int index,
+    bool isActive,
+    bool isCompleted,
+    double size,
+  ) {
     if (isCompleted) {
-      return Icon(
-        Icons.check,
-        size: size * 0.5,
-        color: Colors.white,
-      );
+      return Icon(Icons.check, size: size * 0.5, color: Colors.white);
     }
-    
+
     if (showStepNumbers) {
       return Text(
         '${index + 1}',
@@ -320,7 +333,7 @@ class ResponsiveStepper extends StatelessWidget {
         ),
       );
     }
-    
+
     return Icon(
       isActive ? Icons.circle : Icons.radio_button_unchecked,
       size: size * 0.4,

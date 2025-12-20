@@ -26,9 +26,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
           topRight: Radius.circular(25),
         ),
       ),
-      constraints: BoxConstraints(
-        maxHeight: Get.height * 0.8,
-      ),
+      constraints: BoxConstraints(maxHeight: Get.height * 0.8),
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
@@ -126,13 +124,10 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
         ),
         SizedBox(height: ResponsiveDimensions.h(8)),
         Container(
-          constraints: BoxConstraints(
-            maxHeight: Get.height * 0.3,
-          ),
+          constraints: BoxConstraints(maxHeight: Get.height * 0.3),
           child: ListView.builder(
             shrinkWrap: true,
-            physics:
-                const ClampingScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             itemCount: discount.products!.length,
             itemBuilder: (context, index) {
               final product = discount.products![index];
@@ -200,9 +195,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
         ),
         color: Colors.white,
       ),
-      constraints: BoxConstraints(
-        maxHeight: Get.height * 0.8,
-      ),
+      constraints: BoxConstraints(maxHeight: Get.height * 0.8),
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(ResponsiveDimensions.w(16)),
@@ -262,7 +255,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: ResponsiveDimensions.h(12),)
+                      SizedBox(height: ResponsiveDimensions.h(12)),
                     ],
                   );
                 },
@@ -277,12 +270,10 @@ class AddDiscountBottomSheet extends StatelessWidget {
   Widget _buildPriceInput() {
     return TextField(
       keyboardType: TextInputType.number,
-      decoration:  InputDecoration(
+      decoration: InputDecoration(
         labelText: 'السعر بعد التخفيض',
         hintText: 'أدخل السعر بعد التخفيض',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15)
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
         suffixText: '₪',
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       ),
@@ -297,12 +288,11 @@ class AddDiscountBottomSheet extends StatelessWidget {
     return TextField(
       maxLines: 3,
       minLines: 2,
-      decoration:  InputDecoration(
+      decoration: InputDecoration(
         labelText: 'ملاحظات (اختياري)',
         hintText: 'أدخل ملاحظات عن التخفيض',
-  border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15)
-        ),        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
       onChanged: controller.setDiscountNote,
     );
@@ -312,11 +302,10 @@ class AddDiscountBottomSheet extends StatelessWidget {
     return TextField(
       controller: controller.dateController,
       readOnly: true,
-      decoration:  InputDecoration(
+      decoration: InputDecoration(
         labelText: 'تاريخ التخفيض',
-  border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15)
-        ),        suffixIcon: Icon(Icons.calendar_today),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        suffixIcon: Icon(Icons.calendar_today),
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       ),
       onTap: () async {
