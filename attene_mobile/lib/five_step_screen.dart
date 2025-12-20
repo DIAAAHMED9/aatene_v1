@@ -24,7 +24,7 @@ class ServiceStepperScreen extends StepperScreenBase {
   }) : super(
           key: key,
           appBarTitle: isEditMode ? 'تعديل الخدمة' : 'إضافة خدمة جديدة',
-          primaryColor: Colors.blue,
+          primaryColor: AppColors.primary400,
           showBackButton: true,
           isLinear: true,
         );

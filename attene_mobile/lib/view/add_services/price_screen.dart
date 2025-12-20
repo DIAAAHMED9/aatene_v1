@@ -333,7 +333,7 @@ class PriceScreen extends StatelessWidget {
 
   Widget _buildDevelopmentItem(Development development, ServiceController controller) {
     return Dismissible(
-      key: Key(development.id),
+      key: Key(development.id.toString()),
       direction: DismissDirection.endToStart,
       background: Container(
         decoration: BoxDecoration(

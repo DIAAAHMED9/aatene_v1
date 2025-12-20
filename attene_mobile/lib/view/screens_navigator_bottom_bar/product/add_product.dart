@@ -32,7 +32,7 @@ class AddProductContent extends StatelessWidget {
     return Scaffold(
 backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
+        // padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

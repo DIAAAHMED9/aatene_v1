@@ -9,6 +9,7 @@ import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_prod
 
 import 'component/custom_stepper/responsive_custom_stepper.dart';
 import 'component/custom_stepper/stepper_screen_base.dart';
+import 'utlis/colors/app_color.dart';
 import 'view/advance_info/keyword_controller.dart';
 import 'view/related_products/related_products_controller.dart';
 import 'view/screens_navigator_bottom_bar/product/add_product_controller.dart';
@@ -18,7 +19,7 @@ class DemoStepperScreen extends StepperScreenBase {
       : super(
           key: key,
           appBarTitle: 'إضافة منتج جديد',
-          primaryColor: Colors.blue,
+          primaryColor: AppColors.primary400,
           showBackButton: true,
           isLinear: true,
         );

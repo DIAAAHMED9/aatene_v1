@@ -26,22 +26,42 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     final DataInitializerService dataService =
         Get.find<DataInitializerService>();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          'إدارة الحسابات',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
-            fontSize: 20,
-          ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            // AppBar مخصص
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top,
+                left: 16,
+                right: 16,
+                bottom: 16,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'إدارة الحسابات',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: KeyboardDismissOnScroll(
+                child: Obx(() => _buildBody(controller, isRTL, myAppController,context)),
+              ),
+            ),
+          ],
         ),
-        centerTitle: false,
       ),
-      body: Obx(() => _buildBody(controller, isRTL, myAppController)),
     );
   }
 
@@ -49,6 +69,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     ManageAccountStoreController controller,
     bool isRTL,
     MyAppController myAppController,
+    BuildContext context
   ) {
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
@@ -66,7 +87,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
       return _buildEmptyAccountsView(controller);
     }
 
-    return _buildAccountsListView(controller);
+    return _buildAccountsListView(controller,context);
   }
 
   Widget _buildLoadingView() {
@@ -83,94 +104,101 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
   }
 
   Widget _buildErrorView(ManageAccountStoreController controller) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 60, color: Colors.red),
-          const SizedBox(height: 16),
-          Text(
-            'حدث خطأ',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: Text(
-              controller.errorMessage.value,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ),
-          const SizedBox(height: 16),
-          AateneButton(
-            buttonText: 'إعادة المحاولة',
-            textColor: Colors.white,
-            color: AppColors.primary400,
-            borderColor: AppColors.primary400,
-            raduis: 10,
-            onTap: controller.loadStores,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyAccountsView(ManageAccountStoreController controller) {
-    return Container(
-      padding: const EdgeInsets.all(16),
+    return SingleChildScrollView(
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/png/empty_store.png',
-              width: 200,
-              height: 200,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'لا يوجد لديك أي متاجر',
-              style: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF555555),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: 280,
-              child: Text(
-                'يمكنك البدء بإضافة متاجر جديدة لإدارتها بشكل منفصل',
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 60, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(
+                'حدث خطأ',
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
                 ),
-                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 32),
-            AateneButton(
-              buttonText: 'إضافة متجر جديد',
-              textColor: Colors.white,
-              color: AppColors.primary400,
-              borderColor: AppColors.primary400,
-              raduis: 30,
-              onTap: controller.addNewStore,
-            ),
-            const SizedBox(height: 120),
-          ],
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Text(
+                  controller.errorMessage.value,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              ),
+              const SizedBox(height: 16),
+              AateneButton(
+                buttonText: 'إعادة المحاولة',
+                textColor: Colors.white,
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                raduis: 10,
+                onTap: controller.loadStores,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildAccountsListView(ManageAccountStoreController controller) {
+  Widget _buildEmptyAccountsView(ManageAccountStoreController controller) {
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/png/empty_store.png',
+                width: 200,
+                height: 200,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'لا يوجد لديك أي متاجر',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Color(0xFF555555),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: 280,
+                child: Text(
+                  'يمكنك البدء بإضافة متاجر جديدة لإدارتها بشكل منفصل',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFFAAAAAA),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 32),
+              AateneButton(
+                buttonText: 'إضافة متجر جديد',
+                textColor: Colors.white,
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                raduis: 30,
+                onTap: controller.addNewStore,
+              ),
+              const SizedBox(height: 100),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountsListView(ManageAccountStoreController controller,BuildContext context) {
     List<Store> filteredStores = controller.stores.where((store) {
       if (controller.searchQuery.value.isNotEmpty) {
         final query = controller.searchQuery.value.toLowerCase();
@@ -181,67 +209,69 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
       return true;
     }).toList();
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              color: Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: TextField(
-              controller: controller.searchController,
-              onChanged: controller.onSearchChanged,
-              decoration: InputDecoration(
-                hintText: 'ابحث عن متجر...',
-                hintStyle: TextStyle(color: Colors.grey[600]),
-                prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: TextField(
+                controller: controller.searchController,
+                onChanged: controller.onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'ابحث عن متجر...',
+                  hintStyle: TextStyle(color: Colors.grey[600]),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
 
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Color(0XFFF0F7FF),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'الحساب/المتجر',
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color(0XFFF0F7FF),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'الحساب/المتجر',
+                    style: TextStyle(
+                      color: Color(0xFF395A7D),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Text(
+                  'الإجراءات',
                   style: TextStyle(
                     color: Color(0xFF395A7D),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-              Text(
-                'الإجراءات',
-                style: TextStyle(
-                  color: Color(0xFF395A7D),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        Expanded(
-          child: ListView.builder(
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: filteredStores.length,
             itemBuilder: (context, index) {
@@ -249,21 +279,23 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               return _buildStoreItem(store, controller);
             },
           ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: AateneButton(
-            buttonText: 'إضافة متجر جديد',
-            textColor: Colors.white,
-            color: AppColors.primary400,
-            borderColor: AppColors.primary400,
-            raduis: 10,
-            onTap: controller.addNewStore,
+SizedBox(height: 30,),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: AateneButton(
+              buttonText: 'إضافة متجر جديد',
+              textColor: Colors.white,
+              color: AppColors.primary400,
+              borderColor: AppColors.primary400,
+              raduis: 10,
+              onTap: controller.addNewStore,
+            ),
           ),
-        ),
-        SizedBox(height: 120),
-      ],
+          
+          // مساحة إضافية للكيبورد
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 20),
+        ],
+      ),
     );
   }
 
@@ -507,53 +539,74 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
   }
 
   Widget _buildLoginRequiredView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.login_rounded, size: 80, color: Colors.grey[400]),
-            const SizedBox(height: 24),
-            Text(
-              'يجب تسجيل الدخول',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.login_rounded, size: 80, color: Colors.grey[400]),
+              const SizedBox(height: 24),
+              Text(
+                'يجب تسجيل الدخول',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[600],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'يرجى تسجيل الدخول للوصول إلى إدارة الحسابات والمتاجر',
-              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            AateneButton(
-              buttonText: 'تسجيل الدخول',
-              textColor: Colors.white,
-              color: AppColors.primary400,
-              borderColor: AppColors.primary400,
-              raduis: 10,
-              onTap: () {
-                Get.toNamed('/login');
-              },
-            ),
-            const SizedBox(height: 16),
-            AateneButton(
-              buttonText: 'إنشاء حساب جديد',
-              textColor: AppColors.primary400,
-              color: Colors.white,
-              borderColor: AppColors.primary400,
-              raduis: 10,
-              onTap: () {
-                Get.toNamed('/register');
-              },
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'يرجى تسجيل الدخول للوصول إلى إدارة الحسابات والمتاجر',
+                style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              AateneButton(
+                buttonText: 'تسجيل الدخول',
+                textColor: Colors.white,
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                raduis: 10,
+                onTap: () {
+                  Get.toNamed('/login');
+                },
+              ),
+              const SizedBox(height: 16),
+              AateneButton(
+                buttonText: 'إنشاء حساب جديد',
+                textColor: AppColors.primary400,
+                color: Colors.white,
+                borderColor: AppColors.primary400,
+                raduis: 10,
+                onTap: () {
+                  Get.toNamed('/register');
+                },
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class KeyboardDismissOnScroll extends StatelessWidget {
+  final Widget child;
+
+  const KeyboardDismissOnScroll({Key? key, required this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification notification) {
+        if (notification is ScrollUpdateNotification) {
+          FocusScope.of(context).unfocus();
+        }
+        return false;
+      },
+      child: child,
     );
   }
 }

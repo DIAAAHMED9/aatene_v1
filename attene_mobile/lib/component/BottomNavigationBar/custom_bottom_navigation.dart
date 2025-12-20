@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'inward_top_notch_clipper.dart';
 
 class CustomBottomNavigation extends StatefulWidget {
@@ -36,136 +37,185 @@ class CustomBottomNavigation extends StatefulWidget {
 
 class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   int _currentIndex = 0;
+  final double _fabSize = 60;
 
   @override
   Widget build(BuildContext context) {
-    const double circleSize = 60;
-    const double listUp = 20;
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: _buildMainContent(context),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
+  }
 
+  Widget _buildMainContent(BuildContext context) {
+    // نستخدم Stack بدلاً من Column للحفاظ على البار ثابتًا
+    return Stack(
+      children: [
+        // المحتوى الرئيسي
+        Positioned.fill(
+          child: widget.pages[_currentIndex],
+        ),
+        // طبقة شفافة لمنع النقر على المحتوى خلف البار
+        if (MediaQuery.of(context).viewInsets.bottom == 0)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 100,
+              color: Colors.transparent,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double containerWidth = screenWidth - 30;
     final double notchWidth = containerWidth * widget.notchWidthRatio;
     final double notchDepth = 68 * widget.notchDepthRatio;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Stack(
+    return Container(
+      color: Colors.transparent,
+      height: 100,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          widget.pages[_currentIndex],
+          // الخلفية البيضاء مع الظل
           Positioned(
-            bottom: listUp,
+            bottom: 20,
             left: (screenWidth - containerWidth) / 2,
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.topCenter,
-              children: [
-                Container(
-                  height: 68,
-                  width: containerWidth,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x26000000),
-                        offset: const Offset(0, 4),
-                        blurRadius: 16,
-                      ),
-                    ],
+            child: Container(
+              height: 68,
+              width: containerWidth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x26000000),
+                    offset: const Offset(0, 4),
+                    blurRadius: 16,
                   ),
-                ),
-                ClipPath(
-                  clipper: InwardTopNotchClipper(notchWidth, notchDepth),
-                  child: Container(
-                    height: 68,
-                    width: containerWidth,
-                    color: Colors.white,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: List.generate(widget.icons.length + 1, (i) {
-                        if (i == (widget.icons.length ~/ 2)) {
-                          return const SizedBox(width: 10);
-                        }
-                        final actualIndex = i > (widget.icons.length ~/ 2)
-                            ? i - 1
-                            : i;
-                        return navItem(
-                          icon: widget.icons[actualIndex],
-                          index: actualIndex,
-                          text: widget.pageName![actualIndex],
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 50,
-                  child: Material(
-                    shape: const CircleBorder(),
-                    elevation: 0,
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: widget.onFabTap,
-                      child: Container(
-                        height: circleSize,
-                        width: circleSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.fabColor,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0x26000000),
-                              offset: const Offset(0, 4),
-                              blurRadius: 16,
-                            ),
-                          ],
-                        ),
-                        child: Icon(widget.fabIcon, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+          
+          // البار مع Notch
+          Positioned(
+            bottom: 20,
+            left: (screenWidth - containerWidth) / 2,
+            child: ClipPath(
+              clipper: InwardTopNotchClipper(notchWidth, notchDepth),
+              child: Container(
+                height: 68,
+                width: containerWidth,
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(widget.icons.length + 1, (i) {
+                    if (i == (widget.icons.length ~/ 2)) {
+                      return SizedBox(
+                        width: _fabSize + 20,
+                      );
+                    }
+                    final actualIndex = i > (widget.icons.length ~/ 2)
+                        ? i - 1
+                        : i;
+                    return _buildNavItem(
+                      context,
+                      icon: widget.icons[actualIndex],
+                      index: actualIndex,
+                      text: widget.pageName[actualIndex],
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ),
+          
+          // زر الفاب - جزء من الـ BottomNavigationBar
+          Positioned(
+            bottom: 20 + 34, // 34 = نصف ارتفاع البار (68/2)
+            left: (screenWidth - _fabSize) / 2,
+            child: _buildFloatingActionButton(context),
           ),
         ],
       ),
     );
   }
 
-  Widget navItem({required IconData icon, required int index, String? text}) {
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return Material(
+      shape: const CircleBorder(),
+      elevation: 4,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          widget.onFabTap?.call();
+        },
+        child: Container(
+          height: _fabSize,
+          width: _fabSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.fabColor,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0x26000000),
+                offset: const Offset(0, 4),
+                blurRadius: 16,
+              ),
+            ],
+          ),
+          child: Icon(widget.fabIcon, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(BuildContext context, {required IconData icon, required int index, String? text}) {
     final bool isSelected = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 28,
-            color: isSelected ? widget.selectedColor : widget.unselectedColor,
-          ),
-          const SizedBox(height: 4),
-          text != null
-              ? Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isSelected
-                        ? widget.selectedColor
-                        : widget.unselectedColor,
-                  ),
-                )
-              : (isSelected)
-              ? Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: widget.selectedColor,
-                  ),
-                )
-              : SizedBox(),
-        ],
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        setState(() => _currentIndex = index);
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 28,
+              color: isSelected ? widget.selectedColor : widget.unselectedColor,
+            ),
+            const SizedBox(height: 4),
+            if (text != null)
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isSelected ? widget.selectedColor : widget.unselectedColor,
+                ),
+              )
+            else if (isSelected)
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.selectedColor,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

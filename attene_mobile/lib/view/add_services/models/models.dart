@@ -1,7 +1,7 @@
 import 'dart:io';
 
 class FAQ {
-  final String id;
+  final int id; // غير من String إلى int
   final String question;
   final String answer;
   
@@ -28,7 +28,7 @@ class FAQ {
 
   factory FAQ.fromApiJson(Map<String, dynamic> json) {
     return FAQ(
-      id: json['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id: json['id'] as int? ?? 0, // تحويل إلى int
       question: json['question'] ?? '',
       answer: json['answer'] ?? '',
     );
@@ -45,7 +45,7 @@ class FAQ {
 }
 
 class Development {
-  String id;
+  int id; // غير من String إلى int
   String title;
   double price;
   int executionTime;
@@ -80,7 +80,7 @@ class Development {
 
   factory Development.fromApiJson(Map<String, dynamic> json) {
     return Development(
-      id: json['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id: json['id'] as int? ?? 0, // تحويل إلى int
       title: json['title'] ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       executionTime: json['execute_count'] as int? ?? 0,
@@ -114,7 +114,7 @@ class Development {
 }
 
 class ServiceImage {
-  final String id;
+  final int id; // غير من String إلى int
   final String url;
   bool isMain;
   final bool isLocalFile;
@@ -129,7 +129,7 @@ class ServiceImage {
   });
 
   ServiceImage copyWith({
-    String? id,
+    int? id,
     String? url,
     bool? isMain,
     bool? isLocalFile,
@@ -155,7 +155,7 @@ class ServiceImage {
 }
 
 class Service {
-  final String? id;
+  final int? id; // غير من String? إلى int?
   final String slug;
   final String title;
   final int sectionId;
@@ -169,6 +169,7 @@ class Service {
   final int executeCount;
   final List<Development> extras;
   final List<String> images;
+  final String? imagesUrl;
   final String description;
   final List<FAQ> questions;
   final DateTime? createdAt;
@@ -195,6 +196,7 @@ class Service {
     required this.images,
     required this.description,
     required this.questions,
+     this.imagesUrl,
     this.createdAt,
     this.updatedAt,
     this.acceptedCopyright = false,
@@ -203,23 +205,41 @@ class Service {
   });
 
   factory Service.fromApiJson(Map<String, dynamic> json) {
+    // معالجة images لتحويلها من String مفصولة بفواصل إلى List<String>
+    List<String> imagesList = [];
+    if (json['images'] is String) {
+      final imagesString = json['images'] as String;
+      imagesList = imagesString.split(',').map((img) => img.trim()).toList();
+    } else if (json['images'] is List) {
+      imagesList = List<String>.from(json['images'] ?? []);
+    }
+
     return Service(
-      id: json['id']?.toString(),
+      id: json['id'] as int?, // تأكد أنه int
       slug: json['slug'] ?? '',
       title: json['title'] ?? '',
-      sectionId: json['section_id'] as int? ?? 0,
-      categoryId: json['category_id'] as int? ?? 0,
+      sectionId: json['section_id'] is String 
+          ? int.tryParse(json['section_id']) ?? 0
+          : json['section_id'] as int? ?? 0,
+      categoryId: json['category_id'] is String
+          ? int.tryParse(json['category_id']) ?? 0
+          : json['category_id'] as int? ?? 0,
       specialties: List<String>.from(json['specialties'] ?? []),
       tags: List<String>.from(json['tags'] ?? []),
       storeId: json['store_id']?.toString(),
       status: json['status'] ?? 'pending',
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      price: json['price'] is String
+          ? double.tryParse(json['price']) ?? 0.0
+          : (json['price'] as num?)?.toDouble() ?? 0.0,
+      imagesUrl: json['images_url'],
       executeType: json['execute_type'] ?? 'hour',
-      executeCount: json['execute_count'] as int? ?? 0,
+      executeCount: json['execute_count'] is String
+          ? int.tryParse(json['execute_count']) ?? 0
+          : json['execute_count'] as int? ?? 0,
       extras: (json['extras'] as List<dynamic>?)
           ?.map((extra) => Development.fromApiJson(extra))
           .toList() ?? [],
-      images: List<String>.from(json['images'] ?? []),
+      images: imagesList,
       description: json['description'] ?? '',
       questions: (json['questions'] as List<dynamic>?)
           ?.map((q) => FAQ.fromApiJson(q))
@@ -265,7 +285,7 @@ class Service {
   }
 
   Service copyWith({
-    String? id,
+    int? id,
     String? slug,
     String? title,
     int? sectionId,

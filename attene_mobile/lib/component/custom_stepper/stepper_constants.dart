@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../utlis/colors/app_color.dart';
+
 class StepperConstants {
-  static const Color primaryColor = Colors.blue;
+  static const Color primaryColor = AppColors.primary400;
   static const Color successColor = Colors.green;
   static const Color errorColor = Colors.red;
   static const Color warningColor = Colors.orange;

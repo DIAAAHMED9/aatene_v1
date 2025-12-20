@@ -1677,7 +1677,7 @@ switch (alignment) {
     );
   }
 
-  void _showDeleteFAQDialog(String id) {
+  void _showDeleteFAQDialog(int id) {
     Get.defaultDialog(
       title: 'حذف السؤال',
       middleText: 'هل أنت متأكد من حذف هذا السؤال؟',

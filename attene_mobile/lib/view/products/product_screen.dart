@@ -88,113 +88,54 @@ class ProductScreen extends GetView<ProductController> {
   }
 
   Widget _buildBody(BuildContext context) {
-     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-    return Column(
-      children: [
-        Expanded(
-          child: GetBuilder<MyAppController>(
-            builder: (myAppController) {
-              if (!myAppController.isLoggedIn.value) {
-                return _buildLoginRequiredView(context);
-              }
-
-              return GetBuilder<ProductController>(
-                builder: (productController) {
-                  if (!productController.isTabControllerReady ||
-                      productController.tabs.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            color: AppColors.primary400,
-                          ),
-                          SizedBox(height: ResponsiveDimensions.f(16)),
-                          Text(
-                            'جاري تحميل التبويبات...',
-                            style: TextStyle(
-                              fontSize: ResponsiveDimensions.f(14),
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return Padding(
-                    padding:  EdgeInsets.only(bottom: isSmallScreen?ResponsiveDimensions.f(100):ResponsiveDimensions.f(25) ),
-                    child: TabBarView(
-                      controller: productController.tabController,
-                      children: List.generate(productController.tabs.length, (index) {
-                        return _buildTabContent(productController.tabs[index], index, context);
-                      }),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
     
-    return GetBuilder<ProductController>(
-      builder: (controller) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16),
-            vertical: ResponsiveDimensions.f(8),
-          ),
-          child: Container(
-            height: ResponsiveDimensions.f(44),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.f(22)),
-            ),
-            child: Row(
-              children: [
-                SizedBox(width: ResponsiveDimensions.f(16)),
-                Icon(
-                  Icons.search,
-                  color: Colors.grey,
-                  size: ResponsiveDimensions.f(20),
-                ),
-                SizedBox(width: ResponsiveDimensions.f(8)),
-                Expanded(
-                  child: TextField(
-                    controller: controller.searchTextController,
-                    onChanged: (value) => controller.searchQuery.value = value,
-                    decoration: InputDecoration(
-                      hintText: 'ابحث عن منتج...',
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
+    return GetBuilder<MyAppController>(
+      builder: (myAppController) {
+        if (!myAppController.isLoggedIn.value) {
+          return _buildLoginRequiredView(context);
+        }
+
+        return GetBuilder<ProductController>(
+          builder: (productController) {
+            if (!productController.isTabControllerReady ||
+                productController.tabs.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      color: AppColors.primary400,
+                    ),
+                    SizedBox(height: ResponsiveDimensions.f(16)),
+                    Text(
+                      'جاري تحميل التبويبات...',
+                      style: TextStyle(
                         fontSize: ResponsiveDimensions.f(14),
+                        color: Colors.grey,
                       ),
                     ),
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.f(14),
-                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Column(
+              children: [
+                Expanded(
+                  child: TabBarView(
+                    controller: productController.tabController,
+                    children: List.generate(productController.tabs.length, (index) {
+                      return _buildTabContent(productController.tabs[index], index, context);
+                    }),
                   ),
                 ),
-                if (controller.searchTextController.text.isNotEmpty)
-                  IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      size: ResponsiveDimensions.f(20),
-                    ),
-                    onPressed: controller.clearSearch,
-                  ),
+                // مساحة للكيبورد فقط
+                SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
               ],
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -257,27 +198,30 @@ class ProductScreen extends GetView<ProductController> {
     final crossAxisCount = _getGridCrossAxisCount(context);
     final spacing = screenWidth < 600 ? ResponsiveDimensions.f(8) : ResponsiveDimensions.f(16);
     
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(spacing),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: spacing,
-        mainAxisSpacing: spacing,
-        childAspectRatio: screenWidth < 600 ? 0.7 : 0.8,
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.all(spacing),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: spacing,
+          mainAxisSpacing: spacing,
+          childAspectRatio: screenWidth < 600 ? 0.7 : 0.8,
+        ),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          return ProductGridItem(
+            product: products[index],
+            controller: controller,
+            isSelected: controller.selectedProductIds.contains('${products[index].id}'),
+            onSelectionChanged: (isSelected) {
+              controller.toggleProductSelection('${products[index].id}');
+            },
+          );
+        },
       ),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return ProductGridItem(
-          product: products[index],
-          controller: controller,
-          isSelected: controller.selectedProductIds.contains('${products[index].id}'),
-          onSelectionChanged: (isSelected) {
-            controller.toggleProductSelection('${products[index].id}');
-          },
-        );
-      },
     );
   }
 
@@ -294,21 +238,24 @@ class ProductScreen extends GetView<ProductController> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
     
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16)),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return ProductListItem(
-          product: products[index],
-          controller: controller,
-          isSelected: controller.selectedProductIds.contains('${products[index].id}'),
-          onSelectionChanged: (isSelected) {
-            controller.toggleProductSelection('${products[index].id}');
-          },
-        );
-      },
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16)),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          return ProductListItem(
+            product: products[index],
+            controller: controller,
+            isSelected: controller.selectedProductIds.contains('${products[index].id}'),
+            onSelectionChanged: (isSelected) {
+              controller.toggleProductSelection('${products[index].id}');
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -317,6 +264,7 @@ class ProductScreen extends GetView<ProductController> {
     final isSmallScreen = screenWidth < 600;
     
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -367,6 +315,8 @@ class ProductScreen extends GetView<ProductController> {
               ),
             ),
           ),
+          // مساحة إضافية للكيبورد
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
         ],
       ),
     );
@@ -377,6 +327,7 @@ class ProductScreen extends GetView<ProductController> {
     final isSmallScreen = screenWidth < 600;
     
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -431,6 +382,8 @@ class ProductScreen extends GetView<ProductController> {
                 ),
               ),
             ),
+          // مساحة إضافية للكيبورد
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
         ],
       ),
     );
@@ -493,6 +446,7 @@ class ProductScreen extends GetView<ProductController> {
     final isSmallScreen = screenWidth < 600;
     
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -542,6 +496,8 @@ class ProductScreen extends GetView<ProductController> {
               ),
             ),
           ),
+          // مساحة إضافية للكيبورد
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
         ],
       ),
     );

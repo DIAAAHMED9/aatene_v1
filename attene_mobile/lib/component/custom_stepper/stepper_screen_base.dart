@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import '../../utlis/colors/app_color.dart';
 import '../custom_stepper/responsive_custom_stepper.dart';
 
 abstract class StepperScreenBase extends StatefulWidget {
@@ -14,7 +16,7 @@ abstract class StepperScreenBase extends StatefulWidget {
   const StepperScreenBase({
     Key? key,
     required this.appBarTitle,
-    this.primaryColor = Colors.blue,
+    this.primaryColor = AppColors.primary400,
     this.showAppBar = true,
     this.showBackButton = true,
     this.isLinear = false,
@@ -56,6 +58,22 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
   Widget buildBackButton() => _buildDefaultBackButton();
   Widget buildStepNavigation() => _buildDefaultStepNavigation();
 
+  String _getCurrentStepTitle() {
+    if (steps.isEmpty || currentStep >= steps.length) {
+      return widget.appBarTitle;
+    }
+    
+    final step = steps[currentStep];
+    if (step.title is Text) {
+      return (step.title as Text).data ?? widget.appBarTitle;
+    } else if (step.title is String) {
+      return step.title as String;
+    } else {
+      // إذا كان العنوان widget آخر
+      return widget.appBarTitle;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -69,6 +87,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: _buildAppBar(context),
         body: ResponsiveCustomStepper(
@@ -81,11 +100,20 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 16
+                    ),
                     child: buildStepContent(stepIndex),
                   ),
                 ),
-                widget.bottomNavigation ?? buildStepNavigation(),
+                KeyboardVisibilityBuilder(
+                  builder: (BuildContext context, bool isVisible) {
+                    return isVisible
+                        ? const SizedBox()
+                        : widget.bottomNavigation ?? buildStepNavigation();
+                  },
+                ),
+                SizedBox(height: 56,)
               ],
             );
           },
@@ -103,16 +131,17 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
     
     return AppBar(
       title: Text(
-        widget.appBarTitle,
-        style: TextStyle(
+        _getCurrentStepTitle(), // استخدام عنوان الخطوة الحالية
+        style: const TextStyle(
           fontSize: 18,
+          color: Colors.white,
           fontWeight: FontWeight.w600,
         ),
       ),
       backgroundColor: widget.primaryColor,
       foregroundColor: Colors.white,
       elevation: 0,
-      centerTitle: true,
+      // centerTitle: true,
       leading: widget.showBackButton
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -159,6 +188,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
   }
 
   void nextStep() {
+    print('press next');
     if (!validateStep(currentStep)) return;
     
     if (currentStep < steps.length - 1) {
@@ -196,15 +226,12 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase> extends State
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 100),
-        child: Row(
-          children: [
-            if (currentStep > 0) buildBackButton(),
-            if (currentStep > 0) const SizedBox(width: 16),
-            Expanded(child: buildNextButton()),
-          ],
-        ),
+      child: Row(
+        children: [
+          if (currentStep > 0) buildBackButton(),
+          if (currentStep > 0) const SizedBox(width: 16),
+          Expanded(child: buildNextButton()),
+        ],
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utlis/colors/app_color.dart';
+
 class ResponsiveCustomStepper extends StatefulWidget {
   final List<StepperStep> steps;
   final int currentStep;
@@ -59,11 +61,15 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 600;
     final isTablet = screenWidth >= 600 && screenWidth < 1024;
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 100;
     
     return Column(
       children: [
-        _buildResponsiveStepperHeader(isMobile, isTablet),
+        // الرأس فقط عندما لا يكون الكيبورد مفتوحاً
+        // if (!isKeyboardVisible) 
+          _buildResponsiveStepperHeader(isMobile, isTablet),
         
+        // المحتوى الرئيسي
         Expanded(
           child: widget.builder(context, widget.currentStep),
         ),
@@ -232,14 +238,14 @@ class _AnimatedStepCircle extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isCompleted || isActive
-                            ? Colors.blue
+                            ? AppColors.primary400
                             : Colors.grey[300]!,
                         width: isMobile ? 2.0 : 2.5,
                       ),
                       boxShadow: (isActive || isNext)
                           ? [
                               BoxShadow(
-                                color: Colors.blue.withOpacity(
+                                color: AppColors.primary400.withOpacity(
                                   0.3 * animation.value,
                                 ),
                                 blurRadius: isMobile ? 6 : 8,
@@ -263,7 +269,7 @@ class _AnimatedStepCircle extends StatelessWidget {
                       curve: Curves.fastOutSlowIn,
                       decoration: BoxDecoration(
                         color: isCompleted
-                            ? Colors.blue.withOpacity(0.9)
+                            ? AppColors.primary400.withOpacity(0.9)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -285,11 +291,11 @@ class _AnimatedStepCircle extends StatelessWidget {
                                 width: isMobile ? 10 : 12,
                                 height: isMobile ? 10 : 12,
                                 decoration: BoxDecoration(
-                                  color: Colors.blue,
+                                  color: AppColors.primary400,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.blue.withOpacity(0.5),
+                                      color: AppColors.primary400.withOpacity(0.5),
                                       blurRadius: isMobile ? 3 : 4,
                                       spreadRadius: isMobile ? 0.5 : 1,
                                     ),
@@ -318,7 +324,7 @@ class _AnimatedStepCircle extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                              color: isActive || isCompleted ? Colors.blue : Colors.grey[600],
+                              color: isActive || isCompleted ? AppColors.primary400 : Colors.grey[600],
                             ),
                           ),
                           if (step.subtitle.isNotEmpty)
@@ -403,7 +409,7 @@ class _StepConnectorPainter extends CustomPainter {
 
     final Paint progressPaint = Paint()
       ..shader = LinearGradient(
-        colors: [Colors.blue.shade400, Colors.blue.shade600],
+        colors: [AppColors.primary400, AppColors.primary500],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
@@ -424,7 +430,7 @@ class _StepConnectorPainter extends CustomPainter {
 
       if (progress > 0 && progress < 1) {
         final pulsePaint = Paint()
-          ..color = Colors.blue.withOpacity(0.5 * (1 - progress))
+          ..color = AppColors.primary400.withOpacity(0.5 * (1 - progress))
           ..strokeWidth = 6
           ..strokeCap = StrokeCap.round;
 

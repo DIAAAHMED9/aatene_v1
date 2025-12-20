@@ -1,11 +1,16 @@
-import 'package:attene_mobile/five_step_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:attene_mobile/five_step_screen.dart';
+import 'package:attene_mobile/component/appBar/tab_model.dart';
+import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:attene_mobile/utlis/language/language_utils.dart';
+import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:attene_mobile/view/add_services/service_controller.dart';
-import 'package:attene_mobile/view/add_services/responsive_dimensions.dart';
-
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'models/models.dart';
+import 'service_grid_item.dart';
+import 'service_list_item.dart';
 
 class ServicesListScreen extends StatefulWidget {
   const ServicesListScreen({super.key});
@@ -14,58 +19,64 @@ class ServicesListScreen extends StatefulWidget {
   State<ServicesListScreen> createState() => _ServicesListScreenState();
 }
 
-class _ServicesListScreenState extends State<ServicesListScreen> {
-  final ServiceController _controller = Get.find<ServiceController>();
-  final ScrollController _scrollController = ScrollController();
-  List<Service> _services = [];
-  bool _isLoading = false;
-  bool _hasMore = true;
-  int _currentPage = 1;
-  final int _limit = 10;
+class _ServicesListScreenState extends State<ServicesListScreen> with TickerProviderStateMixin {
+  final ServiceController _serviceController = Get.find<ServiceController>();
+  late TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
+  final RxString _searchQuery = ''.obs;
+  final RxString _viewMode = 'list'.obs;
+  final RxList<String> _selectedServiceIds = <String>[].obs;
+  final RxBool _isLoading = true.obs;
+  final RxString _errorMessage = ''.obs;
+  
+  List<Service> _allServices = [];
+  List<TabData> _tabs = [];
 
   @override
   void initState() {
     super.initState();
+    _initializeTabs();
     _loadServices();
-    _scrollController.addListener(_scrollListener);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
-  Future<void> _loadServices({bool refresh = false}) async {
-    if (_isLoading) return;
+  void _initializeTabs() {
+    _tabs = [
+      TabData(label: 'جميع الخدمات', viewName: 'all'),
+      TabData(label: 'نشط', viewName: 'active'),
+      TabData(label: 'معتمد', viewName: 'approved'),
+      TabData(label: 'قيد المراجعة', viewName: 'pending'),
+      TabData(label: 'مسودة', viewName: 'draft'),
+      TabData(label: 'مرفوض', viewName: 'rejected'),
+    ];
+    
+    _tabController = TabController(
+      length: _tabs.length,
+      vsync: this,
+    );
+    
+    _tabController.addListener(_handleTabChange);
+  }
 
-    if (refresh) {
-      _currentPage = 1;
-      _services.clear();
-      _hasMore = true;
+  void _handleTabChange() {
+    if (_tabController.indexIsChanging) {
+      _updateTabServices();
     }
+  }
 
-    if (!_hasMore && !refresh) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
+  Future<void> _loadServices() async {
     try {
-      final services = await _controller.getAllServices(
-        page: _currentPage,
-        limit: _limit,
-      );
-
-      if (refresh) {
-        _services = services;
-      } else {
-        _services.addAll(services);
-      }
-
-      _hasMore = services.length == _limit;
-      _currentPage++;
+      _isLoading.value = true;
+      _allServices = await _serviceController.getAllServices();
+      _errorMessage.value = '';
     } catch (e) {
+      _errorMessage.value = 'فشل في تحميل الخدمات: $e';
       Get.snackbar(
         'خطأ',
         'فشل في تحميل الخدمات: $e',
@@ -73,37 +84,82 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
         colorText: Colors.white,
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      _loadServices();
+      _isLoading.value = false;
     }
   }
 
   Future<void> _refreshServices() async {
-    await _loadServices(refresh: true);
+    await _loadServices();
+  }
+
+  void _updateTabServices() {
+    setState(() {});
+  }
+
+  List<Service> _getServicesForTab(int tabIndex) {
+    if (_allServices.isEmpty) return [];
+    
+    final tab = _tabs[tabIndex];
+    final status = tab.viewName;
+    
+    List<Service> filteredServices = _allServices;
+    
+    if (status != 'all') {
+      filteredServices = _allServices
+          .where((service) => service.status == status)
+          .toList();
+    }
+    
+    if (_searchQuery.value.isNotEmpty) {
+      filteredServices = filteredServices
+          .where((service) =>
+              service.title.toLowerCase().contains(_searchQuery.value.toLowerCase()) ||
+              (service.description ?? '').toLowerCase().contains(_searchQuery.value.toLowerCase()))
+          .toList();
+    }
+    
+    return filteredServices;
   }
 
   void _navigateToAddService() {
-    _controller.setCreateMode();
+    _serviceController.setCreateMode();
     Get.to(() => const ServiceStepperScreen());
   }
 
   void _navigateToEditService(Service service) {
-    _controller.setEditMode(service.id!, service.title);
+    if (service.id == null) {
+      Get.snackbar(
+        'خطأ',
+        'لا يمكن تعديل الخدمة بدون معرف',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    // تحويل service.id إلى String لأن الـ controller يتوقع String
+    String serviceId = service.id.toString();
+    _serviceController.setEditMode(serviceId, service.title);
     Get.to(() => ServiceStepperScreen(
       isEditMode: true,
-      serviceId: service.id,
+      serviceId: serviceId,
     ));
   }
 
   Future<void> _deleteService(Service service) async {
+    if (service.id == null) {
+      Get.snackbar(
+        'خطأ',
+        'لا يمكن حذف الخدمة بدون معرف',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    // تحويل service.id إلى String لأن الـ controller يتوقع String
+    String serviceId = service.id.toString();
+    
     final confirm = await Get.defaultDialog<bool>(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف الخدمة "${service.title}"؟',
@@ -111,14 +167,26 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
       textCancel: 'إلغاء',
       confirmTextColor: Colors.white,
       onConfirm: () async {
-        final result = await _controller.deleteService(service.id!);
+        final result = await _serviceController.deleteService(serviceId);
         if (result?['success'] == true) {
           Get.back(result: true);
-          _refreshServices();
+          await _refreshServices();
         }
       },
       onCancel: () => Get.back(result: false),
     );
+  }
+
+  void _toggleServiceSelection(String serviceId) {
+    if (_selectedServiceIds.contains(serviceId)) {
+      _selectedServiceIds.remove(serviceId);
+    } else {
+      _selectedServiceIds.add(serviceId);
+    }
+  }
+
+  void _clearSelection() {
+    _selectedServiceIds.clear();
   }
 
   void _showServiceDetails(Service service) {
@@ -170,11 +238,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                               width: 200,
                               margin: EdgeInsets.only(
                                 right: index < service.images.length - 1 ? 8 : 0,
+                                left: index < service.images.length - 1 ? 8 : 0,
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 image: DecorationImage(
-                                  image: NetworkImage(service.images[index]),
+                                  image: NetworkImage(_serviceController.getFullImageUrl(service.images[index]) ),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -269,7 +338,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                       ),
                     ),
                     Text(
-                      service.description,
+                      service.description ?? '',
                       style: const TextStyle(
                         fontSize: 14,
                         height: 1.5,
@@ -341,6 +410,10 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
         color = Colors.red;
         text = 'مرفوض';
         break;
+      case 'approved':
+        color = Colors.green;
+        text = 'معتمد';
+        break;
       case 'active':
         color = Colors.green;
         text = 'نشط';
@@ -382,200 +455,471 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isRTL = LanguageUtils.isRTL;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('خدماتي'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _refreshServices,
+      backgroundColor: Colors.white,
+      appBar: _buildAppBar(isRTL, context),
+      body: _buildBody(context),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(bool isRTL, BuildContext context) {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(_calculateAppBarHeight(context)),
+      child: Obx(() {
+        final shouldShowTabs = _tabs.isNotEmpty && !_isLoading.value;
+        
+        return CustomAppBarWithTabs(
+          isRTL: isRTL,
+          config: AppBarConfig(
+            title: 'خدماتي',
+            actionText: ' + اضافة خدمة جديدة',
+            onActionPressed: _navigateToAddService,
+            tabs: _tabs,
+            searchController: _searchController,
+            onSearchChanged: (value) {
+              _searchQuery.value = value;
+              setState(() {});
+            },
+            onFilterPressed: () => Get.toNamed('/media-library'),
+            onSortPressed: _openSort,
+            tabController: shouldShowTabs ? _tabController : null,
+            onTabChanged: (index) {
+              if (shouldShowTabs) {
+                _tabController.animateTo(index);
+                setState(() {});
+              }
+            },
+            showSearch: true,
+            showTabs: shouldShowTabs,
           ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: _refreshServices,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _navigateToAddService,
-                  icon: const Icon(Icons.add),
-                  label: const Text('إضافة خدمة جديدة'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: AppColors.primary400,
-                  ),
+        );
+      }),
+    );
+  }
+
+  double _calculateAppBarHeight(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    double height = ResponsiveDimensions.f(175);
+    
+    final shouldShowTabs = _tabs.isNotEmpty && !_isLoading.value;
+    
+    if (shouldShowTabs) {
+      height += ResponsiveDimensions.f(45);
+      height += ResponsiveDimensions.f(15);
+    }
+    
+    height += ResponsiveDimensions.f(60);
+    height += ResponsiveDimensions.f(15);
+    
+    return height;
+  }
+
+  Widget _buildBody(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return GetBuilder<MyAppController>(
+      builder: (myAppController) {
+        if (!myAppController.isLoggedIn.value) {
+          return _buildLoginRequiredView(context);
+        }
+
+        return Obx(() {
+          if (_isLoading.value && _allServices.isEmpty) {
+            return _buildLoadingView(context);
+          }
+
+          if (_errorMessage.value.isNotEmpty) {
+            return _buildErrorView(context);
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: List.generate(_tabs.length, (index) {
+                    return _buildTabContent(_tabs[index], index, context);
+                  }),
                 ),
               ),
-            ),
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+            ],
+          );
+        });
+      },
+    );
+  }
 
-            Expanded(
-              child: _services.isEmpty && !_isLoading
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.work_outline,
-                            size: 64,
-                            color: Colors.grey[400],
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'لا توجد خدمات',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'انقر على زر "إضافة خدمة جديدة" لبدء إنشاء خدمتك الأولى',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveDimensions.responsiveWidth(16),
-                      ),
-                      itemCount: _services.length + (_hasMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _services.length) {
-                          return _isLoading
-                              ? const Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              : const SizedBox();
-                        }
+  Widget _buildTabContent(TabData tab, int tabIndex, BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: _refreshServices,
+      child: _buildTabContentInternal(tab, tabIndex, context),
+    );
+  }
 
-                        final service = _services[index];
-                        return _buildServiceItem(service);
-                      },
-                    ),
-            ),
-          ],
+  Widget _buildTabContentInternal(TabData tab, int tabIndex, BuildContext context) {
+    final services = _getServicesForTab(tabIndex);
+
+    if (services.isEmpty) {
+      return _buildEmptyView(tab.viewName, tabIndex, context);
+    }
+
+    return _buildServicesView(services, context);
+  }
+
+  Widget _buildServicesView(List<Service> services, BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return Obx(() {
+      final isGridMode = _viewMode.value == 'grid' && screenWidth > 768;
+      
+      if (isGridMode) {
+        return _buildGridLayout(services, context);
+      } else {
+        return _buildListLayout(services, context);
+      }
+    });
+  }
+
+  Widget _buildGridLayout(List<Service> services, BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = _getGridCrossAxisCount(context);
+    final spacing = screenWidth < 600 ? ResponsiveDimensions.f(8) : ResponsiveDimensions.f(16);
+    
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.all(spacing),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: spacing,
+          mainAxisSpacing: spacing,
+          childAspectRatio: screenWidth < 600 ? 0.7 : 0.8,
         ),
+        itemCount: services.length,
+        itemBuilder: (context, index) {
+          final service = services[index];
+          final serviceId = service.id?.toString() ?? '';
+          
+          return ServiceGridItem(
+            service: service,
+            onTap: () => _showServiceDetails(service),
+            onEdit: () => _navigateToEditService(service),
+            onDelete: () => _deleteService(service),
+            isSelected: _selectedServiceIds.contains(serviceId),
+            onSelectionChanged: (isSelected) {
+              if (serviceId.isNotEmpty) {
+                _toggleServiceSelection(serviceId);
+              }
+            },
+          );
+        },
       ),
     );
   }
 
-  Widget _buildServiceItem(Service service) {
-    return Card(
-      margin: EdgeInsets.only(bottom: ResponsiveDimensions.responsiveHeight(12)),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppColors.primary100,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: service.images.isNotEmpty
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    service.images.first,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.work_outline,
-                      color: AppColors.primary500,
-                    ),
-                  ),
-                )
-              : Icon(
-                  Icons.work_outline,
-                  color: AppColors.primary500,
-                ),
-        ),
-        title: Text(
-          service.title,
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.responsiveFontSize(16),
-            fontWeight: FontWeight.bold,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text(
-              'السعر: ${service.price} ₪',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 4),
-            _buildStatusChip(service.status),
-          ],
-        ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) {
-            switch (value) {
-              case 'edit':
-                _navigateToEditService(service);
-                break;
-              case 'delete':
-                _deleteService(service);
-                break;
-              case 'view':
-                _showServiceDetails(service);
-                break;
-            }
+  int _getGridCrossAxisCount(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 400) return 2;
+    if (screenWidth < 600) return 3;
+    if (screenWidth < 900) return 3;
+    if (screenWidth < 1200) return 4;
+    return 5;
+  }
+
+  Widget _buildListLayout(List<Service> services, BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16)),
+        itemCount: services.length,
+        itemBuilder: (context, index) {
+          final service = services[index];
+          final serviceId = service.id?.toString() ?? '';
+          
+          return ServiceListItem(
+          service: service,
+          controller: _serviceController,
+          isSelected: _serviceController.selectedServiceIds.contains(serviceId),
+          onSelectionChanged: (isSelected) {
+            _serviceController.toggleServiceSelection(serviceId);
           },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit, size: 20),
-                  SizedBox(width: 8),
-                  Text('تعديل'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'view',
-              child: Row(
-                children: [
-                  Icon(Icons.visibility, size: 20),
-                  SizedBox(width: 8),
-                  Text('عرض التفاصيل'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, size: 20, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('حذف', style: TextStyle(color: Colors.red)),
-                ],
-              ),
-            ),
-          ],
-        ),
-        onTap: () => _showServiceDetails(service),
+          onTap: () => _showServiceDetails(service),
+        );
+        },
       ),
     );
+  }
+
+  Widget _buildLoginRequiredView(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.login_rounded,
+            size: ResponsiveDimensions.f(100),
+            color: Colors.grey[400],
+          ),
+          SizedBox(height: ResponsiveDimensions.f(24)),
+          Text(
+            'يجب تسجيل الدخول',
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(20)
+                  : ResponsiveDimensions.f(24),
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          SizedBox(height: ResponsiveDimensions.f(16)),
+          Text(
+            'يرجى تسجيل الدخول للوصول إلى إدارة الخدمات',
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(14)
+                  : ResponsiveDimensions.f(16),
+              color: Colors.grey[500],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: ResponsiveDimensions.f(32)),
+          SizedBox(
+            width: ResponsiveDimensions.f(200),
+            child: ElevatedButton.icon(
+              onPressed: () => Get.toNamed('/login'),
+              icon: Icon(Icons.login_rounded, size: ResponsiveDimensions.f(20)),
+              label: Text(
+                'تسجيل الدخول',
+                style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary400,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  vertical: ResponsiveDimensions.f(16),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyView(String sectionName, int tabIndex, BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.work_outline,
+            size: ResponsiveDimensions.f(100),
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: ResponsiveDimensions.f(24)),
+          Text(
+            _getEmptyMessage(sectionName, tabIndex),
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(18)
+                  : ResponsiveDimensions.f(22),
+              color: const Color(0xFF555555),
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: ResponsiveDimensions.f(12)),
+          Text(
+            _getEmptyDescription(sectionName, tabIndex),
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(12)
+                  : ResponsiveDimensions.f(14),
+              color: const Color(0xFFAAAAAA),
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: ResponsiveDimensions.f(32)),
+          if (tabIndex == 0)
+            SizedBox(
+              width: ResponsiveDimensions.f(200),
+              child: ElevatedButton(
+                onPressed: _navigateToAddService,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary400,
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveDimensions.f(16),
+                  ),
+                ),
+                child: Text(
+                  'إضافة خدمة جديدة',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: ResponsiveDimensions.f(14),
+                  ),
+                ),
+              ),
+            ),
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
+        ],
+      ),
+    );
+  }
+
+  String _getEmptyMessage(String sectionName, int tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        return 'لا يوجد لديك أي خدمات';
+      case 1:
+        return 'لا توجد خدمات نشطة';
+      case 2:
+        return 'لا توجد خدمات معتمدة';
+      case 3:
+        return 'لا توجد خدمات قيد المراجعة';
+      case 4:
+        return 'لا توجد مسودات خدمات';
+      case 5:
+        return 'لا توجد خدمات مرفوضة';
+      default:
+        return 'لا توجد خدمات في قسم $sectionName';
+    }
+  }
+
+  String _getEmptyDescription(String sectionName, int tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        return 'يمكنك البدء بإضافة خدمات جديدة لعرضها هنا';
+      case 1:
+        return 'الخدمات النشطة ستظهر هنا بعد تفعيلها';
+      case 2:
+        return 'الخدمات المعتمدة ستظهر هنا بعد الموافقة عليها';
+      case 3:
+        return 'الخدمات قيد المراجعة ستظهر هنا بعد إضافتها';
+      case 4:
+        return 'يمكنك حفظ الخدمات كمسودات والعودة لإكمالها لاحقاً';
+      case 5:
+        return 'الخدمات المرفوضة ستظهر هنا مع إمكانية تعديلها وإعادة إرسالها';
+      default:
+        return 'يمكنك إضافة خدمات إلى هذا القسم';
+    }
+  }
+
+  Widget _buildLoadingView(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: AppColors.primary400,
+          ),
+          SizedBox(height: ResponsiveDimensions.f(16)),
+          Text(
+            'جاري تحميل الخدمات...',
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(14)
+                  : ResponsiveDimensions.f(16),
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: ResponsiveDimensions.f(80),
+            color: Colors.red,
+          ),
+          SizedBox(height: ResponsiveDimensions.f(16)),
+          Text(
+            'حدث خطأ',
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(16)
+                  : ResponsiveDimensions.f(18),
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
+          ),
+          SizedBox(height: ResponsiveDimensions.f(8)),
+          Obx(() => Text(
+            _errorMessage.value,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: isSmallScreen
+                  ? ResponsiveDimensions.f(12)
+                  : ResponsiveDimensions.f(14),
+              color: Colors.grey,
+            ),
+          )),
+          SizedBox(height: ResponsiveDimensions.f(16)),
+          ElevatedButton(
+            onPressed: _refreshServices,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary400,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveDimensions.f(24),
+                vertical: ResponsiveDimensions.f(12),
+              ),
+            ),
+            child: Text(
+              'إعادة المحاولة',
+              style: TextStyle(
+                fontSize: ResponsiveDimensions.f(14),
+              ),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
+        ],
+      ),
+    );
+  }
+
+  void _openSort() {
+    // TODO: Implement sort dialog
   }
 }

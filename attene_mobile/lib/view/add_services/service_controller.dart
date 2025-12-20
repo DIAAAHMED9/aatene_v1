@@ -75,7 +75,11 @@ class ServiceController extends GetxController {
   // RxBool acceptedCopyright = false.obs;
   RxBool acceptedTerms = false.obs;
   RxBool acceptedPrivacy = false.obs;
+    final RxBool _isSelectionMode = false.obs;
+  final RxList<String> _selectedServiceIds = <String>[].obs;
   
+  bool get isInSelectionMode => _isSelectionMode.value;
+  List<String> get selectedServiceIds => _selectedServiceIds.toList();
   @override
   void onInit() {
     super.onInit();
@@ -108,7 +112,59 @@ class ServiceController extends GetxController {
       update(['description_field', 'character_counter']);
     });
   }
+    void toggleServiceSelection(String serviceId) {
+    if (_selectedServiceIds.contains(serviceId)) {
+      _selectedServiceIds.remove(serviceId);
+    } else {
+      _selectedServiceIds.add(serviceId);
+    }
+    
+    // إذا لم تبقى أي عناصر محددة، اخروج من وضع التحديد
+    if (_selectedServiceIds.isEmpty) {
+      _isSelectionMode.value = false;
+    }
+  }
+    String getFullImageUrl(String imagePath) {
+    if (imagePath.isEmpty) {
+      return '';
+    }
+    
+    // إذا كان الرابط كاملاً بالفعل
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    // إذا كان مساراً نسبياً، قم ببناء الرابط الكامل
+    String baseUrl = ApiHelper.getBaseUrl(); // تأكد من وجود هذه الدالة في ApiHelper
+    
+    // تحقق من هيكل المسار
+    if (imagePath.startsWith('storage/')) {
+      return '$baseUrl/$imagePath';
+    } else if (imagePath.startsWith('images/')) {
+      return '$baseUrl/storage/$imagePath';
+    } else {
+      // افترض أنه يبدأ من storage
+      return '$baseUrl/storage/$imagePath';
+    }
+  }
+  void toggleSelectionMode() {
+    _isSelectionMode.value = !_isSelectionMode.value;
+    if (!_isSelectionMode.value) {
+      _selectedServiceIds.clear();
+    }
+  }
   
+  void clearSelection() {
+    _selectedServiceIds.clear();
+    _isSelectionMode.value = false;
+  }
+  
+  void selectAllServices(List<String> allServiceIds) {
+    _selectedServiceIds.assignAll(allServiceIds);
+    if (allServiceIds.isNotEmpty) {
+      _isSelectionMode.value = true;
+    }
+  }
   void goToNextStep() {
     if (currentStep.value < 4) {
       currentStep.value++;
@@ -265,151 +321,153 @@ class ServiceController extends GetxController {
     update(['development_form']);
   }
   
-  void addDevelopment() {
-    final title = developmentTitle.value.trim();
-    final priceText = developmentPrice.value.trim();
-    final timeValue = developmentTimeValue.value.trim();
-    final timeUnit = developmentTimeUnit.value;
-    
-    if (title.isEmpty || priceText.isEmpty || timeValue.isEmpty) return;
-    
-    final price = double.tryParse(priceText) ?? 0.0;
-    final executionTime = int.tryParse(timeValue) ?? 0;
-    
-    if (price <= 0 || executionTime <= 0) return;
-    
-    final newDevelopment = Development(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: title,
-      price: price,
-      executionTime: executionTime,
-      timeUnit: timeUnit,
-    );
-    
-    developments.add(newDevelopment);
-    
-    developmentTitle.value = '';
-    developmentPrice.value = '';
-    developmentTimeValue.value = '';
-    developmentTimeUnit.value = 'ساعة';
-    
-    update(['developments_list', 'development_form']);
-  }
+void addDevelopment() {
+  final title = developmentTitle.value.trim();
+  final priceText = developmentPrice.value.trim();
+  final timeValue = developmentTimeValue.value.trim();
+  final timeUnit = developmentTimeUnit.value;
   
-  void removeDevelopment(String id) {
-    developments.removeWhere((dev) => dev.id == id);
-    update(['developments_list']);
-  }
+  if (title.isEmpty || priceText.isEmpty || timeValue.isEmpty) return;
   
-  void addFAQ(String question, String answer) {
-    if (faqs.length >= maxFAQs) return;
-    
-    final newFAQ = FAQ(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      question: question.trim(),
-      answer: answer.trim(),
+  final price = double.tryParse(priceText) ?? 0.0;
+  final executionTime = int.tryParse(timeValue) ?? 0;
+  
+  if (price <= 0 || executionTime <= 0) return;
+  
+  // استخدام int بدلاً من String
+  final newDevelopment = Development(
+    id: DateTime.now().millisecondsSinceEpoch, // تغيير إلى int
+    title: title,
+    price: price,
+    executionTime: executionTime,
+    timeUnit: timeUnit,
+  );
+  
+  developments.add(newDevelopment);
+  
+  developmentTitle.value = '';
+  developmentPrice.value = '';
+  developmentTimeValue.value = '';
+  developmentTimeUnit.value = 'ساعة';
+  
+  update(['developments_list', 'development_form']);
+}
+
+void removeDevelopment(int id) { // تغيير المعلمة إلى int
+  developments.removeWhere((dev) => dev.id == id);
+  update(['developments_list']);
+}
+
+void addFAQ(String question, String answer) {
+  if (faqs.length >= maxFAQs) return;
+  
+  final newFAQ = FAQ(
+    id: DateTime.now().millisecondsSinceEpoch, // تغيير إلى int
+    question: question.trim(),
+    answer: answer.trim(),
+  );
+  
+  faqs.add(newFAQ);
+  update(['faqs_list']);
+}
+
+void updateFAQ(int id, String newQuestion, String newAnswer) { // تغيير المعلمة الأولى إلى int
+  final index = faqs.indexWhere((faq) => faq.id == id);
+  if (index != -1) {
+    faqs[index] = FAQ(
+      id: id,
+      question: newQuestion.trim(),
+      answer: newAnswer.trim(),
     );
-    
-    faqs.add(newFAQ);
     update(['faqs_list']);
   }
+}
+
+void removeFAQ(int id) { // تغيير المعلمة إلى int
+  faqs.removeWhere((faq) => faq.id == id);
+  update(['faqs_list']);
+}
+
+void addImagesFromMediaLibrary(List<MediaItem> mediaItems) {
+  final List<ServiceImage> newImages = [];
   
-  void updateFAQ(String id, String newQuestion, String newAnswer) {
-    final index = faqs.indexWhere((faq) => faq.id == id);
-    if (index != -1) {
-      faqs[index] = FAQ(
-        id: id,
-        question: newQuestion.trim(),
-        answer: newAnswer.trim(),
+  for (var mediaItem in mediaItems) {
+    if (serviceImages.length >= maxImages) {
+      Get.snackbar(
+        'تنبيه',
+        'لا يمكن إضافة أكثر من $maxImages صور',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
       );
-      update(['faqs_list']);
-    }
-  }
-  
-  void removeFAQ(String id) {
-    faqs.removeWhere((faq) => faq.id == id);
-    update(['faqs_list']);
-  }
-  
-  void addImagesFromMediaLibrary(List<MediaItem> mediaItems) {
-    final List<ServiceImage> newImages = [];
-    
-    for (var mediaItem in mediaItems) {
-      if (serviceImages.length >= maxImages) {
-        Get.snackbar(
-          'تنبيه',
-          'لا يمكن إضافة أكثر من $maxImages صور',
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
-        break;
-      }
-      
-      try {
-        final isDuplicate = serviceImages.any((img) => img.url == mediaItem.path);
-        if (isDuplicate) continue;
-        
-        final isNetworkUrl = mediaItem.path.startsWith('http');
-        final serviceImage = ServiceImage(
-          id: '${DateTime.now().millisecondsSinceEpoch}_${mediaItem.id}',
-          url: mediaItem.path,
-          isMain: serviceImages.isEmpty,
-          isLocalFile: !isNetworkUrl,
-          file: !isNetworkUrl ? File(mediaItem.path) : null,
-        );
-        
-        newImages.add(serviceImage);
-      } catch (e) {
-        print('خطأ في إضافة الصورة: $e');
-      }
+      break;
     }
     
-    if (newImages.isNotEmpty) {
-      serviceImages.addAll(newImages);
-      update(['images_list']);
+    try {
+      final isDuplicate = serviceImages.any((img) => img.url == mediaItem.path);
+      if (isDuplicate) continue;
+      
+      final isNetworkUrl = mediaItem.path.startsWith('http');
+      final serviceImage = ServiceImage(
+        id: DateTime.now().millisecondsSinceEpoch, // تغيير إلى int
+        url: mediaItem.path,
+        isMain: serviceImages.isEmpty,
+        isLocalFile: !isNetworkUrl,
+        file: !isNetworkUrl ? File(mediaItem.path) : null,
+      );
+      
+      newImages.add(serviceImage);
+    } catch (e) {
+      print('خطأ في إضافة الصورة: $e');
     }
   }
   
-  void removeImage(String id) {
-    final imageIndex = serviceImages.indexWhere((img) => img.id == id);
-    if (imageIndex != -1) {
-      final wasMain = serviceImages[imageIndex].isMain;
-      serviceImages.removeAt(imageIndex);
-      
-      if (wasMain && serviceImages.isNotEmpty) {
-        serviceImages[0] = serviceImages[0].copyWith(isMain: true);
-      }
-      
-      update(['images_list']);
-    }
-  }
-  
-  void setMainImage(String id) {
-    final updatedImages = serviceImages.map((image) {
-      return image.copyWith(isMain: image.id == id);
-    }).toList();
-    
-    serviceImages.assignAll(updatedImages);
+  if (newImages.isNotEmpty) {
+    serviceImages.addAll(newImages);
     update(['images_list']);
   }
-  
-  void reorderImages(int oldIndex, int newIndex) {
-    if (oldIndex < 0 || oldIndex >= serviceImages.length) return;
-    if (newIndex < 0) newIndex = 0;
-    if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
+}
+
+void removeImage(int id) { // تغيير المعلمة إلى int
+  final imageIndex = serviceImages.indexWhere((img) => img.id == id);
+  if (imageIndex != -1) {
+    final wasMain = serviceImages[imageIndex].isMain;
+    serviceImages.removeAt(imageIndex);
     
-    final List<ServiceImage> updatedList = List<ServiceImage>.from(serviceImages);
-    final ServiceImage item = updatedList.removeAt(oldIndex);
-    
-    if (oldIndex < newIndex) {
-      updatedList.insert(newIndex - 1, item);
-    } else {
-      updatedList.insert(newIndex, item);
+    if (wasMain && serviceImages.isNotEmpty) {
+      serviceImages[0] = serviceImages[0].copyWith(isMain: true);
     }
     
-    serviceImages.assignAll(updatedList);
     update(['images_list']);
   }
+}
+
+void setMainImage(int id) { // تغيير المعلمة إلى int
+  final updatedImages = serviceImages.map((image) {
+    return image.copyWith(isMain: image.id == id);
+  }).toList();
+  
+  serviceImages.assignAll(updatedImages);
+  update(['images_list']);
+}
+
+void reorderImages(int oldIndex, int newIndex) {
+  if (oldIndex < 0 || oldIndex >= serviceImages.length) return;
+  if (newIndex < 0) newIndex = 0;
+  if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
+  
+  final List<ServiceImage> updatedList = List<ServiceImage>.from(serviceImages);
+  final ServiceImage item = updatedList.removeAt(oldIndex);
+  
+  if (oldIndex < newIndex) {
+    updatedList.insert(newIndex - 1, item);
+  } else {
+    updatedList.insert(newIndex, item);
+  }
+  
+  serviceImages.assignAll(updatedList);
+  update(['images_list']);
+}
+  
   
   bool get allPoliciesAccepted {
     return 
@@ -948,95 +1006,94 @@ class ServiceController extends GetxController {
     }
   }
 
-  Future<Map<String, dynamic>?> deleteService(String serviceId) async {
-    try {
-      isLoading.value = true;
-      update();
+Future<Map<String, dynamic>?> deleteService(String serviceId) async {
+  try {
+    isLoading.value = true;
+    update();
 
-      final response = await ApiHelper.delete(
-        path: '/merchants/services/$serviceId',
-        withLoading: false,
-        shouldShowMessage: true,
-      );
+    final response = await ApiHelper.delete(
+      path: '/merchants/services/$serviceId',
+      withLoading: false,
+      shouldShowMessage: true,
+    );
 
-      if (response != null && response['status'] == true) {
-        Get.snackbar(
-          'نجاح',
-          'تم حذف الخدمة بنجاح',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-
-        isLoading.value = false;
-        update();
-
-        return {
-          'success': true,
-          'message': 'تم حذف الخدمة بنجاح',
-          'data': response['data'],
-        };
-      } else {
-        throw Exception(response?['message'] ?? 'فشل في حذف الخدمة');
-      }
-    } catch (e) {
-      isLoading.value = false;
-      update();
-      
+    if (response != null && response['status'] == true) {
       Get.snackbar(
-        'خطأ',
-        'فشل في حذف الخدمة: ${e.toString()}',
-        backgroundColor: Colors.red,
+        'نجاح',
+        'تم حذف الخدمة بنجاح',
+        backgroundColor: Colors.green,
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
-      
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
-    }
-  }
 
-  Future<Service?> getServiceById(String serviceId) async {
-    try {
-      isLoading.value = true;
-      update();
-
-      final response = await ApiHelper.get(
-        path: '/merchants/services/$serviceId',
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-
-      if (response != null && response['status'] == true) {
-        final data = response['data'] ?? {};
-        final service = Service.fromApiJson(data);
-        
-        _updateControllerFromService(service);
-
-        isLoading.value = false;
-        update();
-
-        return service;
-      } else {
-        throw Exception(response?['message'] ?? 'فشل في جلب الخدمة');
-      }
-    } catch (e) {
       isLoading.value = false;
       update();
-      
-      Get.snackbar(
-        'خطأ',
-        'فشل في جلب الخدمة: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      
-      return null;
-    }
-  }
 
+      return {
+        'success': true,
+        'message': 'تم حذف الخدمة بنجاح',
+        'data': response['data'],
+      };
+    } else {
+      throw Exception(response?['message'] ?? 'فشل في حذف الخدمة');
+    }
+  } catch (e) {
+    isLoading.value = false;
+    update();
+    
+    Get.snackbar(
+      'خطأ',
+      'فشل في حذف الخدمة: ${e.toString()}',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+    
+    return {
+      'success': false,
+      'message': e.toString(),
+    };
+  }
+}
+
+Future<Service?> getServiceById(String serviceId) async {
+  try {
+    isLoading.value = true;
+    update();
+
+    final response = await ApiHelper.get(
+      path: '/merchants/services/$serviceId',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+
+    if (response != null && response['status'] == true) {
+      final data = response['data'] ?? {};
+      final service = Service.fromApiJson(data);
+      
+      _updateControllerFromService(service);
+
+      isLoading.value = false;
+      update();
+
+      return service;
+    } else {
+      throw Exception(response?['message'] ?? 'فشل في جلب الخدمة');
+    }
+  } catch (e) {
+    isLoading.value = false;
+    update();
+    
+    Get.snackbar(
+      'خطأ',
+      'فشل في جلب الخدمة: ${e.toString()}',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+    
+    return null;
+  }
+}
   Future<List<Service>> getAllServices({
     int page = 1,
     int limit = 20,
@@ -1054,8 +1111,8 @@ class ServiceController extends GetxController {
       };
 
       if (status != null) queryParams['status'] = status;
-      if (sectionId != null) queryParams['section_id'] = sectionId;
-      if (categoryId != null) queryParams['category_id'] = categoryId;
+      // if (sectionId != null) queryParams['section_id'] = sectionId;
+      // if (categoryId != null) queryParams['category_id'] = categoryId;
 
       final response = await ApiHelper.get(
         path: '/merchants/services',
@@ -1063,12 +1120,14 @@ class ServiceController extends GetxController {
         withLoading: false,
         shouldShowMessage: false,
       );
-
       if (response != null && response['status'] == true) {
+
         final data = response['data'] ?? [];
+
         final services = (data as List<dynamic>)
             .map((item) => Service.fromApiJson(item))
             .toList();
+print('dATAT2 :: $services');
 
         isLoading.value = false;
         update();
@@ -1202,7 +1261,7 @@ class ServiceController extends GetxController {
   }
 
   void _updateControllerFromService(Service service) {
-    serviceId.value = service.id ?? '';
+    serviceId.value = service.id.toString() ?? '';
     serviceSlug.value = service.slug;
     serviceTitle.value = service.title;
     selectedSectionId.value = service.sectionId;
@@ -1228,7 +1287,7 @@ class ServiceController extends GetxController {
     for (int i = 0; i < service.images.length; i++) {
       final imageUrl = service.images[i];
       serviceImages.add(ServiceImage(
-        id: '${service.id}_$i',
+        id: service.id??0,
         url: imageUrl,
         isMain: i == 0,
         isLocalFile: false,

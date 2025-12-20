@@ -1,36 +1,33 @@
+import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
-class CustomStepper extends StatefulWidget {
+class CustomStepperFixed extends StatefulWidget {
   final List<StepperStep> steps;
   final int currentStep;
   final ValueChanged<int>? onStepTapped;
   final Widget Function(BuildContext, int) builder;
+  final bool showLabels;
+  final bool isLinear;
 
-  const CustomStepper({
+  const CustomStepperFixed({
     Key? key,
     required this.steps,
     required this.currentStep,
     this.onStepTapped,
     required this.builder,
+    this.showLabels = true,
+    this.isLinear = false,
   }) : super(key: key);
 
   @override
-  _CustomStepperState createState() => _CustomStepperState();
+  _CustomStepperFixedState createState() => _CustomStepperFixedState();
 }
 
-class StepperStep {
-  final String title;
-  final String subtitle;
-  final IconData? icon;
-
-  const StepperStep({required this.title, required this.subtitle, this.icon});
-}
-
-class _CustomStepperState extends State<CustomStepper>
+class _CustomStepperFixedState extends State<CustomStepperFixed>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   int _previousStep = 0;
-  bool _isForward = true;
 
   @override
   void initState() {
@@ -42,10 +39,9 @@ class _CustomStepperState extends State<CustomStepper>
   }
 
   @override
-  void didUpdateWidget(CustomStepper oldWidget) {
+  void didUpdateWidget(CustomStepperFixed oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.currentStep != widget.currentStep) {
-      _isForward = widget.currentStep > oldWidget.currentStep;
       _previousStep = oldWidget.currentStep;
       _animationController.reset();
       _animationController.forward();
@@ -60,7 +56,21 @@ class _CustomStepperState extends State<CustomStepper>
 
   @override
   Widget build(BuildContext context) {
-    return _buildStepperHeader();
+    return KeyboardVisibilityBuilder(
+      builder: (context, isKeyboardVisible) {
+        return Column(
+          children: [
+            // إخفاء الستيببر فقط عندما يكون الكيبورد مفتوحاً
+            if (!isKeyboardVisible) _buildStepperHeader(),
+            
+            // المحتوى الرئيسي
+            Expanded(
+              child: widget.builder(context, widget.currentStep),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildStepperHeader() {
@@ -68,7 +78,6 @@ class _CustomStepperState extends State<CustomStepper>
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: List.generate(widget.steps.length, (index) {
           final isActive = index == widget.currentStep;
           final isCompleted = index < widget.currentStep;
@@ -99,8 +108,6 @@ class _CustomStepperState extends State<CustomStepper>
     return Container(
       constraints: const BoxConstraints(minWidth: 60, maxWidth: 80),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _AnimatedStepCircle(
             step: widget.steps[index],
@@ -192,14 +199,14 @@ class _AnimatedStepCircle extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isCompleted || isActive
-                            ? Colors.blue
+                            ? AppColors.primary400
                             : Colors.grey[300]!,
                         width: 2.5,
                       ),
                       boxShadow: (isActive || isNext)
                           ? [
                               BoxShadow(
-                                color: Colors.blue.withOpacity(
+                                color: AppColors.primary400.withOpacity(
                                   0.3 * animation.value,
                                 ),
                                 blurRadius: 8,
@@ -219,7 +226,7 @@ class _AnimatedStepCircle extends StatelessWidget {
                       curve: Curves.fastOutSlowIn,
                       decoration: BoxDecoration(
                         color: isCompleted
-                            ? Colors.blue.withOpacity(0.9)
+                            ? AppColors.primary400.withOpacity(0.9)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -241,11 +248,11 @@ class _AnimatedStepCircle extends StatelessWidget {
                                   width: 12,
                                   height: 12,
                                   decoration: BoxDecoration(
-                                    color: Colors.blue,
+                                    color: AppColors.primary400,
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.blue.withOpacity(0.5),
+                                        color: AppColors.primary400.withOpacity(0.5),
                                         blurRadius: 4,
                                         spreadRadius: 1,
                                       ),
@@ -334,7 +341,7 @@ class _StepConnectorPainter extends CustomPainter {
 
     final Paint progressPaint = Paint()
       ..shader = LinearGradient(
-        colors: [Colors.blue.shade400, Colors.blue.shade600],
+        colors: [AppColors.primary400, AppColors.primary500],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
@@ -355,7 +362,7 @@ class _StepConnectorPainter extends CustomPainter {
 
       if (progress > 0 && progress < 1) {
         final pulsePaint = Paint()
-          ..color = Colors.blue.withOpacity(0.5 * (1 - progress))
+          ..color = AppColors.primary400.withOpacity(0.5 * (1 - progress))
           ..strokeWidth = 6
           ..strokeCap = StrokeCap.round;
 
@@ -372,4 +379,12 @@ class _StepConnectorPainter extends CustomPainter {
   bool shouldRepaint(covariant _StepConnectorPainter oldDelegate) {
     return progress != oldDelegate.progress || isActive != oldDelegate.isActive;
   }
+}
+
+class StepperStep {
+  final String title;
+  final String subtitle;
+  final IconData? icon;
+
+  const StepperStep({required this.title, required this.subtitle, this.icon});
 }
