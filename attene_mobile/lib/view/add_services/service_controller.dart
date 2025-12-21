@@ -15,6 +15,9 @@ class ServiceController extends GetxController {
   static const int maxImages = 10;
   static const int maxFAQs = 5;
 
+  // النص الافتراضي للوصف
+  static const String defaultDescriptionPlaceholder = 'ابدأ الكتابة هنا...';
+
   RxInt currentStep = 0.obs;
 
   RxString serviceTitle = ''.obs;
@@ -26,8 +29,14 @@ class ServiceController extends GetxController {
 
   late QuillController quillController;
   RxString serviceDescriptionPlainText = ''.obs;
+  RxString serviceDescriptionRichText = ''.obs;
   FocusNode editorFocusNode = FocusNode();
   ScrollController editorScrollController = ScrollController();
+
+  // متغيرات لحالة الوصف
+  RxBool hasUserTypedInDescription = false.obs;
+  RxBool isEditorEmpty = true.obs;
+  RxBool showDescriptionPlaceholder = true.obs;
 
   RxString price = ''.obs;
   RxString executionTimeValue = ''.obs;
@@ -79,14 +88,14 @@ class ServiceController extends GetxController {
   RxBool isLoadingCategories = false.obs;
   RxString categoriesError = ''.obs;
 
-  // RxBool acceptedCopyright = false.obs;
   RxBool acceptedTerms = false.obs;
   RxBool acceptedPrivacy = false.obs;
-    final RxBool _isSelectionMode = false.obs;
+  final RxBool _isSelectionMode = false.obs;
   final RxList<String> _selectedServiceIds = <String>[].obs;
-  
+
   bool get isInSelectionMode => _isSelectionMode.value;
   List<String> get selectedServiceIds => _selectedServiceIds.toList();
+
   @override
   void onInit() {
     super.onInit();
@@ -106,75 +115,271 @@ class ServiceController extends GetxController {
   }
 
   void _initializeQuill() {
+    // بدء المحرر بمستند فارغ
     quillController = QuillController(
-      document: Document.fromJson([
-        {'insert': 'ابدأ الكتابة هنا...\n'},
-      ]),
+      document: Document(),
       selection: const TextSelection.collapsed(offset: 0),
     );
 
+    // مستمع لتغييرات المحتوى
     quillController.document.changes.listen((event) {
-      serviceDescriptionPlainText.value = quillController.document
-          .toPlainText();
-      isDescriptionError.value = serviceDescriptionPlainText.value
-          .trim()
-          .isEmpty;
-      update(['description_field', 'character_counter']);
+      String plainText = quillController.document.toPlainText();
+
+      serviceDescriptionPlainText.value = plainText;
+
+      // التحقق مما إذا كان المحتوى فارغاً
+      bool isEmpty = plainText.trim().isEmpty;
+      bool isOnlyNewline = plainText == '\n' || plainText == '\n\n';
+
+      isEditorEmpty.value = isEmpty || isOnlyNewline;
+
+      // إذا كان هناك نص حقيقي، فقد كتب المستخدم
+      if (plainText.trim().isNotEmpty && !isOnlyNewline) {
+        hasUserTypedInDescription.value = true;
+        showDescriptionPlaceholder.value = false;
+      } else {
+        showDescriptionPlaceholder.value = true;
+      }
+
+      // التحقق من الخطأ - الوصف مطلوب فقط إذا كان المستخدم قد بدأ الكتابة
+      if (hasUserTypedInDescription.value) {
+        isDescriptionError.value = isEditorEmpty.value;
+      } else {
+        isDescriptionError.value = false;
+      }
+
+      // تحديث الواجهة
+      update(['description_field']);
+    });
+
+    // إضافة مستمع لـ FocusNode
+    editorFocusNode.addListener(() {
+      if (editorFocusNode.hasFocus) {
+        // إذا كان المحرر فارغاً ونقره المستخدم، فلنفترض أنه يريد الكتابة
+        if (isEditorEmpty.value && !hasUserTypedInDescription.value) {
+          hasUserTypedInDescription.value = true;
+          showDescriptionPlaceholder.value = false;
+        }
+      }
     });
   }
-    void toggleServiceSelection(String serviceId) {
+
+  void _checkDescriptionContent() {
+    String plainText = quillController.document.toPlainText();
+
+    bool isEmpty = plainText.trim().isEmpty;
+    bool isOnlyNewline = plainText == '\n' || plainText == '\n\n';
+
+    isEditorEmpty.value = isEmpty || isOnlyNewline;
+
+    // تحديث حالة النص الافتراضي
+    if (plainText.trim().isNotEmpty && !isOnlyNewline) {
+      hasUserTypedInDescription.value = true;
+      showDescriptionPlaceholder.value = false;
+    } else {
+      showDescriptionPlaceholder.value = true;
+    }
+
+    // تحديث حالة الخطأ
+    if (hasUserTypedInDescription.value) {
+      isDescriptionError.value = isEditorEmpty.value;
+    } else {
+      isDescriptionError.value = false;
+    }
+  }
+
+  bool get isDescriptionEmpty {
+    return isEditorEmpty.value;
+  }
+
+  bool get isValidDescription {
+    if (!hasUserTypedInDescription.value) return false;
+    return !isDescriptionError.value;
+  }
+
+  bool validateDescriptionForm() {
+    _checkDescriptionContent();
+    return isValidDescription;
+  }
+
+  void resetDescription() {
+    quillController.document = Document();
+    hasUserTypedInDescription.value = false;
+    isEditorEmpty.value = true;
+    showDescriptionPlaceholder.value = true;
+    isDescriptionError.value = false;
+    serviceDescriptionPlainText.value = '';
+    update(['description_field']);
+  }
+
+  void setDescription(String? description) {
+    if (description != null && description.trim().isNotEmpty) {
+      try {
+        quillController.document = Document()..insert(0, description);
+        hasUserTypedInDescription.value = true;
+        isEditorEmpty.value = false;
+        showDescriptionPlaceholder.value = false;
+        isDescriptionError.value = false;
+      } catch (e) {
+        print('❌ خطأ في تحميل الوصف: $e');
+        resetDescription();
+      }
+    } else {
+      resetDescription();
+    }
+    update(['description_field']);
+  }
+
+  bool get allPoliciesAccepted {
+    return acceptedTerms.value && acceptedPrivacy.value;
+  }
+
+  void updateTermsAcceptance(bool value) {
+    acceptedTerms.value = value;
+    update(['terms_section']);
+  }
+
+  void updatePrivacyAcceptance(bool value) {
+    acceptedPrivacy.value = value;
+    update(['privacy_section']);
+  }
+
+  bool validatePoliciesForm() {
+    final bool allAccepted = acceptedTerms.value && acceptedPrivacy.value;
+
+    if (!allAccepted) {
+      Get.snackbar(
+        'تنبيه',
+        'يجب الموافقة على جميع السياسات والشروط قبل المتابعة',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+
+      if (!acceptedTerms.value) {
+        Get.snackbar(
+          'شروط الخدمة',
+          'يجب الموافقة على شروط الخدمة',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+
+      if (!acceptedPrivacy.value) {
+        Get.snackbar(
+          'سياسة الخصوصية',
+          'يجب الموافقة على سياسة الخصوصية',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    }
+
+    return allAccepted;
+  }
+
+  bool validateServiceForm() {
+    bool isValid = true;
+
+    if (serviceTitle.value.isEmpty) {
+      isServiceTitleError.value = true;
+      isValid = false;
+    }
+
+    if (selectedMainCategory.value.isEmpty) {
+      isMainCategoryError.value = true;
+      isValid = false;
+    }
+
+    if (selectedCategory.value.isEmpty || selectedCategoryId.value == 0) {
+      isCategoryError.value = true;
+      isValid = false;
+    }
+
+    update(['service_title_field', 'main_category_field', 'category_field']);
+    return isValid;
+  }
+
+  bool validatePriceForm() {
+    bool isValid = true;
+
+    if (price.value.isEmpty) {
+      isPriceError.value = true;
+      isValid = false;
+    }
+
+    if (executionTimeValue.value.isEmpty) {
+      isExecutionTimeError.value = true;
+      isValid = false;
+    }
+
+    update(['price_field', 'execution_time_field']);
+    return isValid;
+  }
+
+  bool validateImagesForm() {
+    return serviceImages.isNotEmpty;
+  }
+
+  bool validateAllForms() {
+    return validateServiceForm() &&
+        validatePriceForm() &&
+        validateImagesForm() &&
+        validateDescriptionForm() &&
+        validatePoliciesForm();
+  }
+
+  void toggleServiceSelection(String serviceId) {
     if (_selectedServiceIds.contains(serviceId)) {
       _selectedServiceIds.remove(serviceId);
     } else {
       _selectedServiceIds.add(serviceId);
     }
-    
-    // إذا لم تبقى أي عناصر محددة، اخروج من وضع التحديد
+
     if (_selectedServiceIds.isEmpty) {
       _isSelectionMode.value = false;
     }
   }
-    String getFullImageUrl(String imagePath) {
+
+  String getFullImageUrl(String imagePath) {
     if (imagePath.isEmpty) {
       return '';
     }
-    
-    // إذا كان الرابط كاملاً بالفعل
+
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-    
-    // إذا كان مساراً نسبياً، قم ببناء الرابط الكامل
-    String baseUrl = ApiHelper.getBaseUrl(); // تأكد من وجود هذه الدالة في ApiHelper
-    
-    // تحقق من هيكل المسار
+
+    String baseUrl = ApiHelper.getBaseUrl();
+
     if (imagePath.startsWith('storage/')) {
       return '$baseUrl/$imagePath';
     } else if (imagePath.startsWith('images/')) {
       return '$baseUrl/storage/$imagePath';
     } else {
-      // افترض أنه يبدأ من storage
       return '$baseUrl/storage/$imagePath';
     }
   }
+
   void toggleSelectionMode() {
     _isSelectionMode.value = !_isSelectionMode.value;
     if (!_isSelectionMode.value) {
       _selectedServiceIds.clear();
     }
   }
-  
+
   void clearSelection() {
     _selectedServiceIds.clear();
     _isSelectionMode.value = false;
   }
-  
+
   void selectAllServices(List<String> allServiceIds) {
     _selectedServiceIds.assignAll(allServiceIds);
     if (allServiceIds.isNotEmpty) {
       _isSelectionMode.value = true;
     }
   }
+
   void goToNextStep() {
     if (currentStep.value < 4) {
       currentStep.value++;
@@ -331,278 +536,151 @@ class ServiceController extends GetxController {
     developmentTimeUnit.value = unit;
     update(['development_form']);
   }
-  
-void addDevelopment() {
-  final title = developmentTitle.value.trim();
-  final priceText = developmentPrice.value.trim();
-  final timeValue = developmentTimeValue.value.trim();
-  final timeUnit = developmentTimeUnit.value;
-  
-  if (title.isEmpty || priceText.isEmpty || timeValue.isEmpty) return;
-  
-  final price = double.tryParse(priceText) ?? 0.0;
-  final executionTime = int.tryParse(timeValue) ?? 0;
-  
-  if (price <= 0 || executionTime <= 0) return;
-  
-  // استخدام int بدلاً من String
-  final newDevelopment = Development(
-    id: DateTime.now().millisecondsSinceEpoch, // تغيير إلى int
-    title: title,
-    price: price,
-    executionTime: executionTime,
-    timeUnit: timeUnit,
-  );
-  
-  developments.add(newDevelopment);
-  
-  developmentTitle.value = '';
-  developmentPrice.value = '';
-  developmentTimeValue.value = '';
-  developmentTimeUnit.value = 'ساعة';
-  
-  update(['developments_list', 'development_form']);
-}
 
-void removeDevelopment(int id) { // تغيير المعلمة إلى int
-  developments.removeWhere((dev) => dev.id == id);
-  update(['developments_list']);
-}
+  void addDevelopment() {
+    final title = developmentTitle.value.trim();
+    final priceText = developmentPrice.value.trim();
+    final timeValue = developmentTimeValue.value.trim();
+    final timeUnit = developmentTimeUnit.value;
 
-void addFAQ(String question, String answer) {
-  if (faqs.length >= maxFAQs) return;
-  
-  final newFAQ = FAQ(
-    id: DateTime.now().millisecondsSinceEpoch, // تغيير إلى int
-    question: question.trim(),
-    answer: answer.trim(),
-  );
-  
-  faqs.add(newFAQ);
-  update(['faqs_list']);
-}
+    if (title.isEmpty || priceText.isEmpty || timeValue.isEmpty) return;
 
-void updateFAQ(int id, String newQuestion, String newAnswer) { // تغيير المعلمة الأولى إلى int
-  final index = faqs.indexWhere((faq) => faq.id == id);
-  if (index != -1) {
-    faqs[index] = FAQ(
-      id: id,
-      question: newQuestion.trim(),
-      answer: newAnswer.trim(),
+    final price = double.tryParse(priceText) ?? 0.0;
+    final executionTime = int.tryParse(timeValue) ?? 0;
+
+    if (price <= 0 || executionTime <= 0) return;
+
+    final newDevelopment = Development(
+      id: DateTime.now().millisecondsSinceEpoch,
+      title: title,
+      price: price,
+      executionTime: executionTime,
+      timeUnit: timeUnit,
     );
+
+    developments.add(newDevelopment);
+
+    developmentTitle.value = '';
+    developmentPrice.value = '';
+    developmentTimeValue.value = '';
+    developmentTimeUnit.value = 'ساعة';
+
+    update(['developments_list', 'development_form']);
+  }
+
+  void removeDevelopment(int id) {
+    developments.removeWhere((dev) => dev.id == id);
+    update(['developments_list']);
+  }
+
+  void addFAQ(String question, String answer) {
+    if (faqs.length >= maxFAQs) return;
+
+    final newFAQ = FAQ(
+      id: DateTime.now().millisecondsSinceEpoch,
+      question: question.trim(),
+      answer: answer.trim(),
+    );
+
+    faqs.add(newFAQ);
     update(['faqs_list']);
   }
-}
 
-void removeFAQ(int id) { // تغيير المعلمة إلى int
-  faqs.removeWhere((faq) => faq.id == id);
-  update(['faqs_list']);
-}
-
-void addImagesFromMediaLibrary(List<MediaItem> mediaItems) {
-  final List<ServiceImage> newImages = [];
-  
-  for (var mediaItem in mediaItems) {
-    if (serviceImages.length >= maxImages) {
-      Get.snackbar(
-        'تنبيه',
-        'لا يمكن إضافة أكثر من $maxImages صور',
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
+  void updateFAQ(int id, String newQuestion, String newAnswer) {
+    final index = faqs.indexWhere((faq) => faq.id == id);
+    if (index != -1) {
+      faqs[index] = FAQ(
+        id: id,
+        question: newQuestion.trim(),
+        answer: newAnswer.trim(),
       );
-      break;
-    }
-    
-    try {
-      final isDuplicate = serviceImages.any((img) => img.url == mediaItem.path);
-      if (isDuplicate) continue;
-      
-      final isNetworkUrl = mediaItem.path.startsWith('http');
-      final serviceImage = ServiceImage(
-        id: DateTime.now().millisecondsSinceEpoch, // تغيير إلى int
-        url: mediaItem.path,
-        isMain: serviceImages.isEmpty,
-        isLocalFile: !isNetworkUrl,
-        file: !isNetworkUrl ? File(mediaItem.path) : null,
-      );
-      
-      newImages.add(serviceImage);
-    } catch (e) {
-      print('خطأ في إضافة الصورة: $e');
+      update(['faqs_list']);
     }
   }
-  
-  if (newImages.isNotEmpty) {
-    serviceImages.addAll(newImages);
-    update(['images_list']);
-  }
-}
 
-void removeImage(int id) { // تغيير المعلمة إلى int
-  final imageIndex = serviceImages.indexWhere((img) => img.id == id);
-  if (imageIndex != -1) {
-    final wasMain = serviceImages[imageIndex].isMain;
-    serviceImages.removeAt(imageIndex);
-    
-    if (wasMain && serviceImages.isNotEmpty) {
-      serviceImages[0] = serviceImages[0].copyWith(isMain: true);
-    }
-    
-    update(['images_list']);
-  }
-}
-
-void setMainImage(int id) { // تغيير المعلمة إلى int
-  final updatedImages = serviceImages.map((image) {
-    return image.copyWith(isMain: image.id == id);
-  }).toList();
-  
-  serviceImages.assignAll(updatedImages);
-  update(['images_list']);
-}
-
-void reorderImages(int oldIndex, int newIndex) {
-  if (oldIndex < 0 || oldIndex >= serviceImages.length) return;
-  if (newIndex < 0) newIndex = 0;
-  if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
-  
-  final List<ServiceImage> updatedList = List<ServiceImage>.from(serviceImages);
-  final ServiceImage item = updatedList.removeAt(oldIndex);
-  
-  if (oldIndex < newIndex) {
-    updatedList.insert(newIndex - 1, item);
-  } else {
-    updatedList.insert(newIndex, item);
-  }
-  
-  serviceImages.assignAll(updatedList);
-  update(['images_list']);
-}
-  
-  
-  bool get allPoliciesAccepted {
-    return
-    // acceptedCopyright.value &&
-    acceptedTerms.value && acceptedPrivacy.value;
+  void removeFAQ(int id) {
+    faqs.removeWhere((faq) => faq.id == id);
+    update(['faqs_list']);
   }
 
-  // void updateCopyrightAcceptance(bool value) {
-  //   acceptedCopyright.value = value;
-  //   update(['copyright_section']);
-  // }
+  void addImagesFromMediaLibrary(List<MediaItem> mediaItems) {
+    final List<ServiceImage> newImages = [];
 
-  void updateTermsAcceptance(bool value) {
-    acceptedTerms.value = value;
-    update(['terms_section']);
-  }
-
-  void updatePrivacyAcceptance(bool value) {
-    acceptedPrivacy.value = value;
-    update(['privacy_section']);
-  }
-
-  bool validatePoliciesForm() {
-    final bool allAccepted =
-        //  acceptedCopyright.value &&
-        acceptedTerms.value && acceptedPrivacy.value;
-
-    if (!allAccepted) {
-      Get.snackbar(
-        'تنبيه',
-        'يجب الموافقة على جميع السياسات والشروط قبل المتابعة',
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: Duration(seconds: 3),
-      );
-
-      // تبيان أي السياسات غير موافق عليها
-      // if (!acceptedCopyright.value) {
-      //   Get.snackbar(
-      //     'إشعار حقوق النشر',
-      //     'يجب الموافقة على إشعار حقوق النشر',
-      //     backgroundColor: Colors.red,
-      //     colorText: Colors.white,
-      //   );
-      // }
-
-      if (!acceptedTerms.value) {
+    for (var mediaItem in mediaItems) {
+      if (serviceImages.length >= maxImages) {
         Get.snackbar(
-          'شروط الخدمة',
-          'يجب الموافقة على شروط الخدمة',
-          backgroundColor: Colors.red,
+          'تنبيه',
+          'لا يمكن إضافة أكثر من $maxImages صور',
+          backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
+        break;
       }
 
-      if (!acceptedPrivacy.value) {
-        Get.snackbar(
-          'سياسة الخصوصية',
-          'يجب الموافقة على سياسة الخصوصية',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+      try {
+        final isDuplicate = serviceImages.any((img) => img.url == mediaItem.path);
+        if (isDuplicate) continue;
+
+        final isNetworkUrl = mediaItem.path.startsWith('http');
+        final serviceImage = ServiceImage(
+          id: DateTime.now().millisecondsSinceEpoch,
+          url: mediaItem.path,
+          isMain: serviceImages.isEmpty,
+          isLocalFile: !isNetworkUrl,
+          file: !isNetworkUrl ? File(mediaItem.path) : null,
         );
+
+        newImages.add(serviceImage);
+      } catch (e) {
+        print('خطأ في إضافة الصورة: $e');
       }
     }
 
-    return allAccepted;
+    if (newImages.isNotEmpty) {
+      serviceImages.addAll(newImages);
+      update(['images_list']);
+    }
   }
 
-  bool validateServiceForm() {
-    bool isValid = true;
+  void removeImage(int id) {
+    final imageIndex = serviceImages.indexWhere((img) => img.id == id);
+    if (imageIndex != -1) {
+      final wasMain = serviceImages[imageIndex].isMain;
+      serviceImages.removeAt(imageIndex);
 
-    if (serviceTitle.value.isEmpty) {
-      isServiceTitleError.value = true;
-      isValid = false;
+      if (wasMain && serviceImages.isNotEmpty) {
+        serviceImages[0] = serviceImages[0].copyWith(isMain: true);
+      }
+
+      update(['images_list']);
     }
-
-    if (selectedMainCategory.value.isEmpty) {
-      isMainCategoryError.value = true;
-      isValid = false;
-    }
-
-    if (selectedCategory.value.isEmpty || selectedCategoryId.value == 0) {
-      isCategoryError.value = true;
-      isValid = false;
-    }
-
-    update(['service_title_field', 'main_category_field', 'category_field']);
-    return isValid;
   }
 
-  bool validatePriceForm() {
-    bool isValid = true;
+  void setMainImage(int id) {
+    final updatedImages = serviceImages.map((image) {
+      return image.copyWith(isMain: image.id == id);
+    }).toList();
 
-    if (price.value.isEmpty) {
-      isPriceError.value = true;
-      isValid = false;
+    serviceImages.assignAll(updatedImages);
+    update(['images_list']);
+  }
+
+  void reorderImages(int oldIndex, int newIndex) {
+    if (oldIndex < 0 || oldIndex >= serviceImages.length) return;
+    if (newIndex < 0) newIndex = 0;
+    if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
+
+    final List<ServiceImage> updatedList = List<ServiceImage>.from(serviceImages);
+    final ServiceImage item = updatedList.removeAt(oldIndex);
+
+    if (oldIndex < newIndex) {
+      updatedList.insert(newIndex - 1, item);
+    } else {
+      updatedList.insert(newIndex, item);
     }
 
-    if (executionTimeValue.value.isEmpty) {
-      isExecutionTimeError.value = true;
-      isValid = false;
-    }
-
-    update(['price_field', 'execution_time_field']);
-    return isValid;
-  }
-
-  bool validateDescriptionForm() {
-    final hasContent = serviceDescriptionPlainText.value.trim().isNotEmpty;
-    isDescriptionError.value = !hasContent;
-    update(['description_field']);
-    return hasContent;
-  }
-
-  bool validateImagesForm() {
-    return serviceImages.isNotEmpty;
-  }
-
-  bool validateAllForms() {
-    return validateServiceForm() &&
-        validatePriceForm() &&
-        validateImagesForm() &&
-        validateDescriptionForm() &&
-        validatePoliciesForm();
+    serviceImages.assignAll(updatedList);
+    update(['images_list']);
   }
 
   Future<void> loadSections() async {
@@ -788,17 +866,21 @@ void reorderImages(int oldIndex, int newIndex) {
           .map((img) => ({'id': img.id, 'url': img.url, 'isMain': img.isMain}))
           .toList(),
       'imagesCount': serviceImages.length,
-      // 'policies': {
-      //   // 'acceptedCopyright': acceptedCopyright.value,
-      //   'acceptedTerms': acceptedTerms.value,
-      //   'acceptedPrivacy': acceptedPrivacy.value,
-      // },
+      'policies': {
+        'acceptedTerms': acceptedTerms.value,
+        'acceptedPrivacy': acceptedPrivacy.value,
+      },
       'timestamp': DateTime.now().toIso8601String(),
     };
   }
 
   String getQuillContentAsJson() {
-    return jsonEncode(quillController.document.toDelta().toJson());
+    try {
+      return jsonEncode(quillController.document.toDelta().toJson());
+    } catch (e) {
+      print('❌ خطأ في تحويل محتوى Quill إلى JSON: $e');
+      return '[]';
+    }
   }
 
   void resetAll() {
@@ -811,16 +893,9 @@ void reorderImages(int oldIndex, int newIndex) {
     specializations.clear();
     keywords.clear();
 
-    quillController = QuillController(
-      document: Document.fromJson([
-        {'insert': 'ابدأ الكتابة هنا...\n'},
-      ]),
-      selection: const TextSelection.collapsed(offset: 0),
-    );
+    resetDescription();
 
-    serviceDescriptionPlainText.value = '';
     faqs.clear();
-    isDescriptionError.value = false;
     price.value = '';
     executionTimeValue.value = '';
     executionTimeUnit.value = 'ساعة';
@@ -848,7 +923,6 @@ void reorderImages(int oldIndex, int newIndex) {
 
     categories.clear();
 
-    // acceptedCopyright.value = false;
     acceptedTerms.value = false;
     acceptedPrivacy.value = false;
 
@@ -860,11 +934,11 @@ void reorderImages(int oldIndex, int newIndex) {
       isSaving.value = true;
       update();
 
-      // التحقق من جميع السياسات أولاً
-      if (!allPoliciesAccepted) {
+      // التحقق من الوصف إذا كان المستخدم قد كتب فيه
+      if (hasUserTypedInDescription.value && !validateDescriptionForm()) {
         Get.snackbar(
           'خطأ',
-          'يجب الموافقة على جميع السياسات قبل نشر الخدمة',
+          'الرجاء إضافة وصف مفصل للخدمة',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -942,11 +1016,11 @@ void reorderImages(int oldIndex, int newIndex) {
       isSaving.value = true;
       update();
 
-      // التحقق من جميع السياسات أولاً
-      if (!allPoliciesAccepted) {
+      // التحقق من الوصف إذا كان المستخدم قد كتب فيه
+      if (hasUserTypedInDescription.value && !validateDescriptionForm()) {
         Get.snackbar(
           'خطأ',
-          'يجب الموافقة على جميع السياسات قبل تحديث الخدمة',
+          'الرجاء إضافة وصف مفصل للخدمة',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -1014,94 +1088,95 @@ void reorderImages(int oldIndex, int newIndex) {
     }
   }
 
-Future<Map<String, dynamic>?> deleteService(String serviceId) async {
-  try {
-    isLoading.value = true;
-    update();
+  Future<Map<String, dynamic>?> deleteService(String serviceId) async {
+    try {
+      isLoading.value = true;
+      update();
 
-    final response = await ApiHelper.delete(
-      path: '/merchants/services/$serviceId',
-      withLoading: false,
-      shouldShowMessage: true,
-    );
+      final response = await ApiHelper.delete(
+        path: '/merchants/services/$serviceId',
+        withLoading: false,
+        shouldShowMessage: true,
+      );
 
-    if (response != null && response['status'] == true) {
+      if (response != null && response['status'] == true) {
+        Get.snackbar(
+          'نجاح',
+          'تم حذف الخدمة بنجاح',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+
+        isLoading.value = false;
+        update();
+
+        return {
+          'success': true,
+          'message': 'تم حذف الخدمة بنجاح',
+          'data': response['data'],
+        };
+      } else {
+        throw Exception(response?['message'] ?? 'فشل في حذف الخدمة');
+      }
+    } catch (e) {
+      isLoading.value = false;
+      update();
+
       Get.snackbar(
-        'نجاح',
-        'تم حذف الخدمة بنجاح',
-        backgroundColor: Colors.green,
+        'خطأ',
+        'فشل في حذف الخدمة: ${e.toString()}',
+        backgroundColor: Colors.red,
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
 
-      isLoading.value = false;
-      update();
-
       return {
-        'success': true,
-        'message': 'تم حذف الخدمة بنجاح',
-        'data': response['data'],
+        'success': false,
+        'message': e.toString(),
       };
-    } else {
-      throw Exception(response?['message'] ?? 'فشل في حذف الخدمة');
     }
-  } catch (e) {
-    isLoading.value = false;
-    update();
-    
-    Get.snackbar(
-      'خطأ',
-      'فشل في حذف الخدمة: ${e.toString()}',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
-    
-    return {
-      'success': false,
-      'message': e.toString(),
-    };
   }
-}
 
-Future<Service?> getServiceById(String serviceId) async {
-  try {
-    isLoading.value = true;
-    update();
+  Future<Service?> getServiceById(String serviceId) async {
+    try {
+      isLoading.value = true;
+      update();
 
-    final response = await ApiHelper.get(
-      path: '/merchants/services/$serviceId',
-      withLoading: false,
-      shouldShowMessage: false,
-    );
+      final response = await ApiHelper.get(
+        path: '/merchants/services/$serviceId',
+        withLoading: false,
+        shouldShowMessage: false,
+      );
 
-    if (response != null && response['status'] == true) {
-      final data = response['data'] ?? {};
-      final service = Service.fromApiJson(data);
-      
-      _updateControllerFromService(service);
+      if (response != null && response['status'] == true) {
+        final data = response['data'] ?? {};
+        final service = Service.fromApiJson(data);
 
+        _updateControllerFromService(service);
+
+        isLoading.value = false;
+        update();
+
+        return service;
+      } else {
+        throw Exception(response?['message'] ?? 'فشل في جلب الخدمة');
+      }
+    } catch (e) {
       isLoading.value = false;
       update();
 
-      return service;
-    } else {
-      throw Exception(response?['message'] ?? 'فشل في جلب الخدمة');
+      Get.snackbar(
+        'خطأ',
+        'فشل في جلب الخدمة: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      return null;
     }
-  } catch (e) {
-    isLoading.value = false;
-    update();
-    
-    Get.snackbar(
-      'خطأ',
-      'فشل في جلب الخدمة: ${e.toString()}',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-    
-    return null;
   }
-}
+
   Future<List<Service>> getAllServices({
     int page = 1,
     int limit = 20,
@@ -1116,8 +1191,6 @@ Future<Service?> getServiceById(String serviceId) async {
       final Map<String, dynamic> queryParams = {'page': page, 'limit': limit};
 
       if (status != null) queryParams['status'] = status;
-      // if (sectionId != null) queryParams['section_id'] = sectionId;
-      // if (categoryId != null) queryParams['category_id'] = categoryId;
 
       final response = await ApiHelper.get(
         path: '/merchants/services',
@@ -1132,7 +1205,6 @@ Future<Service?> getServiceById(String serviceId) async {
         final services = (data as List<dynamic>)
             .map((item) => Service.fromApiJson(item))
             .toList();
-print('dATAT2 :: $services');
 
         isLoading.value = false;
         update();
@@ -1232,11 +1304,11 @@ print('dATAT2 :: $services');
     final List<String> imagesToSend = uploadedImages.isNotEmpty
         ? uploadedImages
         : serviceImages
-              .map((img) {
-                return _extractRelativePath(img.url);
-              })
-              .where((url) => url.isNotEmpty)
-              .toList();
+        .map((img) {
+      return _extractRelativePath(img.url);
+    })
+        .where((url) => url.isNotEmpty)
+        .toList();
 
     final serviceData = {
       'slug': slug,
@@ -1253,9 +1325,8 @@ print('dATAT2 :: $services');
       'images': imagesToSend,
       'description': serviceDescriptionPlainText.value,
       'questions': questions,
-      // 'accepted_copyright': acceptedCopyright.value,
-      // 'accepted_terms': acceptedTerms.value,
-      // 'accepted_privacy': acceptedPrivacy.value,
+      'accepted_terms': acceptedTerms.value,
+      'accepted_privacy': acceptedPrivacy.value,
     };
 
     if (!forUpdate && storeId != null && storeId.isNotEmpty) {
@@ -1283,10 +1354,8 @@ print('dATAT2 :: $services');
 
     faqs.assignAll(service.questions);
 
-    serviceDescriptionPlainText.value = service.description;
-    quillController.document = Document.fromJson([
-      {'insert': service.description},
-    ]);
+    // تحميل الوصف
+    setDescription(service.description);
 
     serviceImages.clear();
     for (int i = 0; i < service.images.length; i++) {
@@ -1300,7 +1369,6 @@ print('dATAT2 :: $services');
       ));
     }
 
-    // acceptedCopyright.value = service.acceptedCopyright;
     acceptedTerms.value = service.acceptedTerms;
     acceptedPrivacy.value = service.acceptedPrivacy;
 
@@ -1308,16 +1376,16 @@ print('dATAT2 :: $services');
   }
 
   Future<void> _loadCategoryAndSectionNames(
-    int sectionId,
-    int categoryId,
-  ) async {
+      int sectionId,
+      int categoryId,
+      ) async {
     try {
       if (sections.isEmpty) {
         await loadSections();
       }
 
       final section = sections.firstWhere(
-        (s) => (s['id'] as int?) == sectionId,
+            (s) => (s['id'] as int?) == sectionId,
         orElse: () => {'name': ''},
       );
       selectedMainCategory.value = section['name']?.toString() ?? '';
@@ -1327,7 +1395,7 @@ print('dATAT2 :: $services');
         await loadCategories();
 
         final category = categories.firstWhere(
-          (c) => (c['id'] as int?) == categoryId,
+              (c) => (c['id'] as int?) == categoryId,
           orElse: () => {'name': ''},
         );
         selectedCategory.value = category['name']?.toString() ?? '';
