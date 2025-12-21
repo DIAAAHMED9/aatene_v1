@@ -192,19 +192,19 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: false,
         colorScheme:
-            ColorScheme.light(
-              primary: AppColors.primary500,
-              secondary: AppColors.primary200,
-              background: AppColors.light1000,
-              surface: AppColors.light1000,
-              onBackground: AppColors.neutral200,
-              onSurface: AppColors.neutral200,
-              error: AppColors.error200,
-              onError: AppColors.light1000,
-            ).copyWith(
-              primary: AppColors.primary300,
-              surface: AppColors.light1000,
-            ), // يمكنك تغيير هذا إلى true إذا كنت تستخدم Material 3
+        ColorScheme.light(
+          primary: AppColors.primary500,
+          secondary: AppColors.primary200,
+          background: AppColors.light1000,
+          surface: AppColors.light1000,
+          onBackground: AppColors.neutral200,
+          onSurface: AppColors.neutral200,
+          error: AppColors.error200,
+          onError: AppColors.light1000,
+        ).copyWith(
+          primary: AppColors.primary300,
+          surface: AppColors.light1000,
+        ), // يمكنك تغيير هذا إلى true إذا كنت تستخدم Material 3
       ),
 
       // Dark Theme (اختياري)
@@ -215,15 +215,15 @@ class MyApp extends StatelessWidget {
           backgroundColor: AppColors.neutral300,
         ),
         colorScheme:
-            ColorScheme.dark(
-              primary: AppColors.primary500,
-              secondary: AppColors.primary200,
-              background: AppColors.neutral200,
-              surface: AppColors.neutral300,
-            ).copyWith(
-              primary: AppColors.primary400,
-              surface: AppColors.neutral200,
-            ),
+        ColorScheme.dark(
+          primary: AppColors.primary500,
+          secondary: AppColors.primary200,
+          background: AppColors.neutral200,
+          surface: AppColors.neutral300,
+        ).copyWith(
+          primary: AppColors.primary400,
+          surface: AppColors.neutral200,
+        ),
         dialogTheme: DialogThemeData(backgroundColor: AppColors.neutral300),
       ),
 
