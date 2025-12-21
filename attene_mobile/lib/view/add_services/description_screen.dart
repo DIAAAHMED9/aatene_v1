@@ -51,7 +51,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             _buildFAQsSection(),
 
             // أزرار التنقل
-            // _buildNavigationButtons(),
+            _buildNavigationButtons(),
           ],
         ),
       ),
@@ -67,12 +67,25 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'وصف مفصل للخدمة',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.responsiveFontSize(20),
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'وصف مفصل للخدمة',
+                style: TextStyle(
+                  fontSize: ResponsiveDimensions.responsiveFontSize(20),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // زر تصحيح
+              IconButton(
+                onPressed: () {
+                  controller.debugDescription();
+                },
+                icon: Icon(Icons.bug_report),
+                tooltip: 'تصحيح الوصف',
+              ),
+            ],
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
           Obx(() {
@@ -733,6 +746,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               bool shouldValidate = controller.hasUserTypedInDescription.value;
               bool isValid = shouldValidate ? controller.validateDescriptionForm() : true;
 
+              // تسجيل بيانات الوصف للمساعدة في التنقيح
+              print('🔍 حالة الوصف في زر التالي:');
+              print('- hasUserTypedInDescription: ${controller.hasUserTypedInDescription.value}');
+              print('- isEditorEmpty: ${controller.isEditorEmpty.value}');
+              print('- Plain Text length: ${controller.serviceDescriptionPlainText.value.length}');
+
               return Material(
                 color: isValid ? AppColors.primary500 : Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
@@ -740,10 +759,25 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   borderRadius: BorderRadius.circular(10),
                   onTap: isValid
                       ? () {
-                    // التحقق النهائي
+                    // التحقق النهائي مع تسجيل البيانات
+                    print('✅ التحقق النهائي قبل الانتقال:');
+
+                    // تحديث محتوى الوصف قبل التحقق
+                    final plainText = controller.quillController.document.toPlainText();
+                    final richText = controller.getQuillContentAsJson();
+
+                    controller.serviceDescriptionPlainText.value = plainText;
+                    controller.serviceDescriptionRichText.value = richText;
+
+                    print('📝 النص العادي: $plainText');
+                    print('📝 طول النص العادي: ${plainText.length}');
+
+                    // التحقق من الصحة
                     if (controller.validateDescriptionForm()) {
+                      print('✅ الوصف صالح، الانتقال إلى الخطوة التالية');
                       Get.to(() => const ImagesScreen());
                     } else {
+                      print('❌ الوصف غير صالح');
                       Get.snackbar(
                         'خطأ',
                         'الرجاء إضافة وصف مفصل للخدمة',

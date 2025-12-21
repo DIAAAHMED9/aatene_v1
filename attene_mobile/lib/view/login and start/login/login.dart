@@ -26,6 +26,7 @@ class Login extends StatelessWidget {
               horizontal: ResponsiveDimensions.w(20),
             ),
             child: Column(
+              spacing: 5,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -61,7 +62,7 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
                 Obx(
-                  () => TextFiledAatene(
+                      () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL
                         ? 'البريد الإلكتروني / رقم الجوال'
@@ -72,7 +73,7 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
                 Obx(
-                  () => TextFiledAatene(
+                      () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'كلمة المرور' : 'Password',
                     errorText: controller.passwordError.value,
@@ -98,14 +99,14 @@ class Login extends StatelessWidget {
                     child: Text(
                       isRTL ? 'نسيت كلمة المرور؟' : 'Forgot Password?',
                       style: TextStyle(
-                        color: const Color(0xFF0071A7),
+                        color: AppColors.neutral600,
                         fontSize: ResponsiveDimensions.f(14),
                       ),
                     ),
                   ),
                 ),
                 Obx(
-                  () => AateneButton(
+                      () => AateneButton(
                     textColor: Colors.white,
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
@@ -116,22 +117,58 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: ResponsiveDimensions.h(10)),
                 Row(
+                  spacing: 20,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      child: SizedBox(
-                        width: ResponsiveDimensions.w(40),
-                        height: ResponsiveDimensions.h(40),
-                        child: const Icon(Icons.g_mobiledata),
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveDimensions.w(20)),
+                    // GestureDetector(
+                    //   child: SizedBox(
+                    //     width: ResponsiveDimensions.w(40),
+                    //     height: ResponsiveDimensions.h(40),
+                    //     child: const Icon(Icons.g_mobiledata),
+                    //   ),
+                    // ),
                     GestureDetector(
                       onTap: () => controller.socialLogin('google'),
                       child: Container(
-                        width: ResponsiveDimensions.w(40),
-                        height: ResponsiveDimensions.h(40),
-                        child: const Icon(Icons.apple),
+                        width: ResponsiveDimensions.w(150),
+                        height: ResponsiveDimensions.h(50),
+                        decoration: BoxDecoration(
+                          color: AppColors.neutral100,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.apple, color: AppColors.light1000, size: 25,),
+                            Text("باستخدام أبل",style: TextStyle(fontWeight: FontWeight.bold,  fontSize: ResponsiveDimensions.f(16),color: AppColors.light1000),)
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => controller.socialLogin('google'),
+                      child: Container(
+                        width: ResponsiveDimensions.w(150),
+                        height: ResponsiveDimensions.h(50),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(color: AppColors.neutral600)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Image.asset(
+                                'assets/images/png/google.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                              onPressed: () {},
+                            ),
+
+                            Text("باستخدام جوجل",style: TextStyle(fontWeight: FontWeight.bold,  fontSize: ResponsiveDimensions.f(16),color: AppColors.neutral100),)
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -150,7 +187,7 @@ class Login extends StatelessWidget {
                     GestureDetector(
                       onTap: controller.createNewAccount,
                       child: Text(
-                        isRTL ? 'إنشاء حساب جديد' : 'Create new account',
+                        isRTL ? 'اشتراك' : 'Create new account',
                         style: TextStyle(
                           color: const Color(0xFF0071A7),
                           fontWeight: FontWeight.bold,
