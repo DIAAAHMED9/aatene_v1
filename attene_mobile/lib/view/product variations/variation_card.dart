@@ -1,8 +1,8 @@
+import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';

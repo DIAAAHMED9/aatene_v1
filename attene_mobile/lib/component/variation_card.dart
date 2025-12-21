@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
+
+import '../view/product variations/product_variation_model.dart';
 
 class VariationCard extends StatelessWidget {
   final ProductVariation variation;

@@ -1,13 +1,12 @@
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
+import 'package:attene_mobile/view/add%20services/description_screen.dart';
+import 'package:attene_mobile/view/add%20services/images_screen.dart';
+import 'package:attene_mobile/view/add%20services/policy_screen.dart';
+import 'package:attene_mobile/view/add%20services/price_screen.dart';
+import 'package:attene_mobile/view/add%20services/service_controller.dart';
+import 'package:attene_mobile/view/add%20services/service_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:attene_mobile/view/add_services/service_controller.dart';
-import 'package:attene_mobile/view/add_services/service_screen.dart';
-import 'package:attene_mobile/view/add_services/price_screen.dart';
-import 'package:attene_mobile/view/add_services/description_screen.dart';
-import 'package:attene_mobile/view/add_services/images_screen.dart';
-import 'package:attene_mobile/view/add_services/policy_screen.dart';
-
 import '../component/custom_stepper/responsive_custom_stepper.dart';
 import '../component/custom_stepper/stepper_screen_base.dart';
 import 'component/aatene_button/aatene_button.dart';
@@ -445,7 +444,7 @@ class _ServiceStepperScreenState
     //           size: 28
     //         ),
     //         const SizedBox(width: 12),
-    //         Text(
+    //         text(
     //           isEditMode ? 'تم التحديث بنجاح!' : 'تمت الإضافة بنجاح!',
     //           style: const TextStyle(
     //             fontSize: 20,
@@ -464,7 +463,7 @@ class _ServiceStepperScreenState
     //           color: Colors.green,
     //         ),
     //         const SizedBox(height: 20),
-    //         Text(
+    //         text(
     //           isEditMode
     //             ? 'تم تحديث خدمتك بنجاح'
     //             : 'تم نشر خدمتك بنجاح',
@@ -477,7 +476,7 @@ class _ServiceStepperScreenState
     //         ),
     //         const SizedBox(height: 10),
     //         if (result['service_id'] != null)
-    //           Text(
+    //           text(
     //             'رقم الخدمة: ${result['service_id']}',
     //             style: TextStyle(
     //               fontSize: 14,
@@ -485,7 +484,7 @@ class _ServiceStepperScreenState
     //             ),
     //             textAlign: TextAlign.center,
     //           ),
-    //         Text(
+    //         text(
     //           'يمكنك الآن عرض الخدمة في قائمة خدماتك',
     //           style: TextStyle(
     //             fontSize: 14,
@@ -504,7 +503,7 @@ class _ServiceStepperScreenState
     //             currentStep = 0;
     //           });
     //         },
-    //         child: const Text(
+    //         child: const text(
     //           'حسناً',
     //           style: TextStyle(
     //             fontSize: 16,

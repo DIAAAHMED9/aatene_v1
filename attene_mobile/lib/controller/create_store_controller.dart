@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:attene_mobile/view/add%20new%20store/choose_type_store/manage_account_store_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -14,6 +13,7 @@ import 'package:attene_mobile/view/media_library/media_model.dart';
 import '../my_app/my_app_controller.dart';
 import '../view/Services/data_lnitializer_service.dart';
 import '../view/Services/unified_loading_screen.dart' show UnifiedLoadingScreen;
+import '../view/add new store/choose type store/manage_account_store_controller.dart';
 
 class CreateStoreController extends GetxController {
   final MyAppController myAppController = Get.find<MyAppController>();

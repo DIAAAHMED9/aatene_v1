@@ -1,7 +1,7 @@
+import 'package:attene_mobile/view/add%20services/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
-import 'package:attene_mobile/view/add_services/models/models.dart';
 
 class ServiceGridItem extends StatelessWidget {
   final Service service;

@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';
-import 'package:attene_mobile/view/product_variations/product_variations_screen.dart';
-
 import '../../../controller/product_controller.dart';
+import '../../product variations/product_variations_screen.dart';
 
 class AddProductController extends GetxController {
   final ProductCentralController productCentralController =

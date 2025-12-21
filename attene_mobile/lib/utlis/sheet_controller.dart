@@ -7,12 +7,12 @@ import 'package:attene_mobile/add_product_stepper_screen.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/section_model.dart';
+import '../view/product variations/product_variation_controller.dart';
+import '../view/product variations/product_variation_model.dart';
 
 enum BottomSheetType {
   filter,

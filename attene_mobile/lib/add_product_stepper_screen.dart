@@ -1,16 +1,16 @@
+import 'package:attene_mobile/view/advance%20info/keyword_controller.dart';
+import 'package:attene_mobile/view/advance%20info/keyword_management_screen.dart';
+import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
+import 'package:attene_mobile/view/product%20variations/product_variations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/controller/product_controller.dart';
-import 'package:attene_mobile/view/advance_info/keyword_management_screen.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
-import 'package:attene_mobile/view/product_variations/product_variations_screen.dart';
 import 'package:attene_mobile/view/related_products/related_products_screen.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product.dart';
 
 import 'component/custom_stepper/responsive_custom_stepper.dart';
 import 'component/custom_stepper/stepper_screen_base.dart';
 import 'utlis/colors/app_color.dart';
-import 'view/advance_info/keyword_controller.dart';
 import 'view/related_products/related_products_controller.dart';
 import 'view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 

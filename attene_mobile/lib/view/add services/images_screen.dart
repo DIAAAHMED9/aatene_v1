@@ -1,7 +1,7 @@
+import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:attene_mobile/view/add_services/responsive_dimensions.dart';
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';
 import '../media_library/media_model.dart';
 import 'description_screen.dart';

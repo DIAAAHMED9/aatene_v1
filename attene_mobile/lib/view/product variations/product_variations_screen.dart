@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
+import 'package:attene_mobile/view/product%20variations/widgets/variation_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -5,8 +7,6 @@ import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:attene_mobile/controller/product_controller.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
-import 'package:attene_mobile/view/product_variations/widgets/variation_widgets.dart';
 
 class ProductVariationsScreen extends StatelessWidget {
   const ProductVariationsScreen({super.key});

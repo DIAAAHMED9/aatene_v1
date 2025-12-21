@@ -1,10 +1,10 @@
+import 'package:attene_mobile/view/product%20variations/widgets/attributes_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
-import 'package:attene_mobile/view/product_variations/widgets/attributes_bottom_sheet.dart';
 import 'product_variation_model.dart';
 
 class ProductVariationController extends GetxController {

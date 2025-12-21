@@ -1,9 +1,9 @@
-import 'package:attene_mobile/view/Control_Users/Widget/edit_profile_label.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../utlis/colors/app_color.dart';
+import 'Widget/edit_profile_label.dart';
 
 class Edit_Profile extends StatelessWidget {
   const Edit_Profile({super.key});

@@ -1,9 +1,10 @@
+import 'package:attene_mobile/view/add%20services/service_controller.dart' show ServiceController;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
-import 'package:attene_mobile/view/add_services/models/models.dart';
-import 'package:attene_mobile/view/add_services/service_controller.dart';
+
+import 'models/models.dart';
 
 class ServiceListItem extends StatelessWidget {
   final Service service;

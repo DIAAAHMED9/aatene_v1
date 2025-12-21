@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:attene_mobile/api/api_request.dart';
+import 'package:attene_mobile/view/add%20new%20store/choose%20type%20store/type_store.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/models/store_model.dart';
-import 'package:attene_mobile/view/add%20new%20store/choose_type_store/type_store.dart';
 import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
 import 'package:attene_mobile/view/Services/unified_loading_screen.dart';

@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
+
+import '../product variations/product_variation_model.dart';
 
 class DataInitializerService extends GetxService {
   final RxBool _isInitializing = false.obs;

@@ -1,6 +1,9 @@
-import 'package:attene_mobile/view/Control_Users/block_screen.dart';
-import 'package:attene_mobile/view/Control_Users/change%20password.dart';
-import 'package:attene_mobile/view/Control_Users/edit%20profile.dart';
+
+import 'package:attene_mobile/view/add%20new%20store/choose%20type%20store/manage_account_store_controller.dart';
+import 'package:attene_mobile/view/add%20services/service_controller.dart';
+import 'package:attene_mobile/view/advance%20info/keyword_controller.dart';
+import 'package:attene_mobile/view/login%20and%20start/set%20new%20password/set_new_password.dart';
+import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,20 +24,15 @@ import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
 import 'package:attene_mobile/view/Services/data_sync_service.dart'
     show DataSyncService;
-import 'package:attene_mobile/view/add_services/service_controller.dart';
-import 'package:attene_mobile/view/advance_info/keyword_controller.dart';
 import 'package:attene_mobile/view/media_library/media_library_controller.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/products/product_controller.dart';
 import 'package:attene_mobile/view/related_products/related_products_controller.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 
 import 'package:attene_mobile/view/Splash/splash.dart';
-import 'package:attene_mobile/view/add new store/choose_type_store/manage_account_store_controller.dart';
 import 'package:attene_mobile/view/login and start/forget_password/forget_password.dart';
 import 'package:attene_mobile/view/login and start/login/login.dart';
 import 'package:attene_mobile/view/login and start/Register/register.dart';
-import 'package:attene_mobile/view/login and start/set_newPassword/set_new_password.dart';
 import 'package:attene_mobile/view/login and start/start_page.dart';
 import 'package:attene_mobile/view/login and start/verfication/verfication.dart';
 import 'package:attene_mobile/view/media_library/media_library_screen.dart';
@@ -164,7 +162,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-        // Text Buttons
+        // text Buttons
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(foregroundColor: AppColors.primary500),
         ),

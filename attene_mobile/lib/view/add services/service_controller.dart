@@ -292,9 +292,9 @@ class ServiceController extends GetxController {
 
       // تسجيل التحديث للمساعدة في التنقيح
       print('🔄 تحديث نصوص الوصف:');
-      print('- Plain Text: "$plainText"');
-      print('- Plain Text length: ${plainText.length}');
-      print('- Rich Text length: ${serviceDescriptionRichText.value.length}');
+      print('- Plain text: "$plainText"');
+      print('- Plain text length: ${plainText.length}');
+      print('- Rich text length: ${serviceDescriptionRichText.value.length}');
     } catch (e) {
       print('❌ خطأ في updateDescriptionTexts: $e');
     }
@@ -1548,7 +1548,7 @@ class ServiceController extends GetxController {
         .where((url) => url.isNotEmpty)
         .toList();
 
-    // الحصول على الوصف النصي (Plain Text)
+    // الحصول على الوصف النصي (Plain text)
     String descriptionText = serviceDescriptionPlainText.value.trim();
 
     // سجل الوصف للمساعدة في التنقيح

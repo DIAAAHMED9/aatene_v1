@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_model.dart';
+
+import '../related_products/related_products_model.dart';
 
 class BottomSheetController extends GetxController {
   final RxList<ProductAttribute> selectedAttributesRx =

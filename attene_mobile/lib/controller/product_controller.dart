@@ -6,11 +6,10 @@ import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/models/section_model.dart';
 import 'package:attene_mobile/utlis/sheet_controller.dart';
 import 'package:attene_mobile/view/media_library/media_model.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
-
 import '../my_app/my_app_controller.dart';
 import '../view/Services/data_lnitializer_service.dart';
 import '../view/Services/unified_loading_screen.dart';
+import '../view/product variations/product_variation_controller.dart';
 import '../view/related_products/related_products_controller.dart';
 import '../view/screens_navigator_bottom_bar/product/product_controller.dart';
 

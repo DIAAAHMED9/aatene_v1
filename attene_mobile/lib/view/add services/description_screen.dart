@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
+import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:attene_mobile/view/add_services/responsive_dimensions.dart';
-import 'package:attene_mobile/view/add_services/faq_bottom_sheet.dart';
-import 'package:attene_mobile/view/add_services/images_screen.dart';
-import 'package:attene_mobile/view/add_services/service_controller.dart';
+import 'faq_bottom_sheet.dart';
+import 'images_screen.dart';
 import 'models/models.dart';
 
 class DescriptionScreen extends StatefulWidget {
@@ -750,7 +750,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               print('🔍 حالة الوصف في زر التالي:');
               print('- hasUserTypedInDescription: ${controller.hasUserTypedInDescription.value}');
               print('- isEditorEmpty: ${controller.isEditorEmpty.value}');
-              print('- Plain Text length: ${controller.serviceDescriptionPlainText.value.length}');
+              print('- Plain text length: ${controller.serviceDescriptionPlainText.value.length}');
 
               return Material(
                 color: isValid ? AppColors.primary500 : Colors.grey[300],

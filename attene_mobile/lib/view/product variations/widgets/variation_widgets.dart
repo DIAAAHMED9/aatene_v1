@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
-import 'package:attene_mobile/view/product_variations/product_variation_controller.dart';
+import '../product_variation_controller.dart';
 import '../variation_card.dart';
 
 class VariationToggleWidget extends StatelessWidget {
