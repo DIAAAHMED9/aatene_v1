@@ -208,24 +208,24 @@ class MyApp extends StatelessWidget {
       ),
 
       // Dark Theme (اختياري)
-      darkTheme: ThemeData(
-        primaryColor: AppColors.primary500,
-        scaffoldBackgroundColor: AppColors.neutral200,
-        bottomSheetTheme: BottomSheetThemeData(
-          backgroundColor: AppColors.neutral300,
-        ),
-        colorScheme:
-        ColorScheme.dark(
-          primary: AppColors.primary500,
-          secondary: AppColors.primary200,
-          background: AppColors.neutral200,
-          surface: AppColors.neutral300,
-        ).copyWith(
-          primary: AppColors.primary400,
-          surface: AppColors.neutral200,
-        ),
-        dialogTheme: DialogThemeData(backgroundColor: AppColors.neutral300),
-      ),
+      // darkTheme: ThemeData(
+      //   primaryColor: AppColors.primary500,
+      //   scaffoldBackgroundColor: AppColors.neutral200,
+      //   bottomSheetTheme: BottomSheetThemeData(
+      //     backgroundColor: AppColors.neutral300,
+      //   ),
+      //   colorScheme:
+      //   ColorScheme.dark(
+      //     primary: AppColors.primary500,
+      //     secondary: AppColors.primary200,
+      //     background: AppColors.neutral200,
+      //     surface: AppColors.neutral300,
+      //   ).copyWith(
+      //     primary: AppColors.primary400,
+      //     surface: AppColors.neutral200,
+      //   ),
+      //   dialogTheme: DialogThemeData(backgroundColor: AppColors.neutral300),
+      // ),
 
       initialRoute: '/',
       getPages: [
