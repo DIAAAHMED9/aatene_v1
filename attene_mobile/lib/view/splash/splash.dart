@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/splash_screen/splash_icon.png',
+                    'assets/images/gif/aatene.gif',
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 20),

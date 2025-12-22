@@ -41,7 +41,7 @@ dependencies:
   dot_navigation_bar: ^1.0.2
   flutter_quill: ^11.5.0
   # flutter_quill:
-  #   git:
+  #   gif:
   #     url: https://github.com/singerdmx/flutter-quill.git
   # flutter_quill_localizations: ^9.3.1
   rich_editor: ^0.2.5
@@ -105,6 +105,26 @@ flutter_native_splash:
 dev_dependencies:
   auto_mappr: ^2.5.0
   build_runner: ^2.4.10
+  flutter_launcher_icons: "^0.14.4"
+#
+#flutter_launcher_icons:
+#  android: true
+#  ios: true
+#  image_path: "assets/images/splash_screen/splash_screen.png"
+#  min_sdk_android: 21 # android min sdk min:16, default 21
+#  web:
+#    generate: true
+#    image_path: "assets/images/splash_screen/splash_screen.png"
+#    background_color: "#3D5E83"
+#    theme_color: "#3D5E83"
+#  windows:
+#    generate: true
+#    image_path: "path/to/image.png"
+#    icon_size: 48 # min:48, max:256, default: 48
+#  macos:
+#    generate: true
+#    image_path: "assets/images/splash_screen/splash_screen.png"
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -115,6 +135,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.8.0
+
 flutter:
 
   # The following line ensures that the Material Icons font is
@@ -126,8 +147,9 @@ flutter:
     - assets/images/
     - assets/icons/svg/
     - assets/icons/svg/bottom_nav_bar/
-    - assets/images/svg_images/
+    - assets/images/svg images/
     - assets/images/png/
+    - assets/images/gif/
     - assets/images/splash_screen/
     - assets/
     - assets/fonts/

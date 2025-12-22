@@ -1,0 +1,35 @@
+import 'package:flutter/material.dart';
+
+import '../../../../utlis/colors/app_color.dart';
+
+class ReportCard extends StatelessWidget {
+  const ReportCard({super.key, required this.image, required this.title});
+  final Image  image ;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.primary400),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            image,
+
+              Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
