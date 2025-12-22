@@ -239,7 +239,7 @@ class MyApp extends StatelessWidget {
 
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const ReportAbuse()),
+        GetPage(name: '/', page: () => const ReportAbuseScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
