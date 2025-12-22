@@ -4,9 +4,9 @@
     <bytecodeTargetLevel>
       <module name="android.file_picker" target="21" />
       <module name="android.flutter_local_notifications" target="21" />
-      <module name="dev.flutter.plugin.gradle" target="21" />
-      <module name="dev.flutter.plugin.gradle.main" target="11" />
-      <module name="dev.flutter.plugin.gradle.test" target="11" />
+      <module name="gradle" target="21" />
+      <module name="gradle.main" target="11" />
+      <module name="gradle.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

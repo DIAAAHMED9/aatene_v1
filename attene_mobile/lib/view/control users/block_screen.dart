@@ -37,128 +37,120 @@ class BlockScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            spacing: 20,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    child: Container(
-                      width: 150,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary400,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "مستخدمين",
-                          style: TextStyle(
-                            color: AppColors.light1000,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 12,
+          children: [
+            /// Tabs
+            Row(
+              children: [
+                Expanded(child: _tabButton(text: 'مستخدمين', selected: true)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _tabButton(text: 'متاجر', selected: false),
+                ),
+              ],
+            ),
+
+            /// Search
+            TextFiledAatene(
+              isRTL: isRTL,
+              hintText: "بحث",
+              suffixIcon: IconButton(
+                onPressed: () {},
+                icon: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary400,
+                    borderRadius: BorderRadius.circular(50),
                   ),
-                  Spacer(),
-                  GestureDetector(
-                    child: Container(
-                      width: 150,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary400,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "مستخدمين",
-                          style: TextStyle(
-                            color: AppColors.light1000,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "بحث",
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(7.0),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary400,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.search_rounded,
-                        color: AppColors.light1000,
-                      ),
-                    ),
-                  ),
+                  child: Icon(Icons.search, color: AppColors.light1000),
                 ),
               ),
-              Row(
-                spacing: 15,
-                children: [
-                  CircleAvatar(radius: 25),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Ahmed Ali",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "@ahmed",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.neutral300,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    child: Container(
-                      width: 90,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary400,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "إلغاء الحظر",
-                          style: TextStyle(
-                            color: AppColors.light1000,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            ),
+
+            /// List
+            Expanded(
+              child: ListView.builder(
+                itemCount: 7,
+                itemBuilder: (context, index) {
+                  return _blockItem();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _tabButton({required String text, required bool selected}) {
+    return Container(
+      height: 42,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: selected ? const Color(0xFF3E5C7F) : const Color(0xFFDCE6F3),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: selected ? Colors.white : const Color(0xFF3E5C7F),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  static Widget _blockItem() {
+    return Padding(
+      padding: const EdgeInsets.symmetric( vertical: 10),
+      child: Row(
+        spacing: 10,
+        children: [
+          /// Avatar
+          const CircleAvatar(
+            radius: 26,
+            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+          ),
+
+          /// Name + block
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'Ahmed Ali',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+              SizedBox(height: 4),
+              Text(
+                '@ahmed',
+                style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
             ],
           ),
-        ),
+
+          const Spacer(),
+
+          /// Follow back button
+          Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3E5C7F),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(
+              child: Text(
+                'إلغاء الحظر',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

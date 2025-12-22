@@ -62,7 +62,6 @@ class Edit_Profile extends StatelessWidget {
                   right: 12,
                   child: _editButton(
                     onTap: () {
-                      // TODO: edit cover
                     },
                   ),
                 ),

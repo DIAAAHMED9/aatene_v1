@@ -1,3 +1,4 @@
+import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 
@@ -69,7 +70,7 @@ class TextFiledAatene extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: heightTextFiled,
+          height: 45,
           child: TextFormField(
             controller: controller,
             initialValue: initialValue,
@@ -118,8 +119,8 @@ class TextFiledAatene extends StatelessWidget {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
                 borderSide: BorderSide(
-                  color: hasError ? Colors.red : Colors.blue,
-                  width: hasError ? 2.5 : 2.0,
+                  color: hasError ? Colors.red : AppColors.primary400,
+                  width: hasError ? 2.5 :1,
                 ),
               ),
               errorBorder: OutlineInputBorder(
