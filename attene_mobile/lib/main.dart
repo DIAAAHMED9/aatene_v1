@@ -12,6 +12,7 @@ import 'package:attene_mobile/view/login%20and%20start/set%20new%20password/set_
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:attene_mobile/view/support/privacy/privacy_screen.dart';
+import 'package:attene_mobile/view/support/report%20pages/inquiry_about_complaints.dart';
 import 'package:attene_mobile/view/support/report%20pages/report_abuse.dart';
 import 'package:attene_mobile/view/support/report%20pages/sellect_report.dart';
 import 'package:attene_mobile/view/support/terms%20of%20use/terms_of_use_screen.dart';
@@ -239,7 +240,7 @@ class MyApp extends StatelessWidget {
 
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const ReportAbuseScreen()),
+        GetPage(name: '/', page: () => const InquiryAboutComplaints()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
