@@ -16,7 +16,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     {
       'title': 'المقدمة',
       'content':
-      'نحن في أعضائي نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.\n'
+          'نحن في أعضائي نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.\n'
           'توضح هذه الصفحة كيف نقوم بجمع معلوماتك واستخدامها وحمايتها أثناء استخدامك لمنصتنا.',
     },
     {
@@ -77,19 +77,16 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: AppColors.neutral700,
-                ),
+                border: Border.all(color: AppColors.neutral700),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   spacing: 5,
                   children: [
-                    Icon(Icons.language, size: 12,),
-                    Text("عربي (AR)", style: TextStyle(fontSize: 10),),
-                    Icon(Icons.keyboard_arrow_down_outlined, size: 12,),
-
+                    Icon(Icons.language, size: 12),
+                    Text("عربي (AR)", style: TextStyle(fontSize: 10)),
+                    Icon(Icons.keyboard_arrow_down_outlined, size: 12),
                   ],
                 ),
               ),
@@ -145,14 +142,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       children: [
                         Text(
                           items[index]['title']!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
+                          style: const TextStyle(fontSize: 16),
                         ),
                         const Spacer(),
-                        _circleIconPlus(
-                          isExpanded ? Icons.remove : Icons.add,
-                        ),
+                        _circleIconPlus(isExpanded ? Icons.remove : Icons.add),
                       ],
                     ),
                   ),

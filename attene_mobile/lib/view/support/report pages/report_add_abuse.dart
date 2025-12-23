@@ -1,28 +1,17 @@
-import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ReportAbuseScreen extends StatefulWidget {
-  const ReportAbuseScreen({super.key});
+import '../../../component/aatene_button/aatene_button.dart';
+import '../../../utlis/colors/app_color.dart';
+import '../../../utlis/language/language_utils.dart';
 
-  @override
-  State<ReportAbuseScreen> createState() => _ReportAbuseScreenState();
-}
-
-class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
-  int? selectedOption = 1;
-
-  final List<String> options = [
-    'الإبلاغ عن منتج',
-    'الإبلاغ عن تاجر',
-    'الإبلاغ عن زبون',
-    'الإبلاغ عن خدمة',
-    'أخرى',
-  ];
+class ReportAddAbuse extends StatelessWidget {
+  const ReportAddAbuse({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isRTL = LanguageUtils.isRTL;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -70,6 +59,7 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
+                spacing: 5,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title
@@ -82,29 +72,24 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                     'ما الذي تقدر أن نساعدك به ؟',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
-                  // Radio options
-                  ...List.generate(options.length, (index) {
-                    return RadioListTile<int>(
-                      value: index,
-                      groupValue: selectedOption,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedOption = value;
-                        });
-                      },
-                      activeColor: AppColors.primary400,
-                      title: Text(
-                        options[index],
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      contentPadding: EdgeInsets.zero,
-                    );
-                  }),
 
+                  const Text('الموضوع', style: TextStyle(fontSize: 14)),
+                  TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا"),
+
+                  const Text(
+                    'الشكوى/ الأفتراح',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  TextFiledAatene(
+                    isRTL: isRTL,
+                    hintText: "اكتب هنا",
+                    textInputType: TextInputType.multiline,
+                    maxLines: 5,
+                  ),
                   SizedBox(height: 10),
                   // Next Button
                   AateneButton(
-                    buttonText: "التالي",
+                    buttonText: "ارسال",
                     color: AppColors.primary400,
                     textColor: AppColors.light1000,
                     borderColor: AppColors.primary400,
