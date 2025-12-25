@@ -149,21 +149,29 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
           fontWeight: FontWeight.w600,
         ),
       ),
-      backgroundColor: widget.primaryColor,
+      backgroundColor: Colors.white,
       foregroundColor: Colors.white,
       elevation: 0,
       // centerTitle: true,
       leading: widget.showBackButton
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () async {
-                if (currentStep > 0) {
-                  previousStep();
-                } else {
-                  await onCancel();
-                }
-              },
-            )
+          ?  IconButton(
+        onPressed: () async {
+          if (currentStep > 0) {
+            previousStep();
+          } else {
+            await onCancel();
+          }
+        },
+        icon: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            color: Colors.grey[100],
+          ),
+          child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+        ),
+      )
           : null,
       actions: _buildAppBarActions(),
     );
@@ -274,7 +282,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         backgroundColor: widget.primaryColor,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.primary400,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 3,
       ),

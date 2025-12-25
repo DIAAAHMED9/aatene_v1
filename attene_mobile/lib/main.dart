@@ -1,4 +1,3 @@
-
 import 'package:attene_mobile/view/add%20new%20store/choose%20type%20store/manage_account_store_controller.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:attene_mobile/view/advance%20info/keyword_controller.dart';
@@ -11,10 +10,13 @@ import 'package:attene_mobile/view/control%20users/personal_info.dart';
 import 'package:attene_mobile/view/login%20and%20start/set%20new%20password/set_new_password.dart';
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
+import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
+import 'package:attene_mobile/view/support/frequently%20asked/frequently_asked.dart';
 import 'package:attene_mobile/view/support/privacy/privacy_screen.dart';
 import 'package:attene_mobile/view/support/report%20pages/inquiry_about_complaints.dart';
 import 'package:attene_mobile/view/support/report%20pages/report_abuse.dart';
 import 'package:attene_mobile/view/support/report%20pages/sellect_report.dart';
+import 'package:attene_mobile/view/support/safety%20rules/safety_rules_screen.dart';
 import 'package:attene_mobile/view/support/terms%20of%20use/terms_of_use_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -203,19 +205,19 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: false,
         colorScheme:
-        ColorScheme.light(
-          primary: AppColors.primary500,
-          secondary: AppColors.primary200,
-          background: AppColors.light1000,
-          surface: AppColors.light1000,
-          onBackground: AppColors.neutral200,
-          onSurface: AppColors.neutral200,
-          error: AppColors.error200,
-          onError: AppColors.light1000,
-        ).copyWith(
-          primary: AppColors.primary300,
-          surface: AppColors.light1000,
-        ), // يمكنك تغيير هذا إلى true إذا كنت تستخدم Material 3
+            ColorScheme.light(
+              primary: AppColors.primary500,
+              secondary: AppColors.primary200,
+              background: AppColors.light1000,
+              surface: AppColors.light1000,
+              onBackground: AppColors.neutral200,
+              onSurface: AppColors.neutral200,
+              error: AppColors.error200,
+              onError: AppColors.light1000,
+            ).copyWith(
+              primary: AppColors.primary300,
+              surface: AppColors.light1000,
+            ), // يمكنك تغيير هذا إلى true إذا كنت تستخدم Material 3
       ),
 
       // Dark Theme (اختياري)
@@ -237,10 +239,9 @@ class MyApp extends StatelessWidget {
       //   ),
       //   dialogTheme: DialogThemeData(backgroundColor: AppColors.neutral300),
       // ),
-
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const InquiryAboutComplaints()),
+        GetPage(name: '/', page: () => const AboutUsScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

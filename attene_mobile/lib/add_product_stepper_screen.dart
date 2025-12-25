@@ -19,7 +19,7 @@ class DemoStepperScreen extends StepperScreenBase {
       : super(
           key: key,
           appBarTitle: 'إضافة منتج جديد',
-          primaryColor: AppColors.primary400,
+          primaryColor: AppColors.light1000,
           showBackButton: true,
           isLinear: true,
         );

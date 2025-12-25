@@ -76,7 +76,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          /// IMAGE
+          /// Image
           Center(
             child: Image.asset(
               'assets/images/gif/Accept_terms.gif',
@@ -88,7 +88,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
 
           const SizedBox(height: 24),
 
-          /// LIST ITEMS
+          /// List Item
           ...List.generate(items.length, (index) {
             final bool isExpanded = expandedIndex == index;
             return Container(

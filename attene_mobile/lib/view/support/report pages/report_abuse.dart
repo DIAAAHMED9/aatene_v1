@@ -2,6 +2,7 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class ReportAbuseScreen extends StatefulWidget {
   const ReportAbuseScreen({super.key});
@@ -50,38 +51,35 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Center(
-          child: Container(
-            height: 420,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.primary400, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.neutral700.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 8,
-                  offset: Offset(4, 5),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 500,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.primary400),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 24),
+
                   // Title
                   const Text(
                     'الإبلاغ عن إساءة',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+
                   // Subtitle
                   const Text(
                     'ما الذي تقدر أن نساعدك به ؟',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
+
+                  const SizedBox(height: 24),
+
                   // Radio options
                   ...List.generate(options.length, (index) {
                     return RadioListTile<int>(
@@ -100,8 +98,8 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                       contentPadding: EdgeInsets.zero,
                     );
                   }),
+                  SizedBox(height: 20),
 
-                  SizedBox(height: 10),
                   // Next Button
                   AateneButton(
                     buttonText: "التالي",
