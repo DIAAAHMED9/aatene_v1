@@ -4,6 +4,7 @@ import 'package:attene_mobile/view/support/about%20us/widgets/card.dart';
 import 'package:attene_mobile/view/support/about%20us/widgets/section_items2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../helper/url_helper.dart';
 import '../../../utlis/colors/app_color.dart';
 import 'widgets/section_title.dart';
 import 'widgets/section_card3.dart';
@@ -509,7 +510,11 @@ class AboutUsScreen extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        UrlHelper.open(
+                                          "https://www.facebook.com/aateneofficial/",
+                                        );
+                                      },
                                       icon: Image.asset(
                                         'assets/images/png/facebook.png',
                                         height: 20,
@@ -523,11 +528,15 @@ class AboutUsScreen extends StatelessWidget {
                                     color: AppColors.primary500,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
-
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        UrlHelper.open(
+                                          "https://www.instagram.com/aatene_official/",
+                                          // "https://wa.me/+972526213879",
+                                        );
+                                      },
                                       icon: Image.asset(
                                         'assets/images/png/instagram.png',
                                         height: 20,
@@ -545,7 +554,12 @@ class AboutUsScreen extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        UrlHelper.open(
+                                          "https://wa.me/+972526213879",
+                                        );
+
+                                      },
                                       icon: Image.asset(
                                         'assets/images/png/whatsapp.png',
                                         height: 20,
