@@ -59,9 +59,9 @@ class InquiryAboutComplaints extends StatelessWidget {
                 spacing: 10,
                 children: [
                   ComplaintsCard(
-                    number:  '8',
-                    title: 'إجمالي الشكاوى',
-                    backgroundColor:  Color(0xFFF2F8FF),
+                    number: '8',
+                    title: 'الاجمالي',
+                    backgroundColor: Color(0xFFF2F8FF),
                     textColor: AppColors.primary400,
                   ),
                   ComplaintsCard(
@@ -86,14 +86,140 @@ class InquiryAboutComplaints extends StatelessWidget {
               ),
               Text("رقم الشكوى"),
               Row(
-                 children: [
-
-                   Expanded(child: TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا", )),
-                   CircleAvatar(
-                     backgroundColor: AppColors.secondary100,
-                     child: IconButton(onPressed: (){}, icon: Icon(Icons.filter_list, color: AppColors.primary400,)),
-                   ),
-                 ],
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا"),
+                  ),
+                  CircleAvatar(
+                    backgroundColor: AppColors.primary50,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.filter_list,
+                        color: AppColors.primary400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7),
+                  border: Border.all(color: Color(0xFFd4d4d4)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        spacing: 8,
+                        children: [
+                          Text(
+                            "مشكلة في التوصيل",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFFFFF4E6),
+                              border: Border.all(color: Color(0xFFFFE2CA)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              child: Center(
+                                child: Text(
+                                  "قيد المعالجة",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Color(0xFFF17713),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        spacing: 5,
+                        children: [
+                          Text(
+                            "رقم الشكوي :",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          Text(
+                            "C-2020-001",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.primary400,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "الفئة :",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          Text(
+                            "خدمات",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.primary400,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "التاريخ :",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          Text(
+                            "C-2020-001",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.primary400,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        child: Container(
+                          width: 110,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7),
+                            color: AppColors.primary400,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              spacing: 5,
+                              children: [
+                                Icon(
+                                  Icons.remove_red_eye_outlined,
+                                  color: AppColors.light1000,
+                                ),
+                                Text(
+                                  "عرض التفاصيل",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: AppColors.light1000,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

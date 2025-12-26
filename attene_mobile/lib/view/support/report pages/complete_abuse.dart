@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,15 +12,6 @@ class CompleteAbuse extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
-          "الشكاوى والاقتراحات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: false,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
@@ -34,13 +26,39 @@ class CompleteAbuse extends StatelessWidget {
         ),
       ),
 
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 10,
-        children: [
-          Image.asset('assets/images/png/done.png'),
-          //   done.png
-        ],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 10,
+            children: [
+              SizedBox(height: 20),
+              Image.asset('assets/images/png/done.png'),
+              Text(
+                "شكرا لك",
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "تم ارسال طلبك وهو في الطريق تحقق من بريدك الالكتروني للحصول على التفاصيل",
+                style: TextStyle(color: Colors.grey),
+              ),
+              Spacer(),
+              AateneButton(
+                buttonText: "استعلام عن الشكاوى",
+                color: AppColors.primary300,
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary300,
+              ),
+              AateneButton(
+                buttonText: "العودة للرئيسية",
+                color: AppColors.primary500,
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary500,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
