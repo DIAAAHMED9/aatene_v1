@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import '../../utlis/colors/app_color.dart';
 
@@ -13,6 +14,7 @@ class AateneButtonWithIcon extends StatelessWidget {
   final String buttonText;
   final Color? color;
   final Icon? icon;
+  final double borderRadius = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class AateneButtonWithIcon extends StatelessWidget {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(borderRadius),
           color: AppColors.primary400,
         ),
         child: Row(

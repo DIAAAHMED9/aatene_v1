@@ -29,7 +29,7 @@ class SectionItems2 extends StatelessWidget {
                   height: 25,
                   decoration: BoxDecoration(
                     color: AppColors.primary400,
-                    borderRadius: BorderRadius.circular(3),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: Center(
                     child: icon,

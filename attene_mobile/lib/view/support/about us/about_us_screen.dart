@@ -1,11 +1,12 @@
+import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/component/aatene_button/aatene_button_with_arrow_icon.dart';
+import 'package:attene_mobile/view/support/about%20us/widgets/card.dart';
 import 'package:attene_mobile/view/support/about%20us/widgets/section_items2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utlis/colors/app_color.dart';
 import 'widgets/section_title.dart';
-import 'widgets/info_card.dart';
-import 'widgets/feature_item.dart';
-import 'widgets/contact_form.dart';
+import 'widgets/section_card3.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
@@ -65,8 +66,8 @@ class AboutUsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         'assets/images/png/mainus.png',
-                        height: 200,
-                        width: double.infinity,
+                        height: 300,
+                        width: 320,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -149,34 +150,452 @@ class AboutUsScreen extends StatelessWidget {
                   SizedBox(height: 20),
                   SectionItems2(
                     title: "بدون عمولة على المبيعات",
-                    subtitle: "احتفظ بكامل أرباحك دون اقتطاعات، وركز على تنمية عملك وزيادة دخلك.",
+                    subtitle:
+                        "احتفظ بكامل أرباحك دون اقتطاعات، وركز على تنمية عملك وزيادة دخلك.",
                     icon: Image.asset('assets/images/png/section1.png'),
                   ),
                   SectionItems2(
                     title: "سهولة استخدام من جميع الأجهزة",
-                    subtitle: "تصفح وبيع واشتري بسهولة من الهاتف أو الكمبيوتر، أينما كنت وفي أي وقت.",
+                    subtitle:
+                        "تصفح وبيع واشتري بسهولة من الهاتف أو الكمبيوتر، أينما كنت وفي أي وقت.",
                     icon: Image.asset('assets/images/png/section2.png'),
                   ),
                   SectionItems2(
                     title: "دعم مستمر وتدريب للتجار",
-                    subtitle: "نقدم إرشادًا ومتابعة دورية لتطوير مهاراتك وتحقيق أفضل النتائج في تجارتك.",
+                    subtitle:
+                        "نقدم إرشادًا ومتابعة دورية لتطوير مهاراتك وتحقيق أفضل النتائج في تجارتك.",
                     icon: Image.asset('assets/images/png/section3.png'),
                   ),
                   SectionItems2(
                     title: "مجتمع محلي حقيقي",
-                    subtitle: "نقدم إرشادًا ومتابعة دورية لتطوير مهاراتك وتحقيق أفضل النتائج في تجارتك.",
+                    subtitle:
+                        "نقدم إرشادًا ومتابعة دورية لتطوير مهاراتك وتحقيق أفضل النتائج في تجارتك.",
                     icon: Image.asset('assets/images/png/section4.png'),
                   ),
                   SectionItems2(
                     title: "خدمات ومنتجات متنوعة بمكان واحد",
-                    subtitle: "وفر وقتك وجهدك، وابحث عن كل ما تحتاجه بسهولة في منصة واحدة.",
+                    subtitle:
+                        "وفر وقتك وجهدك، وابحث عن كل ما تحتاجه بسهولة في منصة واحدة.",
                     icon: Image.asset('assets/images/png/section5.png'),
                   ),
                   SizedBox(height: 20),
                 ],
               ),
             ),
+            Container(
+              width: double.infinity,
+              color: Color(0xFFf6f6f6),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  spacing: 10,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "عندك خدمة أو منتج؟ خلّي الناس القريبين يشتروا منك بسهولة!",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "منصة مخصصة لأصحاب المشاريع الصغيرة، الحرفيين، وبائعي المنتجات والخدمات. نوصلك مباشرةً بعملاء منطقتك بطريقة سهلة وسريعة، مع دعم مستمر وأدوات تساعدك على عرض منتجاتك وزيادة مبيعاتك.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.neutral600,
+                      ),
+                    ),
+                    AateneButton(
+                      buttonText: "انضم اليوم، وخلّي الناس تشتري منك بسهولة",
+                      raduis: 10,
+                      color: AppColors.primary500,
+                      borderColor: AppColors.primary500,
+                      textColor: AppColors.light1000,
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 10,
+                        children: [
+                          CardWidget(
+                            title: "الخدمات",
+                            subtitle:
+                                "خدمة الحلاقة في البيت، تصوير مناسباتك، صيانة أجهزة المنزل، تصميم جرافيك لمشروعك، أو حتى تنظيف المنازل والمكاتب.",
+                            icon: Icon(
+                              Icons.drive_file_move_sharp,
+                              color: AppColors.light1000,
+                            ),
+                          ),
+                          CardWidget(
+                            title: "المنتجات",
+                            subtitle:
+                                "بيع المخبوزات الطازجة، الملابس العصرية، الإكسسوارات اليدوية، المنتجات الغذائية المحلية، أو التحف والهدايا.",
+                            icon: Icon(
+                              Icons.shopping_basket_rounded,
+                              color: AppColors.light1000,
+                            ),
+                          ),
+                          CardWidget(
+                            title: "المنتجات",
+                            subtitle:
+                                "بيع المخبوزات الطازجة، الملابس العصرية، الإكسسوارات اليدوية، المنتجات الغذائية المحلية، أو التحف والهدايا.",
+                            icon: Icon(
+                              Icons.shopping_basket_rounded,
+                              color: AppColors.light1000,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "بدك تشتري من أهل بلدك؟",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "في أعطيني  تلاقي كل احتياجاتك في مكان واحد، من منتجات وخدمات محلية موثوقة. تقدر تتواصل مباشرة مع البائع، تطلب بسهولة، وتستلم بسرعة وبأسعار تناسب ميزانيتك.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.neutral600,
+                      ),
+                    ),
+                    Row(
+                      spacing: 10,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.light1000,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Color(0xFFEDEDED)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "تصفح العروض الآن",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.light1000,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Color(0xFFEDEDED)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "ابحث عن خدمة أو منتج محدّد",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.light1000,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Row(
+                          spacing: 10,
+                          children: [
+                            Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary400,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.language,
+                                  size: 16,
+                                  color: AppColors.light1000,
+                                ),
+                              ),
+                            ),
+                            Column(
+                              spacing: 5,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "data",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "data",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.neutral700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SectionCard3(
+                      title: "منتجات محلية وخدمات موثوقة",
+                      subtitle:
+                          "اكتشف أفضل المنتجات والخدمات من مزوّدين موثوقين في منطقتك.",
+                      icon: Icon(
+                        Icons.verified,
+                        size: 16,
+                        color: AppColors.light1000,
+                      ),
+                    ),
+                    SectionCard3(
+                      title: "كل شيء بمكان واحد",
+                      subtitle:
+                          "وفّر وقتك وجهدك بالوصول لكل ما تحتاجه من مكان واحد.",
+                      icon: Icon(
+                        Icons.storefront_rounded,
+                        size: 16,
+                        color: AppColors.light1000,
+                      ),
+                    ),
+                    SectionCard3(
+                      title: "تواصل مباشر وسريع",
+                      subtitle:
+                          "تحدث مع المزوّدين مباشرة واحصل على ردود فورية.",
+                      icon: Icon(
+                        Icons.call,
+                        size: 16,
+                        color: AppColors.light1000,
+                      ),
+                    ),
+                    SectionCard3(
+                      title: "أسعار تناسب الكل",
+                      subtitle:
+                          "استمتع بخيارات متنوعة بأسعار تناسب مختلف الميزانيات.",
+                      icon: Icon(
+                        Icons.attach_money,
+                        size: 16,
+                        color: AppColors.light1000,
+                      ),
+                    ),
+                    SectionCard3(
+                      title: "دعم المشاريع الصغيرة بمجتمعك",
+                      subtitle:
+                          "ساهم في نمو المشاريع المحلية وكن جزءًا من دعم مجتمعك.",
+                      icon: Icon(
+                        Icons.support_agent,
+                        size: 16,
+                        color: AppColors.light1000,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        spacing: 10,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "ابدأ الآن بإضافة رسالتك",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: AppColors.primary400,
+                            ),
+                          ),
+                          Text(
+                            "تواصل معنا، نحن هنا لمساعدتك.",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "فريقنا جاهز يرد على كل استفساراتك ويساعدك بخطوات واضحة وسريعة، سواء كنت حابب تعرف أكثر عن خدماتنا أو تحتاج دعم في طلبك. لا تتردد، رسالتك تهمنا.",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.neutral600,
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.light1000,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 5,
+                                children: [
+                                  SizedBox(height: 20),
+
+                                  Text(
+                                    "نحن هنا للاستماع، اكتب ما ترغب بمشاركته معنا 🤗",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  // Name field
+                                  _buildTextField(hint: "الاسم"),
+                                  const SizedBox(height: 20),
+                                  // Email field
+                                  _buildTextField(
+                                    hint: "البريد الإلكتروني",
+                                    keyboardType: TextInputType.emailAddress,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  // Message field
+                                  _buildTextField(hint: "الرسالة", maxLines: 8),
+                                  SizedBox(height: 10),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary500,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        spacing: 10,
+                                        children: [
+                                          Text(
+                                            "إرسال الرسالة",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: AppColors.light1000,
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward,
+                                            color: AppColors.light1000,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary500,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset(
+                                        'assets/images/png/facebook.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary500,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset(
+                                        'assets/images/png/instagram.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary500,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset(
+                                        'assets/images/png/whatsapp.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String hint,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return TextField(
+      textDirection: TextDirection.rtl,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintTextDirection: TextDirection.rtl,
+        hintStyle: const TextStyle(
+          color: AppColors.neutral600,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.neutral900, width: 2),
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.neutral900, width: 2),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.primary400),
         ),
       ),
     );
