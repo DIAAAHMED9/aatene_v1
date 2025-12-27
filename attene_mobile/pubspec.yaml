@@ -153,15 +153,15 @@ flutter:
     - assets/images/splash_screen/
     - assets/
     - assets/fonts/
-    - assets/fonts/almarai_font_family/
+    - assets/fonts/ping_font_tlwen/
 
   fonts:
-    - family: Almarai
+    - family: PingAR
       fonts:
-        - asset: assets/fonts/almarai_font_family/Almarai-Bold.ttf
-        - asset: assets/fonts/almarai_font_family/Almarai-ExtraBold.ttf
-        - asset: assets/fonts/almarai_font_family/Almarai-Regular.ttf
-        - asset: assets/fonts/almarai_font_family/Almarai-Light.ttf
+        - asset: assets/fonts/ping_font_tlwen/PingAR-Black.otf
+        - asset: assets/fonts/ping_font_tlwen/PingAR-Bold.otf
+        - asset: assets/fonts/ping_font_tlwen/PingAR-Regular.otf
+        - asset: assets/fonts/ping_font_tlwen/PingAR-Medium.otf
 flutter_intl:
   enabled: true
   # To add assets to your application, add an assets section, like this:

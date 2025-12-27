@@ -86,7 +86,7 @@ class EditShippingPrice extends StatelessWidget {
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "٣",
-                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30),
+                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30), textInputAction: TextInputAction.next,
               ),
               Text("سعر التوصيل"),
               TextFiledAatene(
@@ -98,7 +98,7 @@ class EditShippingPrice extends StatelessWidget {
                     "₪",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                ),
+                ), textInputAction: TextInputAction.done,
               ),
               AateneButtonWithIcon(buttonText: "حفظ ملف التوصيل"),
             ],

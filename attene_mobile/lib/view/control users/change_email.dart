@@ -52,7 +52,7 @@ class ChangeEmail extends StatelessWidget {
               isRTL: isRTL,
               hintText: "example@gmail.com",
               textInputType: TextInputType.emailAddress,
-              heightTextFiled: 45,
+              heightTextFiled: 45, textInputAction: TextInputAction.done,
             ),
             AateneButton(
               buttonText: "حفظ",

@@ -69,7 +69,7 @@ class BlockScreen extends StatelessWidget {
                   ),
                   child: Icon(Icons.search, color: AppColors.light1000),
                 ),
-              ),
+              ), textInputAction: TextInputAction.done,
             ),
 
             /// List

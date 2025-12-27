@@ -53,7 +53,7 @@ class ChangeMobileNumber extends StatelessWidget {
               hintText: "01289022985",
               textInputType: TextInputType.phone,
               heightTextFiled: 45,
-              prefixIcon: Icon(Icons.phone_outlined),
+              prefixIcon: Icon(Icons.phone_outlined), textInputAction: TextInputAction.done,
             ),
             AateneButton(
               buttonText: "حفظ",

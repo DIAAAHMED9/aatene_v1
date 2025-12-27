@@ -374,7 +374,7 @@ class ProductNameSectionWidget extends StatelessWidget {
                           .remove('productName');
                       controller.update();
                     }
-                  },
+                  }, textInputAction: TextInputAction.next,
                 ),
                 if (controller.fieldErrors.containsKey('productName'))
                   Padding(
@@ -452,7 +452,7 @@ class PriceSectionWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  fillColor: Colors.transparent,
+                  fillColor: Colors.transparent, textInputAction: TextInputAction.next,
                 ),
                 if (controller.fieldErrors.containsKey('price'))
                   Padding(

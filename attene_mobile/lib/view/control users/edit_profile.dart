@@ -1,3 +1,7 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
+import 'package:attene_mobile/view/control%20users/change_email.dart';
+import 'package:attene_mobile/view/control%20users/change_mobile_number.dart';
+import 'package:attene_mobile/view/control%20users/change_password.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -159,7 +163,7 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.person_rounded,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ),
+                              ), screen: Edit_Profile(),
                             ),
                             EditProfileLabel(
                               title: "البريد الالكتروني",
@@ -168,7 +172,7 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.email,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ),
+                              ), screen: ChangeEmail(),
                             ),
                             EditProfileLabel(
                               title: "رقم الهاتف",
@@ -177,7 +181,7 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.phone_android_outlined,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ),
+                              ), screen: ChangeMobileNumber(),
                             ),
                             EditProfileLabel(
                               title: " كلمة المرور",
@@ -186,7 +190,7 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.password,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ),
+                              ), screen: ChangePassword(),
                             ),
                           ],
                         ),
@@ -203,7 +207,6 @@ class Edit_Profile extends StatelessWidget {
     );
   }
 
-  // Reusable Edit Button
   Widget _editButton({
     double size = 20,
     double padding = 8,

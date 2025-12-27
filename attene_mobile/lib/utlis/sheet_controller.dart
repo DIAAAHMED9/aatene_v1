@@ -685,7 +685,7 @@ Widget buildManageSectionsContent() {
             },
             prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
             isRTL: isRTL,
-            hintText: 'ابحث في الأقسام',
+            hintText: 'ابحث في الأقسام', textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 20),
 
@@ -910,7 +910,7 @@ Widget buildManageSectionsContent() {
           onChanged: (value) => _newSectionName.value = value,
           prefixIcon: Icon(Icons.create_new_folder_rounded, color: Colors.grey[600]),
           isRTL: isRTL,
-          hintText: 'أدخل اسم القسم الجديد',
+          hintText: 'أدخل اسم القسم الجديد', textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 20),
         
@@ -1519,7 +1519,7 @@ Widget buildManageSectionsContent() {
           controller: _newAttributeController,
           onChanged: (value) => _newAttributeName.value = value,
           isRTL: isRTL,
-          hintText: 'اسم السمة',
+          hintText: 'اسم السمة', textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 20),
         AateneButton(
@@ -1547,7 +1547,7 @@ Widget buildManageSectionsContent() {
           controller: _newAttributeValueController,
           onChanged: (value) => _newAttributeValue.value = value,
           isRTL: isRTL,
-          hintText: 'قيمة الصفة',
+          hintText: 'قيمة الصفة', textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 20),
         AateneButton(

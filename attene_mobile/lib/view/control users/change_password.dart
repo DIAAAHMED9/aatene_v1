@@ -47,7 +47,7 @@ class ChangePassword extends StatelessWidget {
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword,
+              textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 12),
             Divider(),
@@ -56,14 +56,14 @@ class ChangePassword extends StatelessWidget {
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword,
+              textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 12),
             Text("تأكيد كلمة المرور الجديدة", style: TextStyle(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword,
+              textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.done,
             ),
             SizedBox(height: 20),
             AateneButton(

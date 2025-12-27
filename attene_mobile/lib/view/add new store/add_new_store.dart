@@ -69,7 +69,7 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "أدخل اسم المتجر",
-                controller: controller.nameController,
+                controller: controller.nameController, textInputAction: TextInputAction.next,
               ),
               SizedBox(height: 15),
 
@@ -129,7 +129,7 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "أدخل وصف المتجر",
-                controller: controller.descriptionController,
+                controller: controller.descriptionController, textInputAction: TextInputAction.next,
               ),
               SizedBox(height: 15),
               TextWithStar(text: "البريد الالكتروني"),
@@ -138,7 +138,7 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "example@email.com",
-                controller: controller.emailController,
+                controller: controller.emailController, textInputAction: TextInputAction.done,
               ),
               SizedBox(height: 15),
 
@@ -261,7 +261,7 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "أدخل رقم الهاتف",
-                controller: controller.phoneController,
+                controller: controller.phoneController, textInputAction: TextInputAction.done,
               ),
               SizedBox(height: 15),
 

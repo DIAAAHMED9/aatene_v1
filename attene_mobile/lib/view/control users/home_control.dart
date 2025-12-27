@@ -153,7 +153,7 @@ class HomeControl extends StatelessWidget {
                       ), screen: BlockScreen(),
                     ),
                     ExpansionTile(
-                      splashColor: AppColors.primary50,
+                      // splashColor: AppColors.primary50,
                       maintainState: true,
                       title: Text(
                         "الدعم",

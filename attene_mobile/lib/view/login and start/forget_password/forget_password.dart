@@ -90,7 +90,7 @@ class ForgetPassword extends StatelessWidget {
                     hintText: isRTL ? 'البريد الإلكتروني' : 'Email',
                     errorText: controller.emailError.value,
                     onChanged: controller.updateEmail,
-                    textInputType: TextInputType.emailAddress,
+                    textInputType: TextInputType.emailAddress, textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(50)),

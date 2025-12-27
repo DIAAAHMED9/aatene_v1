@@ -130,7 +130,7 @@ class _ServicesPageViewState extends State<ServicesPageView> {
       child: TextFiledAatene(
         isRTL: isRTL,
         hintText: "ابحث من خلال أي كلمة مفتاحية",
-        prefixIcon: Icon(Icons.search, color: Colors.grey),
+        prefixIcon: Icon(Icons.search, color: Colors.grey), textInputAction: TextInputAction.done,
       ),
     );
   }

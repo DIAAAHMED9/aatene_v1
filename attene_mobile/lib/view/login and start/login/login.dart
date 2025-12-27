@@ -68,7 +68,7 @@ class Login extends StatelessWidget {
                         ? 'البريد الإلكتروني / رقم الجوال'
                         : 'Email / Phone Number',
                     errorText: controller.emailError.value,
-                    onChanged: controller.updateEmail,
+                    onChanged: controller.updateEmail, textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -89,7 +89,7 @@ class Login extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: controller.togglePasswordVisibility,
-                    ),
+                    ), textInputAction: TextInputAction.done,
                   ),
                 ),
                 Align(

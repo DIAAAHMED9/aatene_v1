@@ -75,7 +75,11 @@ class ReportAddAbuse extends StatelessWidget {
                   ),
 
                   const Text('الموضوع', style: TextStyle(fontSize: 14)),
-                  TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا"),
+                  TextFiledAatene(
+                    isRTL: isRTL,
+                    hintText: "اكتب هنا",
+                    textInputAction: TextInputAction.next,
+                  ),
 
                   const Text(
                     'الشكوى/ الأفتراح',
@@ -86,6 +90,7 @@ class ReportAddAbuse extends StatelessWidget {
                     hintText: "اكتب هنا",
                     textInputType: TextInputType.multiline,
                     maxLines: 5,
+                    textInputAction: TextInputAction.done,
                   ),
                   SizedBox(height: 10),
                   // Next Button
@@ -93,7 +98,9 @@ class ReportAddAbuse extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute<void>(builder: (context) => CompleteAbuse()),
+                        MaterialPageRoute<void>(
+                          builder: (context) => CompleteAbuse(),
+                        ),
                       );
                     },
                     buttonText: "ارسال",

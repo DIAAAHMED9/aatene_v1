@@ -390,6 +390,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                       ),
                       SizedBox(height: 8),
                       TextFiledAatene(
+                        textInputAction: TextInputAction.next,
+
                         isRTL: isRTL,
                         hintText: "عدد الأيام",
                         controller: daysControllers[index],
@@ -414,6 +416,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                       ),
                       SizedBox(height: 8),
                       TextFiledAatene(
+                        textInputAction: TextInputAction.done,
+
                         isRTL: isRTL,
                         hintText: "السعر",
                         controller: priceControllers[index],

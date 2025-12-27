@@ -43,9 +43,9 @@ class EditShippingMethod extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("اسم ملف الشحن"),
-              TextFiledAatene(isRTL: isRTL, hintText: "اكتب اسم الشركة هنا"),
+              TextFiledAatene(isRTL: isRTL, hintText: "اكتب اسم الشركة هنا", textInputAction: TextInputAction.next,),
               Text("شركة الشحن"),
-              TextFiledAatene(isRTL: isRTL, hintText: "اسم شركة الشحن"),
+              TextFiledAatene(isRTL: isRTL, hintText: "اسم شركة الشحن", textInputAction: TextInputAction.next,),
               Text("رقم الهاتف"),
               TextFiledAatene(
                 isRTL: isRTL,
@@ -78,7 +78,7 @@ class EditShippingMethod extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
+                ), textInputAction: TextInputAction.next,
               ),
               Divider(color: AppColors.neutral900),
               Row(
@@ -99,9 +99,10 @@ class EditShippingMethod extends StatelessWidget {
               ),
               Text("موعد التسليم"),
               TextFiledAatene(
+
                 isRTL: isRTL,
                 hintText: "٣",
-                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30),
+                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30), textInputAction: TextInputAction.next,
               ),
               Text("سعر التوصيل"),
               TextFiledAatene(
@@ -113,7 +114,7 @@ class EditShippingMethod extends StatelessWidget {
                     "₪",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                ),
+                ), textInputAction: TextInputAction.done,
               ),
               AateneButtonWithIcon(buttonText: "التالي"),
             ],

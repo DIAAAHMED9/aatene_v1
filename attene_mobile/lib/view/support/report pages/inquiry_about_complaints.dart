@@ -91,7 +91,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                 spacing: 10,
                 children: [
                   Expanded(
-                    child: TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا"),
+                    child: TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا", textInputAction: TextInputAction.done,),
                   ),
                   CircleAvatar(
                     backgroundColor: AppColors.primary50,

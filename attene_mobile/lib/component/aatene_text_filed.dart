@@ -18,7 +18,7 @@ class TextFiledAatene extends StatelessWidget {
     this.fillColor,
     this.maxLines,
     this.minLines,
-    this.textInputAction,
+    required this.textInputAction,
     this.onSubmitted,
     this.enabled,
     this.readOnly,
@@ -48,7 +48,7 @@ class TextFiledAatene extends StatelessWidget {
   final Color? fillColor;
   final int? maxLines;
   final int? minLines;
-  final TextInputAction? textInputAction;
+  final TextInputAction textInputAction;
   final bool? enabled;
   final bool? readOnly;
   final VoidCallback? onTap;
