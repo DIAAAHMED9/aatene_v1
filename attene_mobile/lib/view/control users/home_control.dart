@@ -1,7 +1,17 @@
 import 'package:attene_mobile/component/name_control.dart';
+import 'package:attene_mobile/view/control%20users/block_screen.dart';
+import 'package:attene_mobile/view/control%20users/edit_profile.dart';
+import 'package:attene_mobile/view/control%20users/followers.dart';
+import 'package:attene_mobile/view/control%20users/personal_info.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/home/home.dart';
+import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
+import 'package:attene_mobile/view/support/privacy/privacy_screen.dart';
+import 'package:attene_mobile/view/support/report%20pages/sellect_report.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 import '../../utlis/colors/app_color.dart';
+import '../support/terms of use/terms_of_use_screen.dart';
 
 class HomeControl extends StatelessWidget {
   const HomeControl({super.key});
@@ -73,10 +83,16 @@ class HomeControl extends StatelessWidget {
                               ),
                               child: Center(
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(builder: (context) => PersonalInfo()),
+                                    );
+                                  },
                                   icon: Icon(
                                     Icons.mode_edit_outline_outlined,
                                     color: AppColors.primary400,
+                                    size:15,
                                   ),
                                 ),
                               ),
@@ -89,121 +105,127 @@ class HomeControl extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Column(
-                spacing: 10,
-                children: [
-                  NameControl(
-                    name: "لوحة القيادة",
-                    icon: Icon(
-                      Icons.home_outlined,
-                      color: AppColors.primary400,
-                      size: 25,
+            SizedBox(height: 20),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    NameControl(
+                      name: "لوحة القيادة",
+                      icon: Icon(
+                        Icons.home_outlined,
+                        color: AppColors.primary400,
+                        size: 25,
+                      ), screen: HomeScreen(),
                     ),
-                  ),
-                  NameControl(
-                    name: "حساباتي",
-                    icon: Icon(
-                      Icons.person_outline,
-                      color: AppColors.primary400,
-                      size: 25,
+                    NameControl(
+                      name: "حساباتي",
+                      icon: Icon(
+                        Icons.person_outline,
+                        color: AppColors.primary400,
+                        size: 25,
+                      ), screen: HomeControl(),
                     ),
-                  ),
-                  NameControl(
-                    name: "تعديل الملف الشخصي",
-                    icon: Icon(
-                      Icons.edit_outlined,
-                      color: AppColors.primary400,
-                      size: 25,
+                    NameControl(
+                      name: "تعديل الملف الشخصي",
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: AppColors.primary400,
+                        size: 25,
+                      ), screen: Edit_Profile(),
                     ),
-                  ),
-                  NameControl(
-                    name: "المتابعين",
-                    icon: Icon(
-                      Icons.person_add_alt,
-                      color: AppColors.primary400,
-                      size: 25,
+                    NameControl(
+                      name: "المتابعين",
+                      icon: Icon(
+                        Icons.person_add_alt,
+                        color: AppColors.primary400,
+                        size: 25,
+                      ), screen: FollowersPage(),
                     ),
-                  ),
-                  NameControl(
-                    name: "قائمة الحظر",
-                    icon: Icon(
-                      Icons.block_outlined,
-                      color: AppColors.primary400,
-                      size: 25,
+                    NameControl(
+                      name: "قائمة الحظر",
+                      icon: Icon(
+                        Icons.block_outlined,
+                        color: AppColors.primary400,
+                        size: 25,
+                      ), screen: BlockScreen(),
                     ),
-                  ),
-                  ExpansionTile(
-                    // splashColor: AppColors.primary50,
-                    maintainState: true,
-                    title: Text(
-                      "الدعم",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    children: [
-                      NameControl(
-                        name: "اتصل بنا",
-                        icon: Icon(
-                          Icons.contact_support_outlined,
-                          color: AppColors.primary400,
-                          size: 25,
+                    ExpansionTile(
+                      splashColor: AppColors.primary50,
+                      maintainState: true,
+                      title: Text(
+                        "الدعم",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
-                      NameControl(
-                        name: "سياسة الخصوصية",
-                        icon: Icon(
-                          Icons.privacy_tip_outlined,
-                          color: AppColors.primary400,
-                          size: 25,
-                        ),
-                      ),
-                      NameControl(
-                        name: "تشروط الخدمة",
-                        icon: Icon(
-                          Icons.local_police_outlined,
-                          color: AppColors.primary400,
-                          size: 25,
-                        ),
-                      ),
-                      NameControl(
-                        name: "بوابة الشكاوى والاقتراحات",
-                        icon: Icon(
-                          Icons.report_problem_outlined,
-                          color: AppColors.primary400,
-                          size: 25,
-                        ),
-                      ),
-                      NameControl(
-                        name: "عن أعطيني",
-                        icon: Icon(
-                          Icons.lightbulb_circle_outlined,
-                          color: AppColors.primary400,
-                          size: 25,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    child: Row(
-                      spacing: 10,
                       children: [
-                        Icon(Icons.login_rounded, color: AppColors.error200),
-                        Text(
-                          "تسجيل خروج",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.error200,
-                          ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        NameControl(
+
+                          name: "اتصل بنا",
+                          icon: Icon(
+                            Icons.contact_support_outlined,
+                            color: AppColors.primary400,
+                            size: 25,
+                          ), screen: HomeControl(),
+                        ),
+                        NameControl(
+                          name: "سياسة الخصوصية",
+                          icon: Icon(
+                            Icons.privacy_tip_outlined,
+                            color: AppColors.primary400,
+                            size: 25,
+                          ), screen: PrivacyScreen(),
+                        ),
+                        NameControl(
+                          name: "تشروط الخدمة",
+                          icon: Icon(
+                            Icons.local_police_outlined,
+                            color: AppColors.primary400,
+                            size: 25,
+                          ), screen: TermsOfUseScreen(),
+                        ),
+                        NameControl(
+                          name: "بوابة الشكاوى والاقتراحات",
+                          icon: Icon(
+                            Icons.report_problem_outlined,
+                            color: AppColors.primary400,
+                            size: 25,
+                          ), screen: SellectReport(),
+                        ),
+                        NameControl(
+                          name: "عن أعطيني",
+                          icon: Icon(
+                            Icons.lightbulb_circle_outlined,
+                            color: AppColors.primary400,
+                            size: 25,
+                          ), screen: AboutUsScreen(),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    GestureDetector(
+                      child: Row(
+                        spacing: 10,
+                        children: [
+                          Icon(Icons.login_rounded, color: AppColors.error200),
+                          Text(
+                            "تسجيل خروج",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.error200,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

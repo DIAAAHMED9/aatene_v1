@@ -7,17 +7,24 @@ class NameControl extends StatelessWidget {
     super.key,
     required this.name,
     required this.icon,
-    this.onTap,
+    this.onTap, required this.screen,
   });
 
   final String name;
   final Widget icon;
+  final Widget screen;
+
   final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute<void>(builder: (context) => screen),
+        );
+      },
       child: Column(
         spacing: 10,
         children: [

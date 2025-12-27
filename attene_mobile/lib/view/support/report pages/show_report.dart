@@ -3,6 +3,8 @@ import 'package:attene_mobile/utlis/colors/app_color.dart' show AppColors;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../control users/home_control.dart';
+
 class ShowReport extends StatelessWidget {
   const ShowReport({super.key});
 
@@ -147,7 +149,14 @@ class ShowReport extends StatelessWidget {
                       ],
                     ),
                     Divider(),
-                    AateneButton(buttonText: "إغلاق", color: AppColors.primary400, borderColor: AppColors.primary400,textColor: AppColors.light1000,)
+                    AateneButton(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(builder: (context) => HomeControl()),
+                        );
+                      },
+                      buttonText: "إغلاق", color: AppColors.primary400, borderColor: AppColors.primary400,textColor: AppColors.light1000,)
                   ],
                 ),
               ),

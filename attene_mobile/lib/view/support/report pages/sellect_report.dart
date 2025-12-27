@@ -1,8 +1,10 @@
+import 'package:attene_mobile/view/support/report%20pages/report_abuse.dart';
 import 'package:attene_mobile/view/support/report%20pages/widget/report_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../utlis/colors/app_color.dart';
+import 'inquiry_about_complaints.dart';
 
 class SellectReport extends StatelessWidget {
   const SellectReport({super.key});
@@ -52,11 +54,16 @@ class SellectReport extends StatelessWidget {
                   height: 150,
                   fit: BoxFit.cover,
                 ),
-                title: "إستعلام عن الشكاوي",
+                title: "إستعلام عن الشكاوي", screen: InquiryAboutComplaints(),
               ),
               ReportCard(
-                image: Image.asset('assets/images/png/report2.png'),
-                title: "إستعلام عن الشكاوي",
+                image: Image.asset(
+                  'assets/images/png/report2.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+                title: "شكوى أو إفتراح", screen: ReportAbuseScreen(),
               ),
             ],
           ),

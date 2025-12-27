@@ -1,5 +1,7 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/view/control%20users/home_control.dart';
+import 'package:attene_mobile/view/support/report%20pages/show_report.dart';
 import 'package:attene_mobile/view/support/report%20pages/widget/complaints_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -188,6 +190,12 @@ class InquiryAboutComplaints extends StatelessWidget {
                         ],
                       ),
                       GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(builder: (context) => ShowReport()),
+                          );
+                        },
                         child: Container(
                           width: 110,
                           height: 40,

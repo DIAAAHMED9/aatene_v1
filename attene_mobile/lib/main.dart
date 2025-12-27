@@ -5,6 +5,7 @@ import 'package:attene_mobile/view/control%20users/block_screen.dart';
 import 'package:attene_mobile/view/control%20users/change_mobile_number.dart';
 import 'package:attene_mobile/view/control%20users/change_password.dart';
 import 'package:attene_mobile/view/control%20users/followers.dart';
+import 'package:attene_mobile/view/control%20users/home_control.dart';
 import 'package:attene_mobile/view/control%20users/notification_feed.dart';
 import 'package:attene_mobile/view/control%20users/personal_info.dart';
 import 'package:attene_mobile/view/login%20and%20start/set%20new%20password/set_new_password.dart';
@@ -241,7 +242,7 @@ class MyApp extends StatelessWidget {
       // ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () => const HomeControl()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

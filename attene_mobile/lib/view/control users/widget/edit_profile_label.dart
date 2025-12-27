@@ -8,13 +8,13 @@ class EditProfileLabel extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.icon,
-    this.onTap,
+    required this.screen,
   });
 
   final String title;
   final String subtitle;
   final Widget icon;
-  final Function()? onTap;
+  final Widget screen;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,12 @@ class EditProfileLabel extends StatelessWidget {
         color: AppColors.neutral1000,
       ),
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(builder: (context) => screen),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.only(right: 12, left: 12),
           child: Row(

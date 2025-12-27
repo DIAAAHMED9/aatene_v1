@@ -1,8 +1,10 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/view/control%20users/home_control.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../utlis/colors/app_color.dart';
+import 'inquiry_about_complaints.dart';
 
 class CompleteAbuse extends StatelessWidget {
   const CompleteAbuse({super.key});
@@ -45,12 +47,28 @@ class CompleteAbuse extends StatelessWidget {
               ),
               Spacer(),
               AateneButton(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => InquiryAboutComplaints(),
+                    ),
+                  );
+                },
                 buttonText: "استعلام عن الشكاوى",
                 color: AppColors.primary300,
                 textColor: AppColors.light1000,
                 borderColor: AppColors.primary300,
               ),
               AateneButton(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => HomeControl(),
+                    ),
+                  );
+                },
                 buttonText: "العودة للرئيسية",
                 color: AppColors.primary500,
                 textColor: AppColors.light1000,

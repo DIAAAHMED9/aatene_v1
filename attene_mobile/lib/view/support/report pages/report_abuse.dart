@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:attene_mobile/view/support/report%20pages/report_add_abuse.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -102,6 +103,12 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
 
                   // Next Button
                   AateneButton(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(builder: (context) => ReportAddAbuse()),
+                      );
+                    },
                     buttonText: "التالي",
                     color: AppColors.primary400,
                     textColor: AppColors.light1000,

@@ -60,10 +60,7 @@ class Edit_Profile extends StatelessWidget {
                 Positioned(
                   top: 12,
                   right: 12,
-                  child: _editButton(
-                    onTap: () {
-                    },
-                  ),
+                  child: _editButton(onTap: () {}),
                 ),
 
                 // Profile Image + Edit Button
@@ -95,9 +92,7 @@ class Edit_Profile extends StatelessWidget {
                           child: _editButton(
                             size: 18,
                             padding: 6,
-                            onTap: () {
-                              // TODO: edit profile image
-                            },
+                            onTap: () {},
                           ),
                         ),
                       ],
@@ -185,7 +180,7 @@ class Edit_Profile extends StatelessWidget {
                               ),
                             ),
                             EditProfileLabel(
-                              title: "تغيير كلمة المرور",
+                              title: " كلمة المرور",
                               subtitle: "تغيير كلمة المرور",
                               icon: Icon(
                                 Icons.password,

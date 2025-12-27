@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/view/support/report%20pages/complete_abuse.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -89,6 +90,12 @@ class ReportAddAbuse extends StatelessWidget {
                   SizedBox(height: 10),
                   // Next Button
                   AateneButton(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(builder: (context) => CompleteAbuse()),
+                      );
+                    },
                     buttonText: "ارسال",
                     color: AppColors.primary400,
                     textColor: AppColors.light1000,
