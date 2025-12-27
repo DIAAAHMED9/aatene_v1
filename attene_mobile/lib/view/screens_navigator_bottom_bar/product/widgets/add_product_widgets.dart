@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/Text/text_with_star.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
@@ -110,25 +111,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'الصور',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '*',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+            TextWithStar(text: "الصور"),
             SizedBox(height: ResponsiveDimensions.f(5)),
             Text(
               'يمكنك إضافة حتى (10) صور و (1) فيديو',
@@ -367,19 +350,8 @@ class ProductNameSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'اسم المنتج',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(width: ResponsiveDimensions.f(4)),
-            Text('*', style: TextStyle(color: Colors.red[400])),
-          ],
-        ),
+
+        TextWithStar(text: "اسم المنتج"),
         SizedBox(height: ResponsiveDimensions.f(8)),
         GetBuilder<AddProductController>(
           builder: (_) {
@@ -447,19 +419,7 @@ class PriceSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'السعر',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(width: ResponsiveDimensions.f(4)),
-            Text('*', style: TextStyle(color: Colors.red[400])),
-          ],
-        ),
+        TextWithStar(text: "السعر"),
         SizedBox(height: ResponsiveDimensions.f(8)),
         GetBuilder<AddProductController>(
           builder: (_) {
@@ -533,26 +493,7 @@ class CategoriesSectionWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'الفئات',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.f(4)),
-                Text('*', style: TextStyle(color: Colors.red[400])),
-                const Spacer(),
-                if (hasError || (categories.isEmpty && !isLoading))
-                  IconButton(
-                    icon: Icon(Icons.refresh, size: ResponsiveDimensions.f(20)),
-                    onPressed: controller.reloadCategories,
-                    tooltip: 'إعادة تحميل الفئات',
-                  ),
-              ],
-            ),
+            TextWithStar(text: "الفئات"),
             SizedBox(height: ResponsiveDimensions.f(8)),
 
             if (isLoading) _buildLoadingDropdown('جاري تحميل الفئات...'),
@@ -796,19 +737,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'حالة المنتج',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.f(4)),
-                Text('*', style: TextStyle(color: Colors.red[400])),
-              ],
-            ),
+            TextWithStar(text: "حالة المنتج"),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
               decoration: BoxDecoration(
@@ -901,19 +830,7 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'وصف المنتج',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.f(4)),
-                Text('*', style: TextStyle(color: Colors.red[400])),
-              ],
-            ),
+            TextWithStar(text: 'وصف المنتج'),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
               decoration: BoxDecoration(

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/Text/text_with_star.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -55,18 +56,7 @@ class ServiceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'عنوان الخدمة',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text('*', style: TextStyle(color: Colors.red)),
-              ],
-            ),
+            TextWithStar(text: 'عنوان الخدمة'),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Container(
               decoration: BoxDecoration(
@@ -143,19 +133,8 @@ class ServiceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'القسم الرئيسي',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text('*', style: TextStyle(color: Colors.red)),
-              ],
-            ),
+            TextWithStar(text: 'القسم الرئيسي'),
+
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Container(
               decoration: BoxDecoration(
@@ -237,19 +216,7 @@ class ServiceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'الفئة الفرعية',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text('*', style: TextStyle(color: Colors.red)),
-              ],
-            ),
+            TextWithStar(text: 'الفئة الفرعية'),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Container(
               decoration: BoxDecoration(

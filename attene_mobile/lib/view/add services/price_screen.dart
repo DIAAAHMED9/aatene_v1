@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/Text/text_with_star.dart';
 import 'package:attene_mobile/view/add%20services/time_unit_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,19 +44,7 @@ class PriceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'السعر الأساسي',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text('*', style: TextStyle(color: Colors.red)),
-              ],
-            ),
+            TextWithStar(text:'السعر الأساسي'),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Container(
               decoration: BoxDecoration(
@@ -137,19 +126,7 @@ class PriceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'مدة التنفيذ',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
-                const Text('*', style: TextStyle(color: Colors.red)),
-              ],
-            ),
+            TextWithStar(text:'مدة التنفيذ'),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Row(
               children: [

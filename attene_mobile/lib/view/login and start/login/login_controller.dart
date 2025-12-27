@@ -333,7 +333,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         'نجاح',
         message,
-        backgroundColor: AppColors.success200,
+        backgroundColor: AppColors.success300,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         duration: snackbarDuration,
@@ -349,7 +349,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         title,
         message,
-        backgroundColor: AppColors.error200,
+        backgroundColor: AppColors.error300,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         duration: snackbarDuration,

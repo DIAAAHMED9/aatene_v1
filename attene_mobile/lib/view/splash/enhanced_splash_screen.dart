@@ -42,7 +42,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
   void _initializeApp() async {
     try {
       await _controller.forward();
-      setState(() => _loadingText = 'Loading Services...');
+      setState(() => _loadingText = 'Loading services...');
       await AppInitializationService.initialize();
       setState(() => _loadingText = 'Almost Ready...');
       await Future.delayed(const Duration(milliseconds: 500));

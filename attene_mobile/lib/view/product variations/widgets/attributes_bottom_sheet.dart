@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/Text/text_with_star.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -107,23 +108,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Text(
-                'اختر ايقونة',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(width: 6),
-              Text(
-                '*',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
+          child: TextWithStar(text: 'اختر ايقونة'),
         ),
         SizedBox(height: 15),
         Padding(

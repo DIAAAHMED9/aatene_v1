@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/Text/text_with_star.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -46,15 +47,7 @@ class StoreSelectorWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              'إظهار المنتج في متجر',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(width: ResponsiveDimensions.f(4)),
-            Text('*', style: TextStyle(color: Colors.red)),
+            TextWithStar(text: 'إظهار المنتج في متجر'),
             const Spacer(),
             Obx(() {
               if (controller.hasStoresError ||

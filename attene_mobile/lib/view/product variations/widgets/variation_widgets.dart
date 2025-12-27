@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/Text/text_with_star.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -285,34 +286,8 @@ class VariationsListWidget extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            'قيم الاختلافات',
-                            style: TextStyle(
-                              fontSize: ResponsiveDimensions.f(18),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: ResponsiveDimensions.f(18),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Spacer(),
-                          AateneButton(
-                            buttonText: ' قيمة جديدة',
-                            color: AppColors.primary400,
-                            textColor: Colors.white,
-                            borderColor: Colors.transparent,
-                            onTap: () => controller.generateSingleVariation(),
-                          ),
-                        ],
-                      ),
+                      TextWithStar(text: "قيم الاختلافات",),
+
                     ],
                   ),
                 ],
@@ -320,22 +295,7 @@ class VariationsListWidget extends StatelessWidget {
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'قيم الاختلافات',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.f(18),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(width: 6),
-                  Text(
-                    '*',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: ResponsiveDimensions.f(18),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  TextWithStar(text: "قيم الاختلافات",),
                   Spacer(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

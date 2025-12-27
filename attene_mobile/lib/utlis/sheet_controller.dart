@@ -806,11 +806,8 @@ Widget buildManageSectionsContent() {
         margin: EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
 
-          border: isSelected
-              ? Border.all(color: AppColors.primary400, width: 2)
-              : null,
           borderRadius: BorderRadius.circular(8),
-          color: isSelected ? AppColors.primary100 : Colors.white,
+          color: isSelected ? AppColors.primary50 : Colors.white,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -824,14 +821,10 @@ Widget buildManageSectionsContent() {
                     selectSection(value);
                   }
                 },
-                activeColor: AppColors.primary400,
+                activeColor: AppColors.primary300,
               )),
               
-              Icon(
-                Icons.folder_rounded,
-                color: isSelected ? AppColors.primary400 : Colors.blue,
-                size: 24,
-              ),
+
               const SizedBox(width: 12),
               
               Expanded(
@@ -843,7 +836,7 @@ Widget buildManageSectionsContent() {
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
-                        color: isSelected ? AppColors.primary400 : Colors.black87,
+                        color: isSelected ? AppColors.primary500 : Colors.black87,
                       ),
                     ),
                     // const SizedBox(height: 4),

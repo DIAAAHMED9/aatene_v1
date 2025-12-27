@@ -51,9 +51,9 @@ class AddNewStore extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[300],
+              color: Colors.grey[100],
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary500),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),

@@ -145,14 +145,13 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
         _getCurrentStepTitle(), // استخدام عنوان الخطوة الحالية
         style: const TextStyle(
           fontSize: 18,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.bold,
         ),
       ),
       backgroundColor: Colors.white,
       foregroundColor: Colors.white,
       elevation: 0,
-      // centerTitle: true,
+      centerTitle: true,
       leading: widget.showBackButton
           ?  IconButton(
         onPressed: () async {
@@ -162,7 +161,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
             await onCancel();
           }
         },
-        icon: Container(
+        icon:Container(
           width: 50,
           height: 50,
           decoration: BoxDecoration(

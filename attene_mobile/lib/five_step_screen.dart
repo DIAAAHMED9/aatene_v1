@@ -387,46 +387,50 @@ class _ServiceStepperScreenState
           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
 
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.rocket_launch, size: 250, color: Colors.green),
-            const SizedBox(height: 20),
-            Text(
-              isEditMode ? 'تم تحديث خدمتك بنجاح' : 'تم رفع خدمتك بنجاح',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.check_circle, size: 170, color: Colors.green, shadows: [Shadow(blurRadius: 30, color: AppColors.success100, offset: Offset(0, 0))],),
+              const SizedBox(height: 10),
+              Text(
+                isEditMode ? 'تم تحديث خدمتك بنجاح' : 'تم رفع خدمتك بنجاح',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary400,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+
+              Text(
+                'تم رفع الخدمة بنجاح، وهي الآن قيد المراجعة من قبل الفريق المختص. سنوافيكم بالرد خلال 24 إلى 48 ساعة.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 5),
+
+              AateneButton(
+                buttonText: 'قائمة الرغبات',
                 color: AppColors.primary400,
+                textColor: Colors.white,
+                borderColor: AppColors.primary400,
+                onTap: () {
+                  Get.until((route) => route.isFirst);
+                  Get.find<ServiceController>().resetAll();
+                  setState(() {
+                    currentStep = 0;
+                  });
+                },
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 15),
-
-            Text(
-              'تم رفع الخدمة بنجاح، وهي الآن قيد المراجعة من قبل الفريق المختص. سنوافيكم بالرد خلال 24 إلى 48 ساعة.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-
-            AateneButton(
-              buttonText: 'قائمة الرغبات',
-              color: AppColors.primary400,
-              textColor: Colors.white,
-              onTap: () {
-                Get.until((route) => route.isFirst);
-                Get.find<ServiceController>().resetAll();
-                setState(() {
-                  currentStep = 0;
-                });
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
