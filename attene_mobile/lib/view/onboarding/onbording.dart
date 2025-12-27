@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../component/aatene_button/aatene_button.dart';
 import '../../utlis/colors/app_color.dart';
-import '../../utlis/image_flip/image_utils.dart';
+import '../../utlis/image flip/image_utils.dart';
 import '../../utlis/language/language_utils.dart';
 
 class Onbording extends StatelessWidget {
@@ -232,83 +232,10 @@ class Onbording extends StatelessWidget {
   }
 
   Widget _buildMobileLayout(BuildContext context, bool isRTL) {
-    return Stack(
-      children: [
-        // الصورة الأولى (الطفل)
-        Positioned(
-          top: ResponsiveDimensions.h(90), // 50 + 40
-          left: isRTL ? 0 : ResponsiveDimensions.h(205),
-          right: isRTL ? ResponsiveDimensions.h(205) : 0,
-          child: isRTL
-              ? Image.asset(
-                  'assets/images/png/onboarding_child.png',
-                  width: ResponsiveDimensions.w(400),
-                  height: ResponsiveDimensions.h(400),
-                )
-              : ImageUtils.flipHorizontal(
-                  'assets/images/png/onboarding_child.png',
-                  width: ResponsiveDimensions.w(400),
-                  height: ResponsiveDimensions.h(400),
-                ),
-        ),
-        // المحتوى النصي
-        Positioned(
-          top: ResponsiveDimensions.h(60),
-          left: isRTL ? null : ResponsiveDimensions.w(20),
-          right: isRTL ? ResponsiveDimensions.w(20) : null,
-          child: SizedBox(
-            width: isRTL
-                ? ResponsiveDimensions.w(120)
-                : ResponsiveDimensions.w(154),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Align(
-                  alignment: isRTL
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Image.asset(
-                    'assets/images/png/aatene_black_text.png',
-                    width: ResponsiveDimensions.w(120),
-                    height: ResponsiveDimensions.h(50),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text.rich(
-                  TextSpan(
-                    text: isRTL
-                        ? 'مزيج من الخدمات المتنوعة متواجدة في مكان '
-                        : 'A mix of diverse services available in one ',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.getFontSize(
-                        context,
-                        baseSize: 35,
-                      ),
-                      fontWeight: FontWeight.w800,
-                      color: const Color(0xFF383838),
-                      height: 1.4,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: isRTL ? 'واحد' : 'place',
-                        style: TextStyle(
-                          fontSize: ResponsiveDimensions.getFontSize(
-                            context,
-                            baseSize: 32,
-                          ),
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+    return Image.asset(
+      'assets/images/png/onboarding.png',
+      width: double.infinity,
+      height: ResponsiveDimensions.h(400),
     );
   }
 

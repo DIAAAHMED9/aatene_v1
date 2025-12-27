@@ -259,7 +259,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
         onPressed: previousStep,
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          side: BorderSide(color: widget.primaryColor, width: 2),
+          side: BorderSide(color: AppColors.primary400, width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -269,7 +269,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: widget.primaryColor,
+            color:AppColors.primary400,
           ),
         ),
       ),

@@ -10,112 +10,114 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _SplashScreenState extends State<SplashScreen> {
+  bool _isInitializing = false;
+  bool _showError = false;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _initializeAnimation();
-    _startApp();
-  }
-
-  void _initializeAnimation() {
-    _controller = AnimationController(
-      duration: const Duration(seconds: 7),
-      vsync: this,
-    );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _controller.forward();
+    // تأخير 5 ثواني قبل بدء التهيئة
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        _startApp();
+      }
+    });
   }
 
   void _startApp() async {
+    if (_isInitializing) return;
+
+    setState(() {
+      _isInitializing = true;
+      _showError = false;
+    });
+
     try {
-      await Future.wait<void>([
-        Future.delayed(_controller.duration!),
-        AppInitializationService.initialize(),
-      ]);
+      // تهيئة التطبيق
+      await AppInitializationService.initialize();
+
       if (mounted) {
+        // الانتقال إلى شاشة onboarding
         Navigator.pushReplacementNamed(context, '/onboarding');
       }
     } catch (error) {
       print('❌ Error during app initialization: $error');
       if (mounted) {
-        _showErrorDialog(error.toString());
+        setState(() {
+          _isInitializing = false;
+          _showError = true;
+          _errorMessage = error.toString();
+        });
       }
     }
   }
 
-  void _showErrorDialog(String error) {
+  void _showErrorDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Initialization Error'),
-        content: Text('Failed to start app: $error'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _startApp();
-            },
-            child: const Text('Retry'),
+      builder: (context) =>
+          AlertDialog(
+            title: const Text('خطأ في التهيئة'),
+            content: Text('فشل في بدء التطبيق: $_errorMessage'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _startApp();
+                },
+                child: const Text('إعادة المحاولة'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('إغلاق'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
     );
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // عرض رسالة الخطأ إذا حدث خطأ
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_showError && mounted) {
+        _showErrorDialog();
+        setState(() {
+          _showError = false;
+        });
+      }
+    });
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 1.0],
-            colors: [Color(0xFF6394CB), Color(0xFF38587B)],
-          ),
+            color: Colors.white
         ),
         child: Center(
-          child: FadeTransition(
-            opacity: _animation,
-            child: ScaleTransition(
-              scale: _animation,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/gif/aatene.gif',
-                    fit: BoxFit.contain,
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: ResponsiveDimensions.w(40),
-                    height: ResponsiveDimensions.h(40),
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors.light1000,
-                      ),
-                      strokeWidth: 3,
-                    ),
-                  ),
-                ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/gif/aatene.gif',
+                fit: BoxFit.contain,
               ),
-            ),
+              const SizedBox(height: 20),
+              // إظهار مؤشر التحميل فقط أثناء التهيئة
+              if (_isInitializing)
+                SizedBox(
+                  width: ResponsiveDimensions.w(40),
+                  height: ResponsiveDimensions.h(40),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.light1000,
+                    ),
+                    strokeWidth: 3,
+                  ),
+                ),
+            ],
           ),
         ),
       ),

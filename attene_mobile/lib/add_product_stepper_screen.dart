@@ -322,7 +322,7 @@ class _DemoStepperScreenState
               },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: widget.primaryColor,
+          backgroundColor: AppColors.primary400,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -335,7 +335,7 @@ class _DemoStepperScreenState
                 width: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary400),
                 ),
               )
             : Padding(
