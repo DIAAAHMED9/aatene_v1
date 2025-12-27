@@ -1,5 +1,4 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
-import 'package:attene_mobile/component/aatene_button/aatene_button_with_arrow_icon.dart';
 import 'package:attene_mobile/view/support/about%20us/widgets/card.dart';
 import 'package:attene_mobile/view/support/about%20us/widgets/section_items2.dart';
 import 'package:flutter/material.dart';
@@ -555,10 +554,7 @@ class AboutUsScreen extends StatelessWidget {
                                     padding: const EdgeInsets.all(10.0),
                                     child: IconButton(
                                       onPressed: () {
-                                        UrlHelper.open(
-                                          "https://wa.me/+972526213879",
-                                        );
-
+                                        _showMyDialog(context);
                                       },
                                       icon: Image.asset(
                                         'assets/images/png/whatsapp.png',
@@ -612,6 +608,44 @@ class AboutUsScreen extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.primary400),
         ),
       ),
+    );
+  }
+
+  Future<void> _showMyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('اختر الواتساب الذي تحتاجه'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    UrlHelper.open("https://wa.me/+972526213879");
+                  },
+                  child: Text('واتس خدمة العملاء'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    UrlHelper.open("https://wa.me/+972559390851");
+                  },
+                  child: Text('واتس لاستعلام عن الخدمات والمنتجات'),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('الغاء'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
