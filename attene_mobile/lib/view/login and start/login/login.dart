@@ -144,7 +144,7 @@ class Login extends StatelessWidget {
                               size: 25,
                             ),
                             Text(
-                              "باستخدام أبل",
+                              " أبل",
                               style: getBold(color: AppColors.light1000),
                             ),
                           ],
@@ -173,7 +173,7 @@ class Login extends StatelessWidget {
                             ),
 
                             Text(
-                              "باستخدام جوجل",
+                              " جوجل",
                               style: getBold(color: AppColors.neutral100),
                             ),
                           ],

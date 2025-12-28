@@ -2,10 +2,10 @@ import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20new%20store/choose%20type%20store/manage_account_store_controller.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:attene_mobile/view/advance%20info/keyword_controller.dart';
-import 'package:attene_mobile/view/control%20users/block_screen.dart';
+import 'package:attene_mobile/view/control%20users/block/screen/block_screen.dart';
 import 'package:attene_mobile/view/control%20users/change_mobile_number.dart';
 import 'package:attene_mobile/view/control%20users/change_password.dart';
-import 'package:attene_mobile/view/control%20users/followers.dart';
+import 'package:attene_mobile/view/control%20users/followers/screen/followers.dart';
 import 'package:attene_mobile/view/control%20users/home_control.dart';
 import 'package:attene_mobile/view/control%20users/notification_feed.dart';
 import 'package:attene_mobile/view/control%20users/personal_info.dart';
@@ -243,7 +243,7 @@ class MyApp extends StatelessWidget {
       // ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () =>  HomeControl()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

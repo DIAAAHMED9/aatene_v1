@@ -16,7 +16,7 @@ class _NotificationFeedState extends State<NotificationFeed> {
   bool updates = true;
   bool messages = true;
   bool following = true;
-  bool recommendations = false;
+  bool recommendations = true;
 
   Widget _settingItem({
     required String title,

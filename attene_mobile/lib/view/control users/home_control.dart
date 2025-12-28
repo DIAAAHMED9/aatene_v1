@@ -1,8 +1,7 @@
 import 'package:attene_mobile/component/name_control.dart';
 import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:attene_mobile/view/control%20users/block_screen.dart';
 import 'package:attene_mobile/view/control%20users/edit_profile.dart';
-import 'package:attene_mobile/view/control%20users/followers.dart';
+import 'package:attene_mobile/view/control%20users/followers/screen/followers.dart';
 import 'package:attene_mobile/view/control%20users/personal_info.dart';
 import 'package:attene_mobile/view/screens_navigator_bottom_bar/home/home.dart';
 import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 
 import '../../utlis/colors/app_color.dart';
 import '../support/terms of use/terms_of_use_screen.dart';
+import 'block/screen/block_screen.dart';
 
 class HomeControl extends StatelessWidget {
   const HomeControl({super.key});
@@ -44,6 +44,7 @@ class HomeControl extends StatelessWidget {
                   // Image.asset("assets/images/png/controler_bacground.png", width: double.infinity, height: 260,),
                   Column(
                     children: [
+                      SizedBox(height: 20,),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Image.asset(
@@ -146,7 +147,7 @@ class HomeControl extends StatelessWidget {
                         color: AppColors.primary400,
                         size: 25,
                       ),
-                      screen: FollowersPage(),
+                      screen: Followers(),
                     ),
                     NameControl(
                       name: "قائمة الحظر",
@@ -182,7 +183,7 @@ class HomeControl extends StatelessWidget {
                           screen: PrivacyScreen(),
                         ),
                         NameControl(
-                          name: "تشروط الخدمة",
+                          name: "شروط الخدمة",
                           icon: Icon(
                             Icons.local_police_outlined,
                             color: AppColors.primary400,

@@ -201,14 +201,14 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               children: [
               Icon(
               icon,
-              size: 28,
+              size: 24,
               color: isSelected ? widget.selectedColor : widget.unselectedColor,
             ),
             SizedBox(height: 4),
             if (text != null)
         Text(
         text,
-        style: getRegular(fontSize: 12,
+        style: getRegular(fontSize: 10,
           color: isSelected ? widget.selectedColor : widget.unselectedColor,)
     )
     else if (isSelected)

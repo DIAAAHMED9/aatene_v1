@@ -135,7 +135,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                     ),
                     title: Row(
                       children: [
-                        Text(items[index]['title']!, style: getRegular()),
+                        Text(items[index]['title']!, style: getRegular(fontSize: 14)),
                         const Spacer(),
                         _circleIconPlus(isExpanded ? Icons.remove : Icons.add),
                       ],

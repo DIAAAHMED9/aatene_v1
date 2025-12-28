@@ -297,6 +297,8 @@ class _DemoStepperScreenState
       textConfirm: 'نعم، إلغاء',
       textCancel: 'لا، استمر',
       confirmTextColor: Colors.white,
+      cancelTextColor: AppColors.primary400,
+      buttonColor: AppColors.primary400,
       onConfirm: () {
         Get.back(result: true);
         Get.back();
@@ -348,7 +350,7 @@ class _DemoStepperScreenState
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
                   currentStep == steps.length - 1 ? 'إنهاء وإرسال' : 'التالي',
-                  style: getMedium(),
+                  style: getMedium( color: Colors.white),
                 ),
               ),
       );

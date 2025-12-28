@@ -1,5 +1,4 @@
 import 'package:attene_mobile/component/appBar/tab_model.dart';
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -20,26 +19,14 @@ class CustomAppBarWithTabs extends StatelessWidget
   }) : super(key: key);
 
   bool _isMobile(BuildContext context) =>
-      MediaQuery
-          .of(context)
-          .size
-          .width < 768;
+      MediaQuery.of(context).size.width < 768;
 
   bool _isTablet(BuildContext context) =>
-      MediaQuery
-          .of(context)
-          .size
-          .width >= 768 &&
-          MediaQuery
-              .of(context)
-              .size
-              .width < 1024;
+      MediaQuery.of(context).size.width >= 768 &&
+          MediaQuery.of(context).size.width < 1024;
 
   bool _isDesktop(BuildContext context) =>
-      MediaQuery
-          .of(context)
-          .size
-          .width >= 1024;
+      MediaQuery.of(context).size.width >= 1024;
 
   @override
   Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
@@ -168,11 +155,12 @@ class CustomAppBarWithTabs extends StatelessWidget
             ),
             child: Text(
               config.title,
-              style: getBold(
-                color: Colors.black87,
+              style: TextStyle(
                 fontSize: _getTitleFontSize(context),
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+                fontFamily: "PingAR",
               ),
-
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -186,10 +174,7 @@ class CustomAppBarWithTabs extends StatelessWidget
   }
 
   Widget _buildActionButton(BuildContext context) {
-    final isSmallMobile = MediaQuery
-        .of(context)
-        .size
-        .width < 400;
+    final isSmallMobile = MediaQuery.of(context).size.width < 400;
 
     return Material(
       color: Colors.transparent,
@@ -202,9 +187,11 @@ class CustomAppBarWithTabs extends StatelessWidget
             // if (!isSmallMobile)
             Text(
               config.actionText,
-              style: getMedium(
+              style: TextStyle(
                 color: AppColors.primary400,
                 fontSize: _isMobile(context) ? 17 : 19,
+                fontWeight: FontWeight.w600,
+                fontFamily: "PingAR",
               ),
             ),
           ],
@@ -273,64 +260,67 @@ class CustomAppBarWithTabs extends StatelessWidget
             ),
             child: Row(
               children: [
-            Expanded(
-            child: TextField(
-            controller: config.searchController,
-              onChanged: config.onSearchChanged,
+                Expanded(
+                  child: TextField(
+                    controller: config.searchController,
+                    onChanged: config.onSearchChanged,
 
-              decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey[600],
-                    size: _isMobile(context) ? 20 : 22,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey[600],
+                        size: _isMobile(context) ? 20 : 22,
+                      ),
+                      border: InputBorder.none,
+                      hintText: isRTL
+                          ? 'ابحث عن منتج...'
+                          : 'Search products...',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: _isMobile(context) ? 14 : 15,
+                        fontFamily: "PingAR",
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontSize: _isMobile(context) ? 14 : 15,
+                      color: Colors.black87,
+                      fontFamily: "PingAR",
+                    ),
                   ),
-                  border: InputBorder.none,
-                  hintText: isRTL
-                      ? 'ابحث عن منتج...'
-                      : 'Search products...',
-                  hintStyle: getRegular(color: Colors.grey,
-                    fontSize: _isMobile(context) ? 14 : 15,),
-            ),
-            style: getRegular(
-              fontSize: _isMobile(context) ? 14 : 15,
-              color: Colors.black87,
+                ),
+                if (config.searchController?.text.isNotEmpty ?? false)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: _isMobile(context) ? 8 : 12,
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        config.searchController?.clear();
+                        config.onSearchChanged?.call('');
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey[500],
+                        size: _isMobile(context) ? 18 : 20,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
-        if (config.searchController?.text.isNotEmpty ?? false)
+        SizedBox(width: 5),
+        if (config.onSortPressed != null)
           Padding(
-            padding: EdgeInsets.only(
-              right: _isMobile(context) ? 8 : 12,
-            ),
-            child: GestureDetector(
-              onTap: () {
-                config.searchController?.clear();
-                config.onSearchChanged?.call('');
-              },
-              child: Icon(
-                Icons.close,
-                color: Colors.grey[500],
-                size: _isMobile(context) ? 18 : 20,
-              ),
+            padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
+            child: _buildIconButton(
+              icon: Icons.sort_rounded,
+              onTap: config.onSortPressed!,
+              context: context,
+              tooltip: 'ترتيب',
             ),
           ),
       ],
-    ),
-    ),
-    ),
-    SizedBox(width: 5),
-    if (config.onSortPressed != null)
-    Padding(
-    padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
-    child: _buildIconButton(
-    icon: Icons.sort_rounded,
-    onTap: config.onSortPressed!,
-    context: context,
-    tooltip: 'ترتيب',
-    ),
-    ),
-    ]
-    ,
     );
   }
 
@@ -376,10 +366,11 @@ class CustomAppBarWithTabs extends StatelessWidget
     );
   }
 
-  Widget _buildUniversalImage(String assetPath, {
-    Color? color,
-    double size = 20,
-  }) {
+  Widget _buildUniversalImage(
+      String assetPath, {
+        Color? color,
+        double size = 20,
+      }) {
     try {
       Widget imageWidget;
 
@@ -389,12 +380,11 @@ class CustomAppBarWithTabs extends StatelessWidget
           width: size,
           height: size,
           fit: BoxFit.contain,
-          placeholderBuilder: (context) =>
-              SizedBox(
-                width: size,
-                height: size,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+          placeholderBuilder: (context) => SizedBox(
+            width: size,
+            height: size,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
         );
       } else {
         imageWidget = Image.asset(
@@ -480,19 +470,23 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
         left: widget.isRTL ? 0 : (widget.isMobile ? 12 : 20),
         right: widget.isRTL ? (widget.isMobile ? 12 : 20) : 0,
       ),
-      labelStyle: getMedium(
+      labelStyle: TextStyle(
         fontSize: widget.isMobile
             ? 13
             : widget.isTablet
             ? 14
             : 15,
+        fontWeight: FontWeight.w600,
+        fontFamily: "PingAR",
       ),
-      unselectedLabelStyle: getRegular(
+      unselectedLabelStyle: TextStyle(
         fontSize: widget.isMobile
             ? 13
             : widget.isTablet
             ? 14
             : 15,
+        fontWeight: FontWeight.w500,
+        fontFamily: "PingAR",
       ),
       tabs: widget.tabs.map((tab) {
         return _buildTabItem(tab);
@@ -532,12 +526,14 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: getMedium(
+                style: TextStyle(
                   fontSize: widget.isMobile
                       ? 13
                       : widget.isTablet
                       ? 14
                       : 15,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: "PingAR",
                 ),
               ),
             ),

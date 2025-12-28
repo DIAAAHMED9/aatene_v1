@@ -252,6 +252,8 @@ class _ServiceStepperScreenState
       textConfirm: 'نعم، إلغاء',
       textCancel: 'لا، استمر',
       confirmTextColor: Colors.white,
+      cancelTextColor: AppColors.primary400,
+      buttonColor: AppColors.primary400,
       onConfirm: () {
         Get.back(result: true);
         Get.back();
@@ -307,7 +309,7 @@ class _ServiceStepperScreenState
                             ? 'تحديث الخدمة'
                             : 'إنهاء ونشر الخدمة'
                       : 'التالي',
-                  style: getMedium(),
+                  style: getMedium(color: Colors.white),
                 ),
               ),
       );

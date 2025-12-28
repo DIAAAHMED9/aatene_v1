@@ -18,7 +18,7 @@ class MainScreen extends StatelessWidget {
     return CustomBottomNavigation(
       notchWidthRatio: 0.3,
       notchDepthRatio: 0.4,
-      pageName: ['الرئسية', 'المنتجات', 'دردشة', 'USER'],
+      pageName: ['الرئسية', 'منتجات', 'دردشة', 'USER'],
       pages: [
         // لا تغلف الصفحات بأي شيء إضافي - دع CustomBottomNavigation يتعامل مع التمرير
         ManageAccountStore(),
@@ -27,10 +27,10 @@ class MainScreen extends StatelessWidget {
         ServicesListScreen(),
       ],
       icons: const [
-        Icons.home,
+        Icons.home_filled,
         Icons.production_quantity_limits,
-        Icons.chat_bubble_outline,
-        Icons.person,
+        Icons.chat_sharp,
+        Icons.person_sharp,
       ],
       fabIcon: Icons.add,
       fabColor: AppColors.primary400,

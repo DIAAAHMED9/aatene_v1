@@ -22,34 +22,37 @@ class SectionCard3 extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.light1000,
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          spacing: 10,
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          spacing: 5,
           children: [
-            Container(
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                color: AppColors.primary400,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Center(child: icon),
-            ),
-            Column(
-              spacing: 5,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+            Row(
+              spacing: 8,
               children: [
-                Text(title, style: getBold(fontSize: 14)),
+                Container(
+                  width: 25,
+                  height: 25,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary400,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Center(child: icon),
+                ),
                 Text(
-                  subtitle,
-                  style: getRegular(fontSize: 12, color: AppColors.neutral700),
+                  title,
+                  style: getBold(fontSize: 14,),
                 ),
               ],
+            ),
+            Text(
+                subtitle,
+                textAlign: TextAlign.start,
+                style: getRegular(fontSize: 12,
+                  color: AppColors.neutral600,)
             ),
           ],
         ),

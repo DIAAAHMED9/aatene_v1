@@ -52,8 +52,8 @@ class StartLogin extends StatelessWidget {
                   SizedBox(height: ResponsiveDimensions.h(20)),
                   AateneButton(
                     color: AppColors.primary300.withAlpha(50),
-                    textColor: AppColors.primary400,
-                    borderColor: AppColors.neutral600,
+                    textColor: AppColors.primary500,
+                    borderColor: AppColors.primary500,
                     buttonText: isRTL ? 'إنشاء حساب' : 'Create account',
                     onTap: () {
                       Get.offAndToNamed('/register');

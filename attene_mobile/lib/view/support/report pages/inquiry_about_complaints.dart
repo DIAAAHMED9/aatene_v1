@@ -148,34 +148,34 @@ class InquiryAboutComplaints extends StatelessWidget {
                         children: [
                           Text(
                             "رقم الشكوي :",
-                            style: getRegular(fontSize: 12, color: Colors.grey),
+                            style: getRegular(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
                             "C-2020-001",
                             style: getRegular(
-                              fontSize: 12,
+                              fontSize: 10,
                               color: AppColors.primary400,
                             ),
                           ),
                           Text(
                             "الفئة :",
-                            style: getRegular(fontSize: 12, color: Colors.grey),
+                            style: getRegular(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
                             "خدمات",
                             style: getRegular(
-                              fontSize: 12,
+                              fontSize: 10,
                               color: AppColors.primary400,
                             ),
                           ),
                           Text(
                             "التاريخ :",
-                            style: getRegular(fontSize: 12, color: Colors.grey),
+                            style: getRegular(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
                             "C-2020-001",
                             style: getRegular(
-                              fontSize: 12,
+                              fontSize: 10,
                               color: AppColors.primary400,
                             ),
                           ),
@@ -191,7 +191,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          width: 110,
+                          width: 140,
                           height: 40,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(7),
@@ -200,7 +200,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
-                              spacing: 5,
+                              spacing:10,
                               children: [
                                 Icon(
                                   Icons.remove_red_eye_outlined,

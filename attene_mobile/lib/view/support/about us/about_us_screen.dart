@@ -274,51 +274,7 @@ class AboutUsScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppColors.light1000,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Row(
-                          spacing: 10,
-                          children: [
-                            Container(
-                              width: 25,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary400,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.language,
-                                  size: 16,
-                                  color: AppColors.light1000,
-                                ),
-                              ),
-                            ),
-                            Column(
-                              spacing: 5,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("data", style: getBold(fontSize: 14)),
-                                Text(
-                                  "data",
-                                  style: getRegular(
-                                    fontSize: 12,
-                                    color: AppColors.neutral700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+
                     SectionCard3(
                       title: "منتجات محلية وخدمات موثوقة",
                       subtitle:
