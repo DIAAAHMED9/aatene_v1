@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -62,7 +63,7 @@ class VariationCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     variation.displayName,
-                    style: TextStyle(
+                    style: getMedium(
                       fontSize: isSmallScreen
                           ? ResponsiveDimensions.f(14)
                           : ResponsiveDimensions.f(16),
@@ -95,10 +96,9 @@ class VariationCard extends StatelessWidget {
                         ),
                         child: Text(
                           variation.isActive.value ? 'نشط' : 'غير نشط',
-                          style: TextStyle(
+                          style: getRegular(
                             color: Colors.white,
                             fontSize: ResponsiveDimensions.f(12),
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -145,10 +145,9 @@ class VariationCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'SKU: ${variation.sku.value}',
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.f(12),
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
                       ),
                     ),
                   ),
@@ -194,10 +193,10 @@ class VariationCard extends StatelessWidget {
               return Chip(
                 label: Text(
                   '${entry.key}: ${entry.value}',
-                  style: TextStyle(fontSize: ResponsiveDimensions.f(10)),
+                  style: getRegular(fontSize: ResponsiveDimensions.f(12)),
                 ),
                 backgroundColor: AppColors.primary100,
-                labelStyle: TextStyle(color: AppColors.primary500),
+                labelStyle: getRegular(color: AppColors.primary500),
                 visualDensity: VisualDensity.compact,
               );
             }).toList(),
@@ -248,10 +247,9 @@ class VariationCard extends StatelessWidget {
             children: [
               Text(
                 'السمات:',
-                style: TextStyle(
+                style: getMedium(
+                  color: Colors.grey,
                   fontSize: ResponsiveDimensions.f(14),
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[700],
                 ),
               ),
               SizedBox(height: ResponsiveDimensions.f(8)),
@@ -262,10 +260,10 @@ class VariationCard extends StatelessWidget {
                   return Chip(
                     label: Text(
                       '${entry.key}: ${entry.value}',
-                      style: TextStyle(fontSize: ResponsiveDimensions.f(12)),
+                      style: getRegular(fontSize: ResponsiveDimensions.f(12)),
                     ),
                     backgroundColor: AppColors.primary100,
-                    labelStyle: TextStyle(color: AppColors.primary500),
+                    labelStyle: getRegular(color: AppColors.primary500),
                   );
                 }).toList(),
               ),
@@ -298,19 +296,17 @@ class VariationCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.f(12),
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.f(4)),
                 Text(
                   value,
-                  style: TextStyle(
+                  style: getBold(
                     fontSize: ResponsiveDimensions.f(14),
                     color: color,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],

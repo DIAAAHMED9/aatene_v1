@@ -6,6 +6,7 @@ import 'package:attene_mobile/view/support/report%20pages/widget/complaints_card
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
 import '../../../utlis/colors/app_color.dart';
 import '../../../utlis/language/language_utils.dart';
 
@@ -20,11 +21,7 @@ class InquiryAboutComplaints extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "الشكاوى والاقتراحات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -48,14 +45,11 @@ class InquiryAboutComplaints extends StatelessWidget {
             spacing: 10,
             children: [
               // Title
-              const Text(
-                'إستعلام عن الشكاوي',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Text('إستعلام عن الشكاوي', style: getBold(fontSize: 18)),
               // Subtitle
-              const Text(
+              Text(
                 'ما الذي تقدر أن نساعدك به ؟',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: getRegular(fontSize: 12, color: Colors.grey),
               ),
               Row(
                 spacing: 10,
@@ -91,7 +85,11 @@ class InquiryAboutComplaints extends StatelessWidget {
                 spacing: 10,
                 children: [
                   Expanded(
-                    child: TextFiledAatene(isRTL: isRTL, hintText: "اكتب هنا", textInputAction: TextInputAction.done,),
+                    child: TextFiledAatene(
+                      isRTL: isRTL,
+                      hintText: "اكتب هنا",
+                      textInputAction: TextInputAction.done,
+                    ),
                   ),
                   CircleAvatar(
                     backgroundColor: AppColors.primary50,
@@ -122,10 +120,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                         children: [
                           Text(
                             "مشكلة في التوصيل",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
+                            style: getBold(fontSize: 14),
                           ),
                           Container(
                             decoration: BoxDecoration(
@@ -138,7 +133,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   "قيد المعالجة",
-                                  style: TextStyle(
+                                  style: getRegular(
                                     fontSize: 10,
                                     color: Color(0xFFF17713),
                                   ),
@@ -153,38 +148,35 @@ class InquiryAboutComplaints extends StatelessWidget {
                         children: [
                           Text(
                             "رقم الشكوي :",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: getRegular(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
                             "C-2020-001",
-                            style: TextStyle(
+                            style: getRegular(
                               fontSize: 12,
                               color: AppColors.primary400,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
                             "الفئة :",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: getRegular(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
                             "خدمات",
-                            style: TextStyle(
+                            style: getRegular(
                               fontSize: 12,
                               color: AppColors.primary400,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
                             "التاريخ :",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: getRegular(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
                             "C-2020-001",
-                            style: TextStyle(
+                            style: getRegular(
                               fontSize: 12,
                               color: AppColors.primary400,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
@@ -193,7 +185,9 @@ class InquiryAboutComplaints extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute<void>(builder: (context) => ShowReport()),
+                            MaterialPageRoute<void>(
+                              builder: (context) => ShowReport(),
+                            ),
                           );
                         },
                         child: Container(
@@ -214,10 +208,9 @@ class InquiryAboutComplaints extends StatelessWidget {
                                 ),
                                 Text(
                                   "عرض التفاصيل",
-                                  style: TextStyle(
+                                  style: getRegular(
                                     fontSize: 10,
                                     color: AppColors.light1000,
-                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],

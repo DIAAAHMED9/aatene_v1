@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import '../component/custom_stepper/responsive_custom_stepper.dart';
 import '../component/custom_stepper/stepper_screen_base.dart';
 import 'component/aatene_button/aatene_button.dart';
+import 'component/text/aatene_custom_text.dart';
 import 'utlis/colors/app_color.dart';
 
 class ServiceStepperScreen extends StepperScreenBase {
@@ -21,12 +22,12 @@ class ServiceStepperScreen extends StepperScreenBase {
     this.isEditMode = false,
     this.serviceId,
   }) : super(
-          key: key,
-          appBarTitle: isEditMode ? 'تعديل الخدمة' : 'إضافة خدمة جديدة',
-          primaryColor: AppColors.primary400,
-          showBackButton: true,
-          isLinear: true,
-        );
+         key: key,
+         appBarTitle: isEditMode ? 'تعديل الخدمة' : 'إضافة خدمة جديدة',
+         primaryColor: AppColors.primary400,
+         showBackButton: true,
+         isLinear: true,
+       );
 
   @override
   State<ServiceStepperScreen> createState() => _ServiceStepperScreenState();
@@ -306,10 +307,7 @@ class _ServiceStepperScreenState
                             ? 'تحديث الخدمة'
                             : 'إنهاء ونشر الخدمة'
                       : 'التالي',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: getMedium(),
                 ),
               ),
       );
@@ -392,26 +390,29 @@ class _ServiceStepperScreenState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle, size: 170, color: Colors.green, shadows: [Shadow(blurRadius: 30, color: AppColors.success100, offset: Offset(0, 0))],),
+              Icon(
+                Icons.check_circle,
+                size: 170,
+                color: Colors.green,
+                shadows: [
+                  Shadow(
+                    blurRadius: 30,
+                    color: AppColors.success100,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
               Text(
                 isEditMode ? 'تم تحديث خدمتك بنجاح' : 'تم رفع خدمتك بنجاح',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary400,
-                ),
+                style: getBold(fontSize: 18, color: AppColors.primary400),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
 
               Text(
                 'تم رفع الخدمة بنجاح، وهي الآن قيد المراجعة من قبل الفريق المختص. سنوافيكم بالرد خلال 24 إلى 48 ساعة.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
-                ),
+                style: getBold(fontSize: 14, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 5),
@@ -534,10 +535,7 @@ class _ServiceStepperScreenState
       ),
       child: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Text(
-          'السابق',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
+        child: Text('السابق'),
       ),
     );
   }
@@ -548,9 +546,9 @@ class _ServiceStepperScreenState
       onPressed: () async {
         await _saveProgress();
       },
-      child: const Text(
+      child: Text(
         'حفظ مؤقت',
-        style: TextStyle(fontSize: 14, color: Colors.grey),
+        style: getRegular(fontSize: 14, color: Colors.grey),
       ),
     );
   }

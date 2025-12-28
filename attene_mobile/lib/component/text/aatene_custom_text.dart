@@ -25,13 +25,14 @@ TextStyle getCustomTextStyle({
 }
 
 TextStyle getBold({
-  required Color color,
-  required double fontSize,
+  double fontSize =16,
+  FontWeight fontWeight = FontWeightManager.bold,
+  Color color = Colors.black,
   TextOverflow? overflow,
   TextDecoration? decoration,
 }) {
   return TextStyle(
-    fontWeight: FontWeightManager.bold,
+    fontWeight: fontWeight,
     color: color,
     fontSize: fontSize,
     overflow: overflow,
@@ -41,13 +42,14 @@ TextStyle getBold({
 }
 
 TextStyle getBlack({
-  required Color color,
-  required double fontSize,
+  double fontSize =16,
+  FontWeight fontWeight = FontWeightManager.black,
+  Color color = Colors.black,
   TextOverflow? overflow,
   TextDecoration? decoration,
 }) {
   return TextStyle(
-    fontWeight: FontWeightManager.black,
+    fontWeight: fontWeight,
     color: color,
     fontSize: fontSize,
     overflow: overflow,
@@ -57,13 +59,18 @@ TextStyle getBlack({
 }
 
 TextStyle getRegular({
-  required Color color,
-  required double fontSize,
+  double fontSize =16,
+  double   letterSpacin= 1,
+  FontStyle? fontStyle,
+  FontWeight fontWeight = FontWeightManager.regular,
+  Color color = Colors.black,
   TextOverflow? overflow,
   TextDecoration? decoration,
 }) {
   return TextStyle(
-    fontWeight: FontWeightManager.regular,
+    letterSpacing: letterSpacin,
+    fontWeight:fontWeight,
+    fontStyle: fontStyle,
     color: color,
     fontSize: fontSize,
     overflow: overflow,
@@ -73,13 +80,14 @@ TextStyle getRegular({
 }
 
 TextStyle getMedium({
-  required Color color,
-  required double fontSize,
+  double fontSize =16,
+  FontWeight fontWeight = FontWeightManager.bold,
+  Color color = Colors.black,
   TextOverflow? overflow,
   TextDecoration? decoration,
 }) {
   return TextStyle(
-    fontWeight: FontWeightManager.medium,
+    fontWeight: fontWeight,
     color: color,
     fontSize: fontSize,
     overflow: overflow,

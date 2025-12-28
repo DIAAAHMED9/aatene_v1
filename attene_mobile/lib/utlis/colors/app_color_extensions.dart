@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'app_color.dart';
 
@@ -36,13 +37,13 @@ class AppColorThemes {
       onBackground: AppColors.neutral100,
       onSurface: AppColors.neutral100,
     ),
-    textTheme: const TextTheme(
-      displayLarge: TextStyle(color: AppColors.neutral100),
-      displayMedium: TextStyle(color: AppColors.neutral100),
-      displaySmall: TextStyle(color: AppColors.neutral100),
-      bodyLarge: TextStyle(color: AppColors.neutral200),
-      bodyMedium: TextStyle(color: AppColors.neutral300),
-      bodySmall: TextStyle(color: AppColors.neutral400),
+    textTheme:  TextTheme(
+      displayLarge:getRegular(color: AppColors.neutral100),
+      displayMedium: getRegular(color: AppColors.neutral100),
+      displaySmall:getRegular(color: AppColors.neutral100),
+      bodyLarge: getRegular(color: AppColors.neutral200),
+      bodyMedium: getRegular(color: AppColors.neutral300),
+      bodySmall:getRegular(color: AppColors.neutral400),
     ),
   );
 

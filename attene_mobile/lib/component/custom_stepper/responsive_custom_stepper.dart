@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../utlis/colors/app_color.dart';
@@ -59,21 +60,25 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     final isMobile = screenWidth < 600;
     final isTablet = screenWidth >= 600 && screenWidth < 1024;
-    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 100;
-    
+    final isKeyboardVisible = MediaQuery
+        .of(context)
+        .viewInsets
+        .bottom > 100;
+
     return Column(
       children: [
         // الرأس فقط عندما لا يكون الكيبورد مفتوحاً
-        // if (!isKeyboardVisible) 
-          _buildResponsiveStepperHeader(isMobile, isTablet),
-        
+        // if (!isKeyboardVisible)
+        _buildResponsiveStepperHeader(isMobile, isTablet),
+
         // المحتوى الرئيسي
-        Expanded(
-          child: widget.builder(context, widget.currentStep),
-        ),
+        Expanded(child: widget.builder(context, widget.currentStep)),
       ],
     );
   }
@@ -218,133 +223,140 @@ class _AnimatedStepCircle extends StatelessWidget {
           builder: (context, child) {
             final scale = isActive || isNext
                 ? Tween<double>(begin: 0.8, end: 1.0)
-                      .animate(
-                        CurvedAnimation(
-                          parent: animation,
-                          curve: isActive
-                              ? Curves.elasticOut
-                              : Curves.easeInOut,
-                        ),
-                      )
-                      .value
+                .animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: isActive
+                    ? Curves.elasticOut
+                    : Curves.easeInOut,
+              ),
+            )
+                .value
                 : 1.0;
 
             return Transform.scale(
               scale: scale,
               child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    width: circleSize,
-                    height: circleSize,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isCompleted || isActive
-                            ? AppColors.primary400
-                            : Colors.grey[300]!,
-                        width: isMobile ? 2.0 : 2.5,
-                      ),
-                      boxShadow: (isActive || isNext)
-                          ? [
-                              BoxShadow(
-                                color: AppColors.primary400.withOpacity(
-                                  0.3 * animation.value,
-                                ),
-                                blurRadius: isMobile ? 6 : 8,
-                                spreadRadius: isMobile ? 1 : 2,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : [],
+                  alignment: Alignment.center,
+                  children: [
+              AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
+              width: circleSize,
+              height: circleSize,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isCompleted || isActive
+                      ? AppColors.primary400
+                      : Colors.grey[300]!,
+                  width: isMobile ? 2.0 : 2.5,
+                ),
+                boxShadow: (isActive || isNext)
+                    ? [
+                  BoxShadow(
+                    color: AppColors.primary400.withOpacity(
+                      0.3 * animation.value,
                     ),
+                    blurRadius: isMobile ? 6 : 8,
+                    spreadRadius: isMobile ? 1 : 2,
+                    offset: const Offset(0, 2),
                   ),
-
-                  if (isCompleted || isActive)
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 600),
-                      width: isActive
-                          ? (isMobile ? 28 : 32)
-                          : (isMobile ? 30 : 34),
-                      height: isActive
-                          ? (isMobile ? 28 : 32)
-                          : (isMobile ? 30 : 34),
-                      curve: Curves.fastOutSlowIn,
-                      decoration: BoxDecoration(
-                        color: isCompleted
-                            ? AppColors.primary400.withOpacity(0.9)
-                            : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    switchInCurve: Curves.elasticOut,
-                    switchOutCurve: Curves.easeInBack,
-                    child: isCompleted
-                        ? Icon(
-                            Icons.check_rounded,
-                            color: Colors.white,
-                            size: isMobile ? 16 : 18,
-                            key: ValueKey('check_$stepNumber'),
-                          )
-                        : (isActive
-                            ? Container(
-                                width: isMobile ? 10 : 12,
-                                height: isMobile ? 10 : 12,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary400,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary400.withOpacity(0.5),
-                                      blurRadius: isMobile ? 3 : 4,
-                                      spreadRadius: isMobile ? 0.5 : 1,
-                                    ),
-                                  ],
-                                ),
-                                key: ValueKey('dot_$stepNumber'),
-                              )
-                            : Text(
-                                stepNumber.toString(),
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: isMobile ? 13 : 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                key: ValueKey('number_$stepNumber'),
-                              )),
-                  ),
-
-                  if (!isMobile)
-                    Positioned(
-                      bottom: -25,
-                      child: Column(
-                        children: [
-                          Text(
-                            step.title,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                              color: isActive || isCompleted ? AppColors.primary400 : Colors.grey[600],
-                            ),
-                          ),
-                          if (step.subtitle.isNotEmpty)
-                            Text(
-                              step.subtitle,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                ],
+                ]
+                    : [],
               ),
+            ),
+
+            if (isCompleted || isActive)
+            AnimatedContainer(
+            duration: const Duration(milliseconds: 600),
+            width: isActive
+            ? (isMobile ? 28 : 32)
+                : (isMobile ? 30 : 34),
+            height: isActive
+            ? (isMobile ? 28 : 32)
+                : (isMobile ? 30 : 34),
+            curve: Curves.fastOutSlowIn,
+            decoration: BoxDecoration(
+            color: isCompleted
+            ? AppColors.primary400.withOpacity(0.9)
+                : Colors.transparent,
+            shape: BoxShape.circle,
+            ),
+            ),
+
+            AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            switchInCurve: Curves.elasticOut,
+            switchOutCurve: Curves.easeInBack,
+            child: isCompleted
+            ? Icon(
+            Icons.check_rounded,
+            color: Colors.white,
+            size: isMobile ? 16 : 18,
+            key: ValueKey('check_$stepNumber'),
+            )
+                : (isActive
+            ? Container(
+            width: isMobile ? 10 : 12,
+            height: isMobile ? 10 : 12,
+            decoration: BoxDecoration(
+            color: AppColors.primary400,
+            shape: BoxShape.circle,
+            boxShadow: [
+            BoxShadow(
+            color: AppColors.primary400.withOpacity(
+            0.5,
+            ),
+            blurRadius: isMobile ? 3 : 4,
+            spreadRadius: isMobile ? 0.5 : 1,
+            ),
+            ],
+            ),
+            key: ValueKey('dot_$stepNumber'),
+            )
+                : Text(
+            stepNumber.toString(),
+            style: getBold(
+            color: Colors.grey,
+            fontSize: isMobile ? 13 : 14,
+            ),
+            key: ValueKey('number_$stepNumber'),
+            )),
+            ),
+
+            if (!isMobile)
+            Positioned(
+            bottom: -25,
+            child: Column(
+            children: [
+            Text(
+            step.title,
+            style: TextStyle(
+            fontFamily: "PingAR",
+            fontSize: 12,
+            fontWeight: isActive
+            ? FontWeight.bold
+                : FontWeight.normal,
+            color: isActive || isCompleted
+            ? AppColors.primary400
+                : Colors.grey[600],
+            ),
+            ),
+            if (step.subtitle.isNotEmpty)
+            Text(
+            step.subtitle,
+            style: getRegular( fontSize: 10,
+            color: Colors.grey,)
+            ),
+            ],
+            ),
+            )
+            ,
+            ]
+            ,
+            )
+            ,
             );
           },
         ),
@@ -375,7 +387,7 @@ class _AnimatedStepConnector extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool shouldAnimate =
         (isPrevious && stepIndex == currentStep - 1) ||
-        (isNext && stepIndex == currentStep);
+            (isNext && stepIndex == currentStep);
 
     return AnimatedBuilder(
       animation: animation,

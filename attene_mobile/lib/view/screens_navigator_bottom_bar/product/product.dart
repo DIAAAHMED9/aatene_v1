@@ -1,6 +1,7 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/appBar/custom_appbar.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/models/product_model.dart';
 import 'package:attene_mobile/my_app/my_app_controller.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -80,16 +81,12 @@ class ProductScreen extends GetView<ProductController> {
             const SizedBox(height: 24),
             Text(
               'يجب تسجيل الدخول',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
-              ),
+              style: getBold(fontSize: 24, color: Colors.grey),
             ),
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إدارة المنتجات والأقسام',
-              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+              style: getRegular(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -316,11 +313,7 @@ class ProductScreen extends GetView<ProductController> {
               children: [
                 Text(
                   product.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+                  style: getMedium(color: Colors.black87),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -340,7 +333,7 @@ class ProductScreen extends GetView<ProductController> {
                       SizedBox(width: 5),
                       Text(
                         controller.getSectionName(product.sectionId!),
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: getRegular(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -352,10 +345,7 @@ class ProductScreen extends GetView<ProductController> {
 
           Row(
             children: [
-              Text(
-                product.price ?? '0.0',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-              ),
+              Text(product.price ?? '0.0', style: getBold()),
               IconButton(
                 onPressed: () {
                   _editProduct(product);
@@ -393,22 +383,14 @@ class ProductScreen extends GetView<ProductController> {
             const SizedBox(height: 24),
             Text(
               'لا يوجد لديك أي أقسام',
-              style: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF555555),
-                fontWeight: FontWeight.w700,
-              ),
+              style: getBold(fontSize: 22, color: Color(0xFF555555)),
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: 280,
               child: Text(
                 'إبدأ بإضافة أقسام متجرك لتتمكن من إضافة المنتجات وترتيبها بشكل منظم',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.w500,
-                ),
+                style: getRegular(fontSize: 14, color: Color(0xFFAAAAAA)),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -449,11 +431,7 @@ class ProductScreen extends GetView<ProductController> {
               sectionName != null
                   ? 'لا يوجد منتجات في قسم $sectionName'
                   : 'لا يوجد لديك أي منتجات',
-              style: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF555555),
-                fontWeight: FontWeight.w700,
-              ),
+              style: getBold(fontSize: 22, color: Color(0xFF555555)),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -462,11 +440,7 @@ class ProductScreen extends GetView<ProductController> {
                 sectionName != null
                     ? 'يمكنك البدء بإضافة منتجات جديدة إلى هذا القسم'
                     : 'يمكنك البدء بإضافة منتجات جديدة إلى الأقسام التي قمت بإنشائها',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.w500,
-                ),
+                style: getRegular(fontSize: 14, color: Color(0xFFAAAAAA)),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -506,21 +480,14 @@ class ProductScreen extends GetView<ProductController> {
         children: [
           Icon(Icons.error_outline, size: 60, color: Colors.red),
           const SizedBox(height: 16),
-          Text(
-            'حدث خطأ',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
-            ),
-          ),
+          Text('حدث خطأ', style: getBold(fontSize: 18, color: Colors.red)),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: Text(
               controller.productsErrorMessage.value,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600]),
+              style: getRegular(color: Colors.grey),
             ),
           ),
           const SizedBox(height: 16),
@@ -576,12 +543,12 @@ class ProductScreen extends GetView<ProductController> {
             const SizedBox(height: 16),
             Text(
               '${tab.label}',
-              style: TextStyle(fontSize: 18, color: Colors.grey[400]),
+              style: getRegular(fontSize: 18, color: Colors.grey),
             ),
             const SizedBox(height: 8),
             Text(
               'تسجيل الدخول مطلوب لعرض المحتوى',
-              style: TextStyle(color: Colors.grey[400]),
+              style: getRegular(color: Colors.grey),
             ),
           ],
         ),

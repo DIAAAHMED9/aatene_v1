@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,9 +59,8 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                   widget.faq == null
                       ? 'إضافة سؤال شائع'
                       : 'تعديل السؤال الشائع',
-                  style: TextStyle(
+                  style: getBold(
                     fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
@@ -81,13 +81,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'السؤال',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('السؤال', style: getBold()),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                   TextField(
                     controller: questionController,
@@ -101,13 +95,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                     ),
                   ),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
-                  Text(
-                    'الجواب',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('الجواب', style: getBold()),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                   TextField(
                     controller: answerController,
@@ -177,11 +165,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                 ),
                 child: Text(
                   widget.faq == null ? 'إضافة السؤال' : 'تحديث السؤال',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: getMedium(color: Colors.white),
                 ),
               ),
             ),

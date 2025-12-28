@@ -45,7 +45,11 @@ class AateneButton extends StatelessWidget {
               )
             : Text(
                 buttonText,
-                style: TextStyle(color: textColor, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: textColor,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "PingAR",
+                ),
               ),
       ),
     );

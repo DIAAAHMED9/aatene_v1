@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../component/text/aatene_custom_text.dart';
 import '../../utlis/colors/app_color.dart';
 
 class NotificationFeed extends StatefulWidget {
@@ -11,13 +12,11 @@ class NotificationFeed extends StatefulWidget {
 }
 
 class _NotificationFeedState extends State<NotificationFeed> {
-
   bool activity = true;
   bool updates = true;
   bool messages = true;
   bool following = true;
   bool recommendations = false;
-
 
   Widget _settingItem({
     required String title,
@@ -29,17 +28,8 @@ class _NotificationFeedState extends State<NotificationFeed> {
       children: [
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          subtitle: Text(
-            subtitle,
-            style: const TextStyle(fontSize: 13),
-          ),
+          title: Text(title, style: getMedium()),
+          subtitle: Text(subtitle, style: getRegular(fontSize: 13)),
           trailing: Switch(
             value: value,
             onChanged: onChanged,
@@ -58,11 +48,7 @@ class _NotificationFeedState extends State<NotificationFeed> {
         backgroundColor: Colors.white,
         title: Text(
           "إعدادات الإشعارات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -101,21 +87,19 @@ class _NotificationFeedState extends State<NotificationFeed> {
           ),
           _settingItem(
             title: 'المتاجر أو الأشخاص الذين تتابعهم',
-            subtitle:
-            'نشاط المتاجر أو الأشخاص الذين قمت بمتابعتهم.',
+            subtitle: 'نشاط المتاجر أو الأشخاص الذين قمت بمتابعتهم.',
             value: following,
             onChanged: (v) => setState(() => following = v),
           ),
           _settingItem(
             title: 'التوصيات المخصصة',
             subtitle:
-            'اقتراح متاجر أو منتجات أو فعاليات استنادًا إلى تاريخك ونشاطك.',
+                'اقتراح متاجر أو منتجات أو فعاليات استنادًا إلى تاريخك ونشاطك.',
             value: recommendations,
             onChanged: (v) => setState(() => recommendations = v),
           ),
         ],
       ),
     );
-
   }
 }

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
@@ -10,11 +11,8 @@ class VindorHome extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "لوحة القيادة",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style:getBold( color: AppColors.neutral100,
+            fontSize: 20,) ,
         ),
         leading: IconButton(
           onPressed: () {},
@@ -92,7 +90,7 @@ class VindorHome extends StatelessWidget {
                           spacing: 10,
                           children: [
                             Icon(Icons.calendar_month_outlined),
-                            Text("الشهر الحالي", style: TextStyle()),
+                            Text("الشهر الحالي", style:getRegular(),),
                             Icon(Icons.keyboard_arrow_down_rounded),
                           ],
                         ),

@@ -4,26 +4,15 @@ class FAQ {
   final int id; // غير من String إلى int
   final String question;
   final String answer;
-  
-  FAQ({
-    required this.id,
-    required this.question,
-    required this.answer,
-  });
+
+  FAQ({required this.id, required this.question, required this.answer});
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'question': question,
-      'answer': answer,
-    };
+    return {'id': id, 'question': question, 'answer': answer};
   }
 
   Map<String, dynamic> toApiJson() {
-    return {
-      'question': question,
-      'answer': answer,
-    };
+    return {'question': question, 'answer': answer};
   }
 
   factory FAQ.fromApiJson(Map<String, dynamic> json) {
@@ -50,7 +39,7 @@ class Development {
   double price;
   int executionTime;
   String timeUnit;
-  
+
   Development({
     required this.id,
     required this.title,
@@ -80,7 +69,8 @@ class Development {
 
   factory Development.fromApiJson(Map<String, dynamic> json) {
     return Development(
-      id: json['id'] as int? ?? 0, // تحويل إلى int
+      id: json['id'] as int? ?? 0,
+      // تحويل إلى int
       title: json['title'] ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       executionTime: json['execute_count'] as int? ?? 0,
@@ -119,7 +109,7 @@ class ServiceImage {
   bool isMain;
   final bool isLocalFile;
   final File? file;
-  
+
   ServiceImage({
     required this.id,
     required this.url,
@@ -145,12 +135,7 @@ class ServiceImage {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'url': url,
-      'isMain': isMain,
-      'isLocalFile': isLocalFile,
-    };
+    return {'id': id, 'url': url, 'isMain': isMain, 'isLocalFile': isLocalFile};
   }
 }
 
@@ -174,7 +159,7 @@ class Service {
   final List<FAQ> questions;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  
+
   final bool acceptedCopyright;
   final bool acceptedTerms;
   final bool acceptedPrivacy;
@@ -196,7 +181,7 @@ class Service {
     required this.images,
     required this.description,
     required this.questions,
-     this.imagesUrl,
+    this.imagesUrl,
     this.createdAt,
     this.updatedAt,
     this.acceptedCopyright = false,
@@ -215,10 +200,11 @@ class Service {
     }
 
     return Service(
-      id: json['id'] as int?, // تأكد أنه int
+      id: json['id'] as int?,
+      // تأكد أنه int
       slug: json['slug'] ?? '',
       title: json['title'] ?? '',
-      sectionId: json['section_id'] is String 
+      sectionId: json['section_id'] is String
           ? int.tryParse(json['section_id']) ?? 0
           : json['section_id'] as int? ?? 0,
       categoryId: json['category_id'] is String
@@ -236,14 +222,18 @@ class Service {
       executeCount: json['execute_count'] is String
           ? int.tryParse(json['execute_count']) ?? 0
           : json['execute_count'] as int? ?? 0,
-      extras: (json['extras'] as List<dynamic>?)
-          ?.map((extra) => Development.fromApiJson(extra))
-          .toList() ?? [],
+      extras:
+          (json['extras'] as List<dynamic>?)
+              ?.map((extra) => Development.fromApiJson(extra))
+              .toList() ??
+          [],
       images: imagesList,
       description: json['description'] ?? '',
-      questions: (json['questions'] as List<dynamic>?)
-          ?.map((q) => FAQ.fromApiJson(q))
-          .toList() ?? [],
+      questions:
+          (json['questions'] as List<dynamic>?)
+              ?.map((q) => FAQ.fromApiJson(q))
+              .toList() ??
+          [],
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
           : null,

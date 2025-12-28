@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/view/login%20and%20start/Register/register_controller.dart';
@@ -38,11 +39,7 @@ class Register extends StatelessWidget {
                 ),
                 Text(
                   isRTL ? 'أهلاً بك في اعطيني' : 'Welcome to Atene',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0071A7),
-                  ),
+                  style: getBold(color: AppColors.primary400),
                   textAlign: isRTL ? TextAlign.right : TextAlign.left,
                 ),
                 SizedBox(height: ResponsiveDimensions.h(24)),
@@ -52,7 +49,8 @@ class Register extends StatelessWidget {
                     hintText: isRTL ? 'الاسم الكامل' : 'Full Name',
                     errorText: controller.nameError.value,
                     onChanged: controller.updateName,
-                    textInputType: TextInputType.name, textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.name,
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -62,7 +60,8 @@ class Register extends StatelessWidget {
                     hintText: isRTL ? 'البريد الإلكتروني' : 'Email',
                     errorText: controller.emailError.value,
                     onChanged: controller.updateEmail,
-                    textInputType: TextInputType.emailAddress, textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -72,7 +71,8 @@ class Register extends StatelessWidget {
                     hintText: isRTL ? 'رقم الجوال' : 'Phone Number',
                     errorText: controller.phoneError.value,
                     onChanged: controller.updatePhone,
-                    textInputType: TextInputType.phone, textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -93,7 +93,8 @@ class Register extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: controller.togglePasswordVisibility,
-                    ), textInputAction: TextInputAction.next,
+                    ),
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -114,7 +115,8 @@ class Register extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: controller.toggleConfirmPasswordVisibility,
-                    ), textInputAction: TextInputAction.done,
+                    ),
+                    textInputAction: TextInputAction.done,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(30)),
@@ -138,18 +140,14 @@ class Register extends StatelessWidget {
                       isRTL
                           ? 'لديك حساب بالفعل؟ '
                           : 'Already have an account? ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: ResponsiveDimensions.f(14),
-                      ),
+                      style: getRegular(fontSize: ResponsiveDimensions.f(14)),
                     ),
                     GestureDetector(
                       onTap: controller.goToLogin,
                       child: Text(
                         isRTL ? 'تسجيل الدخول' : 'Login',
-                        style: TextStyle(
-                          color: const Color(0xFF0071A7),
-                          fontWeight: FontWeight.bold,
+                        style: getBold(
+                          color: AppColors.primary400,
                           fontSize: ResponsiveDimensions.f(14),
                         ),
                       ),

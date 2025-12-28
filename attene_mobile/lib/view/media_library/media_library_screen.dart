@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../component/text/aatene_custom_text.dart';
+
 class MediaLibraryScreen extends StatefulWidget {
   final bool isSelectionMode;
   final int? maxSelectionCount;
@@ -107,10 +109,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         children: [
           CircularProgressIndicator(color: AppColors.primary400),
           SizedBox(height: 16),
-          Text(
-            'جاري تحميل الملفات...',
-            style: TextStyle(color: Colors.grey[600]),
-          ),
+          Text('جاري تحميل الملفات...', style: getRegular(color: Colors.grey)),
         ],
       ),
     );
@@ -135,12 +134,12 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
           SizedBox(height: 16),
           Text(
             'لا توجد ملفات محملة',
-            style: TextStyle(fontSize: 18, color: Colors.grey[500]),
+            style: getRegular(fontSize: 18, color: Colors.grey),
           ),
           SizedBox(height: 8),
           Text(
             'انقر على زر "+" لرفع الملفات',
-            style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+            style: getRegular(fontSize: 14, color: Color(0xFFBDBDBD)),
           ),
         ],
       ),
@@ -166,7 +165,10 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                 Expanded(
                   child: Text(
                     'الملفات المرفوعة حديثاً. سيتم رفعها تلقائياً إلى السيرفر.',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary500),
+                    style: getRegular(
+                      fontSize: 12,
+                      color: AppColors.primary500,
+                    ),
                   ),
                 ),
               ],
@@ -188,7 +190,11 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                   SizedBox(height: 8),
                   Text(
                     'جاري الرفع... ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary400),
+                    style: TextStyle(
+                      fontFamily: "PingAR",
+                      fontSize: 12,
+                      color: AppColors.primary400,
+                    ),
                   ),
                 ],
               );
@@ -355,14 +361,14 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
               children: [
                 Text(
                   media.name,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: getMedium(fontSize: 14),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4),
                 Text(
                   _formatFileSize(media.size),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: getRegular(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
@@ -402,7 +408,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
               SizedBox(height: 8),
               Text(
                 'جاري الرفع...',
-                style: TextStyle(color: Colors.white, fontSize: 12),
+                style: getRegular(color: Colors.white, fontSize: 12),
               ),
             ],
           ),
@@ -438,11 +444,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         ),
         child: Text(
           'جاري الرفع',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
+          style: getBold(color: Colors.white, fontSize: 10),
         ),
       ),
     );
@@ -531,10 +533,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Text(
-              'اختر طريقة الرفع',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('اختر طريقة الرفع', style: getBold(fontSize: 18)),
             SizedBox(height: 20),
             Row(
               children: [
@@ -594,10 +593,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
             children: [
               Icon(icon, size: 40, color: AppColors.primary400),
               SizedBox(height: 8),
-              Text(
-                title,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
+              Text(title, style: getRegular(fontSize: 14)),
             ],
           ),
         ),
@@ -614,18 +610,14 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
           SizedBox(height: 16),
           Text(
             'لا توجد ملفات',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w500,
-            ),
+            style: getRegular(fontSize: 18, color: Colors.grey),
           ),
           SizedBox(height: 8),
           Text(
             controller.currentTabIndex.value == 0
                 ? 'انقر على زر "+" لإضافة الملفات الأولى'
                 : 'انقر على زر "تحميل" لإضافة الملفات الأولى',
-            style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+            style: getRegular(fontSize: 14, color: Color(0xFFBDBDBD)),
           ),
         ],
       ),
@@ -665,7 +657,10 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                           SizedBox(height: 16),
                           Text(
                             'عرض الفيديو',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: getRegular(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
                           ),
                         ],
                       ),
@@ -712,14 +707,14 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600])),
+            child: Text('إلغاء', style: getRegular(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               controller.deleteMediaItem(media);
             },
-            child: Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text('حذف', style: getRegular(color: Colors.red)),
           ),
         ],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

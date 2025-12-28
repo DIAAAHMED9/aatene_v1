@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -29,10 +30,7 @@ class TypeStore extends GetView<CreateStoreController> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text(
-          'نوع المتجر',
-          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
-        ),
+        title: Text('نوع المتجر', style: getRegular()),
         centerTitle: false,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -81,11 +79,7 @@ class TypeStore extends GetView<CreateStoreController> {
       children: [
         Text(
           'قم باختيار نوع المتجر الذي تريده (تقديم خدمات / بيع منتجات)',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
+          style: getRegular(fontSize: 18),
         ),
       ],
     );
@@ -147,9 +141,8 @@ class TypeStore extends GetView<CreateStoreController> {
             const SizedBox(width: 16),
             Text(
               title,
-              style: TextStyle(
+              style: getRegular(
                 fontSize: 18,
-                fontWeight: FontWeight.w400,
                 color: isSelected ? AppColors.primary400 : Color(0XFF393939),
               ),
             ),
@@ -192,16 +185,12 @@ class TypeStore extends GetView<CreateStoreController> {
             const SizedBox(height: 24),
             Text(
               'يجب تسجيل الدخول',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
-              ),
+              style: getBold(fontSize: 24, color: Colors.grey),
             ),
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إضافة المتاجر',
-              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+              style: getRegular(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

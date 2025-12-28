@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,16 +42,15 @@ class ImagesScreenBody extends StatelessWidget {
               children: [
                 Text(
                   'صور الخدمة',
-                  style: TextStyle(
+                  style: getBold(
                     fontSize: ResponsiveDimensions.responsiveFontSize(20),
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Row(
                   children: [
                     Text(
                       'الصور',
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.responsiveFontSize(18),
                       ),
                     ),
@@ -58,7 +58,7 @@ class ImagesScreenBody extends StatelessWidget {
                 ),
                 Text(
                   'يمكنك إضافة حتى (10) صور و (1) فيديو',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.responsiveFontSize(9),
                   ),
                 ),
@@ -83,7 +83,7 @@ class ImagesScreenBody extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'يمكنك سحب و افلات الصورة لاعادة ترتيب الصور',
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               13,
                             ),
@@ -116,7 +116,7 @@ class ImagesScreenBody extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '• الأبعاد: الصورة بعرض 800 بكسل وطول 460 بكسل (460x800). \n • الحجم:ألا يتعدى حجم الصورة أو الفيديو 50 ميغابايت.\n• الجودة: أن تكون الصورة عالية الجودة وواضحة. ',
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               13,
                             ),
@@ -180,9 +180,9 @@ class ImagesScreenBody extends StatelessWidget {
                 SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                 Text(
                   'اضف او اسحب صورة او فيديو',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                    color: Colors.grey[600],
+                    color: Color(0xFF757575),
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
@@ -291,14 +291,10 @@ class ImagesScreenBody extends StatelessWidget {
                           ),
                           Text(
                             'التالي: الوصف والأسئلة الشائعة',
-                            style: TextStyle(
-                              fontSize: ResponsiveDimensions.responsiveFontSize(
-                                16,
-                              ),
-                              fontWeight: FontWeight.w600,
+                            style: getMedium(
                               color: hasImages
                                   ? Colors.white
-                                  : Colors.grey[600],
+                                  : Color(0xFF757575),
                             ),
                           ),
                         ],
@@ -327,10 +323,9 @@ class ImagesScreenBody extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'يجب إضافة صورة واحدة على الأقل',
-                        style: TextStyle(
+                        style: getRegular(
                           fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                          color: Colors.orange[700],
-                          fontWeight: FontWeight.w500,
+                          color: Colors.orange,
                         ),
                       ),
                     ),
@@ -342,9 +337,9 @@ class ImagesScreenBody extends StatelessWidget {
               onPressed: () => Get.back(),
               child: Text(
                 'العودة للسعر والتطويرات',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                  color: Colors.grey[600],
+                  color: Color(0xFF757575),
                 ),
               ),
             ),

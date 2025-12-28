@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
@@ -50,14 +51,12 @@ class ControllerVendor extends StatelessWidget {
                               children: [
                                 Text(
                                   "jerusalemlll",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+                                  style:getBold(                                    fontSize: 18,
+                                  ) ,
                                 ),
                                 Text(
                                   " فلسطين ، الخليل",
-                                  style: TextStyle(fontSize: 18),
+                                  style:getRegular(fontSize: 18) ,
                                 ),
                               ],
                             ),

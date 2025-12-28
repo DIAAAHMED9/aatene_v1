@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/appBar/tab_model.dart';
@@ -91,7 +92,7 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildBody(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return GetBuilder<MyAppController>(
       builder: (myAppController) {
         if (!myAppController.isLoggedIn.value) {
@@ -106,13 +107,11 @@ class ProductScreen extends GetView<ProductController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(
-                      color: AppColors.primary400,
-                    ),
+                    CircularProgressIndicator(color: AppColors.primary400),
                     SizedBox(height: ResponsiveDimensions.f(16)),
                     Text(
                       'جاري تحميل التبويبات...',
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.f(14),
                         color: Colors.grey,
                       ),
@@ -127,8 +126,14 @@ class ProductScreen extends GetView<ProductController> {
                 Expanded(
                   child: TabBarView(
                     controller: productController.tabController,
-                    children: List.generate(productController.tabs.length, (index) {
-                      return _buildTabContent(productController.tabs[index], index, context);
+                    children: List.generate(productController.tabs.length, (
+                      index,
+                    ) {
+                      return _buildTabContent(
+                        productController.tabs[index],
+                        index,
+                        context,
+                      );
                     }),
                   ),
                 ),
@@ -201,8 +206,10 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildGridLayout(List<Product> products, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = _getGridCrossAxisCount(context);
-    final spacing = screenWidth < 600 ? ResponsiveDimensions.f(8) : ResponsiveDimensions.f(16);
-    
+    final spacing = screenWidth < 600
+        ? ResponsiveDimensions.f(8)
+        : ResponsiveDimensions.f(16);
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       child: GridView.builder(
@@ -220,7 +227,9 @@ class ProductScreen extends GetView<ProductController> {
           return ProductGridItem(
             product: products[index],
             controller: controller,
-            isSelected: controller.selectedProductIds.contains('${products[index].id}'),
+            isSelected: controller.selectedProductIds.contains(
+              '${products[index].id}',
+            ),
             onSelectionChanged: (isSelected) {
               controller.toggleProductSelection('${products[index].id}');
             },
@@ -242,19 +251,25 @@ class ProductScreen extends GetView<ProductController> {
   Widget _buildListLayout(List<Product> products, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16)),
+        padding: EdgeInsets.all(
+          isSmallScreen
+              ? ResponsiveDimensions.f(12)
+              : ResponsiveDimensions.f(16),
+        ),
         itemCount: products.length,
         itemBuilder: (context, index) {
           return ProductListItem(
             product: products[index],
             controller: controller,
-            isSelected: controller.selectedProductIds.contains('${products[index].id}'),
+            isSelected: controller.selectedProductIds.contains(
+              '${products[index].id}',
+            ),
             onSelectionChanged: (isSelected) {
               controller.toggleProductSelection('${products[index].id}');
             },
@@ -270,7 +285,9 @@ class ProductScreen extends GetView<ProductController> {
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -282,22 +299,21 @@ class ProductScreen extends GetView<ProductController> {
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             'يجب تسجيل الدخول',
-            style: TextStyle(
+            style: getBold(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(20)
                   : ResponsiveDimensions.f(24),
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'يرجى تسجيل الدخول للوصول إلى إدارة المنتجات والأقسام',
-            style: TextStyle(
+            style: getRegular(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
-              color: Colors.grey[500],
+              color: Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),
@@ -309,7 +325,7 @@ class ProductScreen extends GetView<ProductController> {
               icon: Icon(Icons.login_rounded, size: ResponsiveDimensions.f(20)),
               label: Text(
                 'تسجيل الدخول',
-                style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+                style: getRegular(fontSize: ResponsiveDimensions.f(14)),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary400,
@@ -337,7 +353,9 @@ class ProductScreen extends GetView<ProductController> {
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -349,24 +367,22 @@ class ProductScreen extends GetView<ProductController> {
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             _getEmptyMessage(sectionName, tabIndex),
-            style: TextStyle(
+            style: getBold(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(18)
                   : ResponsiveDimensions.f(22),
               color: const Color(0xFF555555),
-              fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: ResponsiveDimensions.f(12)),
           Text(
             _getEmptyDescription(sectionName, tabIndex),
-            style: TextStyle(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(12)
                   : ResponsiveDimensions.f(14),
-              color: const Color(0xFFAAAAAA),
-              fontWeight: FontWeight.w500,
+              color: Color(0xFFAAAAAA),
             ),
             textAlign: TextAlign.center,
           ),
@@ -384,7 +400,7 @@ class ProductScreen extends GetView<ProductController> {
                 ),
                 child: Text(
                   'إضافة منتج جديد',
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.white,
                     fontSize: ResponsiveDimensions.f(14),
                   ),
@@ -436,7 +452,7 @@ class ProductScreen extends GetView<ProductController> {
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'جاري تحميل المنتجات...',
-            style: TextStyle(
+            style: getRegular(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -454,7 +470,9 @@ class ProductScreen extends GetView<ProductController> {
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -464,22 +482,13 @@ class ProductScreen extends GetView<ProductController> {
             color: Colors.red,
           ),
           SizedBox(height: ResponsiveDimensions.f(16)),
-          Text(
-            'حدث خطأ',
-            style: TextStyle(
-              fontSize: isSmallScreen
-                  ? ResponsiveDimensions.f(16)
-                  : ResponsiveDimensions.f(18),
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
-            ),
-          ),
+          Text('حدث خطأ', style: getBold(color: Colors.red)),
           SizedBox(height: ResponsiveDimensions.f(8)),
           Obx(
             () => Text(
               controller.productsErrorMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: getRegular(
                 fontSize: isSmallScreen
                     ? ResponsiveDimensions.f(12)
                     : ResponsiveDimensions.f(14),
@@ -500,7 +509,7 @@ class ProductScreen extends GetView<ProductController> {
             ),
             child: Text(
               'إعادة المحاولة',
-              style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+              style: getRegular(fontSize: ResponsiveDimensions.f(14)),
             ),
           ),
           // مساحة إضافية للكيبورد
@@ -523,7 +532,7 @@ class ProductScreen extends GetView<ProductController> {
           icon: Icon(Icons.add, size: ResponsiveDimensions.f(20)),
           label: Text(
             'إضافة منتج',
-            style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+            style: getRegular(fontSize: ResponsiveDimensions.f(14)),
           ),
           backgroundColor: AppColors.primary400,
           foregroundColor: Colors.white,

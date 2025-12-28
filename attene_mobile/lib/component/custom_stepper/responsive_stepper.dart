@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'responsive_utils.dart';
 import 'stepper_constants.dart';
@@ -164,6 +165,7 @@ class ResponsiveStepper extends StatelessWidget {
                 Text(
                   step.title,
                   style: TextStyle(
+                    fontFamily: "PingAR",
                     fontSize: isMobile ? 14 : 12,
                     fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                     color: _getStepTextColor(isActive, isCompleted),
@@ -175,6 +177,7 @@ class ResponsiveStepper extends StatelessWidget {
                     child: Text(
                       step.subtitle,
                       style: TextStyle(
+                        fontFamily: "PingAR",
                         fontSize: isMobile ? 12 : 10,
                         color: Colors.grey[600],
                       ),
@@ -255,6 +258,7 @@ class ResponsiveStepper extends StatelessWidget {
                   Text(
                     step.title,
                     style: TextStyle(
+                      fontFamily: "PingAR",
                       fontSize: 16,
                       fontWeight: isActive
                           ? FontWeight.bold
@@ -265,7 +269,7 @@ class ResponsiveStepper extends StatelessWidget {
                   if (step.subtitle.isNotEmpty)
                     Text(
                       step.subtitle,
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style:getRegular(fontSize: 14, color: Colors.grey),
                     ),
                 ],
               ),
@@ -327,6 +331,7 @@ class ResponsiveStepper extends StatelessWidget {
       return Text(
         '${index + 1}',
         style: TextStyle(
+          fontFamily: "PingAR",
           fontSize: size * 0.4,
           fontWeight: FontWeight.bold,
           color: isActive ? activeColor : Colors.grey[600],

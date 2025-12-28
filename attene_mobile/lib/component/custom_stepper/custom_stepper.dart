@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -62,11 +63,9 @@ class _CustomStepperFixedState extends State<CustomStepperFixed>
           children: [
             // إخفاء الستيببر فقط عندما يكون الكيبورد مفتوحاً
             if (!isKeyboardVisible) _buildStepperHeader(),
-            
+
             // المحتوى الرئيسي
-            Expanded(
-              child: widget.builder(context, widget.currentStep),
-            ),
+            Expanded(child: widget.builder(context, widget.currentStep)),
           ],
         );
       },
@@ -252,7 +251,9 @@ class _AnimatedStepCircle extends StatelessWidget {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.primary400.withOpacity(0.5),
+                                        color: AppColors.primary400.withOpacity(
+                                          0.5,
+                                        ),
                                         blurRadius: 4,
                                         spreadRadius: 1,
                                       ),
@@ -262,10 +263,9 @@ class _AnimatedStepCircle extends StatelessWidget {
                                 )
                               : Text(
                                   stepNumber.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
+                                  style: getBold(
+                                    color: Colors.grey,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
                                   ),
                                   key: ValueKey('number_$stepNumber'),
                                 )),

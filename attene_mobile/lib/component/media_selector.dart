@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -33,8 +34,8 @@ class MediaSelector extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.h(4)),
             Text(
               'إضافة صورة',
-              style: TextStyle(
-                color: Colors.grey[600],
+              style: getRegular(
+                color: Colors.grey,
                 fontSize: ResponsiveDimensions.f(10),
               ),
             ),

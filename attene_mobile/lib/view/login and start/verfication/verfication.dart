@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -74,10 +75,7 @@ class VerificationCodeField extends StatelessWidget {
           filled: true,
           fillColor: hasError ? Colors.red.withOpacity(0.05) : Colors.grey[50],
         ),
-        style: TextStyle(
-          fontSize: ResponsiveDimensions.f(20),
-          fontWeight: FontWeight.bold,
-        ),
+        style: getBold(fontSize: ResponsiveDimensions.f(20)),
       ),
     );
   }
@@ -134,11 +132,7 @@ class Verification extends StatelessWidget {
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
                   isRTL ? 'تأكد من رقم الهاتف' : 'Verify Phone Number',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(35),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: getBold(fontSize: ResponsiveDimensions.f(35)),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
@@ -150,9 +144,9 @@ class Verification extends StatelessWidget {
                     isRTL
                         ? 'لقد ارسلنا رمز التحقق الى +972599084404 اذا لم يتم تسلمها. فانقر فوق اعادة رمز التحقق'
                         : 'We have sent a verification code to +972599084404 If you didn\'t receive it, click Resend',
-                    style: TextStyle(
+                    style: getRegular(
                       fontSize: ResponsiveDimensions.f(16),
-                      color: Colors.grey[600],
+                      color: Colors.grey,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -186,10 +180,9 @@ class Verification extends StatelessWidget {
                           ),
                           child: Text(
                             controller.errorMessage.value,
-                            style: TextStyle(
+                            style: getRegular(
                               color: Colors.red,
                               fontSize: ResponsiveDimensions.f(14),
-                              fontWeight: FontWeight.w500,
                             ),
                             textAlign: isRTL ? TextAlign.right : TextAlign.left,
                           ),
@@ -203,8 +196,8 @@ class Verification extends StatelessWidget {
                     children: [
                       Text(
                         isRTL ? 'لم تستلم الرمز؟ ' : 'Didn\'t receive code? ',
-                        style: TextStyle(
-                          color: Colors.grey[600],
+                        style: getRegular(
+                          color: Colors.grey,
                           fontSize: ResponsiveDimensions.f(14),
                         ),
                       ),
@@ -215,9 +208,8 @@ class Verification extends StatelessWidget {
                               : controller.resendCode,
                           child: Text(
                             isRTL ? 'إعادة الإرسال' : 'Resend',
-                            style: TextStyle(
+                            style: getBold(
                               color: AppColors.primary400,
-                              fontWeight: FontWeight.bold,
                               fontSize: ResponsiveDimensions.f(14),
                             ),
                           ),
@@ -227,8 +219,8 @@ class Verification extends StatelessWidget {
                           isRTL
                               ? 'إعادة الإرسال خلال ${controller.resendCountdown.value} ثانية'
                               : 'Resend in ${controller.resendCountdown.value}s',
-                          style: TextStyle(
-                            color: Colors.grey[500],
+                          style: getRegular(
+                            color: Colors.grey,
                             fontSize: ResponsiveDimensions.f(14),
                           ),
                         ),

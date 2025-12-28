@@ -2,6 +2,7 @@ import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
 import '../../../utlis/colors/app_color.dart';
 
 class SafetyRulesScreen extends StatelessWidget {
@@ -14,11 +15,7 @@ class SafetyRulesScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "قواعد السلامة",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -43,11 +40,7 @@ class SafetyRulesScreen extends StatelessWidget {
             children: [
               Text(
                 "نصائح وإرشادات لضمان البيع والشراء بأمان عبر منصتنا، تحميك وتساعدك على تجنب المشاكل المحتملة.",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
+                style: getRegular(fontSize: 14, color: Colors.grey),
               ),
 
               // Tabs
@@ -106,17 +99,10 @@ class SafetyRulesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                "طرق المحافظة على أمان حسابك",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              Text("طرق المحافظة على أمان حسابك", style: getBold()),
               Text(
                 "نصائح وإرشادات لضمان تجربة بيع وشراء آمنة",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: getRegular(color: Colors.grey, fontSize: 12),
               ),
               // Card Privacy
               SizedBox(
@@ -128,7 +114,7 @@ class SafetyRulesScreen extends StatelessWidget {
                     SafetyCard(
                       icon: Icons.lock_outline,
                       text:
-                      'اختر كلمة سر صعبة التخمين، مكونة من أحرف وأرقام ورموز، ولا تشارك معلومات الدخول على متصفحك لأمان أعلى',
+                          'اختر كلمة سر صعبة التخمين، مكونة من أحرف وأرقام ورموز، ولا تشارك معلومات الدخول على متصفحك لأمان أعلى',
                     ),
                     SizedBox(width: 12),
                     SafetyCard(
@@ -150,25 +136,25 @@ class SafetyRulesScreen extends StatelessWidget {
               ),
               Text(
                 "اتخذ إجراءً إن شككت بمصداقية إعلان أو حساب",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: getBold(),
               ),
               Text(
                 "البيع والشراء عبر أعطيني محاكاة لتجربة البيع والشراء التقليدية، أي أن عليك أن تقارن الأسعار، وتجمع المعلومات، وتتواصل مع الطرف الآخر وتطرح أسئلتك بكل شفافية، للتأكد من وصولك إلى هدفك من التصفح",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: getRegular(color: Colors.grey, fontSize: 12),
               ),
-              AateneButton(buttonText: "تواصل معنا", color: AppColors.primary400,textColor: AppColors.light1000,borderColor: AppColors.primary400,)
-
-
+              AateneButton(
+                buttonText: "تواصل معنا",
+                color: AppColors.primary400,
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary400,
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
   Widget _dot({required bool isActive}) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -181,7 +167,6 @@ class SafetyRulesScreen extends StatelessWidget {
       ),
     );
   }
-
 
   static Widget _tabButton({
     required String text,
@@ -204,9 +189,8 @@ class SafetyRulesScreen extends StatelessWidget {
             icon,
             Text(
               text,
-              style: TextStyle(
-                color: selected ? Colors.white : const Color(0xFF3E5C7F),
-                fontWeight: FontWeight.w600,
+              style: getMedium(
+                color: selected ? Colors.white : Color(0xFF3E5C7F),
               ),
             ),
           ],
@@ -233,30 +217,18 @@ class BulletText extends StatelessWidget {
             child: Icon(Icons.circle, size: 6, color: Colors.black87),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 15,
-                height: 1.6,
-                color: Colors.black87,
-              ),
-            ),
-          ),
+          Expanded(child: Text(text, style: getRegular(fontSize: 15))),
         ],
       ),
     );
   }
 }
+
 class SafetyCard extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const SafetyCard({
-    super.key,
-    required this.icon,
-    required this.text,
-  });
+  const SafetyCard({super.key, required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -276,25 +248,16 @@ class SafetyCard extends StatelessWidget {
               color: const Color(0xFF3F5B78),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 26,
-            ),
+            child: Icon(icon, color: Colors.white, size: 26),
           ),
           const SizedBox(height: 12),
           Text(
             text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              height: 1.6,
-              color: Colors.black87,
-            ),
+            style: getRegular(fontSize: 14),
           ),
         ],
       ),
     );
   }
 }
-

@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/Text/text_with_star.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
@@ -22,9 +23,8 @@ class SectionTitleWidget extends StatelessWidget {
       onTap: onTap,
       child: Text(
         title,
-        style: TextStyle(
+        style: getBold(
           fontSize: ResponsiveDimensions.f(18),
-          fontWeight: FontWeight.bold,
           color: AppColors.primary400,
         ),
       ),
@@ -61,18 +61,17 @@ class CategorySectionWidget extends StatelessWidget {
                 children: [
                   Text(
                     selectedSection.name,
-                    style: TextStyle(
+                    style: getBold(
                       fontSize: ResponsiveDimensions.f(16),
-                      fontWeight: FontWeight.bold,
                       color: AppColors.primary400,
                     ),
                   ),
                   SizedBox(height: ResponsiveDimensions.f(8)),
                   Text(
                     'منتجات خاصة بالملابس و متعلقاتها',
-                    style: TextStyle(
+                    style: getRegular(
                       fontSize: ResponsiveDimensions.f(14),
-                      color: Colors.grey[600],
+                      color: Colors.grey,
                     ),
                   ),
                 ],
@@ -86,7 +85,7 @@ class CategorySectionWidget extends StatelessWidget {
                 ),
                 child: Text(
                   controller.fieldErrors['section']!,
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.f(12),
                   ),
@@ -115,10 +114,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.f(5)),
             Text(
               'يمكنك إضافة حتى (10) صور و (1) فيديو',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(12),
-                color: Colors.black,
-              ),
+              style: getRegular(fontSize: ResponsiveDimensions.f(12)),
             ),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
@@ -134,7 +130,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
               ),
               child: Text(
                 'يمكنك سحب وافلات الصورة لاعادة ترتيب الصور',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.f(12),
                   color: AppColors.primary400,
                 ),
@@ -147,7 +143,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: ResponsiveDimensions.f(8)),
                 child: Text(
                   controller.fieldErrors['media']!,
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.f(12),
                   ),
@@ -199,9 +195,9 @@ class ImageUploadSectionWidget extends StatelessWidget {
                     SizedBox(height: ResponsiveDimensions.f(8)),
                     Text(
                       'اضف او اسحب صورة او فيديو',
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.f(14),
-                        color: Colors.grey[600],
+                        color: Colors.grey,
                       ),
                     ),
                     SizedBox(height: ResponsiveDimensions.f(4)),
@@ -233,7 +229,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
         children: [
           Text(
             'الصور المختارة (${controller.selectedMedia.length})',
-            style: TextStyle(
+            style: getMedium(
               fontSize: ResponsiveDimensions.f(14),
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -324,7 +320,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                 media.name.length > 12
                     ? '${media.name.substring(0, 12)}...'
                     : media.name,
-                style: TextStyle(
+                style: getRegular(
                   color: Colors.white,
                   fontSize: ResponsiveDimensions.f(8),
                 ),
@@ -350,7 +346,6 @@ class ProductNameSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         TextWithStar(text: "اسم المنتج"),
         SizedBox(height: ResponsiveDimensions.f(8)),
         GetBuilder<AddProductController>(
@@ -374,7 +369,8 @@ class ProductNameSectionWidget extends StatelessWidget {
                           .remove('productName');
                       controller.update();
                     }
-                  }, textInputAction: TextInputAction.next,
+                  },
+                  textInputAction: TextInputAction.next,
                 ),
                 if (controller.fieldErrors.containsKey('productName'))
                   Padding(
@@ -384,7 +380,7 @@ class ProductNameSectionWidget extends StatelessWidget {
                     ),
                     child: Text(
                       controller.fieldErrors['productName']!,
-                      style: TextStyle(
+                      style: getRegular(
                         color: Colors.red,
                         fontSize: ResponsiveDimensions.f(12),
                       ),
@@ -397,9 +393,9 @@ class ProductNameSectionWidget extends StatelessWidget {
         SizedBox(height: ResponsiveDimensions.f(8)),
         Text(
           'قم بتضمين الكلمات الرئيسية التي يستخدمها المشترون للبحث عن هذا العنصر.',
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.f(12),
-            color: Colors.grey[600],
+            color: Colors.grey,
           ),
         ),
       ],
@@ -452,7 +448,8 @@ class PriceSectionWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  fillColor: Colors.transparent, textInputAction: TextInputAction.next,
+                  fillColor: Colors.transparent,
+                  textInputAction: TextInputAction.next,
                 ),
                 if (controller.fieldErrors.containsKey('price'))
                   Padding(
@@ -462,7 +459,7 @@ class PriceSectionWidget extends StatelessWidget {
                     ),
                     child: Text(
                       controller.fieldErrors['price']!,
-                      style: TextStyle(
+                      style: getRegular(
                         color: Colors.red,
                         fontSize: ResponsiveDimensions.f(12),
                       ),
@@ -526,9 +523,9 @@ class CategoriesSectionWidget extends StatelessWidget {
                             : controller.selectedCategoryName,
                         decoration: InputDecoration(
                           hintText: 'اختر فئة المنتج',
-                          hintStyle: TextStyle(
+                          hintStyle: getRegular(
                             fontSize: ResponsiveDimensions.f(14),
-                            color: Colors.grey[600],
+                            color: Colors.grey,
                           ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
@@ -548,6 +545,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: TextStyle(
+                                fontFamily: "PingAR",
                                 fontSize: ResponsiveDimensions.f(14),
                                 color:
                                     categoryId ==
@@ -604,7 +602,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                       ),
                       child: Text(
                         controller.fieldErrors['category']!,
-                        style: TextStyle(
+                        style: getRegular(
                           color: Colors.red,
                           fontSize: ResponsiveDimensions.f(12),
                         ),
@@ -638,8 +636,8 @@ class CategoriesSectionWidget extends StatelessWidget {
           SizedBox(width: ResponsiveDimensions.f(12)),
           Text(
             text,
-            style: TextStyle(
-              color: Colors.grey[600],
+            style: getRegular(
+              color: Colors.grey,
               fontSize: ResponsiveDimensions.f(14),
             ),
           ),
@@ -671,8 +669,8 @@ class CategoriesSectionWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   error,
-                  style: TextStyle(
-                    color: Colors.red[600],
+                  style: getRegular(
+                    color: Colors.red,
                     fontSize: ResponsiveDimensions.f(14),
                   ),
                 ),
@@ -714,8 +712,8 @@ class CategoriesSectionWidget extends StatelessWidget {
           SizedBox(width: ResponsiveDimensions.f(12)),
           Text(
             text,
-            style: TextStyle(
-              color: Colors.grey[600],
+            style: getRegular(
+              color: Colors.grey,
               fontSize: ResponsiveDimensions.f(14),
             ),
           ),
@@ -755,9 +753,9 @@ class ProductConditionSectionWidget extends StatelessWidget {
                     : controller.selectedCondition,
                 decoration: InputDecoration(
                   hintText: 'اختر حالة المنتج',
-                  hintStyle: TextStyle(
+                  hintStyle: getRegular(
                     fontSize: ResponsiveDimensions.f(14),
-                    color: Colors.grey[600],
+                    color: Colors.grey,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
@@ -772,6 +770,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                     child: Text(
                       condition,
                       style: TextStyle(
+                        fontFamily: "PingAR",
                         fontSize: ResponsiveDimensions.f(14),
                         color: condition == controller.selectedCondition
                             ? AppColors.primary400
@@ -805,7 +804,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                 ),
                 child: Text(
                   controller.fieldErrors['condition']!,
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.f(12),
                   ),
@@ -860,15 +859,16 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                 },
                 decoration: InputDecoration(
                   hintText: 'وصف المنتج',
-                  hintStyle: TextStyle(
+                  hintStyle: getRegular(
                     fontSize: ResponsiveDimensions.f(14),
-                    color: Colors.grey[600],
+                    color: Colors.grey,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(ResponsiveDimensions.f(12)),
                   counterText:
                       '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
                   counterStyle: TextStyle(
+                    fontFamily: "PingAR",
                     color:
                         controller.characterCount >
                             AddProductController.maxDescriptionLength
@@ -886,7 +886,7 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                 ),
                 child: Text(
                   controller.fieldErrors['productDescription']!,
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.f(12),
                   ),
@@ -898,7 +898,7 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
                 padding: EdgeInsets.only(top: ResponsiveDimensions.f(4)),
                 child: Text(
                   'تجاوزت الحد الأقصى للحروف',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.f(12),
                     color: Colors.red,
                   ),

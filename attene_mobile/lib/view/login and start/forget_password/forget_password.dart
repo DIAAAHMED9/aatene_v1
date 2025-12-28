@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:flutter/material.dart';
@@ -60,11 +61,7 @@ class ForgetPassword extends StatelessWidget {
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
                   isRTL ? 'إعادة تعيين كلمة المرور' : 'Reset Password',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(35),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: getBold(fontSize: ResponsiveDimensions.f(35)),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
@@ -76,10 +73,7 @@ class ForgetPassword extends StatelessWidget {
                     isRTL
                         ? 'الرجاء إدخال بريدك الإلكتروني لطلب إعادة تعيين كلمة المرور'
                         : 'Please enter your email to request a password reset',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.f(16),
-                      color: Colors.grey[600],
-                    ),
+                    style: getRegular(color: Color(0xFF757575)),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -90,7 +84,8 @@ class ForgetPassword extends StatelessWidget {
                     hintText: isRTL ? 'البريد الإلكتروني' : 'Email',
                     errorText: controller.emailError.value,
                     onChanged: controller.updateEmail,
-                    textInputType: TextInputType.emailAddress, textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(50)),

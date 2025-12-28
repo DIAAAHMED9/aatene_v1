@@ -58,24 +58,23 @@ class _SplashScreenState extends State<SplashScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) =>
-          AlertDialog(
-            title: const Text('خطأ في التهيئة'),
-            content: Text('فشل في بدء التطبيق: $_errorMessage'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _startApp();
-                },
-                child: const Text('إعادة المحاولة'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('إغلاق'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('خطأ في التهيئة'),
+        content: Text('فشل في بدء التطبيق: $_errorMessage'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _startApp();
+            },
+            child: const Text('إعادة المحاولة'),
           ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('إغلاق'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -93,17 +92,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-            color: Colors.white
-        ),
+        decoration: const BoxDecoration(color: Colors.white),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/gif/aatene.gif',
-                fit: BoxFit.contain,
-              ),
+              Image.asset('assets/images/gif/aatene.gif', fit: BoxFit.contain),
               const SizedBox(height: 20),
               // إظهار مؤشر التحميل فقط أثناء التهيئة
               if (_isInitializing)

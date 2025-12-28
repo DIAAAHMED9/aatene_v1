@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/product%20variations/widgets/variation_widgets.dart';
 import 'package:flutter/material.dart';
@@ -87,9 +88,8 @@ class ProductVariationsScreen extends StatelessWidget {
           Expanded(
             child: Text(
               'الاختلافات والكميات',
-              style: TextStyle(
+              style: getBold(
                 fontSize: ResponsiveDimensions.f(18),
-                fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
@@ -105,18 +105,17 @@ class ProductVariationsScreen extends StatelessWidget {
       children: [
         Text(
           'الاختلافات والكميات',
-          style: TextStyle(
+          style: getBold(
             fontSize: ResponsiveDimensions.f(20),
-            fontWeight: FontWeight.bold,
             color: Colors.black87,
           ),
         ),
         SizedBox(height: ResponsiveDimensions.h(8)),
         Text(
           'إدارة اختلافات المنتج والكميات المتاحة لكل اختلاف',
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.f(14),
-            color: Colors.grey[600],
+            color: Colors.grey,
           ),
         ),
       ],
@@ -143,10 +142,9 @@ class ProductVariationsScreen extends StatelessWidget {
           SizedBox(height: ResponsiveDimensions.h(16)),
           Text(
             'المنتج بدون اختلافات',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.f(16),
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
+              color: Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),
@@ -154,9 +152,9 @@ class ProductVariationsScreen extends StatelessWidget {
           Text(
             'سيتم إضافة المنتج كصنف واحد بدون اختلافات',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey[600],
+              color: Colors.grey,
             ),
           ),
         ],
@@ -211,8 +209,8 @@ class ProductVariationsScreen extends StatelessWidget {
               ),
               child: Text(
                 'رجوع',
-                style: TextStyle(
-                  color: Colors.grey[700],
+                style: getRegular(
+                  color: Colors.grey,
                   fontSize: ResponsiveDimensions.f(16),
                 ),
               ),
@@ -235,14 +233,7 @@ class ProductVariationsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(
-                    'التالي',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ResponsiveDimensions.f(16),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: Text('التالي', style: getMedium(color: Colors.white)),
                 );
               },
             ),

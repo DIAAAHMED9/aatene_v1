@@ -4,6 +4,7 @@ import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../component/text/aatene_custom_text.dart';
 import '../../utlis/colors/app_color.dart';
 import '../../utlis/language/language_utils.dart';
 
@@ -19,11 +20,7 @@ class PersonalInfo extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "المعلومات الشخصية",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -46,49 +43,49 @@ class PersonalInfo extends StatelessWidget {
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "الاسم الكامل",
-                style: TextStyle(fontSize: 14, color: Colors.black),
-              ),
+              Text("الاسم الكامل", style: getRegular(fontSize: 14)),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "الاسم الكامل",
                 textInputType: TextInputType.name,
-                heightTextFiled: 45, textInputAction: TextInputAction.next,
+                heightTextFiled: 45,
+                textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "الجنس"),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "ذكر",
-                suffixIcon: Icon(Icons.keyboard_arrow_down), textInputAction: TextInputAction.next,
+                suffixIcon: Icon(Icons.keyboard_arrow_down),
+                textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "تاريخ الميلاد"),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "4/11/1998",
-                suffixIcon: Icon(Icons.date_range, color: AppColors.primary400), textInputAction: TextInputAction.next,
+                suffixIcon: Icon(Icons.date_range, color: AppColors.primary400),
+                textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "المدينة"),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "الناصرة",
-                suffixIcon: Icon(Icons.keyboard_arrow_down), textInputAction: TextInputAction.next,
+                suffixIcon: Icon(Icons.keyboard_arrow_down),
+                textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "الحي"),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "الناصرة",
-                suffixIcon: Icon(Icons.keyboard_arrow_down), textInputAction: TextInputAction.next,
+                suffixIcon: Icon(Icons.keyboard_arrow_down),
+                textInputAction: TextInputAction.next,
               ),
-              Text(
-                "النبذة الشخصية",
-                style: TextStyle(fontSize: 14, color: Colors.black),
-              ),
+              Text("النبذة الشخصية", style: getRegular(fontSize: 14)),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "هنا مثال لوص....",
                 textInputType: TextInputType.name,
-                heightTextFiled: 100, textInputAction: TextInputAction.next,
+                heightTextFiled: 100,
+                textInputAction: TextInputAction.next,
               ),
               Row(
                 spacing: 5,
@@ -98,12 +95,23 @@ class PersonalInfo extends StatelessWidget {
                     color: AppColors.primary400,
                     size: 20,
                   ),
-                  Text("لا بأس إن تجاوز النص 300 كلمة.\n يسمح بمرونة في عدد الكلمات حسب الحاجة.", style: TextStyle(fontSize: 12,color: AppColors.neutral400),),
+                  Text(
+                    "لا بأس إن تجاوز النص 300 كلمة.\n يسمح بمرونة في عدد الكلمات حسب الحاجة.",
+                    style: getRegular(
+                      fontSize: 12,
+                      color: AppColors.neutral400,
+                    ),
+                  ),
                   Spacer(),
                   Text("0/50"),
                 ],
               ),
-              AateneButton(buttonText: "حفظ", color: AppColors.primary400,borderColor: AppColors.primary400,textColor: AppColors.light1000,)
+              AateneButton(
+                buttonText: "حفظ",
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                textColor: AppColors.light1000,
+              ),
             ],
           ),
         ),

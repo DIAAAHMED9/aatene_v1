@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 class TextWithStar extends StatelessWidget {
@@ -10,14 +11,8 @@ class TextWithStar extends StatelessWidget {
     return Row(
       spacing: 5,
       children: [
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black,
-          ),
-        ),
-        Text('*', style: TextStyle(color: Colors.red)),
+        Text(text, style: getMedium()),
+        Text('*', style: getRegular(color: Colors.red)),
       ],
     );
   }

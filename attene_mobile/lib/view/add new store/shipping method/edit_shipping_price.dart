@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../component/aatene_button/aatene_button_with_arrow_icon.dart';
@@ -16,11 +17,7 @@ class EditShippingPrice extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "إضافة شركة شحن جديدة",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         leading: IconButton(
           onPressed: () {},
@@ -45,7 +42,7 @@ class EditShippingPrice extends StatelessWidget {
                 children: [
                   Text(
                     "المدن التي ترسل لها المنتجات؟",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: getBold(fontSize: 18),
                   ),
                   Spacer(),
                   TextButton(
@@ -55,8 +52,7 @@ class EditShippingPrice extends StatelessWidget {
                         Icon(Icons.add, color: AppColors.primary400),
                         Text(
                           "إضافة شركة شحن",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                          style: getBold(
                             color: AppColors.primary400,
                             fontSize: 14,
                           ),
@@ -68,10 +64,7 @@ class EditShippingPrice extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Text(
-                    "القدس وضواحيها",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
+                  Text("القدس وضواحيها", style: getBold(fontSize: 18)),
                   Spacer(),
                   IconButton(
                     onPressed: () {},
@@ -86,7 +79,8 @@ class EditShippingPrice extends StatelessWidget {
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "٣",
-                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30), textInputAction: TextInputAction.next,
+                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30),
+                textInputAction: TextInputAction.next,
               ),
               Text("سعر التوصيل"),
               TextFiledAatene(
@@ -98,7 +92,8 @@ class EditShippingPrice extends StatelessWidget {
                     "₪",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                ), textInputAction: TextInputAction.done,
+                ),
+                textInputAction: TextInputAction.done,
               ),
               AateneButtonWithIcon(buttonText: "حفظ ملف التوصيل"),
             ],

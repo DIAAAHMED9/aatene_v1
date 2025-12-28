@@ -7,7 +7,7 @@ class ColorExamples extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.light1000,
       appBar: AppBar(
-        title: const Text(
+        title:  Text(
           'Color System Examples',
           style: TextStyle(color: AppColors.neutral100),
         ),
@@ -159,7 +159,7 @@ class ColorExamples extends StatelessWidget {
                   child: Text(
                     'Warning\nAlpha',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style:  TextStyle(
                       color: AppColors.warning300,
                       fontWeight: FontWeight.bold,
                     ),

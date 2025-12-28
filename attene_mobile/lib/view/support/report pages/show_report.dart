@@ -3,6 +3,7 @@ import 'package:attene_mobile/utlis/colors/app_color.dart' show AppColors;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
 import '../../control users/home_control.dart';
 
 class ShowReport extends StatelessWidget {
@@ -15,11 +16,7 @@ class ShowReport extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "الشكاوى والاقتراحات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -61,21 +58,14 @@ class ShowReport extends StatelessWidget {
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "تفاصيل الشكوي",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
+                    Text("تفاصيل الشكوي", style: getBold(fontSize: 18)),
                     Row(
                       children: [
-                        Text("رقم الشكوي"),
+                        Text("رقم الشكوي", style: getRegular()),
                         Spacer(),
                         Text(
                           "C-2020-001",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: AppColors.primary400,
-                          ),
+                          style: getBold(color: AppColors.primary400),
                         ),
                       ],
                     ),
@@ -95,7 +85,7 @@ class ShowReport extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "قيد المعالجة",
-                                style: TextStyle(
+                                style: getRegular(
                                   fontSize: 10,
                                   color: Color(0xFFF17713),
                                 ),
@@ -112,11 +102,7 @@ class ShowReport extends StatelessWidget {
                         Spacer(),
                         Text(
                           "2025-10-22",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: AppColors.primary400,
-                          ),
+                          style: getBold(color: AppColors.primary400),
                         ),
                       ],
                     ),
@@ -127,10 +113,7 @@ class ShowReport extends StatelessWidget {
                         Spacer(),
                         Text(
                           "شكوي خاصة بالتوصيل",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
+                          style: getRegular(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -141,10 +124,7 @@ class ShowReport extends StatelessWidget {
                         Spacer(),
                         Text(
                           "التوصيل لم يتم في ميعادة",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey
-                          ),
+                          style: getRegular(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -153,10 +133,16 @@ class ShowReport extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute<void>(builder: (context) => HomeControl()),
+                          MaterialPageRoute<void>(
+                            builder: (context) => HomeControl(),
+                          ),
                         );
                       },
-                      buttonText: "إغلاق", color: AppColors.primary400, borderColor: AppColors.primary400,textColor: AppColors.light1000,)
+                      buttonText: "إغلاق",
+                      color: AppColors.primary400,
+                      borderColor: AppColors.primary400,
+                      textColor: AppColors.light1000,
+                    ),
                   ],
                 ),
               ),

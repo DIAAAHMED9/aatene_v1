@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../utlis/colors/app_color.dart';
@@ -7,7 +8,8 @@ class NameControl extends StatelessWidget {
     super.key,
     required this.name,
     required this.icon,
-    this.onTap, required this.screen,
+    this.onTap,
+    required this.screen,
   });
 
   final String name;
@@ -32,10 +34,7 @@ class NameControl extends StatelessWidget {
             spacing: 10,
             children: [
               icon,
-              Text(
-                name,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              Text(name, style: getBold()),
             ],
           ),
           Divider(color: AppColors.neutral800),

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/services/app_initialization_service.dart';
 import 'package:flutter/material.dart';
 import '../../utlis/colors/app_color.dart';
@@ -123,12 +124,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
                 opacity: _fadeAnimation,
                 child: Text(
                   'Aatene',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.light1000,
-                    letterSpacing: 1.5,
-                  ),
+                  style: getBold(color: AppColors.light1000, fontSize: 36),
                 ),
               ),
               const SizedBox(height: 20),
@@ -136,8 +132,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
                 opacity: _fadeAnimation,
                 child: Text(
                   _loadingText,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: getRegular(
                     color: AppColors.light1000.withOpacity(0.8),
                   ),
                 ),

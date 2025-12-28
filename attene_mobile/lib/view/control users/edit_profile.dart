@@ -19,11 +19,7 @@ class Edit_Profile extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "تعديل الملف الشخصي",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -107,15 +103,12 @@ class Edit_Profile extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             // Username
-            Text(
-              'jerusalemIII',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            Text('jerusalemIII', style: getBold(fontSize: 24)),
             SizedBox(height: 4),
             // Location
             Text(
               'فلسطين، الخليل',
-              style: TextStyle(fontSize: 14, color: AppColors.neutral200),
+              style: getRegular(fontSize: 14, color: AppColors.neutral200),
             ),
 
             Padding(
@@ -141,13 +134,7 @@ class Edit_Profile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "    معلومات الحساب",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text("    معلومات الحساب", style: getBold(fontSize: 15)),
                       Divider(),
                       Padding(
                         padding: const EdgeInsets.all(30.0),
@@ -163,7 +150,8 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.person_rounded,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ), screen: Edit_Profile(),
+                              ),
+                              screen: Edit_Profile(),
                             ),
                             EditProfileLabel(
                               title: "البريد الالكتروني",
@@ -172,7 +160,8 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.email,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ), screen: ChangeEmail(),
+                              ),
+                              screen: ChangeEmail(),
                             ),
                             EditProfileLabel(
                               title: "رقم الهاتف",
@@ -181,7 +170,8 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.phone_android_outlined,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ), screen: ChangeMobileNumber(),
+                              ),
+                              screen: ChangeMobileNumber(),
                             ),
                             EditProfileLabel(
                               title: " كلمة المرور",
@@ -190,7 +180,8 @@ class Edit_Profile extends StatelessWidget {
                                 Icons.password,
                                 size: 20,
                                 color: AppColors.neutral50,
-                              ), screen: ChangePassword(),
+                              ),
+                              screen: ChangePassword(),
                             ),
                           ],
                         ),

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -84,14 +85,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
-        title: Text(
-          "إضافة شركة شحن جديدة",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
+        title: Text("إضافة شركة شحن جديدة", style: getBold(fontSize: 18)),
         centerTitle: false,
         leading: IconButton(
           onPressed: () => Get.back(),
@@ -116,14 +110,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "اسم شركة الشحن",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
+              Text("اسم شركة الشحن", style: getMedium(fontSize: 15)),
               SizedBox(height: 8),
               TextFiledAatene(
                 textInputAction: TextInputAction.done,
@@ -133,14 +120,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               ),
               SizedBox(height: 20),
 
-              Text(
-                "رقم الهاتف",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
+              Text("رقم الهاتف", style: getMedium(fontSize: 15)),
               SizedBox(height: 8),
               Container(
                 height: 56,
@@ -162,10 +142,10 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                       child: TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
-                        style: TextStyle(fontSize: 15, color: Colors.black),
+                        style: getRegular(fontSize: 15),
                         decoration: InputDecoration(
                           hintText: "0999988888",
-                          hintStyle: TextStyle(
+                          hintStyle: getRegular(
                             color: AppColors.neutral400,
                             fontSize: 15,
                           ),
@@ -191,10 +171,9 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                             size: 24,
                           ),
                           isExpanded: true,
-                          style: TextStyle(
+                          style: getRegular(
                             color: AppColors.primary400,
                             fontSize: 15,
-                            fontWeight: FontWeight.w500,
                           ),
                           onChanged: (String? newValue) {
                             setState(() {
@@ -231,14 +210,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               Divider(color: AppColors.neutral800, height: 1),
               SizedBox(height: 24),
 
-              Text(
-                "المدن التي ترسل لها المنتجات",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                ),
-              ),
+              Text("المدن التي ترسل لها المنتجات", style: getBold()),
               SizedBox(height: 16),
 
               Column(
@@ -277,7 +249,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                       Expanded(
                         child: Text(
                           city['name'],
-                          style: TextStyle(
+                          style: getMedium(
                             fontSize: 15,
                             color: Colors.black,
                             fontWeight: city['selected']
@@ -311,10 +283,9 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                     SizedBox(width: 8),
                     Text(
                       "إضافة منطقة جديدة غير موجودة",
-                      style: TextStyle(
+                      style: getMedium(
                         color: AppColors.primary500,
                         fontSize: 15,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -326,14 +297,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "المدينة",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
+                    Text("المدينة", style: getMedium(fontSize: 14)),
                     SizedBox(height: 12),
                     Container(
                       height: 56,
@@ -350,7 +314,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
                               "اختر المدينة",
-                              style: TextStyle(
+                              style: getRegular(
                                 color: AppColors.neutral400,
                                 fontSize: 15,
                               ),
@@ -364,7 +328,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                               size: 24,
                             ),
                           ),
-                          style: TextStyle(color: Colors.black, fontSize: 15),
+                          style: getRegular(fontSize: 15),
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedCity = newValue;
@@ -405,7 +369,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           ),
                           child: Text(
                             "إلغاء",
-                            style: TextStyle(
+                            style: getRegular(
                               color: AppColors.neutral600,
                               fontSize: 15,
                             ),
@@ -443,11 +407,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           ),
                           child: Text(
                             "إضافة المدينة",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: getMedium(color: Colors.white, fontSize: 15),
                           ),
                         ),
                       ],
@@ -458,14 +418,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
 
               if (selectedCities.isNotEmpty) ...[
                 SizedBox(height: 24),
-                Text(
-                  "المدن المختارة",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
+                Text("المدن المختارة", style: getBold()),
                 SizedBox(height: 12),
                 ...selectedCities.asMap().entries.map((entry) {
                   int index = entry.key;
@@ -482,18 +435,12 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              city['name'],
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
+                            Text(city['name'], style: getMedium(fontSize: 15)),
                             if (city['type'] == 'custom')
                               Text(
                                 "مدينة مضافة",
                                 style: TextStyle(
+                                  fontFamily: "PingAR",
                                   fontSize: 13,
                                   color: AppColors.neutral500,
                                 ),

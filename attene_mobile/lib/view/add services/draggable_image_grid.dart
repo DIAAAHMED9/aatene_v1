@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -164,6 +165,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
                       ? AppColors.primary400
                       : Colors.grey[400],
                   fontWeight: FontWeight.w600,
+                  fontFamily: "PingAR",
                 ),
               ),
               SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
@@ -181,7 +183,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
 
               Text(
                 '${_controller.serviceImages.length}/${ServiceController.maxImages}',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.responsiveFontSize(10),
                 ),
               ),
@@ -300,10 +302,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
             Text(
               'لا توجد صور مضافة',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                color: Colors.grey[500],
-                fontWeight: FontWeight.w500,
+                color: Colors.grey,
               ),
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
@@ -313,9 +314,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
               ),
               child: Text(
                 'انقر على زر "اختيار من مكتبة الوسائط" لإضافة صور لخدمتك',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                  color: Colors.grey[400],
+                  color: Color(0xFFBDBDBD),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -339,10 +340,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             children: [
               Text(
                 'الصور المضافة (${controller.serviceImages.length}/${ServiceController.maxImages})',
-                style: TextStyle(
-                  fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                  fontWeight: FontWeight.bold,
-                ),
+                style: getBold(),
               ),
               if (controller.serviceImages.length > 1)
                 Container(
@@ -365,10 +363,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
                       SizedBox(width: ResponsiveDimensions.responsiveWidth(6)),
                       Text(
                         'اسحب لإعادة الترتيب',
-                        style: TextStyle(
+                        style: getMedium(
                           fontSize: ResponsiveDimensions.responsiveFontSize(12),
                           color: AppColors.primary400,
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -381,9 +378,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
           if (controller.serviceImages.isNotEmpty)
             Text(
               'الصورة الرئيسية مميزة باللون البرتقالي ★',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                color: Colors.grey[600],
+                color: Color(0xFF757575),
               ),
             ),
         ],
@@ -479,10 +476,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
                   SizedBox(width: ResponsiveDimensions.responsiveWidth(2)),
                   Text(
                     'رئيسية',
-                    style: TextStyle(
+                    style: getBold(
                       fontSize: ResponsiveDimensions.responsiveFontSize(9),
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -503,10 +499,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             child: Center(
               child: Text(
                 '${index + 1}',
-                style: TextStyle(
+                style: getBold(
                   fontSize: ResponsiveDimensions.responsiveFontSize(11),
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -588,9 +583,9 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
             Text(
               'خطأ في الصورة',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(9),
-                color: Colors.grey[500],
+                color: Colors.grey,
               ),
             ),
           ],
@@ -647,6 +642,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
                   fontWeight: image.isMain
                       ? FontWeight.bold
                       : FontWeight.normal,
+                  fontFamily: "PingAR",
                 ),
               ),
             ],
@@ -723,18 +719,12 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
               size: ResponsiveDimensions.responsiveFontSize(20),
             ),
             SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-            Text(
-              'حذف الصورة',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text('حذف الصورة', style: getBold()),
           ],
         ),
         content: Text(
           'هل أنت متأكد من حذف هذه الصورة؟',
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.responsiveFontSize(14),
           ),
         ),
@@ -743,8 +733,8 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             onPressed: () => Get.back(),
             child: Text(
               'إلغاء',
-              style: TextStyle(
-                color: Colors.grey[600],
+              style: getRegular(
+                color: Color(0xFFBDBDBD),
                 fontSize: ResponsiveDimensions.responsiveFontSize(14),
               ),
             ),
@@ -771,7 +761,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             ),
             child: Text(
               'حذف',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(14),
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -73,7 +74,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
     if (steps.isEmpty || currentStep >= steps.length) {
       return widget.appBarTitle;
     }
-    
+
     final step = steps[currentStep];
     if (step.title is Text) {
       return (step.title as Text).data ?? widget.appBarTitle;
@@ -112,7 +113,9 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 16
+                      left: 16,
+                      right: 16,
+                      top: 16,
                     ),
                     child: buildStepContent(stepIndex),
                   ),
@@ -124,7 +127,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
                         : widget.bottomNavigation ?? buildStepNavigation();
                   },
                 ),
-                SizedBox(height: 56,)
+                SizedBox(height: 56),
               ],
             );
           },
@@ -143,34 +146,31 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
     return AppBar(
       title: Text(
         _getCurrentStepTitle(), // استخدام عنوان الخطوة الحالية
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: getBold(fontSize: 18),
       ),
       backgroundColor: Colors.white,
       foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
       leading: widget.showBackButton
-          ?  IconButton(
-        onPressed: () async {
-          if (currentStep > 0) {
-            previousStep();
-          } else {
-            await onCancel();
-          }
-        },
-        icon:Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            color: Colors.grey[100],
-          ),
-          child: Icon(Icons.arrow_back, color: AppColors.neutral100),
-        ),
-      )
+          ? IconButton(
+              onPressed: () async {
+                if (currentStep > 0) {
+                  previousStep();
+                } else {
+                  await onCancel();
+                }
+              },
+              icon: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.grey[100],
+                ),
+                child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+              ),
+            )
           : null,
       actions: _buildAppBarActions(),
     );
@@ -263,14 +263,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: Text(
-          'رجوع',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color:AppColors.primary400,
-          ),
-        ),
+        child: Text('رجوع', style: getMedium(color: AppColors.primary400)),
       ),
     );
   }
@@ -289,7 +282,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Text(
           currentStep == steps.length - 1 ? 'إنهاء' : 'التالي',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: getMedium(),
         ),
       ),
     );

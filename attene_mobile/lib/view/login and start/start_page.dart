@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import '../../component/aatene_button/aatene_button.dart';
 import '../../utlis/colors/app_color.dart';
@@ -31,9 +32,8 @@ class StartLogin extends StatelessWidget {
                       isRTL
                           ? 'مرحبا بك في تطبيق اعطيني قم بالدخول الى التطبيق عبر الطرق التالية'
                           : 'Welcome to the app — please sign in using one of the following methods',
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.f(18),
-                        fontWeight: FontWeight.w500,
                         color: AppColors.neutral100,
                       ),
                       textAlign: TextAlign.center,

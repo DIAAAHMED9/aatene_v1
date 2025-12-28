@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,11 +19,7 @@ class ChangeEmail extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "تغيير البريد الالكتروني",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -44,15 +41,13 @@ class ChangeEmail extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            Text(
-              "البريد الالكتروني",
-              style: TextStyle(fontSize: 14, color: Colors.black),
-            ),
+            Text("البريد الالكتروني", style: getRegular(fontSize: 14)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: "example@gmail.com",
               textInputType: TextInputType.emailAddress,
-              heightTextFiled: 45, textInputAction: TextInputAction.done,
+              heightTextFiled: 45,
+              textInputAction: TextInputAction.done,
             ),
             AateneButton(
               buttonText: "حفظ",

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -41,7 +42,9 @@ class ServiceGridItem extends StatelessWidget {
                       ? BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(ResponsiveDimensions.f(8)),
-                            topRight: Radius.circular(ResponsiveDimensions.f(8)),
+                            topRight: Radius.circular(
+                              ResponsiveDimensions.f(8),
+                            ),
                           ),
                           image: DecorationImage(
                             image: NetworkImage(service.images.first),
@@ -52,7 +55,9 @@ class ServiceGridItem extends StatelessWidget {
                           color: AppColors.primary100,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(ResponsiveDimensions.f(8)),
-                            topRight: Radius.circular(ResponsiveDimensions.f(8)),
+                            topRight: Radius.circular(
+                              ResponsiveDimensions.f(8),
+                            ),
                           ),
                         ),
                   child: service.images.isEmpty
@@ -72,10 +77,7 @@ class ServiceGridItem extends StatelessWidget {
                     children: [
                       Text(
                         service.title,
-                        style: TextStyle(
-                          fontSize: ResponsiveDimensions.f(12),
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: getBold(fontSize: ResponsiveDimensions.f(12)),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -106,7 +108,7 @@ class ServiceGridItem extends StatelessWidget {
                 ),
                 child: Text(
                   'خدمة',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.f(10),
                     color: Colors.white,
                   ),
@@ -159,7 +161,13 @@ class ServiceGridItem extends StatelessWidget {
                       children: [
                         Icon(Icons.delete, size: 16, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('حذف', style: TextStyle(color: Colors.red)),
+                        Text(
+                          'حذف',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontFamily: "PingAR",
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -210,11 +218,7 @@ class ServiceGridItem extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: ResponsiveDimensions.f(10),
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
+        style: getRegular(fontSize: ResponsiveDimensions.f(10), color: color),
       ),
     );
   }

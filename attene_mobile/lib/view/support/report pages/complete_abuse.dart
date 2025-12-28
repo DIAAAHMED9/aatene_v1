@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/control%20users/home_control.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,13 +38,10 @@ class CompleteAbuse extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               Image.asset('assets/images/png/done.png'),
-              Text(
-                "شكرا لك",
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
+              Text("شكرا لك", style: getBold(fontSize: 32)),
               Text(
                 "تم ارسال طلبك وهو في الطريق تحقق من بريدك الالكتروني للحصول على التفاصيل",
-                style: TextStyle(color: Colors.grey),
+                style: getRegular(color: Colors.grey),
               ),
               Spacer(),
               AateneButton(

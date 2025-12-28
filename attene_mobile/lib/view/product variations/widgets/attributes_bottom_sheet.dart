@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/Text/text_with_star.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -99,10 +100,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
           decoration: BoxDecoration(color: Colors.white),
           child: Text(
             'اختر السمات لاستخدامها في الاختلافات',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(18),
-              fontWeight: FontWeight.bold,
-            ),
+            style: getBold(fontSize: ResponsiveDimensions.f(18)),
           ),
         ),
 
@@ -157,7 +155,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${filteredAttributes.length} نتيجة',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: getRegular(fontSize: 12, color: Colors.grey),
               ),
             ),
           ),
@@ -193,10 +191,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                     ),
                     side: BorderSide(color: Colors.grey[400]!),
                   ),
-                  child: Text(
-                    'إلغاء',
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
+                  child: Text('إلغاء', style: getRegular(color: Colors.grey)),
                 ),
               ),
               SizedBox(width: 12),
@@ -212,7 +207,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('التالي', style: TextStyle(color: Colors.white)),
+                  child: Text('التالي', style: getRegular(color: Colors.white)),
                 ),
               ),
             ],
@@ -230,9 +225,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
       leading: _buildAttributeCheckbox(isSelected, attribute),
       title: Text(
         attribute.name,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
+        style: getMedium(
           color: isSelected ? AppColors.primary500 : Colors.black87,
         ),
       ),
@@ -327,18 +320,11 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
         children: [
           Icon(Icons.search_off, size: 60, color: Colors.grey[300]),
           SizedBox(height: 16),
-          Text(
-            'لا توجد نتائج',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[700],
-            ),
-          ),
+          Text('لا توجد نتائج', style: getBold()),
           SizedBox(height: 8),
           Text(
             'لم يتم العثور على سمات تطابق "$_attributeSearchQuery"',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            style: getRegular(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],
@@ -366,10 +352,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
             children: [
               Text(
                 'أضف الصفات الخاصة بالسمات المختارة',
-                style: TextStyle(
-                  fontSize: ResponsiveDimensions.f(18),
-                  fontWeight: FontWeight.bold,
-                ),
+                style: getBold(fontSize: ResponsiveDimensions.f(18)),
               ),
               SizedBox(height: 12),
               _buildAttributesTabs(),
@@ -423,7 +406,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${filteredValues.length} نتيجة',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: getRegular(fontSize: 12, color: Colors.grey),
               ),
             ),
           ),
@@ -471,7 +454,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                       SizedBox(width: 6),
                       Text(
                         'رجوع للسمات',
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: getRegular(color: Colors.grey),
                       ),
                     ],
                   ),
@@ -490,7 +473,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                   ),
                   child: Text(
                     'حفظ الكل',
-                    style: TextStyle(color: Colors.white),
+                    style: getRegular(color: Colors.white),
                   ),
                 ),
               ),
@@ -543,12 +526,11 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                       child: Center(
                         child: Text(
                           selectedValuesCount.toString(),
-                          style: TextStyle(
+                          style: getBold(
                             fontSize: 11,
                             color: isSelected
                                 ? AppColors.primary400
                                 : Colors.white,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -556,8 +538,8 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                   SizedBox(width: 8),
                   Text(
                     attribute.name,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.grey[700],
+                    style: getRegular(
+                      color: isSelected ? Colors.white : Colors.grey,
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,
@@ -585,7 +567,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
         leading: _buildValueCheckbox(isSelected, value, attribute),
         title: Text(
           value.value,
-          style: TextStyle(
+          style: getRegular(
             fontSize: 15,
             fontWeight: FontWeight.normal,
             color: isSelected ? AppColors.primary500 : Colors.black87,
@@ -640,18 +622,11 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
         children: [
           Icon(Icons.search_off, size: 60, color: Colors.grey[300]),
           SizedBox(height: 16),
-          Text(
-            'لا توجد نتائج',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[700],
-            ),
-          ),
+          Text('لا توجد نتائج', style: getBold()),
           SizedBox(height: 8),
           Text(
             'لم يتم العثور على قيم تطابق "$_valueSearchQuery"',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            style: getRegular(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],

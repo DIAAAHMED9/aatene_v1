@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/advance%20info/keyword_controller.dart';
 import 'package:attene_mobile/view/advance%20info/keyword_management_screen.dart';
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
@@ -16,13 +17,13 @@ import 'view/screens_navigator_bottom_bar/product/add_product_controller.dart';
 
 class DemoStepperScreen extends StepperScreenBase {
   const DemoStepperScreen({Key? key})
-      : super(
-          key: key,
-          appBarTitle: 'إضافة منتج جديد',
-          primaryColor: AppColors.light1000,
-          showBackButton: true,
-          isLinear: true,
-        );
+    : super(
+        key: key,
+        appBarTitle: 'إضافة منتج جديد',
+        primaryColor: AppColors.light1000,
+        showBackButton: true,
+        isLinear: true,
+      );
 
   @override
   State<DemoStepperScreen> createState() => _DemoStepperScreenState();
@@ -227,17 +228,20 @@ class _DemoStepperScreenState
             children: [
               const Text('يوجد أخطاء في الحقول التالية:'),
               const SizedBox(height: 10),
-              Text(errorMessages, style: const TextStyle(color: Colors.red)),
+              Text(errorMessages, style: getRegular(color: Colors.red)),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'يرجى تصحيح هذه الأخطاء قبل المتابعة',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: getRegular(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('حسناً')),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('حسناً', style: getRegular()),
+          ),
         ],
       ),
     );
@@ -335,17 +339,16 @@ class _DemoStepperScreenState
                 width: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary400),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.primary400,
+                  ),
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
                   currentStep == steps.length - 1 ? 'إنهاء وإرسال' : 'التالي',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: getMedium(),
                 ),
               ),
       );
@@ -394,17 +397,14 @@ class _DemoStepperScreenState
       AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.check_circle, color: Colors.green, size: 28),
             SizedBox(width: 12),
             Text(
               'تمت العملية بنجاح!',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.green,
-              ),
+
+              style: getBlack(color: Colors.green, fontSize: 20),
             ),
           ],
         ),
@@ -417,20 +417,16 @@ class _DemoStepperScreenState
               color: Colors.green,
             ),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'تم إضافة المنتج بنجاح',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+              style: getMedium(color: Colors.black87, fontSize: 18),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             if (result['data'] != null && result['data'] is List)
               Text(
                 'رقم المنتج: ${_extractProductSku(result)}',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                style: getRegular(fontSize: 14, color: Colors.grey),
               ),
           ],
         ),
@@ -440,14 +436,7 @@ class _DemoStepperScreenState
               Get.offAllNamed('/mainScreen');
               _resetControllers();
             },
-            child: const Text(
-              'حسناً',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.blue,
-              ),
-            ),
+            child: Text('حسناً', style: getMedium(color: Colors.blue)),
           ),
         ],
       ),

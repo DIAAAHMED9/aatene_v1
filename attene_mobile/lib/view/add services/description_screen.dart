@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:flutter/material.dart';
@@ -72,9 +73,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             children: [
               Text(
                 'وصف مفصل للخدمة',
-                style: TextStyle(
+                style: getBold(
                   fontSize: ResponsiveDimensions.responsiveFontSize(20),
-                  fontWeight: FontWeight.bold,
                 ),
               ),
               // زر تصحيح
@@ -89,7 +89,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
           Obx(() {
-            final hasError = controller.isDescriptionError.value &&
+            final hasError =
+                controller.isDescriptionError.value &&
                 controller.hasUserTypedInDescription.value;
 
             return Column(
@@ -97,18 +98,20 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               children: [
                 Text(
                   'يجب أن يكون الوصف واضحاً ومفصلاً لمساعدة العملاء على فهم الخدمة بشكل أفضل.',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF757575),
                   ),
                 ),
                 if (hasError)
                   Padding(
-                    padding: EdgeInsets.only(top: ResponsiveDimensions.responsiveHeight(4)),
+                    padding: EdgeInsets.only(
+                      top: ResponsiveDimensions.responsiveHeight(4),
+                    ),
                     child: Text(
                       '⚠️ الرجاء إضافة وصف مفصل للخدمة',
                       style: TextStyle(
+                        fontFamily: "PingAR",
                         fontSize: ResponsiveDimensions.responsiveFontSize(12),
                         color: Colors.red,
                         fontWeight: FontWeight.w500,
@@ -136,13 +139,16 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             height: ResponsiveDimensions.responsiveHeight(300),
             decoration: BoxDecoration(
               border: Border.all(
-                color: controller.isDescriptionError.value &&
-                    controller.hasUserTypedInDescription.value
+                color:
+                    controller.isDescriptionError.value &&
+                        controller.hasUserTypedInDescription.value
                     ? Colors.red
                     : Colors.grey[300]!,
-                width: controller.isDescriptionError.value &&
-                    controller.hasUserTypedInDescription.value
-                    ? 2 : 1,
+                width:
+                    controller.isDescriptionError.value &&
+                        controller.hasUserTypedInDescription.value
+                    ? 2
+                    : 1,
               ),
               borderRadius: BorderRadius.circular(12),
               color: Colors.white,
@@ -162,9 +168,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 // المحرر
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(12)),
+                    padding: EdgeInsets.all(
+                      ResponsiveDimensions.responsiveWidth(12),
+                    ),
                     child: Obx(() {
-                      final showPlaceholder = controller.showDescriptionPlaceholder.value &&
+                      final showPlaceholder =
+                          controller.showDescriptionPlaceholder.value &&
                           !controller.editorFocusNode.hasFocus;
 
                       return Stack(
@@ -193,15 +202,25 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                                   onTap: () {
                                     controller.editorFocusNode.requestFocus();
                                     setState(() {
-                                      controller.showDescriptionPlaceholder.value = false;
+                                      controller
+                                              .showDescriptionPlaceholder
+                                              .value =
+                                          false;
                                     });
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(8)),
+                                    padding: EdgeInsets.all(
+                                      ResponsiveDimensions.responsiveWidth(8),
+                                    ),
                                     child: Text(
-                                      ServiceController.defaultDescriptionPlaceholder,
+                                      ServiceController
+                                          .defaultDescriptionPlaceholder,
                                       style: TextStyle(
-                                        fontSize: ResponsiveDimensions.responsiveFontSize(16),
+                                        fontFamily: "PingAR",
+                                        fontSize:
+                                            ResponsiveDimensions.responsiveFontSize(
+                                              16,
+                                            ),
                                         color: Colors.grey[400],
                                         height: 1.5,
                                       ),
@@ -373,10 +392,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
             child: Text(
               label,
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(14),
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[800],
+                color: Color(0xFF303030),
               ),
             ),
           ),
@@ -454,10 +473,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
   }
 
   Widget _buildAlignmentButton(
-      IconData icon,
-      String tooltip,
-      String alignment,
-      ) {
+    IconData icon,
+    String tooltip,
+    String alignment,
+  ) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: ResponsiveDimensions.responsiveWidth(2),
@@ -529,16 +548,15 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           SizedBox(height: ResponsiveDimensions.responsiveHeight(7)),
           Text(
             'الأسئلة الشائعة (اختياري)',
-            style: TextStyle(
+            style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(18),
-              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
 
           Text(
             'اكتب إجابات للأسئلة الشائعة التي يطرحها عميلك. أضف حتى خمسة أسئلة.',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.responsiveFontSize(10),
               fontWeight: FontWeight.w300,
               color: Colors.grey.shade500,
@@ -577,10 +595,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                     SizedBox(width: ResponsiveDimensions.responsiveWidth(12)),
                     Text(
                       'أضف  سؤال',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                        fontWeight: FontWeight.w600,
-                        color: canAdd ? AppColors.primary400 : Colors.grey[300],
+                      style: getMedium(
+                        color: canAdd
+                            ? AppColors.primary400
+                            : Color(0xFFE0E0E0),
                       ),
                     ),
                   ],
@@ -627,18 +645,17 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   children: [
                     Text(
                       '${index + 1}. ${faq.question}',
-                      style: TextStyle(
+                      style: getMedium(
                         fontSize: ResponsiveDimensions.responsiveFontSize(15),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
+                        color: Colors.grey,
                       ),
                     ),
                     SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
                     Text(
                       faq.answer,
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                        color: Colors.grey[600],
+                        color: Colors.grey,
                       ),
                     ),
                   ],
@@ -724,10 +741,9 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                       SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                       Text(
                         'السابق',
-                        style: TextStyle(
+                        style: getMedium(
                           fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
+                          color: Colors.grey,
                         ),
                       ),
                     ],
@@ -744,13 +760,19 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             child: Obx(() {
               // التحقق من صحة الوصف فقط إذا كتب المستخدم شيئاً
               bool shouldValidate = controller.hasUserTypedInDescription.value;
-              bool isValid = shouldValidate ? controller.validateDescriptionForm() : true;
+              bool isValid = shouldValidate
+                  ? controller.validateDescriptionForm()
+                  : true;
 
               // تسجيل بيانات الوصف للمساعدة في التنقيح
               print('🔍 حالة الوصف في زر التالي:');
-              print('- hasUserTypedInDescription: ${controller.hasUserTypedInDescription.value}');
+              print(
+                '- hasUserTypedInDescription: ${controller.hasUserTypedInDescription.value}',
+              );
               print('- isEditorEmpty: ${controller.isEditorEmpty.value}');
-              print('- Plain text length: ${controller.serviceDescriptionPlainText.value.length}');
+              print(
+                '- Plain text length: ${controller.serviceDescriptionPlainText.value.length}',
+              );
 
               return Material(
                 color: isValid ? AppColors.primary500 : Colors.grey[300],
@@ -759,33 +781,36 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   borderRadius: BorderRadius.circular(10),
                   onTap: isValid
                       ? () {
-                    // التحقق النهائي مع تسجيل البيانات
-                    print('✅ التحقق النهائي قبل الانتقال:');
+                          // التحقق النهائي مع تسجيل البيانات
+                          print('✅ التحقق النهائي قبل الانتقال:');
 
-                    // تحديث محتوى الوصف قبل التحقق
-                    final plainText = controller.quillController.document.toPlainText();
-                    final richText = controller.getQuillContentAsJson();
+                          // تحديث محتوى الوصف قبل التحقق
+                          final plainText = controller.quillController.document
+                              .toPlainText();
+                          final richText = controller.getQuillContentAsJson();
 
-                    controller.serviceDescriptionPlainText.value = plainText;
-                    controller.serviceDescriptionRichText.value = richText;
+                          controller.serviceDescriptionPlainText.value =
+                              plainText;
+                          controller.serviceDescriptionRichText.value =
+                              richText;
 
-                    print('📝 النص العادي: $plainText');
-                    print('📝 طول النص العادي: ${plainText.length}');
+                          print('📝 النص العادي: $plainText');
+                          print('📝 طول النص العادي: ${plainText.length}');
 
-                    // التحقق من الصحة
-                    if (controller.validateDescriptionForm()) {
-                      print('✅ الوصف صالح، الانتقال إلى الخطوة التالية');
-                      Get.to(() => const ImagesScreen());
-                    } else {
-                      print('❌ الوصف غير صالح');
-                      Get.snackbar(
-                        'خطأ',
-                        'الرجاء إضافة وصف مفصل للخدمة',
-                        backgroundColor: Colors.red,
-                        colorText: Colors.white,
-                      );
-                    }
-                  }
+                          // التحقق من الصحة
+                          if (controller.validateDescriptionForm()) {
+                            print('✅ الوصف صالح، الانتقال إلى الخطوة التالية');
+                            Get.to(() => const ImagesScreen());
+                          } else {
+                            print('❌ الوصف غير صالح');
+                            Get.snackbar(
+                              'خطأ',
+                              'الرجاء إضافة وصف مفصل للخدمة',
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          }
+                        }
                       : null,
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -795,15 +820,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'التالي',
-                          style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                            fontWeight: FontWeight.w600,
-                            color: isValid ? Colors.white : Colors.grey[600],
-                          ),
+                        Text('التالي', style: getRegular()),
+                        SizedBox(
+                          width: ResponsiveDimensions.responsiveWidth(8),
                         ),
-                        SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                         Icon(
                           Icons.arrow_forward,
                           color: isValid ? Colors.white : Colors.grey[600],
@@ -952,9 +972,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             children: [
               Text(
                 isTextColor ? 'اختر لون النص' : 'اختر لون الخلفية',
-                style: TextStyle(
+                style: getBold(
                   fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
@@ -1013,9 +1032,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             children: [
               Text(
                 'إدراج صورة',
-                style: TextStyle(
+                style: getBold(
                   fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
@@ -1083,9 +1101,9 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
         SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
         Text(
           label,
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.responsiveFontSize(14),
-            color: Colors.grey[700],
+            color: Colors.grey,
           ),
         ),
       ],

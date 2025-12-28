@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button_with_arrow_icon.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
@@ -16,11 +17,7 @@ class EditShippingMethod extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "تعديل شركة الشحن",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         leading: IconButton(
           onPressed: () {},
@@ -43,9 +40,17 @@ class EditShippingMethod extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("اسم ملف الشحن"),
-              TextFiledAatene(isRTL: isRTL, hintText: "اكتب اسم الشركة هنا", textInputAction: TextInputAction.next,),
+              TextFiledAatene(
+                isRTL: isRTL,
+                hintText: "اكتب اسم الشركة هنا",
+                textInputAction: TextInputAction.next,
+              ),
               Text("شركة الشحن"),
-              TextFiledAatene(isRTL: isRTL, hintText: "اسم شركة الشحن", textInputAction: TextInputAction.next,),
+              TextFiledAatene(
+                isRTL: isRTL,
+                hintText: "اسم شركة الشحن",
+                textInputAction: TextInputAction.next,
+              ),
               Text("رقم الهاتف"),
               TextFiledAatene(
                 isRTL: isRTL,
@@ -64,9 +69,8 @@ class EditShippingMethod extends StatelessWidget {
                       children: [
                         Text(
                           "(+970)",
-                          style: TextStyle(
+                          style: getBold(
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
                             color: AppColors.primary400,
                           ),
                         ),
@@ -78,15 +82,13 @@ class EditShippingMethod extends StatelessWidget {
                       ],
                     ),
                   ),
-                ), textInputAction: TextInputAction.next,
+                ),
+                textInputAction: TextInputAction.next,
               ),
               Divider(color: AppColors.neutral900),
               Row(
                 children: [
-                  Text(
-                    "القدس وضواحيها",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
+                  Text("القدس وضواحيها", style: getBold(fontSize: 18)),
                   Spacer(),
                   IconButton(
                     onPressed: () {},
@@ -99,10 +101,10 @@ class EditShippingMethod extends StatelessWidget {
               ),
               Text("موعد التسليم"),
               TextFiledAatene(
-
                 isRTL: isRTL,
                 hintText: "٣",
-                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30), textInputAction: TextInputAction.next,
+                suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30),
+                textInputAction: TextInputAction.next,
               ),
               Text("سعر التوصيل"),
               TextFiledAatene(
@@ -114,7 +116,8 @@ class EditShippingMethod extends StatelessWidget {
                     "₪",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                ), textInputAction: TextInputAction.done,
+                ),
+                textInputAction: TextInputAction.done,
               ),
               AateneButtonWithIcon(buttonText: "التالي"),
             ],

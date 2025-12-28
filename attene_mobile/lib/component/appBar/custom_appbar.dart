@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/appBar/tab_model.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -19,14 +20,26 @@ class CustomAppBarWithTabs extends StatelessWidget
   }) : super(key: key);
 
   bool _isMobile(BuildContext context) =>
-      MediaQuery.of(context).size.width < 768;
+      MediaQuery
+          .of(context)
+          .size
+          .width < 768;
 
   bool _isTablet(BuildContext context) =>
-      MediaQuery.of(context).size.width >= 768 &&
-      MediaQuery.of(context).size.width < 1024;
+      MediaQuery
+          .of(context)
+          .size
+          .width >= 768 &&
+          MediaQuery
+              .of(context)
+              .size
+              .width < 1024;
 
   bool _isDesktop(BuildContext context) =>
-      MediaQuery.of(context).size.width >= 1024;
+      MediaQuery
+          .of(context)
+          .size
+          .width >= 1024;
 
   @override
   Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
@@ -125,9 +138,9 @@ class CustomAppBarWithTabs extends StatelessWidget
       borderRadius: _isMobile(context)
           ? BorderRadius.circular(0)
           : BorderRadius.only(
-              bottomLeft: Radius.circular(12),
-              bottomRight: Radius.circular(12),
-            ),
+        bottomLeft: Radius.circular(12),
+        bottomRight: Radius.circular(12),
+      ),
     );
   }
 
@@ -155,11 +168,11 @@ class CustomAppBarWithTabs extends StatelessWidget
             ),
             child: Text(
               config.title,
-              style: TextStyle(
-                fontSize: _getTitleFontSize(context),
-                fontWeight: FontWeight.w700,
+              style: getBold(
                 color: Colors.black87,
+                fontSize: _getTitleFontSize(context),
               ),
+
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -173,7 +186,10 @@ class CustomAppBarWithTabs extends StatelessWidget
   }
 
   Widget _buildActionButton(BuildContext context) {
-    final isSmallMobile = MediaQuery.of(context).size.width < 400;
+    final isSmallMobile = MediaQuery
+        .of(context)
+        .size
+        .width < 400;
 
     return Material(
       color: Colors.transparent,
@@ -184,14 +200,13 @@ class CustomAppBarWithTabs extends StatelessWidget
           mainAxisSize: MainAxisSize.min,
           children: [
             // if (!isSmallMobile)
-              Text(
-                config.actionText,
-                style: TextStyle(
-                  color: AppColors.primary400,
-                  fontSize: _isMobile(context) ? 17 : 19,
-                  fontWeight: FontWeight.w600,
-                ),
+            Text(
+              config.actionText,
+              style: getMedium(
+                color: AppColors.primary400,
+                fontSize: _isMobile(context) ? 17 : 19,
               ),
+            ),
           ],
         ),
       ),
@@ -258,65 +273,64 @@ class CustomAppBarWithTabs extends StatelessWidget
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: config.searchController,
-                    onChanged: config.onSearchChanged,
+            Expanded(
+            child: TextField(
+            controller: config.searchController,
+              onChanged: config.onSearchChanged,
 
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey[600],
-                        size: _isMobile(context) ? 20 : 22,
-                      ),
-                      border: InputBorder.none,
-                      hintText: isRTL
-                          ? 'ابحث عن منتج...'
-                          : 'Search products...',
-                      hintStyle: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: _isMobile(context) ? 14 : 15,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: _isMobile(context) ? 14 : 15,
-                      color: Colors.black87,
-                    ),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.grey[600],
+                    size: _isMobile(context) ? 20 : 22,
                   ),
-                ),
-                if (config.searchController?.text.isNotEmpty ?? false)
-                  Padding(
-                    padding: EdgeInsets.only(
-                      right: _isMobile(context) ? 8 : 12,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        config.searchController?.clear();
-                        config.onSearchChanged?.call('');
-                      },
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.grey[500],
-                        size: _isMobile(context) ? 18 : 20,
-                      ),
-                    ),
-                  ),
-              ],
+                  border: InputBorder.none,
+                  hintText: isRTL
+                      ? 'ابحث عن منتج...'
+                      : 'Search products...',
+                  hintStyle: getRegular(color: Colors.grey,
+                    fontSize: _isMobile(context) ? 14 : 15,),
+            ),
+            style: getRegular(
+              fontSize: _isMobile(context) ? 14 : 15,
+              color: Colors.black87,
             ),
           ),
         ),
-        SizedBox(width: 5),
-        if (config.onSortPressed != null)
+        if (config.searchController?.text.isNotEmpty ?? false)
           Padding(
-            padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
-            child: _buildIconButton(
-              icon: Icons.sort_rounded,
-              onTap: config.onSortPressed!,
-              context: context,
-              tooltip: 'ترتيب',
+            padding: EdgeInsets.only(
+              right: _isMobile(context) ? 8 : 12,
+            ),
+            child: GestureDetector(
+              onTap: () {
+                config.searchController?.clear();
+                config.onSearchChanged?.call('');
+              },
+              child: Icon(
+                Icons.close,
+                color: Colors.grey[500],
+                size: _isMobile(context) ? 18 : 20,
+              ),
             ),
           ),
       ],
+    ),
+    ),
+    ),
+    SizedBox(width: 5),
+    if (config.onSortPressed != null)
+    Padding(
+    padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
+    child: _buildIconButton(
+    icon: Icons.sort_rounded,
+    onTap: config.onSortPressed!,
+    context: context,
+    tooltip: 'ترتيب',
+    ),
+    ),
+    ]
+    ,
     );
   }
 
@@ -362,8 +376,7 @@ class CustomAppBarWithTabs extends StatelessWidget
     );
   }
 
-  Widget _buildUniversalImage(
-    String assetPath, {
+  Widget _buildUniversalImage(String assetPath, {
     Color? color,
     double size = 20,
   }) {
@@ -376,11 +389,12 @@ class CustomAppBarWithTabs extends StatelessWidget
           width: size,
           height: size,
           fit: BoxFit.contain,
-          placeholderBuilder: (context) => SizedBox(
-            width: size,
-            height: size,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
+          placeholderBuilder: (context) =>
+              SizedBox(
+                width: size,
+                height: size,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
         );
       } else {
         imageWidget = Image.asset(
@@ -466,21 +480,19 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
         left: widget.isRTL ? 0 : (widget.isMobile ? 12 : 20),
         right: widget.isRTL ? (widget.isMobile ? 12 : 20) : 0,
       ),
-      labelStyle: TextStyle(
+      labelStyle: getMedium(
         fontSize: widget.isMobile
             ? 13
             : widget.isTablet
             ? 14
             : 15,
-        fontWeight: FontWeight.w600,
       ),
-      unselectedLabelStyle: TextStyle(
+      unselectedLabelStyle: getRegular(
         fontSize: widget.isMobile
             ? 13
             : widget.isTablet
             ? 14
             : 15,
-        fontWeight: FontWeight.w500,
       ),
       tabs: widget.tabs.map((tab) {
         return _buildTabItem(tab);
@@ -520,13 +532,12 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: TextStyle(
+                style: getMedium(
                   fontSize: widget.isMobile
                       ? 13
                       : widget.isTablet
                       ? 14
                       : 15,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

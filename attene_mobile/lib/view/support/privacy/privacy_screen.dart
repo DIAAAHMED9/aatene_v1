@@ -2,6 +2,8 @@ import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
+
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
 
@@ -52,11 +54,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         backgroundColor: Colors.white,
         title: Text(
           "سياسة الخصوصية",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -85,7 +83,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                   spacing: 5,
                   children: [
                     Icon(Icons.language, size: 12),
-                    Text("عربي (AR)", style: TextStyle(fontSize: 10)),
+                    Text("عربي (AR)", style: getRegular(fontSize: 10)),
                     Icon(Icons.keyboard_arrow_down_outlined, size: 12),
                   ],
                 ),
@@ -132,18 +130,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       backgroundColor: AppColors.primary400,
                       child: Text(
                         '${index + 1}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.white,
-                        ),
+                        style: getRegular(fontSize: 11, color: Colors.white),
                       ),
                     ),
                     title: Row(
                       children: [
-                        Text(
-                          items[index]['title']!,
-                          style: const TextStyle(fontSize: 16),
-                        ),
+                        Text(items[index]['title']!, style: getRegular()),
                         const Spacer(),
                         _circleIconPlus(isExpanded ? Icons.remove : Icons.add),
                       ],
@@ -151,12 +143,13 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                   ),
                   if (isExpanded)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Text(
                         items[index]['content']!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.black87,
                           fontSize: 12,
+                          fontFamily: "PingAR",
                         ),
                       ),
                     ),

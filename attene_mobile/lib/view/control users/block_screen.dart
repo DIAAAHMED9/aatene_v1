@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,11 +18,7 @@ class BlockScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "قائمة الحظر",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -48,9 +45,7 @@ class BlockScreen extends StatelessWidget {
               children: [
                 Expanded(child: _tabButton(text: 'مستخدمين', selected: true)),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: _tabButton(text: 'متاجر', selected: false),
-                ),
+                Expanded(child: _tabButton(text: 'متاجر', selected: false)),
               ],
             ),
 
@@ -69,7 +64,8 @@ class BlockScreen extends StatelessWidget {
                   ),
                   child: Icon(Icons.search, color: AppColors.light1000),
                 ),
-              ), textInputAction: TextInputAction.done,
+              ),
+              textInputAction: TextInputAction.done,
             ),
 
             /// List
@@ -97,7 +93,7 @@ class BlockScreen extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: getMedium(
           color: selected ? Colors.white : const Color(0xFF3E5C7F),
           fontWeight: FontWeight.w600,
         ),
@@ -107,7 +103,7 @@ class BlockScreen extends StatelessWidget {
 
   static Widget _blockItem() {
     return Padding(
-      padding: const EdgeInsets.symmetric( vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         spacing: 10,
         children: [
@@ -120,15 +116,12 @@ class BlockScreen extends StatelessWidget {
           /// Name + block
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'Ahmed Ali',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
+            children: [
+              Text('Ahmed Ali', style: getBold()),
               SizedBox(height: 4),
               Text(
                 '@ahmed',
-                style: TextStyle(color: Colors.grey, fontSize: 13),
+                style: getRegular(color: Colors.grey, fontSize: 13),
               ),
             ],
           ),
@@ -146,7 +139,7 @@ class BlockScreen extends StatelessWidget {
             child: Center(
               child: Text(
                 'إلغاء الحظر',
-                style: TextStyle(color: Colors.white, fontSize: 13),
+                style: getRegular(color: Colors.white, fontSize: 13),
               ),
             ),
           ),

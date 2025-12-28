@@ -95,6 +95,7 @@ class TextFiledAatene extends StatelessWidget {
                 TextStyle(
                   fontSize: ResponsiveDimensions.f(14),
                   color: Colors.black87,
+                  fontFamily: "PingAR",
                 ),
             decoration: InputDecoration(
               hintText: hintText,
@@ -143,10 +144,12 @@ class TextFiledAatene extends StatelessWidget {
                   hintStyle ??
                   TextStyle(
                     color: Colors.grey[500],
+                    fontFamily: "PingAR",
                     fontSize: ResponsiveDimensions.f(14),
                   ),
               errorText: hasError ? errorText : null,
               errorStyle: TextStyle(
+                fontFamily: "PingAR",
                 color: Colors.red,
                 fontSize: ResponsiveDimensions.f(12),
                 fontWeight: FontWeight.w500,

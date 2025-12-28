@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import '../utlis/colors/app_color.dart';
 
@@ -11,11 +12,8 @@ class AateneAppbar extends StatelessWidget {
     return AppBar(
       title: Text(
         title,
-        style: TextStyle(
-          color: AppColors.neutral100,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
+
+        style: getBold(color: AppColors.neutral100, fontSize: 20),
       ),
       leading: IconButton(
         onPressed: () {},

@@ -1,9 +1,9 @@
 import 'package:attene_mobile/component/Text/text_with_star.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
-
 
 import 'category_bottom_sheet.dart';
 import 'service_controller.dart';
@@ -25,9 +25,8 @@ class ServiceScreen extends StatelessWidget {
         children: [
           Text(
             'المعلومات الاساسية',
-            style: TextStyle(
+            style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(25),
-              fontWeight: FontWeight.bold,
             ),
           ),
           _buildServiceTitleField(),
@@ -103,7 +102,7 @@ class ServiceScreen extends StatelessWidget {
                   if (controller.isServiceTitleError.value)
                     Text(
                       'هذا الحقل مطلوب',
-                      style: TextStyle(
+                      style: getRegular(
                         color: Colors.red,
                         fontSize: ResponsiveDimensions.responsiveFontSize(12),
                       ),
@@ -112,8 +111,8 @@ class ServiceScreen extends StatelessWidget {
                     const SizedBox(),
                   Text(
                     '${controller.serviceTitle.value.length}/100',
-                    style: TextStyle(
-                      color: Colors.grey[600],
+                    style: getRegular(
+                      color: Color(0xFF757575),
                       fontSize: ResponsiveDimensions.responsiveFontSize(12),
                     ),
                   ),
@@ -161,7 +160,7 @@ class ServiceScreen extends StatelessWidget {
                           controller.selectedMainCategory.value.isEmpty
                               ? 'اختر القسم الرئيسي'
                               : controller.selectedMainCategory.value,
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -189,7 +188,7 @@ class ServiceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -198,9 +197,9 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Text(
               'يجب اختيار قسم رئيسي للخدمة (مثال: تصميم وبرمجة)',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                color: Colors.grey[600],
+                color: Color(0xFF757575),
               ),
             ),
           ],
@@ -261,7 +260,7 @@ class ServiceScreen extends StatelessWidget {
                           controller.selectedCategory.value.isEmpty
                               ? 'اختر الفئة الفرعية'
                               : controller.selectedCategory.value,
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -289,7 +288,7 @@ class ServiceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -298,9 +297,9 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Text(
               'اختر فئة فرعية للخدمة (مثال: تصميم مواقع إلكترونية)',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                color: Colors.grey[600],
+                color: Color(0xFF757575),
               ),
             ),
           ],
@@ -315,13 +314,7 @@ class ServiceScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              'التخصصات أو مجالات العمل',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text('التخصصات أو مجالات العمل', style: getBold()),
             SizedBox(width: ResponsiveDimensions.responsiveWidth(4)),
             GestureDetector(
               onTap: () {
@@ -373,8 +366,8 @@ class ServiceScreen extends StatelessWidget {
                       ? 'تم الوصول للحد الأقصى'
                       : 'أدخل تخصصاً',
                   border: InputBorder.none,
-                  hintStyle: TextStyle(
-                    color: Colors.grey[600],
+                  hintStyle: getRegular(
+                    color: Color(0xFF757575),
                     fontSize: ResponsiveDimensions.responsiveFontSize(14),
                   ),
                   suffixIcon: Tooltip(
@@ -420,9 +413,9 @@ class ServiceScreen extends StatelessWidget {
               children: [
                 Text(
                   'أدخل تخصصاً ثم اضغط زر الإضافة',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.responsiveFontSize(11),
-                    color: Colors.grey[500],
+                    color: Colors.grey,
                   ),
                 ),
                 Text(
@@ -434,6 +427,7 @@ class ServiceScreen extends StatelessWidget {
                             ServiceController.maxSpecializations
                         ? Colors.red
                         : Colors.grey[600],
+                    fontFamily: "PingAR",
                   ),
                 ),
               ],
@@ -472,7 +466,7 @@ class ServiceScreen extends StatelessWidget {
                       return Chip(
                         label: Text(
                           controller.specializations[index],
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -481,10 +475,7 @@ class ServiceScreen extends StatelessWidget {
                         backgroundColor: AppColors.primary100,
                         deleteIconColor: AppColors.primary400,
                         onDeleted: () => controller.removeSpecialization(index),
-                        labelStyle: TextStyle(
-                          color: AppColors.primary500,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        labelStyle: getRegular(color: AppColors.primary500),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.0),
                           side: BorderSide(
@@ -508,13 +499,7 @@ class ServiceScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'الكلمات المفتاحية',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.responsiveFontSize(16),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text('الكلمات المفتاحية', style: getBold()),
         SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
 
         GetBuilder<ServiceController>(
@@ -536,8 +521,8 @@ class ServiceScreen extends StatelessWidget {
                       ? 'تم الوصول للحد الأقصى'
                       : 'أدخل كلمة مفتاحية',
                   border: InputBorder.none,
-                  hintStyle: TextStyle(
-                    color: Colors.grey[600],
+                  hintStyle: getRegular(
+                    color: Color(0xFF757575),
                     fontSize: ResponsiveDimensions.responsiveFontSize(14),
                   ),
                   suffixIcon: Tooltip(
@@ -588,9 +573,9 @@ class ServiceScreen extends StatelessWidget {
               children: [
                 Text(
                   'أدخل كلمة مفتاحية ثم اضغط زر الإضافة',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.responsiveFontSize(11),
-                    color: Colors.grey[500],
+                    color: Colors.grey,
                   ),
                 ),
                 Text(
@@ -602,6 +587,7 @@ class ServiceScreen extends StatelessWidget {
                             ServiceController.maxKeywords
                         ? Colors.red
                         : Colors.grey[600],
+                    fontFamily: "PingAR",
                   ),
                 ),
               ],
@@ -640,7 +626,7 @@ class ServiceScreen extends StatelessWidget {
                       return Chip(
                         label: Text(
                           controller.keywords[index],
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -649,10 +635,7 @@ class ServiceScreen extends StatelessWidget {
                         backgroundColor: AppColors.primary100,
                         deleteIconColor: AppColors.primary400,
                         onDeleted: () => controller.removeKeyword(index),
-                        labelStyle: TextStyle(
-                          color: AppColors.primary500,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        labelStyle: getRegular(color: AppColors.primary500),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.0),
                           side: BorderSide(
@@ -696,17 +679,17 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Text(
               title,
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                color: Colors.grey[500],
+                color: Colors.grey,
               ),
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
             Text(
               subtitle,
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                color: Colors.grey[400],
+                color: Color(0xFFBDBDBD),
               ),
             ),
           ],
@@ -749,11 +732,7 @@ class ServiceScreen extends StatelessWidget {
                   children: [
                     Text(
                       'التالي: السعر والتطويرات',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      style: getMedium(color: Colors.white),
                     ),
                     SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                     Icon(
@@ -803,11 +782,7 @@ class ServiceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'حفظ مؤقت',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
-                  ),
+                  style: getMedium(color: Color(0xFF757575)),
                 ),
               ),
             ),
@@ -825,10 +800,7 @@ class ServiceScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: Text(
           'اختر القسم الرئيسي',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.responsiveFontSize(18),
-            fontWeight: FontWeight.bold,
-          ),
+          style: getBold(fontSize: ResponsiveDimensions.responsiveFontSize(18)),
           textAlign: TextAlign.center,
         ),
         content: SizedBox(
@@ -859,13 +831,14 @@ class ServiceScreen extends StatelessWidget {
                     SizedBox(height: 16),
                     Text(
                       'لا توجد أقسام متاحة',
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: getRegular(color: Color(0xFF757575)),
                     ),
+
                     SizedBox(height: 8),
                     if (controller.categoriesError.isNotEmpty)
                       Text(
                         controller.categoriesError.value,
-                        style: TextStyle(fontSize: 12, color: Colors.red),
+                        style: getRegular(fontSize: 12, color: Colors.red),
                         textAlign: TextAlign.center,
                       ),
                     SizedBox(height: 16),
@@ -905,28 +878,24 @@ class ServiceScreen extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '${index + 1}',
-                          style: TextStyle(
-                            color: AppColors.primary500,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: getBold(color: AppColors.primary500),
                         ),
                       ),
                     ),
                     title: Text(
                       sectionName,
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     subtitle: section['status'] != null
                         ? Text(
                             'الحالة: ${section['status']}',
-                            style: TextStyle(
+                            style: getRegular(
                               fontSize: ResponsiveDimensions.responsiveFontSize(
                                 12,
                               ),
-                              color: Colors.grey[600],
+                              color: Color(0xFF757575),
                             ),
                           )
                         : null,

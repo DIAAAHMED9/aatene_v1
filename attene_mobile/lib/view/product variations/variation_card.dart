@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -102,9 +103,8 @@ class _VariationCardState extends State<VariationCard> {
                   children: [
                     Text(
                       widget.variation.isActive.value ? 'مفعل' : 'غير مفعل',
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: ResponsiveDimensions.f(14),
-                        color: Colors.black,
                         fontWeight: FontWeight.w300,
                       ),
                     ),
@@ -185,14 +185,7 @@ class _VariationCardState extends State<VariationCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'السمات',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.f(16),
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
+        Text('السمات', style: getMedium()),
         SizedBox(height: ResponsiveDimensions.f(12)),
 
         ...attributePairs.map((pair) {
@@ -237,14 +230,7 @@ class _VariationCardState extends State<VariationCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'السمات',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.f(16),
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
+        Text('السمات', style: getMedium()),
         SizedBox(height: ResponsiveDimensions.f(12)),
 
         Wrap(
@@ -287,11 +273,7 @@ class _VariationCardState extends State<VariationCard> {
       children: [
         Text(
           attribute.name,
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.f(14),
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
-          ),
+          style: getRegular(fontSize: ResponsiveDimensions.f(14)),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -322,10 +304,7 @@ class _VariationCardState extends State<VariationCard> {
                     Expanded(
                       child: Text(
                         value.value,
-                        style: TextStyle(
-                          fontSize: ResponsiveDimensions.f(13),
-                          color: Colors.black,
-                        ),
+                        style: getRegular(fontSize: ResponsiveDimensions.f(13)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -348,7 +327,7 @@ class _VariationCardState extends State<VariationCard> {
               ),
               border: InputBorder.none,
               hintText: 'اختر ${attribute.name}',
-              hintStyle: TextStyle(fontSize: ResponsiveDimensions.f(13)),
+              hintStyle: getRegular(fontSize: ResponsiveDimensions.f(13)),
             ),
             icon: Icon(
               Icons.arrow_drop_down,
@@ -356,7 +335,7 @@ class _VariationCardState extends State<VariationCard> {
               size: ResponsiveDimensions.f(20),
             ),
             isExpanded: true,
-            style: TextStyle(fontSize: ResponsiveDimensions.f(13)),
+            style: getRegular(fontSize: ResponsiveDimensions.f(13)),
           ),
         ),
       ],
@@ -369,9 +348,8 @@ class _VariationCardState extends State<VariationCard> {
       children: [
         Text(
           'السعر',
-          style: TextStyle(
+          style: getMedium(
             fontSize: ResponsiveDimensions.f(16),
-            fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
         ),
@@ -408,9 +386,8 @@ class _VariationCardState extends State<VariationCard> {
       children: [
         Text(
           'المخزون',
-          style: TextStyle(
+          style: getMedium(
             fontSize: ResponsiveDimensions.f(16),
-            fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
         ),
@@ -440,14 +417,7 @@ class _VariationCardState extends State<VariationCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'SKU (الرمز التعريفي)',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.f(16),
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
+        Text('SKU (الرمز التعريفي)', style: getMedium()),
         SizedBox(height: ResponsiveDimensions.f(8)),
         TextField(
           controller: _skuController,
@@ -476,10 +446,9 @@ class _VariationCardState extends State<VariationCard> {
           children: [
             Text(
               'الصور',
-              style: TextStyle(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.f(16),
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
               ),
             ),
             SizedBox(width: 8),
@@ -492,11 +461,7 @@ class _VariationCardState extends State<VariationCard> {
                 ),
                 child: Text(
                   '${widget.variation.images.length}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primary500,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: getBold(fontSize: 12, color: AppColors.primary500),
                 ),
               ),
           ],
@@ -540,10 +505,9 @@ class _VariationCardState extends State<VariationCard> {
           ),
           label: Text(
             'قم برفع الصور',
-            style: TextStyle(
+            style: getMedium(
               color: AppColors.primary400,
               fontSize: ResponsiveDimensions.f(13),
-              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -553,9 +517,9 @@ class _VariationCardState extends State<VariationCard> {
             padding: EdgeInsets.only(top: ResponsiveDimensions.f(8)),
             child: Text(
               'لم يتم إضافة أي صور لهذا الاختلاف',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.f(12),
-                color: Colors.grey[600],
+                color: Colors.grey,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -783,23 +747,23 @@ class _VariationCardState extends State<VariationCard> {
       AlertDialog(
         title: Text(
           'تأكيد الحذف',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+          style: getBold(fontWeight: FontWeight.bold, color: Colors.red),
         ),
         content: Text(
           'هل أنت متأكد من حذف هذا الاختلاف؟',
-          style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+          style: getRegular(fontSize: ResponsiveDimensions.f(14)),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('إلغاء', style: TextStyle(color: Colors.grey[700])),
+            child: Text('إلغاء', style: getRegular(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               widget.controller.removeVariation(widget.variation);
             },
-            child: Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text('حذف', style: getRegular(color: Colors.red)),
           ),
         ],
       ),

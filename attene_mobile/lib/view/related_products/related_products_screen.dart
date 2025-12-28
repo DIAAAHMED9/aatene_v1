@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -64,10 +65,7 @@ class RelatedProductsScreen extends StatelessWidget {
           isLinkingMode
               ? 'اختر المنتجات المرتبطة لربطها مع المنتج الرئيسي'
               : 'قم باختيار منتجات لترشيحها في قائمة المنتجات',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.f(16),
-            color: Colors.grey[700],
-          ),
+          style: getRegular(color: Color(0xFF616161)),
         ),
       ],
     );
@@ -107,10 +105,7 @@ class RelatedProductsScreen extends StatelessWidget {
               children: [
                 Text(
                   'المنتجات المختارة (${controller.selectedProductsCount})',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(14),
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: getBold(fontSize: ResponsiveDimensions.f(14)),
                 ),
                 if (controller.hasSelectedProducts)
                   TextButton(
@@ -119,10 +114,7 @@ class RelatedProductsScreen extends StatelessWidget {
                       children: [
                         Icon(Icons.clear_all, color: Colors.red, size: 16),
                         const SizedBox(width: 4),
-                        const Text(
-                          'مسح الكل',
-                          style: TextStyle(color: Colors.red),
-                        ),
+                        Text('مسح الكل', style: getRegular(color: Colors.red)),
                       ],
                     ),
                   ),
@@ -154,7 +146,7 @@ class RelatedProductsScreen extends StatelessWidget {
           SizedBox(height: ResponsiveDimensions.h(16)),
           Text(
             'لم يتم اختيار أي منتجات بعد',
-            style: TextStyle(color: Colors.grey[600]),
+            style: getRegular(color: Colors.grey),
           ),
         ],
       ),
@@ -207,14 +199,7 @@ class RelatedProductsScreen extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.getFontSize(
-                        Get.context!,
-                        baseSize: 16,
-                      ),
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+                    style: getMedium(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -232,9 +217,9 @@ class RelatedProductsScreen extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           product.sectionName!,
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.f(14),
-                            color: Colors.grey[600],
+                            color: Colors.grey,
                           ),
                         ),
                       ],
@@ -243,14 +228,7 @@ class RelatedProductsScreen extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            _formatPrice(product.price ?? '0'),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
-            ),
-          ),
+          Text(_formatPrice(product.price ?? '0'), style: getBold()),
           IconButton(
             onPressed: () => Get.find<RelatedProductsController>()
                 .removeSelectedProduct(product),
@@ -325,10 +303,7 @@ class RelatedProductsScreen extends StatelessWidget {
           children: [
             Text(
               'التخفيضات المضافة (${controller.discountCount})',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(18),
-                fontWeight: FontWeight.bold,
-              ),
+              style: getBold(fontSize: ResponsiveDimensions.f(18)),
             ),
             SizedBox(height: ResponsiveDimensions.h(16)),
             _buildDiscountsList(),
@@ -408,10 +383,7 @@ class RelatedProductsScreen extends StatelessWidget {
                   const Text('السعر الإجمالي:'),
                   Text(
                     '${controller.originalPrice.toStringAsFixed(2)} ₪',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green[600],
-                    ),
+                    style: getBold(color: Colors.green),
                   ),
                 ],
               ),
@@ -477,7 +449,7 @@ class RelatedProductsScreen extends StatelessWidget {
               Get.find<RelatedProductsController>().removeDiscount(discount);
               Get.back();
             },
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text('حذف', style: getRegular(color: Colors.red)),
           ),
         ],
       ),

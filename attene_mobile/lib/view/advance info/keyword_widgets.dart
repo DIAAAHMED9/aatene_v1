@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/Text/text_with_star.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -16,18 +17,17 @@ class KeywordHeaderWidget extends StatelessWidget {
       children: [
         Text(
           'الكلمات المفتاحية للمنتج',
-          style: TextStyle(
+          style: getBold(
             fontSize: ResponsiveDimensions.f(18),
-            fontWeight: FontWeight.bold,
             color: Colors.black87,
           ),
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
         Text(
           'اختر المتجر وأضف الكلمات المفتاحية المناسبة لظهور أفضل في نتائج البحث',
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.f(14),
-            color: Colors.grey[600],
+            color: Colors.grey,
           ),
         ),
       ],
@@ -106,8 +106,8 @@ class StoreSelectorWidget extends StatelessWidget {
           SizedBox(width: ResponsiveDimensions.f(12)),
           Text(
             'جاري تحميل المتاجر...',
-            style: TextStyle(
-              color: Colors.grey[600],
+            style: getRegular(
+              color: Colors.grey,
               fontSize: ResponsiveDimensions.f(14),
             ),
           ),
@@ -139,8 +139,8 @@ class StoreSelectorWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   error,
-                  style: TextStyle(
-                    color: Colors.red[600],
+                  style: getRegular(
+                    color: Colors.red,
                     fontSize: ResponsiveDimensions.f(14),
                   ),
                 ),
@@ -183,8 +183,8 @@ class StoreSelectorWidget extends StatelessWidget {
           Expanded(
             child: Text(
               'لا توجد متاجر متاحة',
-              style: TextStyle(
-                color: Colors.orange[600],
+              style: getRegular(
+                color: Colors.orange,
                 fontSize: ResponsiveDimensions.f(14),
               ),
             ),
@@ -241,7 +241,7 @@ class StoreSelectorWidget extends StatelessWidget {
                     Expanded(
                       child: Text(
                         store.name,
-                        style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+                        style: getRegular(fontSize: ResponsiveDimensions.f(14)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -286,8 +286,8 @@ class KeywordSearchBoxWidget extends StatelessWidget {
                   horizontal: ResponsiveDimensions.f(16),
                   vertical: ResponsiveDimensions.f(14),
                 ),
-                hintStyle: TextStyle(
-                  color: Colors.grey[600],
+                hintStyle: getRegular(
+                  color: Colors.grey,
                   fontSize: ResponsiveDimensions.f(14),
                 ),
               ),
@@ -377,14 +377,7 @@ class AvailableKeywordsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'الكلمات المفتاحية المتاحة',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
+            Text('الكلمات المفتاحية المتاحة', style: getMedium()),
             SizedBox(height: ResponsiveDimensions.f(12)),
             Wrap(
               spacing: ResponsiveDimensions.f(8),
@@ -395,10 +388,7 @@ class AvailableKeywordsWidget extends StatelessWidget {
                   child: Container(
                     child: Text(
                       keyword,
-                      style: TextStyle(
-                        color: AppColors.primary400,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: getRegular(color: AppColors.primary400),
                     ),
                     padding: EdgeInsets.symmetric(
                       horizontal: ResponsiveDimensions.f(15),
@@ -436,18 +426,15 @@ class AvailableKeywordsWidget extends StatelessWidget {
           SizedBox(height: ResponsiveDimensions.f(8)),
           Text(
             'لا توجد كلمات مفتاحية متاحة',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey[600],
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.f(4)),
           Text(
             'جرب البحث بكلمات مختلفة',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(12),
-              color: Colors.grey[500],
-            ),
+            style: getRegular(fontSize: ResponsiveDimensions.f(12)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -469,25 +456,18 @@ class SelectedKeywordsWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              'الكلمات المفتاحية المختارة',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
+            Text('الكلمات المفتاحية المختارة', style: getMedium()),
             const Spacer(),
             GetBuilder<KeywordController>(
               builder: (_) => Text(
                 '${controller.selectedKeywords.length}/${KeywordController.maxKeywords}',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.f(14),
                   color:
                       controller.selectedKeywords.length >=
                           KeywordController.maxKeywords
                       ? Colors.red
-                      : Colors.grey[600],
+                      : Colors.grey,
                 ),
               ),
             ),
@@ -526,17 +506,17 @@ class SelectedKeywordsWidget extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.f(8)),
             Text(
               'لا توجد كلمات مفتاحية مختارة',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.f(14),
-                color: Colors.grey[500],
+                color: Colors.grey,
               ),
             ),
             SizedBox(height: ResponsiveDimensions.f(4)),
             Text(
               'اختر من الكلمات المفتاحية المتاحة',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: ResponsiveDimensions.f(12),
-                color: Colors.grey[400],
+                color: Colors.grey,
               ),
             ),
           ],
@@ -568,10 +548,7 @@ class SelectedKeywordsWidget extends StatelessWidget {
                 backgroundColor: AppColors.primary100,
                 deleteIconColor: AppColors.primary400,
                 onDeleted: () => controller.removeKeyword(keyword),
-                labelStyle: TextStyle(
-                  color: AppColors.primary500,
-                  fontWeight: FontWeight.w500,
-                ),
+                labelStyle: getRegular(color: AppColors.primary500),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                   side: BorderSide(color: AppColors.primary300, width: 1.0),
@@ -622,13 +599,7 @@ class KeywordBottomActionsWidget extends StatelessWidget {
                 ),
                 side: BorderSide(color: Colors.grey[400]!),
               ),
-              child: Text(
-                'إلغاء',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: ResponsiveDimensions.f(16),
-                ),
-              ),
+              child: Text('إلغاء', style: getRegular(color: Colors.grey)),
             ),
           ),
           SizedBox(width: ResponsiveDimensions.f(12)),
@@ -649,11 +620,7 @@ class KeywordBottomActionsWidget extends StatelessWidget {
                 ),
                 child: Text(
                   'تأكيد الاختيار',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: getMedium(color: Colors.white),
                 ),
               ),
             ),

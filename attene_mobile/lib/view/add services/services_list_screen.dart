@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,8 @@ class ServicesListScreen extends StatefulWidget {
   State<ServicesListScreen> createState() => _ServicesListScreenState();
 }
 
-class _ServicesListScreenState extends State<ServicesListScreen> with TickerProviderStateMixin {
+class _ServicesListScreenState extends State<ServicesListScreen>
+    with TickerProviderStateMixin {
   final ServiceController _serviceController = Get.find<ServiceController>();
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
@@ -28,7 +30,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   final RxList<String> _selectedServiceIds = <String>[].obs;
   final RxBool _isLoading = true.obs;
   final RxString _errorMessage = ''.obs;
-  
+
   List<Service> _allServices = [];
   List<TabData> _tabs = [];
 
@@ -55,12 +57,9 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
       TabData(label: 'مسودة', viewName: 'draft'),
       TabData(label: 'مرفوض', viewName: 'rejected'),
     ];
-    
-    _tabController = TabController(
-      length: _tabs.length,
-      vsync: this,
-    );
-    
+
+    _tabController = TabController(length: _tabs.length, vsync: this);
+
     _tabController.addListener(_handleTabChange);
   }
 
@@ -98,26 +97,32 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
 
   List<Service> _getServicesForTab(int tabIndex) {
     if (_allServices.isEmpty) return [];
-    
+
     final tab = _tabs[tabIndex];
     final status = tab.viewName;
-    
+
     List<Service> filteredServices = _allServices;
-    
+
     if (status != 'all') {
       filteredServices = _allServices
           .where((service) => service.status == status)
           .toList();
     }
-    
+
     if (_searchQuery.value.isNotEmpty) {
       filteredServices = filteredServices
-          .where((service) =>
-              service.title.toLowerCase().contains(_searchQuery.value.toLowerCase()) ||
-              (service.description ?? '').toLowerCase().contains(_searchQuery.value.toLowerCase()))
+          .where(
+            (service) =>
+                service.title.toLowerCase().contains(
+                  _searchQuery.value.toLowerCase(),
+                ) ||
+                (service.description ?? '').toLowerCase().contains(
+                  _searchQuery.value.toLowerCase(),
+                ),
+          )
           .toList();
     }
-    
+
     return filteredServices;
   }
 
@@ -136,14 +141,11 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
       );
       return;
     }
-    
+
     // تحويل service.id إلى String لأن الـ controller يتوقع String
     String serviceId = service.id.toString();
     _serviceController.setEditMode(serviceId, service.title);
-    Get.to(() => ServiceStepperScreen(
-      isEditMode: true,
-      serviceId: serviceId,
-    ));
+    Get.to(() => ServiceStepperScreen(isEditMode: true, serviceId: serviceId));
   }
 
   Future<void> _deleteService(Service service) async {
@@ -156,10 +158,10 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
       );
       return;
     }
-    
+
     // تحويل service.id إلى String لأن الـ controller يتوقع String
     String serviceId = service.id.toString();
-    
+
     final confirm = await Get.defaultDialog<bool>(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف الخدمة "${service.title}"؟',
@@ -207,13 +209,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    service.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(service.title, style: getBold(fontSize: 18)),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Get.back(),
@@ -237,13 +233,19 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                             return Container(
                               width: 200,
                               margin: EdgeInsets.only(
-                                right: index < service.images.length - 1 ? 8 : 0,
+                                right: index < service.images.length - 1
+                                    ? 8
+                                    : 0,
                                 left: index < service.images.length - 1 ? 8 : 0,
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 image: DecorationImage(
-                                  image: NetworkImage(_serviceController.getFullImageUrl(service.images[index]) ),
+                                  image: NetworkImage(
+                                    _serviceController.getFullImageUrl(
+                                      service.images[index],
+                                    ),
+                                  ),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -264,14 +266,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                             color: AppColors.primary100,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            '${service.price} ₪',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary500,
-                            ),
-                          ),
+                          child: Text('${service.price} ₪', style: getBold()),
                         ),
                         const SizedBox(width: 8),
                         _buildStatusChip(service.status),
@@ -281,18 +276,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
 
                     Text(
                       'مدة التنفيذ: ${service.executeCount} ${_convertTimeUnit(service.executeType)}',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: getRegular(fontSize: 14, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
 
                     if (service.specialties.isNotEmpty) ...[
-                      const Text(
-                        'التخصصات:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('التخصصات:', style: getBold()),
                       Wrap(
                         spacing: 8,
                         runSpacing: 4,
@@ -309,13 +298,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                     ],
 
                     if (service.tags.isNotEmpty) ...[
-                      const Text(
-                        'الكلمات المفتاحية:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('الكلمات المفتاحية:', style: getBold()),
                       Wrap(
                         spacing: 8,
                         runSpacing: 4,
@@ -331,30 +314,15 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                       const SizedBox(height: 16),
                     ],
 
-                    const Text(
-                      'الوصف:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text('الوصف:', style: getBold()),
                     Text(
                       service.description ?? '',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
+                      style: getRegular(fontSize: 14),
                     ),
                     const SizedBox(height: 16),
 
                     if (service.extras.isNotEmpty) ...[
-                      const Text(
-                        'التطويرات الإضافية:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('التطويرات الإضافية:', style: getBold()),
                       ...service.extras.map(
                         (extra) => ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -369,13 +337,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                     ],
 
                     if (service.questions.isNotEmpty) ...[
-                      const Text(
-                        'الأسئلة الشائعة:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('الأسئلة الشائعة:', style: getBold()),
                       ...service.questions.map(
                         (faq) => ExpansionTile(
                           title: Text(faq.question),
@@ -436,14 +398,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      child: Text(text, style: getRegular(fontSize: 12, color: color)),
     );
   }
 
@@ -464,7 +419,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
     final isRTL = LanguageUtils.isRTL;
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(isRTL, context),
@@ -477,7 +432,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
       preferredSize: Size.fromHeight(_calculateAppBarHeight(context)),
       child: Obx(() {
         final shouldShowTabs = _tabs.isNotEmpty && !_isLoading.value;
-        
+
         return CustomAppBarWithTabs(
           isRTL: isRTL,
           config: AppBarConfig(
@@ -510,26 +465,26 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   double _calculateAppBarHeight(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     double height = ResponsiveDimensions.f(175);
-    
+
     final shouldShowTabs = _tabs.isNotEmpty && !_isLoading.value;
-    
+
     if (shouldShowTabs) {
       height += ResponsiveDimensions.f(45);
       height += ResponsiveDimensions.f(15);
     }
-    
+
     height += ResponsiveDimensions.f(60);
     height += ResponsiveDimensions.f(15);
-    
+
     return height;
   }
 
   Widget _buildBody(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return GetBuilder<MyAppController>(
       builder: (myAppController) {
         if (!myAppController.isLoggedIn.value) {
@@ -570,7 +525,11 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
     );
   }
 
-  Widget _buildTabContentInternal(TabData tab, int tabIndex, BuildContext context) {
+  Widget _buildTabContentInternal(
+    TabData tab,
+    int tabIndex,
+    BuildContext context,
+  ) {
     final services = _getServicesForTab(tabIndex);
 
     if (services.isEmpty) {
@@ -583,10 +542,10 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   Widget _buildServicesView(List<Service> services, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Obx(() {
       final isGridMode = _viewMode.value == 'grid' && screenWidth > 768;
-      
+
       if (isGridMode) {
         return _buildGridLayout(services, context);
       } else {
@@ -598,8 +557,10 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   Widget _buildGridLayout(List<Service> services, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = _getGridCrossAxisCount(context);
-    final spacing = screenWidth < 600 ? ResponsiveDimensions.f(8) : ResponsiveDimensions.f(16);
-    
+    final spacing = screenWidth < 600
+        ? ResponsiveDimensions.f(8)
+        : ResponsiveDimensions.f(16);
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       child: GridView.builder(
@@ -616,7 +577,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
         itemBuilder: (context, index) {
           final service = services[index];
           final serviceId = service.id?.toString() ?? '';
-          
+
           return ServiceGridItem(
             service: service,
             onTap: () => _showServiceDetails(service),
@@ -646,27 +607,33 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   Widget _buildListLayout(List<Service> services, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(12) : ResponsiveDimensions.f(16)),
+        padding: EdgeInsets.all(
+          isSmallScreen
+              ? ResponsiveDimensions.f(12)
+              : ResponsiveDimensions.f(16),
+        ),
         itemCount: services.length,
         itemBuilder: (context, index) {
           final service = services[index];
           final serviceId = service.id?.toString() ?? '';
-          
+
           return ServiceListItem(
-          service: service,
-          controller: _serviceController,
-          isSelected: _serviceController.selectedServiceIds.contains(serviceId),
-          onSelectionChanged: (isSelected) {
-            _serviceController.toggleServiceSelection(serviceId);
-          },
-          onTap: () => _showServiceDetails(service),
-        );
+            service: service,
+            controller: _serviceController,
+            isSelected: _serviceController.selectedServiceIds.contains(
+              serviceId,
+            ),
+            onSelectionChanged: (isSelected) {
+              _serviceController.toggleServiceSelection(serviceId);
+            },
+            onTap: () => _showServiceDetails(service),
+          );
         },
       ),
     );
@@ -675,10 +642,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   Widget _buildLoginRequiredView(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -690,22 +659,22 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             'يجب تسجيل الدخول',
-            style: TextStyle(
+            style: getBold(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(20)
                   : ResponsiveDimensions.f(24),
               fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+              color: Color(0xFF757575),
             ),
           ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'يرجى تسجيل الدخول للوصول إلى إدارة الخدمات',
-            style: TextStyle(
+            style: getRegular(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
-              color: Colors.grey[500],
+              color: Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),
@@ -717,7 +686,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
               icon: Icon(Icons.login_rounded, size: ResponsiveDimensions.f(20)),
               label: Text(
                 'تسجيل الدخول',
-                style: TextStyle(fontSize: ResponsiveDimensions.f(14)),
+                style: getRegular(fontSize: ResponsiveDimensions.f(14)),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary400,
@@ -734,13 +703,19 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
     );
   }
 
-  Widget _buildEmptyView(String sectionName, int tabIndex, BuildContext context) {
+  Widget _buildEmptyView(
+    String sectionName,
+    int tabIndex,
+    BuildContext context,
+  ) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -752,24 +727,22 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             _getEmptyMessage(sectionName, tabIndex),
-            style: TextStyle(
+            style: getBold(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(18)
                   : ResponsiveDimensions.f(22),
-              color: const Color(0xFF555555),
-              fontWeight: FontWeight.w700,
+              color: Color(0xFF555555),
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: ResponsiveDimensions.f(12)),
           Text(
             _getEmptyDescription(sectionName, tabIndex),
-            style: TextStyle(
+            style: getRegular(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(12)
                   : ResponsiveDimensions.f(14),
-              color: const Color(0xFFAAAAAA),
-              fontWeight: FontWeight.w500,
+              color: Color(0xFFAAAAAA),
             ),
             textAlign: TextAlign.center,
           ),
@@ -787,7 +760,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
                 ),
                 child: Text(
                   'إضافة خدمة جديدة',
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.white,
                     fontSize: ResponsiveDimensions.f(14),
                   ),
@@ -841,18 +814,16 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   Widget _buildLoadingView(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AppColors.primary400,
-          ),
+          CircularProgressIndicator(color: AppColors.primary400),
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'جاري تحميل الخدمات...',
-            style: TextStyle(
+            style: getRegular(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -867,10 +838,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
   Widget _buildErrorView(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(24) : ResponsiveDimensions.f(32),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -882,25 +855,26 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'حدث خطأ',
-            style: TextStyle(
+            style: getBold(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(16)
                   : ResponsiveDimensions.f(18),
-              fontWeight: FontWeight.bold,
               color: Colors.red,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.f(8)),
-          Obx(() => Text(
-            _errorMessage.value,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: isSmallScreen
-                  ? ResponsiveDimensions.f(12)
-                  : ResponsiveDimensions.f(14),
-              color: Colors.grey,
+          Obx(
+            () => Text(
+              _errorMessage.value,
+              textAlign: TextAlign.center,
+              style: getRegular(
+                fontSize: isSmallScreen
+                    ? ResponsiveDimensions.f(12)
+                    : ResponsiveDimensions.f(14),
+                color: Colors.grey,
+              ),
             ),
-          )),
+          ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           ElevatedButton(
             onPressed: _refreshServices,
@@ -914,9 +888,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> with TickerProv
             ),
             child: Text(
               'إعادة المحاولة',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(14),
-              ),
+              style: getRegular(fontSize: ResponsiveDimensions.f(14)),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),

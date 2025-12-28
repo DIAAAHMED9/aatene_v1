@@ -1,3 +1,5 @@
+import 'package:attene_mobile/api/api_request.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,10 +29,7 @@ class BottomSheetController extends GetxController {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'إدارة السمات والصفات',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                Text('إدارة السمات والصفات', style: getBold(fontSize: 18)),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () => Get.back(),
@@ -43,13 +42,9 @@ class BottomSheetController extends GetxController {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'السمات المتاحة',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
-                  ),
+                  style: getMedium(fontSize: 14, color: Colors.grey),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -63,11 +58,7 @@ class BottomSheetController extends GetxController {
                   child: Obx(
                     () => Text(
                       '${selectedAttributesRx.length} مختارة',
-                      style: TextStyle(
-                        color: Colors.blue[700],
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: getMedium(color: Colors.blueAccent, fontSize: 12),
                     ),
                   ),
                 ),
@@ -89,9 +80,10 @@ class BottomSheetController extends GetxController {
                     child: ListTile(
                       title: Text(
                         attribute.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: isSelected ? Colors.blue[700] : Colors.black87,
+                        style: getRegular(
+                          color: isSelected
+                              ? Colors.blueAccent
+                              : Colors.black87,
                         ),
                       ),
                       subtitle: Text('${attribute.values.length} قيمة'),

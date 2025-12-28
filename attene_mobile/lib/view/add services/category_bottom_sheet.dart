@@ -1,9 +1,9 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
-
 
 class CategoryBottomSheet extends StatelessWidget {
   const CategoryBottomSheet({super.key});
@@ -30,9 +30,8 @@ class CategoryBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'اختر الفئة',
-                  style: TextStyle(
+                  style: getBold(
                     fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
@@ -71,9 +70,8 @@ class CategoryBottomSheet extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'القسم: ${controller.selectedMainCategory.value}',
-                        style: TextStyle(
+                        style: getMedium(
                           fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                          fontWeight: FontWeight.w600,
                           color: AppColors.primary500,
                         ),
                       ),
@@ -93,7 +91,7 @@ class CategoryBottomSheet extends StatelessWidget {
               onChanged: controller.searchCategories,
               decoration: InputDecoration(
                 hintText: 'ابحث عن فئة...',
-                hintStyle: TextStyle(
+                hintStyle: getRegular(
                   fontSize: ResponsiveDimensions.responsiveFontSize(14),
                 ),
                 prefixIcon: Icon(
@@ -128,12 +126,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         ),
                         Text(
                           'يرجى اختيار قسم أولاً',
-                          style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(
-                              16,
-                            ),
-                            color: Colors.grey[600],
-                          ),
+                          style: getRegular(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -151,11 +144,11 @@ class CategoryBottomSheet extends StatelessWidget {
                         ),
                         Text(
                           'جاري تحميل الفئات...',
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
-                            color: Colors.grey[600],
+                            color: Colors.grey,
                           ),
                         ),
                       ],
@@ -179,7 +172,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         Text(
                           controller.categoriesError.value,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -218,12 +211,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         ),
                         Text(
                           'لا توجد فئات',
-                          style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(
-                              16,
-                            ),
-                            color: Colors.grey[600],
-                          ),
+                          style: getRegular(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -241,7 +229,7 @@ class CategoryBottomSheet extends StatelessWidget {
                     return ListTile(
                       title: Text(
                         categoryName,
-                        style: TextStyle(
+                        style: getRegular(
                           fontSize: ResponsiveDimensions.responsiveFontSize(14),
                         ),
                       ),
@@ -291,14 +279,7 @@ class CategoryBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
-                  'حفظ',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+                child: Text('حفظ', style: getMedium(color: Colors.white)),
               ),
             ),
           ),

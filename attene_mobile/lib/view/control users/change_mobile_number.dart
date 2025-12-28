@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../component/aatene_button/aatene_button.dart';
 import '../../component/aatene_text_filed.dart';
+import '../../component/text/aatene_custom_text.dart';
 import '../../utlis/colors/app_color.dart';
 import '../../utlis/language/language_utils.dart';
 
@@ -18,11 +19,7 @@ class ChangeMobileNumber extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "تغيير رقم الموبايل",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -44,16 +41,14 @@ class ChangeMobileNumber extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            Text(
-              "ارقم الهاتف",
-              style: TextStyle(fontSize: 14, color: Colors.black),
-            ),
+            Text("ارقم الهاتف", style: getRegular(fontSize: 14)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: "01289022985",
               textInputType: TextInputType.phone,
               heightTextFiled: 45,
-              prefixIcon: Icon(Icons.phone_outlined), textInputAction: TextInputAction.done,
+              prefixIcon: Icon(Icons.phone_outlined),
+              textInputAction: TextInputAction.done,
             ),
             AateneButton(
               buttonText: "حفظ",

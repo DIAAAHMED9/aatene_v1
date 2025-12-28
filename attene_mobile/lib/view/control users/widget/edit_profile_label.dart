@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utlis/colors/app_color.dart';
@@ -41,10 +42,13 @@ class EditProfileLabel extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 14)),
+                  Text(title, style: getRegular(fontSize: 14)),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: AppColors.neutral300),
+                    style: getRegular(
+                      fontSize: 12,
+                      color: AppColors.neutral300,
+                    ),
                   ),
                 ],
               ),

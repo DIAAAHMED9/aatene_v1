@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -32,9 +33,8 @@ class DevelopmentBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'إضافة تطوير جديد',
-                  style: TextStyle(
+                  style: getBold(
                     fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
@@ -57,13 +57,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'تفاصيل التطوير',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('تفاصيل التطوير', style: getBold()),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                   Obx(
                     () => TextField(
@@ -88,13 +82,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
 
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
 
-                  Text(
-                    'السعر',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('السعر', style: getBold()),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                   Obx(
                     () => TextField(
@@ -134,13 +122,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
 
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
 
-                  Text(
-                    'مدة التنفيذ',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('مدة التنفيذ', style: getBold()),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                   Row(
                     children: [
@@ -202,7 +184,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                                   children: [
                                     Text(
                                       controller.developmentTimeUnit.value,
-                                      style: TextStyle(
+                                      style: getRegular(
                                         fontSize:
                                             ResponsiveDimensions.responsiveFontSize(
                                               14,
@@ -256,6 +238,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                   child: Text(
                     'إضافة التطوير',
                     style: TextStyle(
+                      fontFamily: "PingAR",
                       fontSize: ResponsiveDimensions.responsiveFontSize(16),
                       fontWeight: FontWeight.w600,
                       color: controller.canAddDevelopment

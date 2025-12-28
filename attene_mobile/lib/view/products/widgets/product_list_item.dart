@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/models/product_model.dart';
@@ -80,12 +81,11 @@ class ProductListItem extends StatelessWidget {
                   children: [
                     Text(
                       product.name,
-                      style: TextStyle(
+                      style: getMedium(
                         fontSize: ResponsiveWidgets.getFontSize(
                           context,
                           baseSize: 16,
                         ),
-                        fontWeight: FontWeight.w600,
                         color: Colors.black87,
                       ),
                       maxLines: 2,
@@ -105,10 +105,7 @@ class ProductListItem extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             controller.getSectionName(product.sectionId!),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                            style: getRegular(fontSize: 12, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -118,14 +115,7 @@ class ProductListItem extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            Text(
-              '${product.price ?? '0.0'} ₪',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-              ),
-            ),
+            Text('${product.price ?? '0.0'} ₪', style: getBold()),
             if (!isSelectionMode)
               IconButton(
                 onPressed: _showProductOptions,

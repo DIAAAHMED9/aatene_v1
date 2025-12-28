@@ -1,4 +1,6 @@
-import 'package:attene_mobile/view/add%20services/service_controller.dart' show ServiceController;
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
+import 'package:attene_mobile/view/add%20services/service_controller.dart'
+    show ServiceController;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -25,7 +27,7 @@ class ServiceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelectionMode = controller.isInSelectionMode;
-    
+
     return GestureDetector(
       onLongPress: () {
         if (!isSelectionMode) {
@@ -51,8 +53,8 @@ class ServiceListItem extends StatelessWidget {
           horizontal: ResponsiveDimensions.f(16),
         ),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? AppColors.primary400.withOpacity(0.1) 
+          color: isSelected
+              ? AppColors.primary400.withOpacity(0.1)
               : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: isSelected
@@ -79,59 +81,52 @@ class ServiceListItem extends StatelessWidget {
                   activeColor: AppColors.primary400,
                 ),
               ),
-            
+
             _buildServiceImage(context),
-            
+
             SizedBox(width: ResponsiveDimensions.f(16)),
-            
+
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: ResponsiveDimensions.f(12)),
+                padding: EdgeInsets.symmetric(
+                  vertical: ResponsiveDimensions.f(12),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       service.title,
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.f(16),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+                      style: getMedium(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     SizedBox(height: ResponsiveDimensions.f(6)),
-                    
+
                     if (service.sectionId != null && service.sectionId != 0)
                       Row(
                         children: [
-                          Icon(Icons.category_outlined,
-                               color: Colors.grey[600],
-                               size: ResponsiveDimensions.f(14)),
+                          Icon(
+                            Icons.category_outlined,
+                            color: Colors.grey[600],
+                            size: ResponsiveDimensions.f(14),
+                          ),
                           SizedBox(width: ResponsiveDimensions.f(4)),
                           Text(
                             _getSectionName(service.sectionId!),
-                            style: TextStyle(
+                            style: getRegular(
                               fontSize: ResponsiveDimensions.f(12),
-                              color: Colors.grey[600],
+                              color: Color(0xFF757575),
                             ),
                           ),
                         ],
                       ),
-                    
+
                     SizedBox(height: ResponsiveDimensions.f(8)),
-                    
+
                     Row(
                       children: [
-                        Text(
-                          '${service.price} ₪',
-                          style: TextStyle(
-                            fontSize: ResponsiveDimensions.f(16),
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black87,
-                          ),
-                        ),
+                        Text('${service.price} ₪', style: getBold()),
                         SizedBox(width: ResponsiveDimensions.f(12)),
                         _buildStatusChip(service.status),
                       ],
@@ -140,12 +135,12 @@ class ServiceListItem extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             if (!isSelectionMode)
               IconButton(
                 onPressed: _showServiceOptions,
                 icon: Icon(
-                  Icons.more_horiz, 
+                  Icons.more_horiz,
                   color: Colors.grey,
                   size: ResponsiveDimensions.f(24),
                 ),
@@ -169,11 +164,11 @@ class ServiceListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: Colors.grey[200],
       ),
-      child: service.imagesUrl!=null
+      child: service.imagesUrl != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                service.imagesUrl??'',
+                service.imagesUrl ?? '',
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -181,7 +176,7 @@ class ServiceListItem extends StatelessWidget {
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
+                                loadingProgress.expectedTotalBytes!
                           : null,
                       strokeWidth: 2,
                       color: AppColors.primary400,
@@ -253,11 +248,7 @@ class ServiceListItem extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: ResponsiveDimensions.f(11),
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+        style: getMedium(fontSize: ResponsiveDimensions.f(11), color: color),
       ),
     );
   }
@@ -285,14 +276,11 @@ class ServiceListItem extends StatelessWidget {
           children: [
             ListTile(
               leading: Icon(
-                Icons.edit, 
+                Icons.edit,
                 color: AppColors.primary400,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text(
-                'تعديل الخدمة',
-                style: TextStyle(fontSize: ResponsiveDimensions.f(16)),
-              ),
+              title: Text('تعديل الخدمة', style: getRegular()),
               onTap: () {
                 Get.back();
                 _editService();
@@ -300,14 +288,11 @@ class ServiceListItem extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(
-                Icons.delete, 
+                Icons.delete,
                 color: Colors.red,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text(
-                'حذف الخدمة',
-                style: TextStyle(fontSize: ResponsiveDimensions.f(16)),
-              ),
+              title: Text('حذف الخدمة', style: getRegular()),
               onTap: () {
                 Get.back();
                 _confirmDeleteService();
@@ -315,14 +300,11 @@ class ServiceListItem extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(
-                Icons.visibility, 
+                Icons.visibility,
                 color: Colors.blue,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text(
-                'عرض التفاصيل',
-                style: TextStyle(fontSize: ResponsiveDimensions.f(16)),
-              ),
+              title: Text('عرض التفاصيل', style: getRegular()),
               onTap: () {
                 Get.back();
                 _viewServiceDetails();
@@ -330,14 +312,11 @@ class ServiceListItem extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(
-                Icons.content_copy, 
+                Icons.content_copy,
                 color: Colors.orange,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text(
-                'نسخ الخدمة',
-                style: TextStyle(fontSize: ResponsiveDimensions.f(16)),
-              ),
+              title: Text('نسخ الخدمة', style: getRegular()),
               onTap: () {
                 Get.back();
                 _copyService();
@@ -354,7 +333,10 @@ class ServiceListItem extends StatelessWidget {
   void _editService() {
     if (service.id != null) {
       controller.setEditMode(service.id!.toString(), service.title);
-      Get.toNamed('/add-service', arguments: {'isEditMode': true, 'serviceId': service.id});
+      Get.toNamed(
+        '/add-service',
+        arguments: {'isEditMode': true, 'serviceId': service.id},
+      );
     }
   }
 
@@ -364,10 +346,7 @@ class ServiceListItem extends StatelessWidget {
         title: Text('حذف الخدمة'),
         content: Text('هل أنت متأكد من حذف الخدمة "${service.title}"؟'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('إلغاء'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: Text('إلغاء')),
           ElevatedButton(
             onPressed: () {
               Get.back();

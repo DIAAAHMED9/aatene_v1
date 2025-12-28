@@ -1,13 +1,21 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/colors/app_color.dart';
 
 class CardWidget extends StatelessWidget {
-  const CardWidget({super.key, required this.title, required this.subtitle, required this.icon});
-  final String title ;
-  final String subtitle ;
-  final Icon icon ;
+  const CardWidget({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
 
+  final String title;
+
+  final String subtitle;
+
+  final Icon icon;
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +43,12 @@ class CardWidget extends StatelessWidget {
               child: icon,
             ),
             Text(
-             title,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              title,
+              style: getBold(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             Text(
               subtitle,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: AppColors.neutral400,
-              ),
+              style: getRegular(fontSize: 12, color: AppColors.neutral400),
             ),
           ],
         ),

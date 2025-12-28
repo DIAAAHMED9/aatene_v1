@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 
@@ -33,24 +34,13 @@ class EmptyStateWidget extends StatelessWidget {
                     color: Colors.grey[300],
                   ),
             const SizedBox(height: 24),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 22,
-                color: Color(0xFF555555),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            Text(title, style: getBold(fontSize: 22, color: Color(0xFF555555))),
             const SizedBox(height: 12),
             SizedBox(
               width: 280,
               child: Text(
                 description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.w500,
-                ),
+                style: getRegular(fontSize: 14, color: Color(0xFFAAAAAA)),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -63,10 +53,7 @@ class EmptyStateWidget extends StatelessWidget {
                   backgroundColor: AppColors.primary400,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: Text(
-                  buttonText,
-                  style: const TextStyle(color: Colors.white),
-                ),
+                child: Text(buttonText, style: getRegular(color: Colors.white)),
               ),
             ),
           ],

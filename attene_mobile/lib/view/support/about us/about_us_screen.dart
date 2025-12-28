@@ -3,6 +3,7 @@ import 'package:attene_mobile/view/support/about%20us/widgets/card.dart';
 import 'package:attene_mobile/view/support/about%20us/widgets/section_items2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../component/text/aatene_custom_text.dart';
 import '../../../helper/url_helper.dart';
 import '../../../utlis/colors/app_color.dart';
 import 'widgets/section_title.dart';
@@ -18,11 +19,7 @@ class AboutUsScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "عن  أعطيني",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -51,16 +48,12 @@ class AboutUsScreen extends StatelessWidget {
                 children: [
                   Text(
                     '"أعطيني" هي منصة إلكترونية وسّطية، تربط بين مزوّدي الخدمات وبائعي المنتجات المحليين مع الزبائن ، عبر واجهة بسيطة وسريعة، نمنح كل شخص عنده خدمة أو منتج فرصة للظهور الرقمي، والوصول لجمهور مهتم بدون عمولات أو تعقيدات.',
-                    style: TextStyle(
+                    style: getRegular(
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
                       color: AppColors.neutral600,
                     ),
                   ),
-                  Text(
-                    'من نحن؟',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                  Text('من نحن؟', style: getBold()),
                   Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
@@ -74,7 +67,7 @@ class AboutUsScreen extends StatelessWidget {
                   ),
                   Text(
                     'في قلب الناصرة، بين شوارعها القديمة وأحلام شبابها وبناتها، انطلقت فكرة أعطيني. نحن مجموعة شباب وصبايا من الناصرة، كبرنا وسط تحديات السوق المحلي، وشفنا كيف التجار الصغار ومزوّدي الخدمات عم بواجهوا صعوبة يوصلوا لزبائنهم… وشفنا كمان الزبون، اللي دايمًا بيدوّر على خدمةموثوقة أو منتج مضمون، ومش دايمًا بلاقيهم بسهولة.',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: getBold(fontSize: 12),
                   ),
                 ],
               ),
@@ -90,13 +83,12 @@ class AboutUsScreen extends StatelessWidget {
                   children: [
                     Text(
                       "رؤيتنا ورسالتنا نحو دعم المشاريع المحلية",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: getBold(),
                     ),
                     Text(
                       "نعمل على تمكين المشاريع الصغيرة من التوسع والظهور الرقمي، ونمنح كل مستخدم مساحة ذكية وسهلة للوصول إلى الخدمات والمنتجات المحلية بسرعة وثقة.",
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: 12,
-                        fontWeight: FontWeight.w500,
                         color: AppColors.neutral600,
                       ),
                     ),
@@ -133,19 +125,12 @@ class AboutUsScreen extends StatelessWidget {
                         backgroundColor: AppColors.neutral100,
                         radius: 3,
                       ),
-                      Text(
-                        "لماذا نحن؟",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      Text("لماذا نحن؟", style: getBold()),
                     ],
                   ),
                   Text(
                     'في "أعطيني"، نؤمن بأن البيع والشراء يجب أن يكون سهلاً، سريعاً، وخالياً من التعقيدات. لذلك نوفر لك منصة موثوقة تربطك مباشرة بأهل منطقتك، بدون عمولات، مع دعم مستمر وتنوع كبير في الخدمات والمنتجات.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      letterSpacing: -0.5,
-                    ),
+                    style: getRegular(fontSize: 14, letterSpacin: -0.5),
                   ),
                   SizedBox(height: 20),
                   SectionItems2(
@@ -193,13 +178,12 @@ class AboutUsScreen extends StatelessWidget {
                   children: [
                     Text(
                       "عندك خدمة أو منتج؟ خلّي الناس القريبين يشتروا منك بسهولة!",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: getBold(),
                     ),
                     Text(
                       "منصة مخصصة لأصحاب المشاريع الصغيرة، الحرفيين، وبائعي المنتجات والخدمات. نوصلك مباشرةً بعملاء منطقتك بطريقة سهلة وسريعة، مع دعم مستمر وأدوات تساعدك على عرض منتجاتك وزيادة مبيعاتك.",
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: 12,
-                        fontWeight: FontWeight.w500,
                         color: AppColors.neutral600,
                       ),
                     ),
@@ -245,15 +229,11 @@ class AboutUsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      "بدك تشتري من أهل بلدك؟",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    Text("بدك تشتري من أهل بلدك؟", style: getBold()),
                     Text(
                       "في أعطيني  تلاقي كل احتياجاتك في مكان واحد، من منتجات وخدمات محلية موثوقة. تقدر تتواصل مباشرة مع البائع، تطلب بسهولة، وتستلم بسرعة وبأسعار تناسب ميزانيتك.",
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: 12,
-                        fontWeight: FontWeight.w500,
                         color: AppColors.neutral600,
                       ),
                     ),
@@ -271,10 +251,7 @@ class AboutUsScreen extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "تصفح العروض الآن",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                                style: getBold(fontSize: 12),
                               ),
                             ),
                           ),
@@ -290,10 +267,7 @@ class AboutUsScreen extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "ابحث عن خدمة أو منتج محدّد",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                                style: getBold(fontSize: 12),
                               ),
                             ),
                           ),
@@ -331,18 +305,11 @@ class AboutUsScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Text("data", style: getBold(fontSize: 14)),
                                 Text(
                                   "data",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "data",
-                                  style: TextStyle(
+                                  style: getRegular(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w500,
                                     color: AppColors.neutral700,
                                   ),
                                 ),
@@ -411,21 +378,19 @@ class AboutUsScreen extends StatelessWidget {
                         children: [
                           Text(
                             "ابدأ الآن بإضافة رسالتك",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style: getBold(
                               fontSize: 12,
                               color: AppColors.primary400,
                             ),
                           ),
                           Text(
                             "تواصل معنا، نحن هنا لمساعدتك.",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: getBold(),
                           ),
                           Text(
                             "فريقنا جاهز يرد على كل استفساراتك ويساعدك بخطوات واضحة وسريعة، سواء كنت حابب تعرف أكثر عن خدماتنا أو تحتاج دعم في طلبك. لا تتردد، رسالتك تهمنا.",
-                            style: TextStyle(
+                            style: getBold(
                               fontSize: 12,
-                              fontWeight: FontWeight.bold,
                               color: AppColors.neutral600,
                             ),
                           ),
@@ -445,10 +410,7 @@ class AboutUsScreen extends StatelessWidget {
 
                                   Text(
                                     "نحن هنا للاستماع، اكتب ما ترغب بمشاركته معنا 🤗",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: getBold(fontSize: 14),
                                   ),
                                   const SizedBox(height: 10),
                                   // Name field
@@ -478,9 +440,7 @@ class AboutUsScreen extends StatelessWidget {
                                         children: [
                                           Text(
                                             "إرسال الرسالة",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
+                                            style: getBold(
                                               color: AppColors.light1000,
                                             ),
                                           ),
@@ -593,11 +553,7 @@ class AboutUsScreen extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintTextDirection: TextDirection.rtl,
-        hintStyle: const TextStyle(
-          color: AppColors.neutral600,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
+        hintStyle: getRegular(color: AppColors.neutral600, fontSize: 14),
         border: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.neutral900, width: 2),
         ),

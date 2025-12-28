@@ -1,10 +1,10 @@
 import 'package:attene_mobile/component/Text/text_with_star.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/time_unit_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
-
 
 import 'development_bottom_sheet.dart';
 import 'models/models.dart';
@@ -44,7 +44,7 @@ class PriceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextWithStar(text:'السعر الأساسي'),
+            TextWithStar(text: 'السعر الأساسي'),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Container(
               decoration: BoxDecoration(
@@ -107,7 +107,7 @@ class PriceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -126,7 +126,7 @@ class PriceScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextWithStar(text:'مدة التنفيذ'),
+            TextWithStar(text: 'مدة التنفيذ'),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Row(
               children: [
@@ -190,7 +190,7 @@ class PriceScreen extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 controller.executionTimeUnit.value,
-                                style: TextStyle(
+                                style: getRegular(
                                   fontSize:
                                       ResponsiveDimensions.responsiveFontSize(
                                         14,
@@ -219,7 +219,7 @@ class PriceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: TextStyle(
+                  style: getRegular(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -237,20 +237,14 @@ class PriceScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'تطويرات الخدمة (اختياري)',
-          style: TextStyle(
-            fontSize: ResponsiveDimensions.responsiveFontSize(16),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text('تطويرات الخدمة (اختياري)', style: getBold()),
         SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
         Row(
           children: [
             Expanded(
               child: Text(
                 'تطويرات الخدمة اختيارية بالكامل، ولا يجوز إلزام المشتري بطلبها. يُرجى التعرف على كيفية استخدامها بالشكل الصحيح.',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.responsiveFontSize(11),
                   color: Colors.grey.shade500,
                 ),
@@ -289,11 +283,7 @@ class PriceScreen extends StatelessWidget {
                 SizedBox(width: ResponsiveDimensions.responsiveWidth(12)),
                 Text(
                   'أضف تطوير جديد',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary400,
-                  ),
+                  style: getMedium(color: AppColors.primary400),
                 ),
               ],
             ),
@@ -388,12 +378,11 @@ class PriceScreen extends StatelessWidget {
                       children: [
                         Text(
                           development.title,
-                          style: TextStyle(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[800],
+                            color: Color(0xFF424242),
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -418,7 +407,7 @@ class PriceScreen extends StatelessWidget {
 
                             Text(
                               '${development.executionTime} ${development.timeUnit}',
-                              style: TextStyle(
+                              style: getRegular(
                                 fontSize:
                                     ResponsiveDimensions.responsiveFontSize(12),
                               ),
@@ -472,11 +461,7 @@ class PriceScreen extends StatelessWidget {
                   children: [
                     Text(
                       'التالي: الوصف والأسئلة الشائعة',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      style: getMedium(color: Colors.white),
                     ),
                     SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                     Icon(
@@ -518,13 +503,7 @@ class PriceScreen extends StatelessWidget {
                         ),
                         Text(
                           'السابق',
-                          style: TextStyle(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(
-                              16,
-                            ),
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[600],
-                          ),
+                          style: getMedium(color: Color(0xFF757575)),
                         ),
                       ],
                     ),
@@ -565,11 +544,7 @@ class PriceScreen extends StatelessWidget {
                     ),
                     child: Text(
                       'حفظ مؤقت',
-                      style: TextStyle(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
-                      ),
+                      style: getMedium(color: Color(0xFF757575)),
                     ),
                   ),
                 ),

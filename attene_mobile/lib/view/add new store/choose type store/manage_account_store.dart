@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -43,20 +44,15 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               ),
               child: Row(
                 children: [
-                  Text(
-                    'إدارة الحسابات',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                      fontSize: 20,
-                    ),
-                  ),
+                  Text('إدارة الحسابات', style: getRegular(fontSize: 20)),
                 ],
               ),
             ),
             Expanded(
               child: KeyboardDismissOnScroll(
-                child: Obx(() => _buildBody(controller, isRTL, myAppController,context)),
+                child: Obx(
+                  () => _buildBody(controller, isRTL, myAppController, context),
+                ),
               ),
             ),
           ],
@@ -69,7 +65,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     ManageAccountStoreController controller,
     bool isRTL,
     MyAppController myAppController,
-    BuildContext context
+    BuildContext context,
   ) {
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
@@ -87,7 +83,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
       return _buildEmptyAccountsView(controller);
     }
 
-    return _buildAccountsListView(controller,context);
+    return _buildAccountsListView(controller, context);
   }
 
   Widget _buildLoadingView() {
@@ -113,21 +109,14 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
             children: [
               Icon(Icons.error_outline, size: 60, color: Colors.red),
               const SizedBox(height: 16),
-              Text(
-                'حدث خطأ',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
+              Text('حدث خطأ', style: getBold(fontSize: 18, color: Colors.red)),
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Text(
                   controller.errorMessage.value,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: getRegular(color: Colors.grey),
                 ),
               ),
               const SizedBox(height: 16),
@@ -162,22 +151,14 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               const SizedBox(height: 24),
               Text(
                 'لا يوجد لديك أي متاجر',
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Color(0xFF555555),
-                  fontWeight: FontWeight.w700,
-                ),
+                style: getBold(fontSize: 22, color: Color(0xFF555555)),
               ),
               const SizedBox(height: 12),
               SizedBox(
                 width: 280,
                 child: Text(
                   'يمكنك البدء بإضافة متاجر جديدة لإدارتها بشكل منفصل',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFAAAAAA),
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: getRegular(fontSize: 14, color: Color(0xFFAAAAAA)),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -198,7 +179,10 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     );
   }
 
-  Widget _buildAccountsListView(ManageAccountStoreController controller,BuildContext context) {
+  Widget _buildAccountsListView(
+    ManageAccountStoreController controller,
+    BuildContext context,
+  ) {
     List<Store> filteredStores = controller.stores.where((store) {
       if (controller.searchQuery.value.isNotEmpty) {
         final query = controller.searchQuery.value.toLowerCase();
@@ -225,7 +209,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                 onChanged: controller.onSearchChanged,
                 decoration: InputDecoration(
                   hintText: 'ابحث عن متجر...',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
+                  hintStyle: getRegular(color: Colors.grey),
                   prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
@@ -250,20 +234,12 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                 Expanded(
                   child: Text(
                     'الحساب/المتجر',
-                    style: TextStyle(
-                      color: Color(0xFF395A7D),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: getMedium(color: Color(0xFF395A7D), fontSize: 14),
                   ),
                 ),
                 Text(
                   'الإجراءات',
-                  style: TextStyle(
-                    color: Color(0xFF395A7D),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: getMedium(color: Color(0xFF395A7D), fontSize: 14),
                 ),
               ],
             ),
@@ -279,7 +255,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               return _buildStoreItem(store, controller);
             },
           ),
-SizedBox(height: 30,),
+          SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: AateneButton(
@@ -291,7 +267,7 @@ SizedBox(height: 30,),
               onTap: controller.addNewStore,
             ),
           ),
-          
+
           // مساحة إضافية للكيبورد
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 20),
         ],
@@ -318,11 +294,7 @@ SizedBox(height: 30,),
                 children: [
                   Text(
                     store.name,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+                    style: getMedium(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -361,9 +333,9 @@ SizedBox(height: 30,),
                               Expanded(
                                 child: Text(
                                   store.address,
-                                  style: TextStyle(
+                                  style: getRegular(
                                     fontSize: 12,
-                                    color: Colors.grey[600],
+                                    color: Colors.grey,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -399,10 +371,9 @@ SizedBox(height: 30,),
                             SizedBox(width: 4),
                             Text(
                               _getStatusText(store.status),
-                              style: TextStyle(
+                              style: getRegular(
                                 fontSize: 10,
                                 color: _getStatusColor(store.status),
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -550,16 +521,12 @@ SizedBox(height: 30,),
               const SizedBox(height: 24),
               Text(
                 'يجب تسجيل الدخول',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[600],
-                ),
+                style: getBold(fontSize: 24, color: Colors.grey),
               ),
               const SizedBox(height: 16),
               Text(
                 'يرجى تسجيل الدخول للوصول إلى إدارة الحسابات والمتاجر',
-                style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+                style: getRegular(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -595,7 +562,8 @@ SizedBox(height: 30,),
 class KeyboardDismissOnScroll extends StatelessWidget {
   final Widget child;
 
-  const KeyboardDismissOnScroll({Key? key, required this.child}) : super(key: key);
+  const KeyboardDismissOnScroll({Key? key, required this.child})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

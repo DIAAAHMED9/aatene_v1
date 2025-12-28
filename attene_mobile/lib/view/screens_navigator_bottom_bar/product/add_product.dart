@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/models/section_model.dart';
@@ -18,8 +19,8 @@ class AddProductContent extends StatelessWidget {
 
     if (selectedSection == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('خطأ')),
-        body: const Center(child: Text('لم يتم تحديد قسم')),
+        appBar: AppBar(title: Text('خطأ', style: getRegular())),
+        body: Center(child: Text('لم يتم تحديد قسم', style: getRegular())),
       );
     }
 

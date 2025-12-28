@@ -3,6 +3,7 @@ import 'package:attene_mobile/view/support/report%20pages/widget/report_card.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
 import '../../../utlis/colors/app_color.dart';
 import 'inquiry_about_complaints.dart';
 
@@ -16,11 +17,7 @@ class SellectReport extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "الشكاوى والاقتراحات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -45,7 +42,7 @@ class SellectReport extends StatelessWidget {
             children: [
               Text(
                 "نحن نقدر ملاحظاتك واقتراحاتك ونحن هنا لمساعدتك في حل مشاكلك والاستماع إلى اقتراحاتك",
-                style: TextStyle(fontSize: 10, color: AppColors.neutral400),
+                style: getRegular(fontSize: 10, color: AppColors.neutral400),
               ),
               ReportCard(
                 image: Image.asset(
@@ -54,7 +51,8 @@ class SellectReport extends StatelessWidget {
                   height: 150,
                   fit: BoxFit.cover,
                 ),
-                title: "إستعلام عن الشكاوي", screen: InquiryAboutComplaints(),
+                title: "إستعلام عن الشكاوي",
+                screen: InquiryAboutComplaints(),
               ),
               ReportCard(
                 image: Image.asset(
@@ -63,7 +61,8 @@ class SellectReport extends StatelessWidget {
                   height: 150,
                   fit: BoxFit.cover,
                 ),
-                title: "شكوى أو إفتراح", screen: ReportAbuseScreen(),
+                title: "شكوى أو إفتراح",
+                screen: ReportAbuseScreen(),
               ),
             ],
           ),

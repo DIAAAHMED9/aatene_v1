@@ -94,6 +94,7 @@ class ServiceController extends GetxController {
   final RxList<String> _selectedServiceIds = <String>[].obs;
 
   bool get isInSelectionMode => _isSelectionMode.value;
+
   List<String> get selectedServiceIds => _selectedServiceIds.toList();
 
   @override
@@ -168,7 +169,9 @@ class ServiceController extends GetxController {
         print('- طول النص: ${plainText.length}');
         print('- hasRealContent: $hasRealContent');
         print('- isEditorEmpty: ${isEditorEmpty.value}');
-        print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
+        print(
+          '- hasUserTypedInDescription: ${hasUserTypedInDescription.value}',
+        );
 
         // إذا كان هناك محتوى حقيقي، فقد كتب المستخدم
         if (hasRealContent) {
@@ -193,7 +196,9 @@ class ServiceController extends GetxController {
         }
 
         print('- isDescriptionError: ${isDescriptionError.value}');
-        print('- showDescriptionPlaceholder: ${showDescriptionPlaceholder.value}');
+        print(
+          '- showDescriptionPlaceholder: ${showDescriptionPlaceholder.value}',
+        );
 
         // تحديث الواجهة
         update(['description_field']);
@@ -265,9 +270,15 @@ class ServiceController extends GetxController {
   // دالة لفحص الوصف بشكل مفصل
   void debugDescription() {
     print('🔍 فحص الوصف المفصل:');
-    print('- serviceDescriptionPlainText: "${serviceDescriptionPlainText.value}"');
-    print('- serviceDescriptionPlainText length: ${serviceDescriptionPlainText.value.length}');
-    print('- serviceDescriptionRichText length: ${serviceDescriptionRichText.value.length}');
+    print(
+      '- serviceDescriptionPlainText: "${serviceDescriptionPlainText.value}"',
+    );
+    print(
+      '- serviceDescriptionPlainText length: ${serviceDescriptionPlainText.value.length}',
+    );
+    print(
+      '- serviceDescriptionRichText length: ${serviceDescriptionRichText.value.length}',
+    );
     print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
     print('- isEditorEmpty: ${isEditorEmpty.value}');
     print('- isValidDescription: ${isValidDescription}');
@@ -404,7 +415,8 @@ class ServiceController extends GetxController {
     if (description != null && description.trim().isNotEmpty) {
       try {
         // محاولة تحميل كمحتوى Quill Delta
-        if (description.trim().startsWith('[') || description.trim().startsWith('{')) {
+        if (description.trim().startsWith('[') ||
+            description.trim().startsWith('{')) {
           try {
             final delta = jsonDecode(description);
             quillController.document = Document.fromJson(delta);
@@ -423,9 +435,9 @@ class ServiceController extends GetxController {
         isDescriptionError.value = false;
 
         // تحديث كلا النصين
-        serviceDescriptionPlainText.value = quillController.document.toPlainText();
+        serviceDescriptionPlainText.value = quillController.document
+            .toPlainText();
         serviceDescriptionRichText.value = getQuillContentAsJson();
-
       } catch (e) {
         print('❌ خطأ في تحميل الوصف: $e');
         resetDescription();
@@ -827,7 +839,9 @@ class ServiceController extends GetxController {
       }
 
       try {
-        final isDuplicate = serviceImages.any((img) => img.url == mediaItem.path);
+        final isDuplicate = serviceImages.any(
+          (img) => img.url == mediaItem.path,
+        );
         if (isDuplicate) continue;
 
         final isNetworkUrl = mediaItem.path.startsWith('http');
@@ -879,7 +893,9 @@ class ServiceController extends GetxController {
     if (newIndex < 0) newIndex = 0;
     if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
 
-    final List<ServiceImage> updatedList = List<ServiceImage>.from(serviceImages);
+    final List<ServiceImage> updatedList = List<ServiceImage>.from(
+      serviceImages,
+    );
     final ServiceImage item = updatedList.removeAt(oldIndex);
 
     if (oldIndex < newIndex) {
@@ -1366,10 +1382,7 @@ class ServiceController extends GetxController {
         duration: const Duration(seconds: 3),
       );
 
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -1434,7 +1447,6 @@ class ServiceController extends GetxController {
         shouldShowMessage: false,
       );
       if (response != null && response['status'] == true) {
-
         final data = response['data'] ?? [];
 
         final services = (data as List<dynamic>)
@@ -1542,18 +1554,20 @@ class ServiceController extends GetxController {
     final List<String> imagesToSend = uploadedImages.isNotEmpty
         ? uploadedImages
         : serviceImages
-        .map((img) {
-      return _extractRelativePath(img.url);
-    })
-        .where((url) => url.isNotEmpty)
-        .toList();
+              .map((img) {
+                return _extractRelativePath(img.url);
+              })
+              .where((url) => url.isNotEmpty)
+              .toList();
 
     // الحصول على الوصف النصي (Plain text)
     String descriptionText = serviceDescriptionPlainText.value.trim();
 
     // سجل الوصف للمساعدة في التنقيح
     print('📝 وصف الخدمة للإرسال:');
-    print('- النص العادي (${descriptionText.length} حرف): ${descriptionText.length > 100 ? descriptionText.substring(0, 100) + '...' : descriptionText}');
+    print(
+      '- النص العادي (${descriptionText.length} حرف): ${descriptionText.length > 100 ? descriptionText.substring(0, 100) + '...' : descriptionText}',
+    );
 
     // التحقق من وجود وصف إذا كان المستخدم قد بدأ الكتابة
     if (hasUserTypedInDescription.value && descriptionText.isEmpty) {
@@ -1619,13 +1633,15 @@ class ServiceController extends GetxController {
     serviceImages.clear();
     for (int i = 0; i < service.images.length; i++) {
       final imageUrl = service.images[i];
-      serviceImages.add(ServiceImage(
-        id: service.id??0,
-        url: imageUrl,
-        isMain: i == 0,
-        isLocalFile: false,
-        file: null,
-      ));
+      serviceImages.add(
+        ServiceImage(
+          id: service.id ?? 0,
+          url: imageUrl,
+          isMain: i == 0,
+          isLocalFile: false,
+          file: null,
+        ),
+      );
     }
 
     acceptedTerms.value = service.acceptedTerms;
@@ -1635,16 +1651,16 @@ class ServiceController extends GetxController {
   }
 
   Future<void> _loadCategoryAndSectionNames(
-      int sectionId,
-      int categoryId,
-      ) async {
+    int sectionId,
+    int categoryId,
+  ) async {
     try {
       if (sections.isEmpty) {
         await loadSections();
       }
 
       final section = sections.firstWhere(
-            (s) => (s['id'] as int?) == sectionId,
+        (s) => (s['id'] as int?) == sectionId,
         orElse: () => {'name': ''},
       );
       selectedMainCategory.value = section['name']?.toString() ?? '';
@@ -1654,7 +1670,7 @@ class ServiceController extends GetxController {
         await loadCategories();
 
         final category = categories.firstWhere(
-              (c) => (c['id'] as int?) == categoryId,
+          (c) => (c['id'] as int?) == categoryId,
           orElse: () => {'name': ''},
         );
         selectedCategory.value = category['name']?.toString() ?? '';

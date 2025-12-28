@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
@@ -39,10 +40,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
                 children: [
                   Text(
                     'تفاصيل التخفيض',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.f(18),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: getBold(fontSize: ResponsiveDimensions.f(18)),
                   ),
                   IconButton(
                     onPressed: Get.back,
@@ -92,7 +90,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: TextStyle(color: Colors.grey[600]),
+              style: getRegular(color: Colors.grey),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -102,6 +100,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: label.contains('خصم') ? Colors.green[600] : null,
+                fontFamily: "PingAR",
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -115,13 +114,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'المنتجات المرفقة:',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: ResponsiveDimensions.f(16),
-          ),
-        ),
+        Text('المنتجات المرفقة:', style: getBold()),
         SizedBox(height: ResponsiveDimensions.h(8)),
         Container(
           constraints: BoxConstraints(maxHeight: Get.height * 0.3),
@@ -208,10 +201,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
                 children: [
                   Text(
                     'إضافة تخفيض',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.f(18),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: getBold(fontSize: ResponsiveDimensions.f(18)),
                   ),
                   IconButton(
                     onPressed: Get.back,
@@ -349,7 +339,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
                 Flexible(
                   child: Text(
                     '${controller.originalPrice.toStringAsFixed(2)} ₪',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: getBold(),
                   ),
                 ),
               ],
@@ -362,10 +352,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
                 Flexible(
                   child: Text(
                     '${controller.discountedPrice.toStringAsFixed(2)} ₪',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green[600],
-                    ),
+                    style: getBold(color: Colors.green),
                   ),
                 ),
               ],
@@ -379,10 +366,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
                   Flexible(
                     child: Text(
                       '${(controller.originalPrice - controller.discountedPrice).toStringAsFixed(2)} ₪',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red[600],
-                      ),
+                      style: getBold(color: Colors.red),
                     ),
                   ),
                 ],

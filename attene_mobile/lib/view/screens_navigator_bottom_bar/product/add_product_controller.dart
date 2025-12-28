@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/models/section_model.dart';
@@ -303,11 +304,11 @@ class AddProductController extends GetxController {
               children: [
                 const Text('يوجد أخطاء في الحقول التالية:'),
                 const SizedBox(height: 10),
-                Text(errorMessages, style: const TextStyle(color: Colors.red)),
-                const SizedBox(height: 20),
-                const Text(
+                Text(errorMessages, style: getRegular(color: Colors.red)),
+                SizedBox(height: 20),
+                Text(
                   'يرجى تصحيح هذه الأخطاء قبل المتابعة',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: getRegular(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),

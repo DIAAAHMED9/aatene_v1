@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../component/aatene_text_filed.dart';
+import '../../component/text/aatene_custom_text.dart';
 import '../../utlis/colors/app_color.dart';
 import '../../utlis/language/language_utils.dart';
 
@@ -18,11 +19,10 @@ class ChangePassword extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "تغيير كلمة المرور",
-          style: TextStyle(
+          style:getBold(
             color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
             fontSize: 20,
-          ),
+          ) ,
         ),
         centerTitle: false,
         leading: IconButton(
@@ -43,7 +43,7 @@ class ChangePassword extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("كلمة المرور القديمة", style: TextStyle(fontSize: 12)),
+            Text("كلمة المرور القديمة", style:getRegular(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
@@ -52,14 +52,14 @@ class ChangePassword extends StatelessWidget {
             SizedBox(height: 12),
             Divider(),
             SizedBox(height: 12),
-            Text("كلمة المرور الجديدة", style: TextStyle(fontSize: 12)),
+            Text("كلمة المرور الجديدة", style:getRegular(fontSize: 12),),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
               textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 12),
-            Text("تأكيد كلمة المرور الجديدة", style: TextStyle(fontSize: 12)),
+            Text("تأكيد كلمة المرور الجديدة",  style:getRegular(fontSize: 12),),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
@@ -69,10 +70,7 @@ class _ProductSelectionBottomSheetState
         children: [
           Text(
             'اختر المنتجات',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(18),
-              fontWeight: FontWeight.bold,
-            ),
+            style: getBold(fontSize: ResponsiveDimensions.f(18)),
           ),
           Row(
             children: [
@@ -143,7 +141,7 @@ class _ProductSelectionBottomSheetState
               Chip(
                 label: Text('${controller.selectedProductsCount} منتج'),
                 backgroundColor: AppColors.primary400.withOpacity(0.2),
-                labelStyle: TextStyle(color: AppColors.primary400),
+                labelStyle: getRegular(color: AppColors.primary400),
               ),
             ],
           ),
@@ -173,7 +171,7 @@ class _ProductSelectionBottomSheetState
                   controller.isSearching
                       ? 'لم يتم العثور على منتجات'
                       : 'لا توجد منتجات',
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: getRegular(color: Colors.grey),
                 ),
               ],
             ),
@@ -244,10 +242,8 @@ class _ProductSelectionBottomSheetState
                           product.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.f(14),
-                            color: Colors.black87,
                           ),
                         ),
 
@@ -265,9 +261,9 @@ class _ProductSelectionBottomSheetState
                               const SizedBox(width: 4),
                               Text(
                                 product.sectionName!,
-                                style: TextStyle(
+                                style: getRegular(
                                   fontSize: ResponsiveDimensions.f(10),
-                                  color: Colors.grey[600],
+                                  color: Colors.grey,
                                 ),
                               ),
                             ],
@@ -281,9 +277,8 @@ class _ProductSelectionBottomSheetState
                     children: [
                       Text(
                         _formatPrice(product.price ?? '0'),
-                        style: TextStyle(
+                        style: getBold(
                           fontSize: ResponsiveDimensions.f(14),
-                          fontWeight: FontWeight.bold,
                           color: AppColors.primary400,
                         ),
                       ),
@@ -368,10 +363,10 @@ class _ProductSelectionBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('المنتجات المختارة:'),
+                          Text('المنتجات المختارة:', style: getRegular()),
                           Text(
                             '${controller.selectedProductsCount} منتج',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: getBold(),
                           ),
                         ],
                       ),
@@ -379,14 +374,10 @@ class _ProductSelectionBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('السعر الإجمالي:'),
+                          Text('السعر الإجمالي:', style: getRegular()),
                           Text(
                             '${controller.originalPrice.toStringAsFixed(2)} ₪',
-                            style: TextStyle(
-                              fontSize: ResponsiveDimensions.f(16),
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary400,
-                            ),
+                            style: getBold(color: AppColors.primary400),
                           ),
                         ],
                       ),
@@ -408,9 +399,9 @@ class _ProductSelectionBottomSheetState
                           ),
                           side: BorderSide(color: Colors.red.shade400),
                         ),
-                        child: const Text(
+                        child: Text(
                           'مسح الكل',
-                          style: TextStyle(color: Colors.red),
+                          style: getRegular(color: Colors.red),
                         ),
                       ),
                     ),

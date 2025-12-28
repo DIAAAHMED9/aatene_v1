@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/colors/app_color.dart';
@@ -24,22 +25,13 @@ class SectionTitle extends StatelessWidget {
             Row(
               spacing: 8,
               children: [
-                CircleAvatar(
-                  backgroundColor: AppColors.primary300,
-                  radius: 12,
-                ),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                CircleAvatar(backgroundColor: AppColors.primary300, radius: 12),
+                Text(title, style: getBold(fontSize: 14)),
               ],
             ),
             Text(
-            subtitle,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.neutral600),
+              subtitle,
+              style: getRegular(fontSize: 12, color: AppColors.neutral600),
             ),
           ],
         ),

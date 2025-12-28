@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -125,14 +126,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
-        title: Text(
-          "إعدادات التسعير",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
+        title: Text("إعدادات التسعير", style: getBold(fontSize: 18)),
         centerTitle: false,
         leading: IconButton(
           onPressed: () => Get.back(),
@@ -160,14 +154,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "المدن التي ترسل لها المنتجات؟",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                    ),
-                  ),
+                  Text("المدن التي ترسل لها المنتجات؟", style: getBold()),
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -187,10 +174,9 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                         SizedBox(width: 4),
                         Text(
                           "إضافة منطقة جديدة",
-                          style: TextStyle(
+                          style: getMedium(
                             color: AppColors.primary500,
                             fontSize: 15,
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -204,14 +190,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "المدينة",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
+                    Text("المدينة", style: getMedium(fontSize: 14)),
                     SizedBox(height: 8),
                     Container(
                       height: 56,
@@ -228,7 +207,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
                               "اختر المدينة",
-                              style: TextStyle(
+                              style: getRegular(
                                 color: AppColors.neutral400,
                                 fontSize: 15,
                               ),
@@ -242,7 +221,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                               size: 24,
                             ),
                           ),
-                          style: TextStyle(color: Colors.black, fontSize: 15),
+                          style: getRegular(fontSize: 15),
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedNewCity = newValue;
@@ -283,7 +262,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                           child: Text(
                             "إلغاء",
-                            style: TextStyle(
+                            style: getRegular(
                               color: AppColors.neutral600,
                               fontSize: 15,
                             ),
@@ -313,11 +292,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                           child: Text(
                             "إضافة",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: getMedium(color: Colors.white, fontSize: 15),
                           ),
                         ),
                       ],
@@ -347,14 +322,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                                 size: 20,
                               ),
                               SizedBox(width: 8),
-                              Text(
-                                city['name'],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              Text(city['name'], style: getMedium()),
                             ],
                           ),
                           IconButton(
@@ -380,14 +348,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
 
                       SizedBox(height: 16),
 
-                      Text(
-                        "موعد التسليم",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
+                      Text("موعد التسليم", style: getMedium(fontSize: 14)),
                       SizedBox(height: 8),
                       TextFiledAatene(
                         textInputAction: TextInputAction.next,
@@ -406,14 +367,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
 
                       SizedBox(height: 16),
 
-                      Text(
-                        "سعر التوصيل",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
+                      Text("سعر التوصيل", style: getMedium(fontSize: 14)),
                       SizedBox(height: 8),
                       TextFiledAatene(
                         textInputAction: TextInputAction.done,

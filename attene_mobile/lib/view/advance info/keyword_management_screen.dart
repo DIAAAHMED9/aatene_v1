@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -57,9 +58,9 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
               SizedBox(height: ResponsiveDimensions.f(20)),
               Text(
                 'جاري تحضير البيانات...',
-                style: TextStyle(
+                style: getRegular(
                   fontSize: ResponsiveDimensions.f(16),
-                  color: Colors.grey[600],
+                  color: Colors.grey,
                 ),
               ),
             ],
@@ -85,9 +86,9 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
                 Text(
                   _errorMessage!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.f(16),
-                    color: Colors.red[600],
+                    color: Colors.red,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.f(20)),

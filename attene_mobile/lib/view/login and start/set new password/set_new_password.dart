@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:flutter/material.dart';
@@ -61,11 +62,7 @@ class SetNewPassword extends StatelessWidget {
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
                   isRTL ? 'أعد ضبط كلمة المرور' : 'Reset Password',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(35),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: getBold(fontSize: ResponsiveDimensions.f(35)),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
@@ -102,7 +99,8 @@ class SetNewPassword extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: controller.togglePasswordVisibility,
-                    ), textInputAction: TextInputAction.next,
+                    ),
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
@@ -123,7 +121,8 @@ class SetNewPassword extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: controller.toggleConfirmPasswordVisibility,
-                    ), textInputAction: TextInputAction.done,
+                    ),
+                    textInputAction: TextInputAction.done,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(20)),

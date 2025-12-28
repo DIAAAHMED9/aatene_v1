@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20new%20store/choose%20type%20store/manage_account_store_controller.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:attene_mobile/view/advance%20info/keyword_controller.dart';
@@ -12,6 +13,7 @@ import 'package:attene_mobile/view/login%20and%20start/set%20new%20password/set_
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
 import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
+import 'package:attene_mobile/view/support/empty.dart';
 import 'package:attene_mobile/view/support/frequently%20asked/frequently_asked.dart';
 import 'package:attene_mobile/view/support/privacy/privacy_screen.dart';
 import 'package:attene_mobile/view/support/report%20pages/inquiry_about_complaints.dart';
@@ -154,10 +156,9 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           centerTitle: true,
           foregroundColor: AppColors.neutral200,
-          titleTextStyle: TextStyle(
+          titleTextStyle: getMedium(
             color: AppColors.neutral200,
             fontSize: 18.0,
-            fontWeight: FontWeight.w600,
           ),
         ),
 
@@ -242,7 +243,7 @@ class MyApp extends StatelessWidget {
       // ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const HomeControl()),
+        GetPage(name: '/', page: () => const SplashScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -24,11 +25,7 @@ class AddShippingMethod extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "طريقة الشحن",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -71,11 +68,7 @@ class AddShippingMethod extends StatelessWidget {
         children: [
           Text(
             "كيف توجد شحن المنتجات؟",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral900,
-            ),
+            style: getBold(fontSize: 18, color: AppColors.neutral900),
           ),
           SizedBox(height: 15),
 
@@ -149,14 +142,7 @@ class AddShippingMethod extends StatelessWidget {
             ),
             SizedBox(width: 12),
 
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
+            Text(title, style: getMedium()),
           ],
         ),
       ),
@@ -177,14 +163,7 @@ class AddShippingMethod extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "شركات الشحن",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+                  Text("شركات الشحن", style: getBold()),
 
                   GestureDetector(
                     onTap: () {
@@ -196,10 +175,9 @@ class AddShippingMethod extends StatelessWidget {
                         SizedBox(width: 6),
                         Text(
                           "إضافة شركة شحن",
-                          style: TextStyle(
+                          style: getRegular(
                             color: AppColors.primary400,
                             fontSize: 14,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -225,17 +203,14 @@ class AddShippingMethod extends StatelessWidget {
                             SizedBox(height: 16),
                             Text(
                               "لا توجد شركات شحن مضافة",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                              ),
+                              style: getRegular(color: Colors.grey),
                             ),
                             SizedBox(height: 8),
                             Text(
                               "انقر على 'إضافة شركة شحن' لإضافة شركة",
-                              style: TextStyle(
+                              style: getRegular(
                                 fontSize: 12,
-                                color: Colors.grey[500],
+                                color: Colors.grey,
                               ),
                             ),
                           ],
@@ -288,10 +263,9 @@ class AddShippingMethod extends StatelessWidget {
             ),
             child: Text(
               isPrimary ? 'أساسي' : 'ثانوي',
-              style: TextStyle(
-                color: isPrimary ? Colors.white : Colors.grey[700],
+              style: getBold(
+                color: isPrimary ? Colors.white : Colors.grey,
                 fontSize: 10,
-                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -304,11 +278,7 @@ class AddShippingMethod extends StatelessWidget {
               children: [
                 Text(
                   company['name']?.toString() ?? 'شركة شحن',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.neutral900,
-                  ),
+                  style: getMedium(color: AppColors.neutral900),
                 ),
 
                 SizedBox(height: 4),
@@ -316,13 +286,13 @@ class AddShippingMethod extends StatelessWidget {
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: getRegular(fontSize: 12, color: Colors.grey),
                   ),
 
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
-                    style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                    style: getRegular(fontSize: 10, color: Colors.grey),
                   ),
               ],
             ),

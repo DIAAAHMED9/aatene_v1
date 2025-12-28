@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -692,13 +693,9 @@ class CreateStoreController extends GetxController {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'اختر المدينة',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.neutral900,
-                      ),
+                      style: getBold(fontSize: 18, color: AppColors.neutral900),
                     ),
                     IconButton(
                       onPressed: () => Get.back(),
@@ -719,8 +716,7 @@ class CreateStoreController extends GetxController {
                     return ListTile(
                       title: Text(
                         city['name']?.toString() ?? 'مدينة',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: getRegular(
                           color: isSelected
                               ? AppColors.primary400
                               : AppColors.neutral800,
@@ -787,13 +783,9 @@ class CreateStoreController extends GetxController {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'اختر الحي',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.neutral900,
-                      ),
+                      style: getBold(fontSize: 18, color: AppColors.neutral900),
                     ),
                     IconButton(
                       onPressed: () => Get.back(),
@@ -814,8 +806,7 @@ class CreateStoreController extends GetxController {
                     return ListTile(
                       title: Text(
                         district['name']?.toString() ?? 'حي',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: getRegular(
                           color: isSelected
                               ? AppColors.primary400
                               : AppColors.neutral800,
@@ -824,7 +815,7 @@ class CreateStoreController extends GetxController {
                       subtitle: district['city_name'] != null
                           ? Text(
                               'مدينة: ${district['city_name']}',
-                              style: const TextStyle(
+                              style: getRegular(
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),
@@ -891,13 +882,9 @@ class CreateStoreController extends GetxController {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'اختر العملة',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.neutral900,
-                      ),
+                      style: getBold(fontSize: 18, color: AppColors.neutral900),
                     ),
                     IconButton(
                       onPressed: () => Get.back(),
@@ -927,19 +914,14 @@ class CreateStoreController extends GetxController {
                               child: Center(
                                 child: Text(
                                   currency['symbol']?.toString() ?? 'ر.س',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary500,
-                                  ),
+                                  style: getBold(color: AppColors.primary500),
                                 ),
                               ),
                             )
                           : null,
                       title: Text(
                         currency['name']?.toString() ?? 'عملة',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: getRegular(
                           color: isSelected
                               ? AppColors.primary400
                               : AppColors.neutral800,
@@ -948,7 +930,7 @@ class CreateStoreController extends GetxController {
                       subtitle: currency['code'] != null
                           ? Text(
                               'الرمز: ${currency['code']}',
-                              style: const TextStyle(
+                              style: getRegular(
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),

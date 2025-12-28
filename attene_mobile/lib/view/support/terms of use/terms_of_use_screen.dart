@@ -2,6 +2,8 @@ import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
+
 class TermsOfUseScreen extends StatefulWidget {
   const TermsOfUseScreen({super.key});
 
@@ -52,11 +54,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
         backgroundColor: Colors.white,
         title: Text(
           "شروط الخدمة",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -111,18 +109,12 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                         backgroundColor: AppColors.primary400,
                         child: Text(
                           '${index + 1}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.white,
-                          ),
+                          style: getRegular(fontSize: 11, color: Colors.white),
                         ),
                       ),
                       title: Row(
                         children: [
-                          Text(
-                            items[index]['title']!,
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                          Text(items[index]['title']!, style: getRegular()),
                           const Spacer(),
                           _circleIconPlus(
                             isExpanded ? Icons.remove : Icons.add,
@@ -135,10 +127,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         child: Text(
                           items[index]['content']!,
-                          style: const TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                          ),
+                          style: getRegular(fontSize: 12),
                         ),
                       ),
                   ],

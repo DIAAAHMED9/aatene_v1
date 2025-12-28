@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
@@ -32,9 +33,8 @@ class TimeUnitBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'اختر الوحدة الزمنية',
-                  style: TextStyle(
+                  style: getBold(
                     fontSize: ResponsiveDimensions.responsiveFontSize(18),
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
@@ -74,11 +74,11 @@ class TimeUnitBottomSheet extends StatelessWidget {
                         decoration: InputDecoration(
                           hintText: 'بحث...',
                           border: InputBorder.none,
-                          hintStyle: TextStyle(
+                          hintStyle: getRegular(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
-                            color: Colors.grey[500],
+                            color: Colors.grey,
                           ),
                         ),
                       ),
@@ -111,8 +111,7 @@ class TimeUnitBottomSheet extends StatelessWidget {
                       ),
                       title: Text(
                         unit,
-                        style: TextStyle(
-                          fontSize: ResponsiveDimensions.responsiveFontSize(16),
+                        style: getRegular(
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -167,11 +166,7 @@ class TimeUnitBottomSheet extends StatelessWidget {
                 ),
                 child: Text(
                   'إلغاء',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
-                  ),
+                  style: getMedium(color: Color(0xFF757575)),
                 ),
               ),
             ),

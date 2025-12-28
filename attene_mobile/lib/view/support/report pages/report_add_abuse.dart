@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../component/aatene_button/aatene_button.dart';
+import '../../../component/text/aatene_custom_text.dart';
 import '../../../utlis/colors/app_color.dart';
 import '../../../utlis/language/language_utils.dart';
 
@@ -18,11 +19,7 @@ class ReportAddAbuse extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "الشكاوى والاقتراحات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -64,30 +61,25 @@ class ReportAddAbuse extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title
-                  const Text(
-                    'الإبلاغ عن إساءة',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  Text('الإبلاغ عن إساءة', style: getBold(fontSize: 18)),
                   // Subtitle
-                  const Text(
+                  Text(
                     'ما الذي تقدر أن نساعدك به ؟',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: getRegular(fontSize: 12, color: Colors.grey),
                   ),
 
-                  const Text('الموضوع', style: TextStyle(fontSize: 14)),
+                  Text('الموضوع', style: getRegular(fontSize: 14)),
                   TextFiledAatene(
                     isRTL: isRTL,
                     hintText: "اكتب هنا",
                     textInputAction: TextInputAction.next,
                   ),
 
-                  const Text(
-                    'الشكوى/ الأفتراح',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                  Text('الشكوى/ الأفتراح', style: getRegular(fontSize: 14)),
                   TextFiledAatene(
                     isRTL: isRTL,
                     hintText: "اكتب هنا",
+                    hintStyle: getRegular(),
                     textInputType: TextInputType.multiline,
                     maxLines: 5,
                     textInputAction: TextInputAction.done,

@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/Text/text_with_star.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
@@ -19,13 +20,7 @@ class VariationToggleWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              'هل يوجد اختلافات للمنتج؟',
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            Text('هل يوجد اختلافات للمنتج؟', style: getMedium()),
             SizedBox(width: ResponsiveDimensions.w(8)),
             Icon(
               Icons.help_outline,
@@ -37,9 +32,9 @@ class VariationToggleWidget extends StatelessWidget {
         SizedBox(height: ResponsiveDimensions.h(4)),
         Text(
           'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.f(14),
-            color: Colors.grey[600],
+            color: Colors.grey,
           ),
         ),
         SizedBox(height: ResponsiveDimensions.h(16)),
@@ -95,10 +90,8 @@ class VariationToggleWidget extends StatelessWidget {
             SizedBox(width: ResponsiveDimensions.w(12)),
             Text(
               label,
-              style: TextStyle(
-                fontSize: ResponsiveDimensions.f(16),
-                fontWeight: FontWeight.w500,
-                color: isSelected ? AppColors.primary400 : Colors.grey[700],
+              style: getRegular(
+                color: isSelected ? AppColors.primary400 : Colors.grey,
               ),
             ),
           ],
@@ -144,13 +137,7 @@ class SelectedAttributesWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  'سمات المنتج',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text('سمات المنتج', style: getMedium()),
                 SizedBox(width: ResponsiveDimensions.w(8)),
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -163,10 +150,9 @@ class SelectedAttributesWidget extends StatelessWidget {
                   ),
                   child: Text(
                     '${controller.selectedAttributes.length}',
-                    style: TextStyle(
+                    style: getBold(
                       color: AppColors.primary400,
                       fontSize: ResponsiveDimensions.f(12),
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -188,10 +174,7 @@ class SelectedAttributesWidget extends StatelessWidget {
                   deleteIconColor: AppColors.primary400,
                   onDeleted: () =>
                       controller.removeSelectedAttribute(attribute),
-                  labelStyle: TextStyle(
-                    color: AppColors.primary500,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  labelStyle: getRegular(color: AppColors.primary500),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
                     side: BorderSide(color: AppColors.primary300, width: 1.0),
@@ -228,18 +211,17 @@ class SelectedAttributesWidget extends StatelessWidget {
               children: [
                 Text(
                   'لم يتم اختيار أي سمات بعد',
-                  style: TextStyle(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.f(14),
-                    color: Colors.orange[800],
-                    fontWeight: FontWeight.w600,
+                    color: Colors.orange,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(4)),
                 Text(
                   'انقر على "إدارة السمات والصفات" لبدء إضافة السمات',
-                  style: TextStyle(
+                  style: getRegular(
                     fontSize: ResponsiveDimensions.f(12),
-                    color: Colors.orange[600],
+                    color: Colors.orange,
                   ),
                 ),
               ],
@@ -285,17 +267,14 @@ class VariationsListWidget extends StatelessWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextWithStar(text: "قيم الاختلافات",),
-
-                    ],
+                    children: [TextWithStar(text: "قيم الاختلافات")],
                   ),
                 ],
               )
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextWithStar(text: "قيم الاختلافات",),
+                  TextWithStar(text: "قيم الاختلافات"),
                   Spacer(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -306,7 +285,7 @@ class VariationsListWidget extends StatelessWidget {
 
                     child: Text(
                       '+ قيمة جديدة',
-                      style: TextStyle(color: AppColors.primary400),
+                      style: getRegular(color: AppColors.primary400),
                     ),
                   ),
                 ],
@@ -354,19 +333,15 @@ class VariationsListWidget extends StatelessWidget {
           SizedBox(height: ResponsiveDimensions.h(16)),
           Text(
             'لم يتم إنشاء قيم الاختلافات بعد',
-            style: TextStyle(
-              fontSize: ResponsiveDimensions.f(16),
-              color: Colors.blue[800],
-              fontWeight: FontWeight.w500,
-            ),
+            style: getRegular(color: Colors.blueAccent),
           ),
           SizedBox(height: ResponsiveDimensions.h(8)),
           Text(
             'انقر على "إنشاء قيمة جديدة" لبدء إضافة الاختلافات',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: getRegular(
+              color: Colors.blueAccent,
               fontSize: ResponsiveDimensions.f(14),
-              color: Colors.blue[600],
             ),
           ),
         ],

@@ -3,6 +3,7 @@ import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
 import '../../../utlis/language/language_utils.dart';
 
 class ServicesPageView extends StatefulWidget {
@@ -25,11 +26,7 @@ class _ServicesPageViewState extends State<ServicesPageView> {
         backgroundColor: Colors.white,
         title: Text(
           "الأسئلة الشائعة",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -48,11 +45,10 @@ class _ServicesPageViewState extends State<ServicesPageView> {
 
       body: Column(
         children: [
-          Text("إجابات وافية على أكثر الأسئلة شيوعًا لضمان تجربة سلسة وواضحة.",style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-            fontWeight: FontWeight.w500
-          ),),
+          Text(
+            "إجابات وافية على أكثر الأسئلة شيوعًا لضمان تجربة سلسة وواضحة.",
+            style: getRegular(fontSize: 14, color: Colors.grey),
+          ),
           _buildTabs(),
           const SizedBox(height: 16),
           _buildSearch(),
@@ -106,9 +102,8 @@ class _ServicesPageViewState extends State<ServicesPageView> {
                     child: Text(
                       tabs[index],
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: getRegular(
                         color: isSelected ? Colors.white : AppColors.primary400,
-                        fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
                     ),
@@ -130,7 +125,8 @@ class _ServicesPageViewState extends State<ServicesPageView> {
       child: TextFiledAatene(
         isRTL: isRTL,
         hintText: "ابحث من خلال أي كلمة مفتاحية",
-        prefixIcon: Icon(Icons.search, color: Colors.grey), textInputAction: TextInputAction.done,
+        prefixIcon: Icon(Icons.search, color: Colors.grey),
+        textInputAction: TextInputAction.done,
       ),
     );
   }
@@ -171,11 +167,7 @@ class _ServicesPageViewState extends State<ServicesPageView> {
         iconColor: Colors.grey,
         title: Text(
           title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-            color: AppColors.primary400,
-          ),
+          style: getMedium(fontSize: 14, color: AppColors.primary400),
         ),
         children: content != null
             ? [
@@ -183,10 +175,9 @@ class _ServicesPageViewState extends State<ServicesPageView> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     content,
-                    style: TextStyle(
+                    style: getRegular(
                       color: AppColors.neutral300,
                       fontSize: 12,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/aatene_text_filed.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:flutter/material.dart';
@@ -38,11 +39,7 @@ class Login extends StatelessWidget {
                 ),
                 Text(
                   isRTL ? 'أهلاً بك في اعطيني' : 'Welcome to Atene',
-                  style: TextStyle(
-                    fontSize: ResponsiveDimensions.f(16),
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0071A7),
-                  ),
+                  style: getBold(color: AppColors.primary400),
                   textAlign: isRTL ? TextAlign.right : TextAlign.left,
                 ),
                 Padding(
@@ -62,18 +59,19 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
                 Obx(
-                      () => TextFiledAatene(
+                  () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL
                         ? 'البريد الإلكتروني / رقم الجوال'
                         : 'Email / Phone Number',
                     errorText: controller.emailError.value,
-                    onChanged: controller.updateEmail, textInputAction: TextInputAction.next,
+                    onChanged: controller.updateEmail,
+                    textInputAction: TextInputAction.next,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),
                 Obx(
-                      () => TextFiledAatene(
+                  () => TextFiledAatene(
                     isRTL: isRTL,
                     hintText: isRTL ? 'كلمة المرور' : 'Password',
                     errorText: controller.passwordError.value,
@@ -89,7 +87,8 @@ class Login extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: controller.togglePasswordVisibility,
-                    ), textInputAction: TextInputAction.done,
+                    ),
+                    textInputAction: TextInputAction.done,
                   ),
                 ),
                 Align(
@@ -98,7 +97,7 @@ class Login extends StatelessWidget {
                     onPressed: controller.forgotPassword,
                     child: Text(
                       isRTL ? 'نسيت كلمة المرور؟' : 'Forgot Password?',
-                      style: TextStyle(
+                      style: getRegular(
                         color: AppColors.neutral600,
                         fontSize: ResponsiveDimensions.f(14),
                       ),
@@ -106,7 +105,7 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 Obx(
-                      () => AateneButton(
+                  () => AateneButton(
                     textColor: Colors.white,
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
@@ -139,8 +138,15 @@ class Login extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.apple, color: AppColors.light1000, size: 25,),
-                            Text("باستخدام أبل",style: TextStyle(fontWeight: FontWeight.bold,  fontSize: ResponsiveDimensions.f(16),color: AppColors.light1000),)
+                            const Icon(
+                              Icons.apple,
+                              color: AppColors.light1000,
+                              size: 25,
+                            ),
+                            Text(
+                              "باستخدام أبل",
+                              style: getBold(color: AppColors.light1000),
+                            ),
                           ],
                         ),
                       ),
@@ -151,8 +157,8 @@ class Login extends StatelessWidget {
                         width: ResponsiveDimensions.w(150),
                         height: ResponsiveDimensions.h(50),
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            border: Border.all(color: AppColors.neutral600)
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: AppColors.neutral600),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +172,10 @@ class Login extends StatelessWidget {
                               onPressed: () {},
                             ),
 
-                            Text("باستخدام جوجل",style: TextStyle(fontWeight: FontWeight.bold,  fontSize: ResponsiveDimensions.f(16),color: AppColors.neutral100),)
+                            Text(
+                              "باستخدام جوجل",
+                              style: getBold(color: AppColors.neutral100),
+                            ),
                           ],
                         ),
                       ),
@@ -179,18 +188,14 @@ class Login extends StatelessWidget {
                   children: [
                     Text(
                       isRTL ? 'ليس لديك حساب؟ ' : 'Don\'t have an account? ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: ResponsiveDimensions.f(14),
-                      ),
+                      style: getRegular(fontSize: ResponsiveDimensions.f(14)),
                     ),
                     GestureDetector(
                       onTap: controller.createNewAccount,
                       child: Text(
                         isRTL ? 'اشتراك' : 'Create new account',
-                        style: TextStyle(
-                          color: const Color(0xFF0071A7),
-                          fontWeight: FontWeight.bold,
+                        style: getBold(
+                          color: AppColors.primary400,
                           fontSize: ResponsiveDimensions.f(14),
                         ),
                       ),

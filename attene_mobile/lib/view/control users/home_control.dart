@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/name_control.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/control%20users/block_screen.dart';
 import 'package:attene_mobile/view/control%20users/edit_profile.dart';
 import 'package:attene_mobile/view/control%20users/followers.dart';
@@ -62,14 +63,11 @@ class HomeControl extends StatelessWidget {
                               children: [
                                 Text(
                                   "jerusalemlll",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+                                  style: getBold(fontSize: 18),
                                 ),
                                 Text(
                                   " فلسطين ، الخليل",
-                                  style: TextStyle(fontSize: 18),
+                                  style: getRegular(fontSize: 18),
                                 ),
                               ],
                             ),
@@ -86,13 +84,15 @@ class HomeControl extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute<void>(builder: (context) => PersonalInfo()),
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => PersonalInfo(),
+                                      ),
                                     );
                                   },
                                   icon: Icon(
                                     Icons.mode_edit_outline_outlined,
                                     color: AppColors.primary400,
-                                    size:15,
+                                    size: 15,
                                   ),
                                 ),
                               ),
@@ -118,7 +118,8 @@ class HomeControl extends StatelessWidget {
                         Icons.home_outlined,
                         color: AppColors.primary400,
                         size: 25,
-                      ), screen: HomeScreen(),
+                      ),
+                      screen: HomeScreen(),
                     ),
                     NameControl(
                       name: "حساباتي",
@@ -126,7 +127,8 @@ class HomeControl extends StatelessWidget {
                         Icons.person_outline,
                         color: AppColors.primary400,
                         size: 25,
-                      ), screen: HomeControl(),
+                      ),
+                      screen: HomeControl(),
                     ),
                     NameControl(
                       name: "تعديل الملف الشخصي",
@@ -134,7 +136,8 @@ class HomeControl extends StatelessWidget {
                         Icons.edit_outlined,
                         color: AppColors.primary400,
                         size: 25,
-                      ), screen: Edit_Profile(),
+                      ),
+                      screen: Edit_Profile(),
                     ),
                     NameControl(
                       name: "المتابعين",
@@ -142,7 +145,8 @@ class HomeControl extends StatelessWidget {
                         Icons.person_add_alt,
                         color: AppColors.primary400,
                         size: 25,
-                      ), screen: FollowersPage(),
+                      ),
+                      screen: FollowersPage(),
                     ),
                     NameControl(
                       name: "قائمة الحظر",
@@ -150,30 +154,23 @@ class HomeControl extends StatelessWidget {
                         Icons.block_outlined,
                         color: AppColors.primary400,
                         size: 25,
-                      ), screen: BlockScreen(),
+                      ),
+                      screen: BlockScreen(),
                     ),
                     ExpansionTile(
                       // splashColor: AppColors.primary50,
                       maintainState: true,
-                      title: Text(
-                        "الدعم",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
+                      title: Text("الدعم", style: getBold(fontSize: 18)),
                       children: [
-                        SizedBox(
-                          height: 10,
-                        ),
+                        SizedBox(height: 10),
                         NameControl(
-
                           name: "اتصل بنا",
                           icon: Icon(
                             Icons.contact_support_outlined,
                             color: AppColors.primary400,
                             size: 25,
-                          ), screen: HomeControl(),
+                          ),
+                          screen: HomeControl(),
                         ),
                         NameControl(
                           name: "سياسة الخصوصية",
@@ -181,7 +178,8 @@ class HomeControl extends StatelessWidget {
                             Icons.privacy_tip_outlined,
                             color: AppColors.primary400,
                             size: 25,
-                          ), screen: PrivacyScreen(),
+                          ),
+                          screen: PrivacyScreen(),
                         ),
                         NameControl(
                           name: "تشروط الخدمة",
@@ -189,7 +187,8 @@ class HomeControl extends StatelessWidget {
                             Icons.local_police_outlined,
                             color: AppColors.primary400,
                             size: 25,
-                          ), screen: TermsOfUseScreen(),
+                          ),
+                          screen: TermsOfUseScreen(),
                         ),
                         NameControl(
                           name: "بوابة الشكاوى والاقتراحات",
@@ -197,7 +196,8 @@ class HomeControl extends StatelessWidget {
                             Icons.report_problem_outlined,
                             color: AppColors.primary400,
                             size: 25,
-                          ), screen: SellectReport(),
+                          ),
+                          screen: SellectReport(),
                         ),
                         NameControl(
                           name: "عن أعطيني",
@@ -205,7 +205,8 @@ class HomeControl extends StatelessWidget {
                             Icons.lightbulb_circle_outlined,
                             color: AppColors.primary400,
                             size: 25,
-                          ), screen: AboutUsScreen(),
+                          ),
+                          screen: AboutUsScreen(),
                         ),
                       ],
                     ),
@@ -216,10 +217,7 @@ class HomeControl extends StatelessWidget {
                           Icon(Icons.login_rounded, color: AppColors.error200),
                           Text(
                             "تسجيل خروج",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.error200,
-                            ),
+                            style: getBold(color: AppColors.error200),
                           ),
                         ],
                       ),

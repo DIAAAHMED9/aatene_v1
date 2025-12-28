@@ -1,4 +1,5 @@
 import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/colors/app_color.dart';
@@ -32,18 +33,8 @@ class ComplaintsCard extends StatelessWidget {
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                number,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: textColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(title, style: getBold(fontSize: 10)),
+              Text(number, style: getBold(fontSize: 18, color: textColor)),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'inward_top_notch_clipper.dart';
@@ -27,9 +28,9 @@ class CustomBottomNavigation extends StatefulWidget {
     this.notchWidthRatio = 0.3,
     this.notchDepthRatio = 0.35,
   }) : assert(
-         pages.length == icons.length,
-         'Pages and icons must be the same length',
-       );
+  pages.length == icons.length,
+  'Pages and icons must be the same length',
+  );
 
   @override
   State<CustomBottomNavigation> createState() => _CustomBottomNavigationState();
@@ -57,7 +58,10 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
           child: widget.pages[_currentIndex],
         ),
         // طبقة شفافة لمنع النقر على المحتوى خلف البار
-        if (MediaQuery.of(context).viewInsets.bottom == 0)
+        if (MediaQuery
+            .of(context)
+            .viewInsets
+            .bottom == 0)
           Positioned(
             bottom: 0,
             left: 0,
@@ -72,7 +76,10 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     final double containerWidth = screenWidth - 30;
     final double notchWidth = containerWidth * widget.notchWidthRatio;
     final double notchDepth = 68 * widget.notchDepthRatio;
@@ -102,7 +109,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               ),
             ),
           ),
-          
+
           // البار مع Notch
           Positioned(
             bottom: 20,
@@ -135,7 +142,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               ),
             ),
           ),
-          
+
           // زر الفاب - جزء من الـ BottomNavigationBar
           Positioned(
             bottom: 20 + 34, // 34 = نصف ارتفاع البار (68/2)
@@ -177,46 +184,46 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, {required IconData icon, required int index, String? text}) {
+  Widget _buildNavItem(BuildContext context,
+      {required IconData icon, required int index, String? text}) {
     final bool isSelected = _currentIndex == index;
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        setState(() => _currentIndex = index);
-      },
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          setState(() => _currentIndex = index);
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              Icon(
               icon,
               size: 28,
               color: isSelected ? widget.selectedColor : widget.unselectedColor,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             if (text != null)
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isSelected ? widget.selectedColor : widget.unselectedColor,
-                ),
-              )
-            else if (isSelected)
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: widget.selectedColor,
-                ),
-              ),
-          ],
-        ),
-      ),
+        Text(
+        text,
+        style: getRegular(fontSize: 12,
+          color: isSelected ? widget.selectedColor : widget.unselectedColor,)
+    )
+    else if (isSelected)
+    Container(
+    width: 6,
+    height: 6,
+    decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    color: widget.selectedColor,
+    ),
+    ),
+    ],
+    ),
+    )
+    ,
     );
   }
 }

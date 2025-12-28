@@ -1,9 +1,9 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20services/responsive_dimensions.dart';
 import 'package:attene_mobile/view/add%20services/service_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
-
 
 class PolicyScreen extends StatelessWidget {
   const PolicyScreen({super.key});
@@ -38,18 +38,16 @@ class PolicyScreen extends StatelessWidget {
         children: [
           Text(
             'الشروط والخصوصية',
-            style: TextStyle(
+            style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(24),
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
           Text(
             'يرجى قراءة وموافقة على جميع السياسات التالية قبل نشر الخدمة',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
-              color: Colors.grey[600],
+              color: Color(0xFF757575),
             ),
           ),
         ],
@@ -68,20 +66,17 @@ class PolicyScreen extends StatelessWidget {
         children: [
           Text(
             'إشعار حقوق النشر',
-            style: TextStyle(
+            style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(18),
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
 
           Text(
             'بإرسال خدمتك، تُقرّ بملكيتك أو حقوقك في المواد المنشورة، وأن نشر هذه المواد لا ينتهك حقوق أي طرف ثالث. كما تُقرّ بفهمك أن مشروعك سيخضع للمراجعة والتقييم من قِبل المنصة لضمان استيفائه للمتطلبات.',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
-              color: Colors.grey[800],
-              height: 1.5,
+              color: Color(0xFF424242),
             ),
             textAlign: TextAlign.right,
           ),
@@ -130,20 +125,17 @@ class PolicyScreen extends StatelessWidget {
         children: [
           Text(
             'شروط الخدمة',
-            style: TextStyle(
+            style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(18),
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
 
           Text(
             'يوافق المستخدم على شروط استخدام المنصة بما في ذلك الالتزام بمعايير الجودة والاستجابة للعملاء في الأوقات المحددة. يحق للمنصة إزالة أي خدمة تنتهك الشروط دون سابق إنذار.',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
-              color: Colors.grey[800],
-              height: 1.5,
+              color: Color(0xFF424242),
             ),
             textAlign: TextAlign.right,
           ),
@@ -178,6 +170,7 @@ class PolicyScreen extends StatelessWidget {
                               14,
                             ),
                             color: Colors.grey[800],
+                            fontFamily: "PingAR",
                           ),
                         ),
                         SizedBox(
@@ -206,6 +199,7 @@ class PolicyScreen extends StatelessWidget {
                                 color: AppColors.primary400,
                                 fontWeight: FontWeight.w500,
                                 decoration: TextDecoration.underline,
+                                fontFamily: "PingAR",
                               ),
                             ),
                           ),
@@ -230,20 +224,17 @@ class PolicyScreen extends StatelessWidget {
         children: [
           Text(
             'إشعار الخصوصية',
-            style: TextStyle(
+            style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(18),
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
             ),
           ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
 
           Text(
             'ستكون الخدمة مرئية للعامة في نتائج البحث. سيتم جمع ومعالجة البيانات المقدمة وفقًا لسياسة الخصوصية. يتحمل المستخدم المسؤولية الكاملة عن أي معلومات شخصية يشاركها في وصف الخدمة.',
-            style: TextStyle(
+            style: getRegular(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
-              color: Colors.grey[800],
-              height: 1.5,
+              color: Color(0xFF424242),
             ),
             textAlign: TextAlign.right,
           ),
@@ -274,6 +265,7 @@ class PolicyScreen extends StatelessWidget {
                         Text(
                           'من خلال إرسال هذه الخدمة وتفعيلها، أفهم أنها ستظهر في نتائج البحث للعامة وستكون مرئية للمستخدمين الآخرين.',
                           style: TextStyle(
+                            fontFamily: "PingAR",
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -301,6 +293,7 @@ class PolicyScreen extends StatelessWidget {
                               color: AppColors.primary400,
                               fontWeight: FontWeight.w500,
                               decoration: TextDecoration.underline,
+                              fontFamily: "PingAR",
                             ),
                           ),
                         ),
@@ -387,6 +380,7 @@ class PolicyScreen extends StatelessWidget {
                                   ? Colors.green[800]
                                   : Colors.orange[800],
                               fontWeight: FontWeight.w500,
+                              fontFamily: "PingAR",
                             ),
                           ),
                         ),
@@ -417,7 +411,7 @@ class PolicyScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'يجب الموافقة على جميع السياسات الثلاثة قبل نشر الخدمة',
-                    style: TextStyle(
+                    style: getRegular(
                       fontSize: ResponsiveDimensions.responsiveFontSize(13),
                       color: AppColors.primary500,
                     ),
@@ -442,9 +436,9 @@ class PolicyScreen extends StatelessWidget {
         SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
         Text(
           title,
-          style: TextStyle(
+          style: getRegular(
             fontSize: ResponsiveDimensions.responsiveFontSize(14),
-            color: isAccepted ? Colors.green[700] : Colors.grey[600],
+            color: isAccepted ? Colors.green : Colors.grey,
             fontWeight: isAccepted ? FontWeight.w600 : FontWeight.normal,
           ),
         ),

@@ -1,16 +1,25 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/colors/app_color.dart';
 
 class SectionCard3 extends StatelessWidget {
-  const SectionCard3({super.key, required this.title, required this.subtitle, required this.icon});
-  final String title ;
-  final String subtitle ;
-  final Icon icon ;
+  const SectionCard3({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  final String title;
+
+  final String subtitle;
+
+  final Icon icon;
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.light1000,
@@ -28,18 +37,18 @@ class SectionCard3 extends StatelessWidget {
                 color: AppColors.primary400,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Center(
-                child: icon,
-              ),
+              child: Center(child: icon),
             ),
             Column(
               spacing: 5,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
-                Text(subtitle, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.neutral700),),
-
+                Text(title, style: getBold(fontSize: 14)),
+                Text(
+                  subtitle,
+                  style: getRegular(fontSize: 12, color: AppColors.neutral700),
+                ),
               ],
             ),
           ],

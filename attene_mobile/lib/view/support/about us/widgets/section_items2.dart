@@ -1,16 +1,25 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/colors/app_color.dart';
 
 class SectionItems2 extends StatelessWidget {
-  const SectionItems2({super.key, required this.title, required this.subtitle, required this.icon});
-  final String title ;
-  final String subtitle ;
-  final Image icon ;
+  const SectionItems2({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  final String title;
+
+  final String subtitle;
+
+  final Image icon;
 
   @override
   Widget build(BuildContext context) {
-    return   Container(
+    return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: Color(0xFFf6f6f6),
@@ -31,27 +40,19 @@ class SectionItems2 extends StatelessWidget {
                     color: AppColors.primary400,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Center(
-                    child: icon,
-                  ),
+                  child: Center(child: icon),
                 ),
                 Text(
-                 title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  title,
+                  style: getBold(fontSize: 14,),
                 ),
               ],
             ),
             Text(
               subtitle,
               textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: AppColors.neutral600,
-              ),
+              style: getRegular(fontSize: 12,
+                color: AppColors.neutral600,)
             ),
           ],
         ),

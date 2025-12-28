@@ -2,6 +2,7 @@ import 'package:attene_mobile/component/aatene_text_filed.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../component/text/aatene_custom_text.dart';
 import '../../utlis/colors/app_color.dart';
 import '../../utlis/language/language_utils.dart';
 
@@ -17,11 +18,7 @@ class FollowersPage extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "قائمة المتابعين",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -47,28 +44,24 @@ class FollowersPage extends StatelessWidget {
               /// Tabs
               Row(
                 children: [
-                  Expanded(child: _tabButton(text: 'أشخاص تتابعهم', selected: true)),
+                  Expanded(
+                    child: _tabButton(text: 'أشخاص تتابعهم', selected: true),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _tabButton(text: 'المتابعين', selected: false),
                   ),
                 ],
               ),
-        
+
               Row(
                 spacing: 10,
                 children: [
-                  Text(
-                    "350K",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "متابع",
-                    style: TextStyle(fontSize: 18, ),
-                  ),
+                  Text("350K", style: getBold(fontSize: 18)),
+                  Text("متابع", style: getRegular(fontSize: 18)),
                 ],
               ),
-        
+
               /// Search
               TextFiledAatene(
                 isRTL: isRTL,
@@ -84,11 +77,12 @@ class FollowersPage extends StatelessWidget {
                     ),
                     child: Icon(Icons.search, color: AppColors.light1000),
                   ),
-                ), textInputAction: TextInputAction.done,
+                ),
+                textInputAction: TextInputAction.done,
               ),
-        
+
               const SizedBox(height: 8),
-        
+
               /// List
               Expanded(
                 child: ListView.builder(
@@ -115,9 +109,8 @@ class FollowersPage extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          color: selected ? Colors.white : const Color(0xFF3E5C7F),
-          fontWeight: FontWeight.w600,
+        style: getMedium(
+          color: selected ? Colors.white : AppColors.primary400
         ),
       ),
     );
@@ -138,15 +131,12 @@ class FollowersPage extends StatelessWidget {
           /// Name + followers
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
-              Text(
-                'SideLimited',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
+            children: [
+              Text('SideLimited', style: getBold(fontSize: 15)),
               SizedBox(height: 4),
               Text(
                 '249K متابعين',
-                style: TextStyle(color: Colors.grey, fontSize: 13),
+                style: getRegular(color: Colors.grey, fontSize: 13),
               ),
             ],
           ),
@@ -162,12 +152,12 @@ class FollowersPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
-              children: const [
+              children: [
                 Icon(Icons.person_add_alt, color: Colors.white, size: 16),
                 SizedBox(width: 6),
                 Text(
                   'رد المتابعة',
-                  style: TextStyle(color: Colors.white, fontSize: 13),
+                  style: getRegular(color: Colors.white, fontSize: 13),
                 ),
               ],
             ),

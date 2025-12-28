@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/add%20new%20store/shipping%20method/add_new_company_shipping.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,11 +38,7 @@ class AddNewStore extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "البيانات الاساسية",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -69,7 +66,8 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "أدخل اسم المتجر",
-                controller: controller.nameController, textInputAction: TextInputAction.next,
+                controller: controller.nameController,
+                textInputAction: TextInputAction.next,
               ),
               SizedBox(height: 15),
 
@@ -86,10 +84,9 @@ class AddNewStore extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         "نوع المتجر: ${controller.storeType.value == 'products' ? 'منتجات' : 'خدمات'}",
-                        style: TextStyle(
+                        style: getRegular(
                           fontSize: 14,
                           color: AppColors.primary500,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -102,7 +99,7 @@ class AddNewStore extends StatelessWidget {
               SizedBox(height: 5),
               Text(
                 "اختر صورة أساسية للشعار (حد أقصى 5 صور)",
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: getRegular(fontSize: 12, color: Colors.grey),
               ),
               SizedBox(height: 10),
 
@@ -115,7 +112,7 @@ class AddNewStore extends StatelessWidget {
               SizedBox(height: 5),
               Text(
                 "اختر صورة واحدة على الأقل للغلاف (حد أقصى 10 صور)",
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: getRegular(fontSize: 12, color: Colors.grey),
               ),
               SizedBox(height: 10),
 
@@ -129,7 +126,8 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "أدخل وصف المتجر",
-                controller: controller.descriptionController, textInputAction: TextInputAction.next,
+                controller: controller.descriptionController,
+                textInputAction: TextInputAction.next,
               ),
               SizedBox(height: 15),
               TextWithStar(text: "البريد الالكتروني"),
@@ -138,7 +136,8 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "example@email.com",
-                controller: controller.emailController, textInputAction: TextInputAction.done,
+                controller: controller.emailController,
+                textInputAction: TextInputAction.done,
               ),
               SizedBox(height: 15),
 
@@ -162,11 +161,10 @@ class AddNewStore extends StatelessWidget {
                             final cityName = controller.selectedCityName.value;
                             return Text(
                               cityName,
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: getRegular(
                                 color: cityName != 'اختر المدينة'
                                     ? AppColors.neutral900
-                                    : Colors.grey[600],
+                                    : Colors.grey,
                               ),
                             );
                           }),
@@ -200,11 +198,10 @@ class AddNewStore extends StatelessWidget {
                                 controller.selectedDistrictName.value;
                             return Text(
                               districtName,
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: getRegular(
                                 color: districtName != 'اختر الحي'
                                     ? AppColors.neutral900
-                                    : Colors.grey[600],
+                                    : Colors.grey,
                               ),
                             );
                           }),
@@ -238,11 +235,10 @@ class AddNewStore extends StatelessWidget {
                                 controller.selectedCurrencyName.value;
                             return Text(
                               currencyName,
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: getRegular(
                                 color: currencyName != 'اختر العملة'
                                     ? AppColors.neutral900
-                                    : Colors.grey[600],
+                                    : Colors.grey,
                               ),
                             );
                           }),
@@ -261,7 +257,8 @@ class AddNewStore extends StatelessWidget {
                 heightTextFiled: 50,
                 isRTL: isRTL,
                 hintText: "أدخل رقم الهاتف",
-                controller: controller.phoneController, textInputAction: TextInputAction.done,
+                controller: controller.phoneController,
+                textInputAction: TextInputAction.done,
               ),
               SizedBox(height: 15),
 
@@ -294,7 +291,7 @@ class AddNewStore extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "إخفاء رقم الهاتف على الملف الشخصي",
-                          style: TextStyle(
+                          style: getRegular(
                             fontSize: 14,
                             color: AppColors.neutral700,
                           ),
@@ -321,7 +318,10 @@ class AddNewStore extends StatelessWidget {
                     Expanded(
                       child: Text(
                         "💡 تأكد من اختيار الصور من 'المكتبة' وليس 'رفع صورة جديدة' لتجنب مشاكل الرفع أثناء إنشاء المتجر",
-                        style: TextStyle(color: Colors.blue[800], fontSize: 12),
+                        style: getRegular(
+                          color: Colors.blueAccent,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -351,9 +351,9 @@ class AddNewStore extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               'الصور المختارة: $logoCount/5',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: 12,
-                color: logoCount >= 5 ? Colors.red : Colors.grey[600],
+                color: logoCount >= 5 ? Colors.red : Colors.grey,
                 fontWeight: logoCount >= 5
                     ? FontWeight.bold
                     : FontWeight.normal,
@@ -391,7 +391,7 @@ class AddNewStore extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'اضف او اسحب صورة او فيديو',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: getRegular(color: Colors.grey),
                   ),
                   const SizedBox(height: 4),
                   const Text(
@@ -472,10 +472,9 @@ class AddNewStore extends StatelessWidget {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       'شعار ${index + 1}',
-                                      style: TextStyle(
+                                      style: getRegular(
                                         color: Colors.white,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -502,6 +501,7 @@ class AddNewStore extends StatelessWidget {
                                 child: Text(
                                   'أساسي',
                                   style: TextStyle(
+                                    fontFamily: "PingAR",
                                     color: Colors.white,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -598,7 +598,7 @@ class AddNewStore extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           'اضف او اسحب صورة او فيديو',
-                          style: TextStyle(color: Colors.grey[600]),
+                          style: getRegular(color: Colors.grey),
                         ),
                         const SizedBox(height: 4),
                         const Text(
@@ -627,9 +627,9 @@ class AddNewStore extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               'الصور المختارة: $coverCount/10',
-              style: TextStyle(
+              style: getRegular(
                 fontSize: 12,
-                color: coverCount >= 10 ? Colors.red : Colors.grey[600],
+                color: coverCount >= 10 ? Colors.red : Colors.grey,
                 fontWeight: coverCount >= 10
                     ? FontWeight.bold
                     : FontWeight.normal,
@@ -667,12 +667,16 @@ class AddNewStore extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'اضف او اسحب صورة او فيديو',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: getRegular(color: Colors.grey),
                   ),
                   const SizedBox(height: 4),
                   const Text(
                     'png , jpg , svg',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontFamily: "PingAR",
+                    ),
                   ),
                 ],
               ),
@@ -748,10 +752,9 @@ class AddNewStore extends StatelessWidget {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       'غلاف ${index + 1}',
-                                      style: TextStyle(
+                                      style: getRegular(
                                         color: Colors.white,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -778,6 +781,7 @@ class AddNewStore extends StatelessWidget {
                                 child: Text(
                                   'أساسي',
                                   style: TextStyle(
+                                    fontFamily: "PingAR",
                                     color: Colors.white,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -874,7 +878,7 @@ class AddNewStore extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           'اضف او اسحب صورة او فيديو',
-                          style: TextStyle(color: Colors.grey[600]),
+                          style: getRegular(color: Colors.grey),
                         ),
                         const SizedBox(height: 4),
                         const Text(
@@ -917,7 +921,7 @@ class AddNewStore extends StatelessWidget {
               SizedBox(height: 10),
               Text(
                 'جاري التحقق من البيانات...',
-                style: TextStyle(color: AppColors.primary400),
+                style: getRegular(color: AppColors.primary400),
               ),
             ],
           ),

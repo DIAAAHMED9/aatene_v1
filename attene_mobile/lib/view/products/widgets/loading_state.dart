@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 class LoadingStateWidget extends StatelessWidget {
@@ -18,10 +19,7 @@ class LoadingStateWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            message,
-            style: const TextStyle(fontSize: 16, color: Colors.grey),
-          ),
+          Text(message, style: getRegular(color: Colors.grey)),
         ],
       ),
     );

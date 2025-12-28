@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:attene_mobile/models/product_model.dart';
@@ -138,11 +139,7 @@ class ProductGridItem extends StatelessWidget {
                     children: [
                       Text(
                         product.name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+                        style: getMedium(fontSize: 14, color: Colors.black87),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -161,9 +158,9 @@ class ProductGridItem extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 controller.getSectionName(product.sectionId!),
-                                style: TextStyle(
+                                style: getRegular(
                                   fontSize: 11,
-                                  color: Colors.grey[600],
+                                  color: Colors.grey,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -179,9 +176,8 @@ class ProductGridItem extends StatelessWidget {
                         children: [
                           Text(
                             '${product.price ?? '0.0'} ر.س',
-                            style: const TextStyle(
+                            style: getBold(
                               fontSize: 14,
-                              fontWeight: FontWeight.w700,
                               color: AppColors.primary400,
                             ),
                           ),

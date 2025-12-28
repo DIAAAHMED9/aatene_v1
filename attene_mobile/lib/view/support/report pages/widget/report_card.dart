@@ -1,9 +1,15 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/colors/app_color.dart';
 
 class ReportCard extends StatelessWidget {
-  const ReportCard({super.key, required this.image, required this.title, required this.screen});
+  const ReportCard({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.screen,
+  });
 
   final Image image;
   final String title;
@@ -31,7 +37,7 @@ class ReportCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               image,
-              Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(title, style:getBold()),
             ],
           ),
         ),

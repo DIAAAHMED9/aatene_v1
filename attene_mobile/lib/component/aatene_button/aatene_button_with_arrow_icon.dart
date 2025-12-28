@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -32,14 +33,7 @@ class AateneButtonWithIcon extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.arrow_back_ios, color: AppColors.light1000, size: 15),
-            Text(
-              buttonText,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.light1000,
-              ),
-            ),
+            Text(buttonText, style: getMedium(color: AppColors.light1000)),
           ],
         ),
       ),

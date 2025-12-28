@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
+
 class ReportAbuseScreen extends StatefulWidget {
   const ReportAbuseScreen({super.key});
 
@@ -30,11 +32,7 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
         backgroundColor: Colors.white,
         title: Text(
           "الشكاوى والاقتراحات",
-          style: TextStyle(
-            color: AppColors.neutral100,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -68,15 +66,12 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                   const SizedBox(height: 24),
 
                   // Title
-                  const Text(
-                    'الإبلاغ عن إساءة',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  Text('الإبلاغ عن إساءة', style: getBold(fontSize: 18)),
 
                   // Subtitle
-                  const Text(
+                  Text(
                     'ما الذي تقدر أن نساعدك به ؟',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: getRegular(fontSize: 12, color: Colors.grey),
                   ),
 
                   const SizedBox(height: 24),
@@ -92,10 +87,7 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                         });
                       },
                       activeColor: AppColors.primary400,
-                      title: Text(
-                        options[index],
-                        style: const TextStyle(fontSize: 16),
-                      ),
+                      title: Text(options[index], style: getRegular()),
                       contentPadding: EdgeInsets.zero,
                     );
                   }),
@@ -106,7 +98,9 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute<void>(builder: (context) => ReportAddAbuse()),
+                        MaterialPageRoute<void>(
+                          builder: (context) => ReportAddAbuse(),
+                        ),
                       );
                     },
                     buttonText: "التالي",
