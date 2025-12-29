@@ -2,6 +2,7 @@ import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/view/control%20users/change_email.dart';
 import 'package:attene_mobile/view/control%20users/change_mobile_number.dart';
 import 'package:attene_mobile/view/control%20users/change_password.dart';
+import 'package:attene_mobile/view/control%20users/personal_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -144,7 +145,7 @@ class Edit_Profile extends StatelessWidget {
                                 size: 20,
                                 color: AppColors.neutral50,
                               ),
-                              screen: Edit_Profile(),
+                              screen: PersonalInfo(),
                             ),
                             EditProfileLabel(
                               title: "البريد الالكتروني",

@@ -22,7 +22,7 @@ class GenericTabs extends StatelessWidget {
     return Column(
       children: [
         Row(
-          spacing: 20,
+          spacing: 5,
           children: List.generate(
             tabs.length,
             (index) => Expanded(
@@ -52,20 +52,22 @@ class GenericTabs extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        AnimatedAlign(
-          duration: const Duration(milliseconds: 300),
-          alignment: selectedIndex == 0
-              ? Alignment.centerLeft
-              : Alignment.centerRight,
-          child: Container(
-            height: 3,
-            width: MediaQuery.of(context).size.width / tabs.length - 30,
-            decoration: BoxDecoration(
-              color: selectedColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
+        // AnimatedAlign(
+        //   duration: const Duration(milliseconds: 300),
+        //   alignment: Alignment(
+        //     -1 + (2 / (tabs.length - 1)) * selectedIndex,
+        //     0,
+        //   ),
+        //   child: Container(
+        //     height: 3,
+        //     width:
+        //     MediaQuery.of(context).size.width / tabs.length - 30,
+        //     decoration: BoxDecoration(
+        //       color: selectedColor,
+        //       borderRadius: BorderRadius.circular(4),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

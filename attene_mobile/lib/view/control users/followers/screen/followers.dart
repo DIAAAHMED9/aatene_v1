@@ -25,6 +25,7 @@ class Followers extends StatelessWidget {
           "قائمة المتابعين",
           style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
+        centerTitle: false,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
@@ -69,7 +70,8 @@ class Followers extends StatelessWidget {
                   ),
                   child: Icon(Icons.search, color: AppColors.light1000),
                 ),
-              ), textInputAction: TextInputAction.done,
+              ),
+              textInputAction: TextInputAction.done,
             ),
 
             const SizedBox(height: 12),
@@ -78,10 +80,7 @@ class Followers extends StatelessWidget {
               child: PageView(
                 controller: controller.pageController,
                 onPageChanged: controller.onPageChanged,
-                children: const [
-                  _FollowersList(),
-                  _FollowersList(),
-                ],
+                children: const [_FollowersList(), _FollowersList()],
               ),
             ),
           ],
@@ -98,7 +97,7 @@ class _FollowersList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: 10,
-      itemBuilder: (_, __) =>  FollowerItem(),
+      itemBuilder: (_, __) => FollowerItem(),
     );
   }
 }

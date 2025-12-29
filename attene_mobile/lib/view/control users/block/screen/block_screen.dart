@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../component/aatene_text_filed.dart';
+import '../../../../component/text/aatene_custom_text.dart';
+import '../../../../utlis/colors/app_color.dart';
 import '../../../../utlis/language/language_utils.dart';
 import '../controller/block_controller.dart';
 import '../widgets/block_item.dart';
@@ -17,20 +19,39 @@ class BlockScreen extends StatelessWidget {
     final isRTL = LanguageUtils.isRTL;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('قائمة الحظر')),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          "تغيير البريد الالكتروني",
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
+        ),
+        centerTitle: false,
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey[100],
+            ),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
           children: [
-            Obx(() {
-              return GenericTabs(
-                tabs: const ['مستخدمين', 'متاجر'],
+            Obx(
+              () => GenericTabs(
+                tabs: ['مستخدمين', 'متاجر', 'محادثات'],
                 selectedIndex: controller.currentIndex.value,
                 onTap: controller.changeTab,
-                selectedColor: const Color(0xFF3E5C7F),
+                selectedColor: AppColors.primary500,
                 unSelectedColor: const Color(0xFFDCE6F3),
-              );
-            }),
+              ),
+            ),
 
             const SizedBox(height: 12),
 
@@ -38,6 +59,7 @@ class BlockScreen extends StatelessWidget {
               isRTL: isRTL,
               hintText: 'بحث',
               textInputAction: TextInputAction.done,
+              onChanged: controller.onSearch,
             ),
 
             const SizedBox(height: 12),
@@ -58,7 +80,7 @@ class BlockScreen extends StatelessWidget {
                         itemBuilder: (_, i) => BlockItem(
                           name: controller.blockedUsers[i],
                           index: i,
-                          isStore: false,
+                          tab: 0,
                         ),
                       ),
                     ),
@@ -68,7 +90,17 @@ class BlockScreen extends StatelessWidget {
                         itemBuilder: (_, i) => BlockItem(
                           name: controller.blockedStores[i],
                           index: i,
-                          isStore: true,
+                          tab: 1,
+                        ),
+                      ),
+                    ),
+                    Obx(
+                      () => ListView.builder(
+                        itemCount: controller.blockedChats.length,
+                        itemBuilder: (_, i) => BlockItem(
+                          name: controller.blockedChats[i],
+                          index: i,
+                          tab: 2,
                         ),
                       ),
                     ),

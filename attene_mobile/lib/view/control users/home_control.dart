@@ -43,7 +43,7 @@ class HomeControl extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: 20,),
+                      SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Image.asset(
@@ -85,7 +85,7 @@ class HomeControl extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute<void>(
-                                        builder: (context) => PersonalInfo(),
+                                        builder: (context) => Edit_Profile(),
                                       ),
                                     );
                                   },

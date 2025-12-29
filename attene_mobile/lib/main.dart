@@ -71,31 +71,31 @@ class AppBindings extends Bindings {
   @override
   void dependencies() {
     if (_initialized) return;
-    
+
     print('🔄 [APP BINDINGS] تسجيل المتحكمات الأساسية فقط...');
-    
+
     Get.lazyPut(() => GetStorage(), fenix: true);
     Get.lazyPut(() => MyAppController(), fenix: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
-    
+
     print('✅ [APP BINDINGS] تم تسجيل الأساسيات');
-    
+
     _delayOtherBindings();
-    
+
     _initialized = true;
   }
-  
+
   void _delayOtherBindings() {
     Future.delayed(const Duration(seconds: 3), () {
       print('🔄 [APP BINDINGS] تسجيل المتحكمات المتبقية...');
-      
+
       Get.lazyPut(() => DataInitializerService(), fenix: true);
       Get.lazyPut(() => BottomSheetController(), fenix: true);
       Get.lazyPut(() => CreateStoreController(), fenix: true);
       Get.lazyPut(() => DataSyncService(), fenix: true);
       Get.lazyPut(() => ChatController(), fenix: true);
-      
+
       Future.delayed(const Duration(seconds: 2), () {
         Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
         Get.lazyPut(() => ProductCentralController(), fenix: true);
@@ -108,7 +108,7 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
-        
+
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });
@@ -216,14 +216,11 @@ class MyApp extends StatelessWidget {
           onSurface: AppColors.neutral200,
           error: AppColors.error200,
           onError: AppColors.light1000,
-        ).copyWith(
-          primary: AppColors.primary300,
-          surface: AppColors.light1000,
-        ),
+        ).copyWith(primary: AppColors.primary300, surface: AppColors.light1000),
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () => Followers()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -242,61 +239,59 @@ class MyApp extends StatelessWidget {
 }
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   print('🚀 بدء تشغيل التطبيق...');
 
   await _initializeEssentialServices();
-  
+
   runApp(const MyApp());
-  
+
   _initializeBackgroundServices();
 }
 
 Future<void> _initializeEssentialServices() async {
   print('🔄 تهيئة الخدمات الأساسية...');
-  
+
   await GetStorage.init();
-  
+
   print('✅ تم تهيئة الخدمات الأساسية');
 }
 
 void _initializeBackgroundServices() {
   WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final GetStorage storage = GetStorage();
+    final GetStorage storage = GetStorage();
 
     print('🔄 بدء الخدمات الخلفية...');
     await Future.delayed(const Duration(seconds: 2));
-    
+
     try {
       String deviceName = await DeviceNameService.getDeviceName();
-      storage.write('device_name',deviceName);
+      storage.write('device_name', deviceName);
       print('📱 الجهاز المستخدم: $deviceName');
-      
+
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       print('✅ تم تهيئة Firebase في الخلفية');
-      
+
       await PushNotificationService().setupInteractedMessage();
-      
+
       Get.put(AppLifecycleManager(), permanent: true);
-      
+
       final token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
-              storage.write('device_token',token );
+        storage.write('device_token', token);
 
         print('📱 FCM Token: $token');
-        
       }
-      
-      final RemoteMessage? initialMessage =
-          await FirebaseMessaging.instance.getInitialMessage();
+
+      final RemoteMessage? initialMessage = await FirebaseMessaging.instance
+          .getInitialMessage();
       if (initialMessage != null) {
         print('📨 تم تشغيل التطبيق من خلال إشعار');
       }
-      
+
       print('✅ اكتملت الخدمات الخلفية');
     } catch (e) {
       print('⚠️ خطأ في الخدمات الخلفية: $e');

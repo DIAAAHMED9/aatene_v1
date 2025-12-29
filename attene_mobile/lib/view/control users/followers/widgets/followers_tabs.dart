@@ -32,20 +32,20 @@ class FollowersTabs extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          AnimatedAlign(
-            duration: const Duration(milliseconds: 300),
-            alignment: controller.currentIndex.value == 0
-                ? Alignment.centerLeft
-                : Alignment.centerRight,
-            child: Container(
-              width: MediaQuery.of(context).size.width / 2 - 30,
-              height: 3,
-              decoration: BoxDecoration(
-                color: AppColors.primary500,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          ),
+          // AnimatedAlign(
+          //   duration: const Duration(milliseconds: 300),
+          //   alignment: controller.currentIndex.value == 0
+          //       ? Alignment.centerLeft
+          //       : Alignment.centerRight,
+          //   child: Container(
+          //     width: MediaQuery.of(context).size.width / 2 - 30,
+          //     height: 3,
+          //     decoration: BoxDecoration(
+          //       color: AppColors.primary500,
+          //       borderRadius: BorderRadius.circular(4),
+          //     ),
+          //   ),
+          // ),
         ],
       );
     });
@@ -63,9 +63,7 @@ class FollowersTabs extends StatelessWidget {
           height: 42,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected
-                ? const Color(0xFF3E5C7F)
-                : const Color(0xFFDCE6F3),
+            color: selected ? AppColors.primary500 : const Color(0xFFDCE6F3),
             borderRadius: BorderRadius.circular(24),
           ),
           child: Text(

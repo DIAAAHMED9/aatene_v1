@@ -189,7 +189,6 @@ class AboutUsScreen extends StatelessWidget {
                     ),
                     AateneButton(
                       buttonText: "انضم اليوم، وخلّي الناس تشتري منك بسهولة",
-                      raduis: 10,
                       color: AppColors.primary500,
                       borderColor: AppColors.primary500,
                       textColor: AppColors.light1000,
@@ -218,9 +217,9 @@ class AboutUsScreen extends StatelessWidget {
                             ),
                           ),
                           CardWidget(
-                            title: "المنتجات",
+                            title: "المنتجات المستعملة",
                             subtitle:
-                                "بيع المخبوزات الطازجة، الملابس العصرية، الإكسسوارات اليدوية، المنتجات الغذائية المحلية، أو التحف والهدايا.",
+                                "إعادة بيع الأجهزة الكهربائية بحالة ممتازة، الأثاث المستعمل، الأدوات المنزلية الزائدة، أو الملابس التي لم تعد تستخدمها.",
                             icon: Icon(
                               Icons.shopping_basket_rounded,
                               color: AppColors.light1000,
@@ -383,7 +382,7 @@ class AboutUsScreen extends StatelessWidget {
                                     height: 60,
                                     decoration: BoxDecoration(
                                       color: AppColors.primary500,
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(100),
                                     ),
                                     child: Center(
                                       child: Row(
@@ -529,17 +528,30 @@ class AboutUsScreen extends StatelessWidget {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    UrlHelper.open("https://wa.me/+972526213879");
-                  },
-                  child: Text('واتس خدمة العملاء'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    UrlHelper.open("https://wa.me/+972559390851");
-                  },
-                  child: Text('واتس لاستعلام عن الخدمات والمنتجات'),
+                Column(
+                  spacing: 15,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary500,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          UrlHelper.open("https://wa.me/+972526213879");
+                        },
+                        child: Text('واتس خدمة العملاء'),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        UrlHelper.open("https://wa.me/+972559390851");
+                      },
+                      child: Text('واتس لاستعلام عن الخدمات والمنتجات'),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -7,13 +7,13 @@ import '../controller/block_controller.dart';
 class BlockItem extends StatelessWidget {
   final String name;
   final int index;
-  final bool isStore;
+  final int tab;
 
   BlockItem({
     super.key,
     required this.name,
     required this.index,
-    required this.isStore,
+    required this.tab,
   });
 
   final controller = Get.find<BlockController>();
@@ -32,12 +32,12 @@ class BlockItem extends StatelessWidget {
           Text(name, style: getBold()),
           const Spacer(),
           GestureDetector(
-            onTap: () => _showConfirmDialog(),
+            onTap: _confirmDialog,
             child: Container(
               height: 36,
               padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFF3E5C7F),
+                color: AppColors.primary500,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
@@ -53,7 +53,7 @@ class BlockItem extends StatelessWidget {
     );
   }
 
-  void _showConfirmDialog() {
+  void _confirmDialog() {
     Get.dialog(
       AlertDialog(
         title: Text(
@@ -63,22 +63,15 @@ class BlockItem extends StatelessWidget {
         content: Text('هل أنت متأكد من إلغاء الحظر؟', style: getMedium()),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: getRegular(color: AppColors.primary400),
-            ),
+            onPressed: Get.back,
+            child: Text('إلغاء', style: getRegular()),
           ),
           TextButton(
             onPressed: () {
-              if (isStore) {
-                controller.unblockStore(index);
-              } else {
-                controller.unblockUser(index);
-              }
-              Get.back();
+              Get.back(); // ⬅️ إغلاق الـ Dialog أولاً
+              controller.unblock(tab: tab, index: index);
             },
-            child: Text('تأكيد', style: getRegular(color: Colors.red)),
+            child: Text('تأكيد', style: getRegular(color: AppColors.error300)),
           ),
         ],
       ),
