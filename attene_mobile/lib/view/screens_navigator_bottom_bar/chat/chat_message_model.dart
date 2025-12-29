@@ -1,8 +1,3 @@
-
-// lib/models/chat_models.dart
-// Unified chat models used across the app.
-// NOTE: Do NOT define ChatMessage in any other file to avoid type conflicts.
-
 int? _toInt(dynamic v) {
   if (v == null) return null;
   if (v is int) return v;
@@ -13,7 +8,7 @@ class ParticipantData {
   final String? id;
   final String? name;
   final String? avatar;
-  final String? type; // user | store | ...
+  final String? type;
 
   const ParticipantData({this.id, this.name, this.avatar, this.type});
 
@@ -26,7 +21,6 @@ class ParticipantData {
 }
 
 class ChatParticipant {
-  /// participant record id (IMPORTANT: used as participant_id for sending messages)
   final int id;
   final String? conversationId;
 
@@ -36,7 +30,6 @@ class ChatParticipant {
   final String? createdAt;
   final String? updatedAt;
 
-  /// Some APIs also return these fields
   final String? participantType;
   final String? participantId;
 
@@ -51,7 +44,6 @@ class ChatParticipant {
     this.participantId,
   });
 
-  // Backward-compatible getters used by UI (so no "name/avatar isn't defined" errors)
   String? get name => participantData?.name;
   String? get avatar => participantData?.avatar;
   String? get type => participantData?.type;
@@ -72,14 +64,13 @@ class ChatParticipant {
 
 class ChatConversation {
   final int id;
-  final String type; // direct | group
+  final String type;
   final String? name;
   final String? ownerType;
   final String? ownerId;
   final int participantsCount;
   final List<ChatParticipant> participants;
 
-  /// May be null/String/Object depending on API
   final dynamic lastMessage;
 
   final String? createdAt;
@@ -119,9 +110,6 @@ class ChatConversation {
   int get totalUnread =>
       participants.fold<int>(0, (sum, p) => sum + (p.unreadMessagesCount ?? 0));
 
-  /// WhatsApp-like title:
-  /// - direct: other participant name
-  /// - group: group name (fallback "مجموعة")
   String displayName({String? myOwnerType, String? myOwnerId}) {
     if (type == 'group') return (name?.trim().isNotEmpty ?? false) ? name!.trim() : 'مجموعة';
 
@@ -172,19 +160,13 @@ class ChatMessage {
   final int id;
   final String? conversationId;
 
-  /// API field: body
   final String? body;
 
-  /// Backward-compatible getter used by some UI versions
   String? get messageContent => body;
 
-  /// API can return:
-  /// - files: [...]
-  /// - files_url: [...]
   final dynamic files;
   final dynamic filesUrl;
 
-  /// sender_id is often participant id
   final String? senderId;
 
   final int? productId;
@@ -236,7 +218,6 @@ class ChatMessage {
         urls.add(v.toString());
       }
     }
-    // Some APIs put urls in files directly
     if (urls.isEmpty && files is List) {
       for (final v in (files as List)) {
         if (v == null) continue;

@@ -1,4 +1,3 @@
-// lib/my_app/app_restart_handler.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +19,6 @@ class AppRestartHandler {
   Future<void> handleAppRestart() async {
     final now = DateTime.now();
     
-    // التحقق من التبريد
     if (_lastRestartTime != null) {
       final timeSinceLastRestart = now.difference(_lastRestartTime!);
       if (timeSinceLastRestart < _restartCooldown) {
@@ -29,7 +27,6 @@ class AppRestartHandler {
       }
     }
     
-    // التحقق من الحد الأقصى
     if (_restartCount >= _maxRestarts) {
       print('🚨 [APP RESTART] تجاوز الحد الأقصى لإعادة التشغيل');
       await _showRestartLimitDialog();
@@ -43,10 +40,8 @@ class AppRestartHandler {
     print('🔄 [APP RESTART] إعادة تشغيل التطبيق (المحاولة $_restartCount)');
     
     try {
-      // تأخير قليل قبل إعادة التوجيه
       await Future.delayed(const Duration(milliseconds: 500));
       
-      // إعادة توجيه إلى الصفحة المناسبة
       final String currentRoute = Get.currentRoute;
       
       if (currentRoute != '/login' && currentRoute != '/splash') {

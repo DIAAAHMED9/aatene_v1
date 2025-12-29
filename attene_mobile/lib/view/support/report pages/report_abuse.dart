@@ -65,10 +65,8 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                 children: [
                   const SizedBox(height: 24),
 
-                  // Title
                   Text('الإبلاغ عن إساءة', style: getBold(fontSize: 18)),
 
-                  // Subtitle
                   Text(
                     'ما الذي تقدر أن نساعدك به ؟',
                     style: getRegular(fontSize: 12, color: Colors.grey),
@@ -76,7 +74,6 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Radio options
                   ...List.generate(options.length, (index) {
                     return RadioListTile<int>(
                       value: index,
@@ -93,7 +90,6 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                   }),
                   SizedBox(height: 20),
 
-                  // Next Button
                   AateneButton(
                     onTap: () {
                       Navigator.push(

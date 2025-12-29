@@ -142,7 +142,6 @@ class _ServicesListScreenState extends State<ServicesListScreen>
       return;
     }
 
-    // تحويل service.id إلى String لأن الـ controller يتوقع String
     String serviceId = service.id.toString();
     _serviceController.setEditMode(serviceId, service.title);
     Get.to(() => ServiceStepperScreen(isEditMode: true, serviceId: serviceId));
@@ -159,7 +158,6 @@ class _ServicesListScreenState extends State<ServicesListScreen>
       return;
     }
 
-    // تحويل service.id إلى String لأن الـ controller يتوقع String
     String serviceId = service.id.toString();
 
     final confirm = await Get.defaultDialog<bool>(
@@ -898,6 +896,5 @@ class _ServicesListScreenState extends State<ServicesListScreen>
   }
 
   void _openSort() {
-    // TODO: Implement sort dialog
   }
 }

@@ -13,7 +13,6 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   void onInit() {
     super.onInit();
     
-    // لا تبدأ المراقبة فوراً - انتظر حتى يتم تحميل الواجهة
     Future.delayed(const Duration(seconds: 5), () {
       WidgetsBinding.instance.addObserver(this);
       print('🔄 [LIFECYCLE] بدء إدارة دورة حياة التطبيق');
@@ -30,12 +29,10 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _currentState.value = state;
     
-    // طباعة محدودة للتقليل من load
     if (state == AppLifecycleState.resumed || state == AppLifecycleState.paused) {
       print('🔄 [LIFECYCLE] تغيير حالة: $state');
     }
 
-    // معالجة الحالات المهمة فقط
     switch (state) {
       case AppLifecycleState.resumed:
         _onAppResumed();
@@ -49,14 +46,12 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   }
 
   void _onAppResumed() {
-    // تأجيل إعادة التحميل لتفادي التحميل الزائد
     Future.delayed(const Duration(seconds: 1), () {
       _reloadDataOnResume();
     });
   }
 
   void _onAppPaused() {
-    // حفظ البيانات بشكل غير متزامن
     _quickSave();
   }
 
@@ -64,20 +59,17 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
     try {
       final myAppController = Get.find<MyAppController>();
       if (myAppController.isLoggedIn.value) {
-        // تأجيل المهام الثقيلة أكثر
         Future.delayed(const Duration(seconds: 2), () {
           _refreshCriticalData();
         });
       }
     } catch (e) {
-      // تجاهل الأخطاء البسيطة
     }
   }
 
   Future<void> _refreshCriticalData() async {
     try {
       print('🔄 [LIFECYCLE] تحديث البيانات...');
-      // إضافة تحديث البيانات المهمة هنا
     } catch (e) {
       print('⚠️ [LIFECYCLE] خطأ في تحديث البيانات: $e');
     }
@@ -87,14 +79,11 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
     try {
       final myAppController = Get.find<MyAppController>();
       if (myAppController.isLoggedIn.value) {
-        // حفظ سريع بدون await لبيانات المستخدم
         myAppController.saveUserPreferences();
       }
 
-      // حفظ حالة التطبيق
       await _saveAppState();
     } catch (e) {
-      // تجاهل أخطاء الحفظ
     }
   }
 
@@ -106,7 +95,6 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
         DateTime.now().toIso8601String(),
       );
     } catch (e) {
-      // تجاهل أخطاء SharedPreferences
     }
   }
 

@@ -1,5 +1,3 @@
-
-// lib/view/screens_navigator_bottom_bar/chat/chat_massege.dart
 import 'dart:async';
 import 'dart:io';
 
@@ -31,10 +29,8 @@ class _ChatMassegeState extends State<ChatMassege> {
   final TextEditingController _text = TextEditingController();
   final ScrollController _scroll = ScrollController();
 
-  // Attachments (local) before sending
   final List<File> _pendingFiles = [];
 
-  // Audio recording
   final AudioRecorder _recorder = AudioRecorder();
   bool _isRecording = false;
   Duration _recordDuration = Duration.zero;
@@ -61,7 +57,7 @@ class _ChatMassegeState extends State<ChatMassege> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scroll.hasClients) return;
       _scroll.animateTo(
-        0, // because reverse: true
+        0,
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOut,
       );
@@ -69,7 +65,6 @@ class _ChatMassegeState extends State<ChatMassege> {
   }
 
   bool _isMe(ChatMessage m) {
-    // best effort: senderData.type/id matches myOwnerType/myOwnerId OR senderId matches my participant record id
     final conv = widget.conversation;
     final myOwnerType = c.myOwnerType;
     final myOwnerId = c.myOwnerId;
@@ -82,7 +77,6 @@ class _ChatMassegeState extends State<ChatMassege> {
       return true;
     }
 
-    // if senderId equals participant record id of "me"
     ChatParticipant? myParticipant;
     for (final p in conv.participants) {
       final d = p.participantData;
@@ -101,9 +95,13 @@ class _ChatMassegeState extends State<ChatMassege> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.conversation.displayName(myOwnerType: c.myOwnerType, myOwnerId: c.myOwnerId);
+    return Obx(() {
+      final conv = (c.currentConversation.value?.id == widget.conversation.id)
+          ? c.currentConversation.value!
+          : widget.conversation;
+      final title = conv.displayName(myOwnerType: c.myOwnerType, myOwnerId: c.myOwnerId);
 
-    return Scaffold(
+      return Scaffold(
       appBar: AppBar(
         title: Text(title),
         actions: [
@@ -124,11 +122,11 @@ class _ChatMassegeState extends State<ChatMassege> {
 
               return ListView.builder(
                 controller: _scroll,
-                reverse: true, // newest at bottom (like WhatsApp)
+                reverse: true,
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 itemCount: msgs.length,
                 itemBuilder: (context, index) {
-                  final m = msgs[msgs.length - 1 - index]; // because reverse:true
+                  final m = msgs[msgs.length - 1 - index];
                   final isMe = _isMe(m);
                   return _MessageBubble(
                     message: m,
@@ -156,6 +154,7 @@ class _ChatMassegeState extends State<ChatMassege> {
         ],
       ),
     );
+    });
   }
 
   Future<void> _openConversationActions() async {
@@ -174,7 +173,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 _openAddParticipantSheet();
               },
             ),
-            if (widget.conversation.type == 'group')
+            if ((widget.conversation.type ?? '').toLowerCase() == 'group')
               ListTile(
                 leading: const Icon(Icons.edit),
                 title: const Text('تعديل اسم المجموعة'),
@@ -210,41 +209,27 @@ class _ChatMassegeState extends State<ChatMassege> {
   }
 
   Future<void> _renameGroup() async {
-    // backend endpoint for rename is not guaranteed; we store name locally (UI) and suggest backend implementation.
-    final tc = TextEditingController(text: widget.conversation.name ?? '');
+    final tc = TextEditingController(text: (c.currentConversation.value?.name ?? widget.conversation.name) ?? '');
     final newName = await showDialog<String?>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('تعديل اسم المجموعة'),
-        content: TextField(controller: tc, decoration: const InputDecoration(hintText: 'اسم المجموعة')),
+        content: TextField(
+          controller: tc,
+          decoration: const InputDecoration(hintText: 'اسم المجموعة'),
+        ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
           ElevatedButton(onPressed: () => Navigator.pop(context, tc.text.trim()), child: const Text('حفظ')),
         ],
       ),
     );
+
     if (newName == null || newName.isEmpty) return;
 
-    // If your backend supports it, change this path and payload accordingly.
-    // For now, we update locally so the UI behaves.
-    final idx = c.allConversations.indexWhere((x) => x.id == widget.conversation.id);
-    if (idx >= 0) {
-      final old = c.allConversations[idx];
-      final updated = ChatConversation(
-        id: old.id,
-        type: old.type,
-        name: newName,
-        ownerType: old.ownerType,
-        ownerId: old.ownerId,
-        participantsCount: old.participantsCount,
-        participants: old.participants,
-        lastMessage: old.lastMessage,
-        createdAt: old.createdAt,
-        updatedAt: old.updatedAt,
-      );
-      c.allConversations[idx] = updated;
-      c.filteredConversations.refresh();
-      setState(() {});
+    final ok = await c.updateGroupName(conversationId: widget.conversation.id, name: newName);
+    if (ok) {
+      if (mounted) setState(() {});
     }
   }
 
@@ -257,7 +242,6 @@ class _ChatMassegeState extends State<ChatMassege> {
     final paths = result.paths.whereType<String>().toList();
     if (paths.isEmpty) return;
 
-    // max 10 images total in selection
     final toAdd = paths.take(10 - _pendingFiles.length).map((p) => File(p)).toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
@@ -271,7 +255,6 @@ class _ChatMassegeState extends State<ChatMassege> {
     final paths = result.paths.whereType<String>().toList();
     if (paths.isEmpty) return;
 
-    // max 10 files at once
     final toAdd = paths.take(10 - _pendingFiles.length).map((p) => File(p)).toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
@@ -284,7 +267,6 @@ class _ChatMassegeState extends State<ChatMassege> {
 
     final convId = widget.conversation.id;
 
-    // Send files first (if any) with optional text
     if (hasFiles) {
       final files = List<File>.from(_pendingFiles);
       setState(() => _pendingFiles.clear());
@@ -306,12 +288,12 @@ class _ChatMassegeState extends State<ChatMassege> {
       }
 
       final dir = await getTemporaryDirectory();
-      final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
       _recordPath = path;
 
       await _recorder.start(
-        const RecordConfig(
-          encoder: AudioEncoder.aacLc,
+         RecordConfig(
+          encoder: AudioEncoder.wav,
           bitRate: 128000,
           sampleRate: 44100,
         ),
@@ -326,7 +308,6 @@ class _ChatMassegeState extends State<ChatMassege> {
 
       setState(() => _isRecording = true);
     } catch (e) {
-      // ignore: avoid_print
       print('❌ startRecording: $e');
     }
   }
@@ -340,7 +321,6 @@ class _ChatMassegeState extends State<ChatMassege> {
         await _recorder.stop();
       }
 
-      // delete file if exists
       final p = _recordPath;
       if (p != null) {
         final f = File(p);
@@ -373,7 +353,6 @@ class _ChatMassegeState extends State<ChatMassege> {
 
       await c.sendFilesMessage(conversationId: widget.conversation.id, files: [f], text: null);
     } catch (e) {
-      // ignore: avoid_print
       print('❌ stopRecordingAndSend: $e');
     } finally {
       setState(() {
@@ -595,7 +574,6 @@ class _FakeWaves extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     final v = animation.value;
-    // 12 bars
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(12, (i) {
@@ -625,6 +603,9 @@ class _MessageBubble extends StatelessWidget {
 
     final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final bubbleColor = isMe ? Theme.of(context).colorScheme.primary.withOpacity(0.14) : Colors.grey.shade200;
+
+    final created = DateTime.tryParse(message.createdAt ?? '');
+    final timeText = created == null ? '' : _formatArabicTime(created);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -668,13 +649,24 @@ class _MessageBubble extends StatelessWidget {
                         if (hasAttachments && text.isNotEmpty) const SizedBox(height: 8),
                         if (text.isNotEmpty) Text(text),
                         if (!hasAttachments && _looksLikeAudio(text, urls)) ...[
-                          // if API puts audio as attachment url, handled below
                         ],
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 2),
+                if (timeText.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      timeText,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+
               ],
             ),
           ),
@@ -712,12 +704,11 @@ class _AttachmentsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // WhatsApp-like: 1 big, 2 side-by-side, 3/4 grid, >4 grid with "+N"
     final count = urls.length;
 
     if (count == 1) return _AttachmentTile(url: urls[0], big: true);
 
-    final show = urls.take(10).toList(); // hard cap
+    final show = urls.take(10).toList();
     final gridCount = show.length.clamp(2, 4);
 
     return SizedBox(
@@ -838,7 +829,6 @@ class _AudioTileState extends State<_AudioTile> {
 
       setState(() => _ready = true);
     } catch (_) {
-      // ignore
     }
   }
 
@@ -979,8 +969,6 @@ class _AddParticipantSheet extends StatelessWidget {
   }
 }
 
-// ---- helpers ----
-
 bool _isImageUrl(String url) {
   final u = url.toLowerCase();
   return u.endsWith('.png') || u.endsWith('.jpg') || u.endsWith('.jpeg') || u.endsWith('.webp') || u.contains('image');
@@ -994,6 +982,21 @@ bool _isAudioUrl(String url) {
 bool _looksLikeAudio(String text, List<String> urls) {
   if (urls.any(_isAudioUrl)) return true;
   return false;
+}
+
+String _formatArabicTime(DateTime dt) {
+  final local = dt.toLocal();
+  int hour = local.hour;
+  final minute = local.minute.toString().padLeft(2, '0');
+
+  final isPm = hour >= 12;
+  final suffix = isPm ? 'مساءً' : 'صباحًا';
+
+  hour = hour % 12;
+  if (hour == 0) hour = 12;
+
+  final hh = hour.toString().padLeft(2, '0');
+  return '$hh:$minute $suffix';
 }
 
 bool _isImagePath(String path) {

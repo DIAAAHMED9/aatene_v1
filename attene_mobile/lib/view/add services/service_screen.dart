@@ -528,9 +528,6 @@ class ServiceScreen extends StatelessWidget {
                   suffixIcon: Tooltip(
                     message: controller.keywordTooltip,
                     child: Container(
-                      // margin: EdgeInsets.only(
-                      //   right: ResponsiveDimensions.responsiveWidth(8),
-                      // ),
                       child: InkWell(
                         onTap: controller.canAddKeyword
                             ? () {

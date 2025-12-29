@@ -254,9 +254,6 @@ class ServiceListItem extends StatelessWidget {
   }
 
   String _getSectionName(int sectionId) {
-    // هذه دالة تحتاج إلى تنفيذ حسب نظامك
-    // يمكنك الحصول على اسم القسم من الـ controller
-    // مثال:
     final section = controller.sections.firstWhere(
       (s) => (s['id'] as int?) == sectionId,
       orElse: () => {'name': 'غير محدد'},

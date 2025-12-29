@@ -1,7 +1,7 @@
 import 'dart:io';
 
 class FAQ {
-  final int id; // غير من String إلى int
+  final int id;
   final String question;
   final String answer;
 
@@ -17,7 +17,7 @@ class FAQ {
 
   factory FAQ.fromApiJson(Map<String, dynamic> json) {
     return FAQ(
-      id: json['id'] as int? ?? 0, // تحويل إلى int
+      id: json['id'] as int? ?? 0,
       question: json['question'] ?? '',
       answer: json['answer'] ?? '',
     );
@@ -34,7 +34,7 @@ class FAQ {
 }
 
 class Development {
-  int id; // غير من String إلى int
+  int id;
   String title;
   double price;
   int executionTime;
@@ -70,7 +70,6 @@ class Development {
   factory Development.fromApiJson(Map<String, dynamic> json) {
     return Development(
       id: json['id'] as int? ?? 0,
-      // تحويل إلى int
       title: json['title'] ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       executionTime: json['execute_count'] as int? ?? 0,
@@ -104,7 +103,7 @@ class Development {
 }
 
 class ServiceImage {
-  final int id; // غير من String إلى int
+  final int id;
   final String url;
   bool isMain;
   final bool isLocalFile;
@@ -140,7 +139,7 @@ class ServiceImage {
 }
 
 class Service {
-  final int? id; // غير من String? إلى int?
+  final int? id;
   final String slug;
   final String title;
   final int sectionId;
@@ -190,7 +189,6 @@ class Service {
   });
 
   factory Service.fromApiJson(Map<String, dynamic> json) {
-    // معالجة images لتحويلها من String مفصولة بفواصل إلى List<String>
     List<String> imagesList = [];
     if (json['images'] is String) {
       final imagesString = json['images'] as String;
@@ -201,7 +199,6 @@ class Service {
 
     return Service(
       id: json['id'] as int?,
-      // تأكد أنه int
       slug: json['slug'] ?? '',
       title: json['title'] ?? '',
       sectionId: json['section_id'] is String

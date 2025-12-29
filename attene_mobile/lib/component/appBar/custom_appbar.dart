@@ -184,7 +184,6 @@ class CustomAppBarWithTabs extends StatelessWidget
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // if (!isSmallMobile)
             Text(
               config.actionText,
               style: TextStyle(
@@ -256,7 +255,6 @@ class CustomAppBarWithTabs extends StatelessWidget
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(_isMobile(context) ? 25 : 25),
-              // border: Border.all(color: Colors.grey, width: 1),
             ),
             child: Row(
               children: [

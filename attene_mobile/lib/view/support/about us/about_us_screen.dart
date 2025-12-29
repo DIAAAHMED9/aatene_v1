@@ -369,16 +369,13 @@ class AboutUsScreen extends StatelessWidget {
                                     style: getBold(fontSize: 14),
                                   ),
                                   const SizedBox(height: 10),
-                                  // Name field
                                   _buildTextField(hint: "الاسم"),
                                   const SizedBox(height: 20),
-                                  // Email field
                                   _buildTextField(
                                     hint: "البريد الإلكتروني",
                                     keyboardType: TextInputType.emailAddress,
                                   ),
                                   const SizedBox(height: 20),
-                                  // Message field
                                   _buildTextField(hint: "الرسالة", maxLines: 8),
                                   SizedBox(height: 10),
                                   Container(
@@ -449,7 +446,6 @@ class AboutUsScreen extends StatelessWidget {
                                       onPressed: () {
                                         UrlHelper.open(
                                           "https://www.instagram.com/aatene_official/",
-                                          // "https://wa.me/+972526213879",
                                         );
                                       },
                                       icon: Image.asset(
@@ -552,7 +548,7 @@ class AboutUsScreen extends StatelessWidget {
             TextButton(
               child: const Text('الغاء'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
             ),
           ],

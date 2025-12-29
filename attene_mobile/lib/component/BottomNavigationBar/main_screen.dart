@@ -20,7 +20,6 @@ class MainScreen extends StatelessWidget {
       notchDepthRatio: 0.4,
       pageName: ['الرئسية', 'منتجات', 'دردشة', 'USER'],
       pages: [
-        // لا تغلف الصفحات بأي شيء إضافي - دع CustomBottomNavigation يتعامل مع التمرير
         ManageAccountStore(),
         ProductScreen(),
         ChatScreen(),

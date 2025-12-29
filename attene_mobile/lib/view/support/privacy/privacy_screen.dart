@@ -96,7 +96,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          /// IMAGE TOP
           Center(
             child: Image.asset(
               'assets/images/gif/Privacy_policy.gif',
@@ -108,7 +107,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
           const SizedBox(height: 24),
 
-          /// LIST ITEMS
           ...List.generate(items.length, (index) {
             final bool isExpanded = expandedIndex == index;
             return Container(

@@ -27,7 +27,6 @@ class ApiHelper {
           'Accept': 'application/json',
           'Device-Type': 'MOBILE',
           'Accept-Language': 'ar',
-          'storeId': '55',
         };
       }
 
@@ -54,7 +53,6 @@ class ApiHelper {
         'Accept': 'application/json',
         'Device-Type': 'MOBILE',
         'Accept-Language': appLanguageController.appLocale.value,
-        'storeId': '55',
       };
     } catch (e) {
       print('❌ [API] خطأ في الحصول على رؤوس الطلب: $e');
@@ -67,8 +65,6 @@ class ApiHelper {
     }
   }
 
-  /// Best-effort helper: returns current storeId if available (as string).
-  /// Used by chat when MyAppController doesn't expose owner identity clearly.
   static String? getStoreIdOrNull() {
     try {
       if (Get.isRegistered<MyAppController>()) {
@@ -77,7 +73,6 @@ class ApiHelper {
         final v = (ud['store_id'] ?? ud['storeId'] ?? ud['store']?['id']);
         if (v != null) return v.toString();
       }
-      // Fallback to the header default (if you keep it constant in _getBaseHeaders)
       final h = _getBaseHeaders();
       final v2 = h['storeId'];
       return v2?.toString();
@@ -85,7 +80,6 @@ class ApiHelper {
       return null;
     }
   }
-
 
   static String _getBaseUrl() {
     switch (currentMode) {
@@ -97,9 +91,6 @@ class ApiHelper {
         return 'https://api.aatene.com/api/v1';
     }
   }
-
-
-  // getBaseUrl() is defined near the bottom to keep backward compatibility
 
   static Future<dynamic> get({
     required String path,
@@ -300,11 +291,9 @@ class ApiHelper {
 
       final requestHeaders = {..._getBaseHeaders(), ...?headers};
 
-      // If sending FormData (multipart), remove Content-Type to let Dio set the boundary
       if (body is FormData) {
         requestHeaders.removeWhere((k, _) => k.toLowerCase() == 'content-type');
       }
-
 
       if (method.toUpperCase() == 'POST' && path.contains('/auth/login')) {
         requestHeaders.removeWhere(
@@ -390,7 +379,6 @@ class ApiHelper {
     body['login'] = email;
     body['device_name'] =storage.read('device_name') ;
     body['device_token'] =storage.read('device_token') ;
-    // body['device_unique_id']='bjh89';
 
     print('''
 🔑 محاولة تسجيل الدخول للمستخدم: $email
@@ -426,7 +414,6 @@ class ApiHelper {
         'password_confirmation': passwordConfirmation,
             'device_name': storage.read('device_name') ,
     'device_token': storage.read('device_token') ,
-    // 'device_unique_id':'bjh89'
       },
       withLoading: withLoading,
       shouldShowMessage: true,
@@ -564,7 +551,6 @@ static Future<dynamic> getConversationMessages(
     shouldShowMessage: false,
   );
 }
-// أضف هذه الطرق إلى ApiHelper
 static Future<dynamic> markMessageAsSeen(int messageId) async {
   return await post(
     path: '/messages/$messageId/seen',

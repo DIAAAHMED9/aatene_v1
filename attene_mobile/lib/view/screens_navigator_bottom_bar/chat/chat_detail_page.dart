@@ -1,5 +1,3 @@
-
-// lib/view/screens_navigator_bottom_bar/chat/chat_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:attene_mobile/models/chat_models.dart';
 

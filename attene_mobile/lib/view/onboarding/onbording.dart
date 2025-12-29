@@ -90,30 +90,6 @@ class Onbording extends StatelessWidget {
           backgroundColor: Colors.white,
           body: Column(
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Text(
-              //       isRTL ? 'اللغة: العربية' : 'Language: English',
-              //       style: TextStyle(
-              //         fontSize: ResponsiveDimensions.f(5),
-              //         color: Colors.grey.shade600,
-              //       ),
-              //     ),
-              //     const SizedBox(width: 8),
-              //     GestureDetector(
-              //       onTap: () => _showLanguageDialog(context),
-              //       child: Text(
-              //         isRTL ? 'تغيير' : 'Change',
-              //         style: TextStyle(
-              //           fontSize: ResponsiveDimensions.f(5),
-              //           color: Colors.blue,
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               Expanded(
                 child: Stack(
                   children: [

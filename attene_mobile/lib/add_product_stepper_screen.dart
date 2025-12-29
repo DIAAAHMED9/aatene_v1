@@ -117,16 +117,13 @@ class _DemoStepperScreenState
   void onStepChanged(int oldStep, int newStep) {
     print('تم الانتقال من الخطوة $oldStep إلى الخطوة $newStep');
 
-    // Validate current step before moving forward
     if (oldStep < newStep && !validateStep(oldStep)) {
-      // Prevent moving to next step
       setState(() {
         currentStep = oldStep;
       });
       return;
     }
 
-    // Mark step as validated if moving forward successfully
     if (oldStep < newStep && validateStep(oldStep)) {
       _stepValidationStatus[oldStep] = true;
     }
@@ -150,7 +147,6 @@ class _DemoStepperScreenState
 
   bool _validateBasicInfoStep() {
     try {
-      // Try to use AddProductController first
       if (Get.isRegistered<AddProductController>()) {
         final addProductController = Get.find<AddProductController>();
         final validation = addProductController.validateStep();
@@ -162,7 +158,6 @@ class _DemoStepperScreenState
         return true;
       }
 
-      // Fallback to ProductCentralController
       if (Get.isRegistered<ProductCentralController>()) {
         final productController = Get.find<ProductCentralController>();
         final validation = productController.validateStep(0);
@@ -272,7 +267,6 @@ class _DemoStepperScreenState
 
   @override
   Future<void> onFinish() async {
-    // Validate all steps before finishing
     bool allValid = true;
     for (int i = 0; i < steps.length; i++) {
       if (!validateStep(i)) {
@@ -479,7 +473,6 @@ class _DemoStepperScreenState
     print('🚀 [DEMO STEPPER] Initializing all required controllers');
 
     try {
-      // تهيئة ProductCentralController (المتحكم الرئيسي)
       if (!Get.isRegistered<ProductCentralController>()) {
         Get.put<ProductCentralController>(
           ProductCentralController(),
@@ -488,7 +481,6 @@ class _DemoStepperScreenState
         print('✅ [DEMO STEPPER] ProductCentralController initialized');
       }
 
-      // تهيئة ProductVariationController (للمتغيرات)
       if (!Get.isRegistered<ProductVariationController>()) {
         Get.put<ProductVariationController>(
           ProductVariationController(),
@@ -497,19 +489,16 @@ class _DemoStepperScreenState
         print('✅ [DEMO STEPPER] ProductVariationController initialized');
       }
 
-      // تهيئة AddProductController (للمعلومات الأساسية)
       if (!Get.isRegistered<AddProductController>()) {
         Get.put<AddProductController>(AddProductController(), permanent: true);
         print('✅ [DEMO STEPPER] AddProductController initialized');
       }
 
-      // تهيئة KeywordController (للكلمات المفتاحية)
       if (!Get.isRegistered<KeywordController>()) {
         Get.put<KeywordController>(KeywordController(), permanent: true);
         print('✅ [DEMO STEPPER] KeywordController initialized');
       }
 
-      // تهيئة RelatedProductsController (للمنتجات المرتبطة)
       if (!Get.isRegistered<RelatedProductsController>()) {
         Get.put<RelatedProductsController>(
           RelatedProductsController(),

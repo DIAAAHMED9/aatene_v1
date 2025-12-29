@@ -61,10 +61,8 @@ class _CustomStepperFixedState extends State<CustomStepperFixed>
       builder: (context, isKeyboardVisible) {
         return Column(
           children: [
-            // إخفاء الستيببر فقط عندما يكون الكيبورد مفتوحاً
             if (!isKeyboardVisible) _buildStepperHeader(),
 
-            // المحتوى الرئيسي
             Expanded(child: widget.builder(context, widget.currentStep)),
           ],
         );

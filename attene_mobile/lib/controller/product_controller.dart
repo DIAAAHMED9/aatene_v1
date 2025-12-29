@@ -42,10 +42,8 @@ class ProductCentralController extends GetxController {
   final RxBool isUpdatingSection = false.obs;
   final RxBool isProductReadyForSubmission = false.obs;
 
-  // Validation errors
   final RxMap<String, String> validationErrors = <String, String>{}.obs;
 
-  // Step validation status
   final RxMap<int, bool> stepValidationStatus = <int, bool>{}.obs;
 
   @override
@@ -54,7 +52,6 @@ class ProductCentralController extends GetxController {
     print('🔄 [PRODUCT CENTRAL] تهيئة متحكم المنتجات المركزي');
     loadCachedCategories();
 
-    // Initialize step validation status
     for (int i = 0; i < 4; i++) {
       stepValidationStatus[i] = false;
     }
@@ -92,9 +89,9 @@ class ProductCentralController extends GetxController {
     validationErrors.clear();
 
     switch (stepIndex) {
-      case 0: // Basic info step
+      case 0:
         return _validateBasicInfoStep();
-      case 2: // Variations step
+      case 2:
         return _validateVariationsStep();
       default:
         return {'isValid': true, 'errors': {}};
@@ -637,7 +634,6 @@ class ProductCentralController extends GetxController {
     variations.clear();
     validationErrors.clear();
 
-    // Reset all step validations
     for (int i = 0; i < 4; i++) {
       stepValidationStatus[i] = false;
     }
@@ -752,7 +748,6 @@ class ProductCentralController extends GetxController {
       selectedSection(section);
       print('✅ [PRODUCT] تحديث القسم: ${section.name} (ID: ${section.id})');
 
-      // Clear section validation error if exists
       if (validationErrors.containsKey('section')) {
         validationErrors.remove('section');
       }

@@ -148,7 +148,6 @@ class RegisterController extends GetxController {
 
       print('API Response: $response');
 
-      // التعديل هنا: استخدم response['status'] بدلاً من response['success']
       if (response != null && response['status'] == true) {
         print('Registration successful');
 
@@ -156,10 +155,8 @@ class RegisterController extends GetxController {
         final token = response['token'];
 
         final MyAppController myAppController = Get.find<MyAppController>();
-        // تأكد أن updateUserData تأخذ userData و token
         myAppController.updateUserData(userData);
 
-        // عرض رسالة النجاح أولاً
         Get.snackbar(
           'نجاح',
           'تم إنشاء الحساب بنجاح',
@@ -169,10 +166,8 @@ class RegisterController extends GetxController {
           duration: const Duration(seconds: 2),
         );
 
-        // الانتقال بعد فترة قصيرة
         await Future.delayed(const Duration(milliseconds: 1500));
 
-        // استخدم offAllNamed لإزالة شاشة التسجيل من المكدس
         print('Navigating to login screen...');
         Get.offAllNamed('/login');
       } else {

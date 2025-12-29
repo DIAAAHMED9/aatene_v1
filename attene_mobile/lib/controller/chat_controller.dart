@@ -1,5 +1,3 @@
-
-// lib/controller/chat_controller.dart
 import 'dart:async';
 import 'dart:io';
 
@@ -12,24 +10,20 @@ import 'package:attene_mobile/my_app/my_app_controller.dart';
 
 import '../view/screens_navigator_bottom_bar/chat/chat_message_model.dart';
 
-/// Tabs for the chat list.
 enum ChatTab { all, unread, active, notActive, interested }
 
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
 
-  // Identity (best effort) to know "me" among participants
-  String? myOwnerType; // 'user' | 'store'
-  String? myOwnerId; // string id
+  String? myOwnerType;
+  String? myOwnerId;
 
-  // UI state
   final Rx<ChatTab> currentTab = ChatTab.all.obs;
   final RxString searchQuery = ''.obs;
 
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMessages = false.obs;
 
-  // Data
   final RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
@@ -37,7 +31,6 @@ class ChatController extends GetxController {
 
   final RxList<Map<String, dynamic>> previousParticipants = <Map<String, dynamic>>[].obs;
 
-  // Current conversation
   final Rxn<ChatConversation> currentConversation = Rxn<ChatConversation>();
   final RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
 
@@ -85,14 +78,12 @@ class ChatController extends GetxController {
         return;
       }
 
-      // fallback: store_id implies store
       if (ud['store_id'] != null) {
         myOwnerType = 'store';
         myOwnerId = (ud['store_id'] ?? ud['id'])?.toString();
         return;
       }
 
-      // fallback: if API layer uses storeId header, adopt it
       final sid = ApiHelper.getStoreIdOrNull();
       if (sid != null) {
         myOwnerType = 'store';
@@ -100,13 +91,11 @@ class ChatController extends GetxController {
         return;
       }
 
-      // fallback: assume user
       if (ud['id'] != null) {
         myOwnerType = 'user';
         myOwnerId = ud['id']?.toString();
       }
     } catch (_) {
-      // ignore
     }
   }
 
@@ -129,13 +118,11 @@ class ChatController extends GetxController {
     return null;
   }
 
-  /// Refresh list
   Future<void> refreshConversations() async {
     await loadConversations();
     await loadPreviousParticipants();
   }
 
-  /// Load conversations list from API
   Future<void> loadConversations({bool silent = false}) async {
     try {
       if (!silent) isLoading.value = true;
@@ -154,15 +141,12 @@ class ChatController extends GetxController {
               .map((e) => ChatConversation.fromJson(Map<String, dynamic>.from(e)))
               .toList();
 
-          // Keep order (API usually returns newest first). If not, sort by updatedAt.
           allConversations.assignAll(list);
 
-          // unread is: conversation has any participant unread > 0
           unreadConversations.assignAll(
             list.where((c) => c.totalUnread > 0).toList(),
           );
 
-          // interested: optional tab, here just keep direct/group with lastMessage null? (adjust if your API has flag)
           interestedConversations.assignAll(
             list.where((c) => (c.type == 'direct' || c.type == 'group')).toList(),
           );
@@ -171,7 +155,6 @@ class ChatController extends GetxController {
         }
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ loadConversations: $e');
     } finally {
       if (!silent) isLoading.value = false;
@@ -221,7 +204,6 @@ class ChatController extends GetxController {
     _applyFilters();
   }
 
-  /// Participants list used by "New chat" screen
   Future<void> loadPreviousParticipants() async {
     try {
       final res = await ApiHelper.get(
@@ -238,18 +220,14 @@ class ChatController extends GetxController {
         );
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ loadPreviousParticipants: $e');
     }
   }
 
-  /// For old code that calls it
   Future<void> loadUnreadCounts() async {
-    // unread counts already included in conversations response
     await loadConversations();
   }
 
-  /// Opens conversation and starts polling (no sockets)
   Future<void> openConversation(ChatConversation conversation) async {
     currentConversation.value = conversation;
     await loadConversationMessages(conversation.id);
@@ -269,17 +247,14 @@ class ChatController extends GetxController {
     _pollTimer = null;
   }
 
-  /// Loads conversation details (fallback to local list)
   Future<ChatConversation?> loadConversationDetails(int conversationId) async {
     final local = _findConversation(conversationId);
     if (local != null) return local;
 
-    // Try refresh then find
     await loadConversations();
     return _findConversation(conversationId);
   }
 
-  /// Loads messages list and sorts ASC by createdAt if possible.
   Future<void> loadConversationMessages(int conversationId, {bool silent = false}) async {
     try {
       if (!silent) isLoadingMessages.value = true;
@@ -308,14 +283,12 @@ class ChatController extends GetxController {
         }
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ loadConversationMessages: $e');
     } finally {
       if (!silent) isLoadingMessages.value = false;
     }
   }
 
-  /// Unified sender: sends text only
   Future<ChatMessage?> sendTextMessage({
     required int conversationId,
     required String text,
@@ -323,7 +296,6 @@ class ChatController extends GetxController {
     return sendMessage(conversationId: conversationId, body: text);
   }
 
-  /// Unified sender: sends files (images/audio/docs) + optional text
   Future<ChatMessage?> sendFilesMessage({
     required int conversationId,
     required List<File> files,
@@ -333,14 +305,13 @@ class ChatController extends GetxController {
     return sendMessage(conversationId: conversationId, body: text, filePaths: paths);
   }
 
-  /// Original sender (kept) - uses participant_id as required by your backend.
   Future<ChatMessage?> sendMessage({
     required int conversationId,
     String? body,
     List<String>? filePaths,
     int? productId,
     int? serviceId,
-    int? varationId, // backend: varation_id
+    int? varationId,
   }) async {
     try {
       final conv = _findConversation(conversationId) ?? currentConversation.value;
@@ -348,8 +319,6 @@ class ChatController extends GetxController {
         throw 'Conversation not found locally';
       }
 
-      // Identify sender without relying on participants list.
-// Backend typically expects owner type + owner id (e.g. storeId/userId), not the participant-row id.
 final ownerType = myOwnerType;
 final ownerId = myOwnerId ?? ApiHelper.getStoreIdOrNull();
 if (ownerType == null || ownerId == null) {
@@ -358,7 +327,6 @@ if (ownerType == null || ownerId == null) {
 
 final form = FormData();
 
-// REQUIRED BY BACKEND
 form.fields.add(MapEntry('conversation_id', conversationId.toString()));
 form.fields.add(MapEntry('participant_type', ownerType));
 form.fields.add(MapEntry('participant_id', ownerId.toString()));
@@ -371,7 +339,7 @@ if (body != null && body.trim().isNotEmpty) {
 
       if (filePaths != null && filePaths.isNotEmpty) {
         for (final p in filePaths) {
-          form.files.add(MapEntry('files[]', await MultipartFile.fromFile(p)));
+          form.files.add(MapEntry('files[]', await MultipartFile.fromFile(p, filename: p.split('/').last)));
         }
       }
 
@@ -385,18 +353,15 @@ if (body != null && body.trim().isNotEmpty) {
       if (res is Map && res['status'] == true && res['message'] is Map) {
         final msg = ChatMessage.fromJson(Map<String, dynamic>.from(res['message']));
 
-        // append if open
         if (currentConversation.value?.id == conversationId) {
           currentMessages.add(msg);
         }
 
-        // update conversation if returned
         final convJson = (res['message'] as Map)['conversation'];
         if (convJson is Map) {
           final updated = ChatConversation.fromJson(Map<String, dynamic>.from(convJson));
           _upsertConversation(updated);
         } else {
-          // otherwise, bump conversation to top
           final idx = allConversations.indexWhere((c) => c.id == conversationId);
           if (idx >= 0) {
             final c0 = allConversations.removeAt(idx);
@@ -407,7 +372,6 @@ if (body != null && body.trim().isNotEmpty) {
         return msg;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ sendMessage: $e');
     }
     return null;
@@ -419,7 +383,6 @@ if (body != null && body.trim().isNotEmpty) {
       allConversations.insert(0, conv);
     } else {
       allConversations[idx] = conv;
-      // move to top
       final c0 = allConversations.removeAt(idx);
       allConversations.insert(0, c0);
     }
@@ -438,10 +401,8 @@ if (body != null && body.trim().isNotEmpty) {
     return false;
   }
 
-  // ---- Conversation management (already supported by your backend) ----
-
   Future<ChatConversation?> createConversation({
-    required String type, // direct | group
+    required String type,
     String? name,
     required List<Map<String, dynamic>> participants,
   }) async {
@@ -466,10 +427,37 @@ if (body != null && body.trim().isNotEmpty) {
         return conv;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ createConversation: $e');
     }
     return null;
+  }
+
+  Future<bool> updateGroupName({
+    required int conversationId,
+    required String name,
+  }) async {
+    try {
+      final res = await ApiHelper.patch(
+        path: '/conversations/$conversationId',
+        body: {'name': name},
+        withLoading: true,
+        shouldShowMessage: true,
+      );
+
+      if (res is Map && res['status'] == true) {
+        await loadConversations(silent: true);
+
+        if (currentConversation.value?.id == conversationId) {
+          final idx = allConversations.indexWhere((c) => c.id == conversationId);
+          if (idx >= 0) currentConversation.value = allConversations[idx];
+        }
+        _applyFilters();
+        return true;
+      }
+    } catch (e) {
+      print('❌ updateGroupName: $e');
+    }
+    return false;
   }
 
   Future<bool> deleteConversation(int conversationId) async {
@@ -494,7 +482,6 @@ if (body != null && body.trim().isNotEmpty) {
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ deleteConversation: $e');
     }
     return false;
@@ -517,7 +504,6 @@ if (body != null && body.trim().isNotEmpty) {
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ addParticipant: $e');
     }
     return false;
@@ -539,7 +525,6 @@ if (body != null && body.trim().isNotEmpty) {
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ removeParticipant: $e');
     }
     return false;

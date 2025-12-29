@@ -41,7 +41,6 @@ class HomeControl extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // Image.asset("assets/images/png/controler_bacground.png", width: double.infinity, height: 260,),
                   Column(
                     children: [
                       SizedBox(height: 20,),
@@ -159,7 +158,6 @@ class HomeControl extends StatelessWidget {
                       screen: BlockScreen(),
                     ),
                     ExpansionTile(
-                      // splashColor: AppColors.primary50,
                       maintainState: true,
                       title: Text("الدعم", style: getBold(fontSize: 18)),
                       children: [

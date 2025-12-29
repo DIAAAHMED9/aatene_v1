@@ -15,8 +15,7 @@ class AppColors {
         900: Color(0xFF1B5E20),
       });
 
-  // إضافة ألوان للخلفية
-  static const Color backgroundColor = Color(0xFFFFFFFF); // أو اللون الذي تريده
+  static const Color backgroundColor = Color(0xFFFFFFFF);
   static const Color dialogBackgroundColor = Color(0xFFFFFFFF);
   static const Color bottomSheetBackgroundColor = Color(0xFFFFFFFF);
 

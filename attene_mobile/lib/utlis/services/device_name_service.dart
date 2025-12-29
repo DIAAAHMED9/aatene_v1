@@ -4,7 +4,6 @@ import 'dart:io' show Platform;
 class DeviceNameService {
   static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
   
-  /// دالة بسيطة تجلب اسم الجهاز فقط بدون بيانات إضافية
   static Future<String> getDeviceName() async {
     try {
       if (Platform.isAndroid) {

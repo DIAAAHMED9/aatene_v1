@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../../../component/text/aatene_custom_text.dart';
 import '../../../../utlis/colors/app_color.dart';
 
-
 class FollowerItem extends StatelessWidget {
   FollowerItem({super.key});
 
@@ -36,7 +35,6 @@ class FollowerItem extends StatelessWidget {
 
           const Spacer(),
 
-          /// Follow Back Button (Reactive)
           Obx(() {
             return GestureDetector(
               onTap: () {
@@ -48,8 +46,8 @@ class FollowerItem extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 decoration: BoxDecoration(
                   color: isFollowing.value
-                      ?  Color(0xFFDCE6F3)   // بعد المتابعة
-                      : AppColors.primary400, // قبل المتابعة
+                      ?  Color(0xFFDCE6F3)
+                      : AppColors.primary400,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(

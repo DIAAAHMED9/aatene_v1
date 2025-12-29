@@ -892,14 +892,6 @@ class BottomSheetController extends GetxController {
                           ? AppColors.primary500
                           : Colors.black87,),
                     ),
-                    // const SizedBox(height: 4),
-                    // Text(
-                    //   'ID: ${section.id}',
-                    //   style: TextStyle(
-                    //     color: isSelected ? AppColors.primary500 : Colors.grey[600],
-                    //     fontSize: 12,
-                    //   ),
-                    // ),
                   ],
                 ),
               ),

@@ -44,9 +44,7 @@ class InquiryAboutComplaints extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
-              // Title
               Text('إستعلام عن الشكاوي', style: getBold(fontSize: 18)),
-              // Subtitle
               Text(
                 'ما الذي تقدر أن نساعدك به ؟',
                 style: getRegular(fontSize: 12, color: Colors.grey),

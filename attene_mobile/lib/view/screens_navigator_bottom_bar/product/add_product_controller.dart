@@ -23,7 +23,6 @@ class AddProductController extends GetxController {
   final RxString _errorMessage = ''.obs;
   final RxString _selectedCategoryName = ''.obs;
 
-  // Field errors
   final RxMap<String, String> _fieldErrors = <String, String>{}.obs;
 
   static const int maxDescriptionLength = 140;
@@ -63,7 +62,6 @@ class AddProductController extends GetxController {
         _updateSelectedCategoryName();
       }
 
-      // Load validation errors
       _fieldErrors.addAll(central.validationErrors);
 
       _validateForm();
@@ -99,14 +97,12 @@ class AddProductController extends GetxController {
       }
     });
 
-    // Listen to category selection
     ever(productCentralController.selectedCategoryId, (id) {
       if (id > 0) {
         _clearFieldError('category');
       }
     });
 
-    // Listen to media changes
     ever(productCentralController.selectedMedia, (media) {
       if (media.isNotEmpty) {
         _clearFieldError('media');
@@ -267,7 +263,6 @@ class AddProductController extends GetxController {
     final validation = productCentralController.validateStep(0);
     _fieldErrors.addAll(validation['errors'] ?? {});
 
-    // Mark step as validated if valid
     if (validation['isValid']) {
       productCentralController.markStepAsValidated(0);
     } else {
@@ -397,7 +392,6 @@ class AddProductController extends GetxController {
     );
   }
 
-  // Getters
   String get selectedCondition => _selectedCondition.value;
 
   int get characterCount => _characterCount.value;

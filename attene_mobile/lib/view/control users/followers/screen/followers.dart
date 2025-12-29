@@ -9,7 +9,6 @@ import '../controller/followers_controller.dart';
 import '../widgets/follower_item.dart';
 import '../widgets/followers_tabs.dart';
 
-
 class Followers extends StatelessWidget {
   Followers({super.key});
 

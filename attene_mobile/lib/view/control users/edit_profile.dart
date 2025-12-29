@@ -42,7 +42,6 @@ class Edit_Profile extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                // Cover Image
                 Container(
                   height: 180,
                   width: double.infinity,
@@ -56,14 +55,12 @@ class Edit_Profile extends StatelessWidget {
                   ),
                 ),
 
-                // Edit Cover Button
                 Positioned(
                   top: 12,
                   right: 12,
                   child: _editButton(onTap: () {}),
                 ),
 
-                // Profile Image + Edit Button
                 Positioned(
                   bottom: -50,
                   left: 0,
@@ -71,7 +68,6 @@ class Edit_Profile extends StatelessWidget {
                   child: Center(
                     child: Stack(
                       children: [
-                        // Profile Image
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: const BoxDecoration(
@@ -85,7 +81,6 @@ class Edit_Profile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Edit Profile Button
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -102,10 +97,8 @@ class Edit_Profile extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 60),
-            // Username
             Text('jerusalemIII', style: getBold(fontSize: 24)),
             SizedBox(height: 4),
-            // Location
             Text(
               'فلسطين، الخليل',
               style: getRegular(fontSize: 14, color: AppColors.neutral200),

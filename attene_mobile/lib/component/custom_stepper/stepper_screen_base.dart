@@ -81,7 +81,6 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
     } else if (step.title is String) {
       return step.title as String;
     } else {
-      // إذا كان العنوان widget آخر
       return widget.appBarTitle;
     }
   }
@@ -145,7 +144,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
 
     return AppBar(
       title: Text(
-        _getCurrentStepTitle(), // استخدام عنوان الخطوة الحالية
+        _getCurrentStepTitle(),
         style: getBold(fontSize: 18),
       ),
       backgroundColor: Colors.white,

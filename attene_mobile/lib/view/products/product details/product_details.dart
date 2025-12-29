@@ -399,7 +399,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                // TextFiledAatene(isRTL: isRTL, hintText: "hintText")
                               ],
                             ),
                             Container(
@@ -480,15 +479,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                               spacing: 10,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // ListView.separated(
-                                //   shrinkWrap: true,
-                                //   scrollDirection: Axis.horizontal,
-                                //   physics: const NeverScrollableScrollPhysics(),
-                                //   itemBuilder: (context, index) => Image.asset("name"),
-                                //   separatorBuilder: (context, index) =>
-                                //   const SizedBox(height: 5),
-                                //   itemCount: 2,
-                                // ),
                                 Text(
                                   "اسم العرض",
                                   style: TextStyle(
@@ -969,7 +959,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                 color: AppColors.neutral600,
                                               ),
                                             ),
-                                            // زر ابلاغ عن اساءة
                                             MaterialButton(
                                               onPressed: () {},
                                               child: Row(
@@ -1212,7 +1201,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Image
                           Stack(
                             children: [
                               ClipRRect(
@@ -1227,7 +1215,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                               ),
 
-                              // Badge
                               Positioned(
                                 top: 10,
                                 right: 10,
@@ -1250,7 +1237,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                               ),
 
-                              // Love Button (No Animation)
                               Positioned(
                                 bottom: -18,
                                 left: 10,
@@ -1286,7 +1272,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                             ],
                           ),
                           const SizedBox(height: 7),
-                          // Info
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
@@ -1361,7 +1346,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                         color: AppColors.neutral300,
                       ),
                     ),
-                    // Vendor Card
                     Container(
                       width: 162,
                       decoration: BoxDecoration(
@@ -1375,7 +1359,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Top Image
                           Stack(
                             children: [
                               ClipRRect(
@@ -1410,7 +1393,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                 ),
                               ),
-                              // Avatar
                               Positioned(
                                 bottom: -15,
                                 left: 10,
@@ -1428,7 +1410,6 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                           const SizedBox(height: 26),
 
-                          // Store Name
                           const Text(
                             '👑 EtnixByron ',
                             style: TextStyle(
@@ -1438,7 +1419,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),
 
                           const SizedBox(height: 8),
-                          // Icons Row
                           Row(
                             spacing: 7,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -1477,14 +1457,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                       height: 100,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //     color: AppColors.neutral900.withOpacity(0.3),
-                        //     spreadRadius: 2,
-                        //     blurRadius: 4,
-                        //     offset: Offset(20, 4),
-                        //   ),
-                        // ],
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: AppColors.primary400),
                       ),

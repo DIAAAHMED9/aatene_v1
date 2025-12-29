@@ -25,12 +25,11 @@ class HamburgerHeader extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Background Pattern
             Positioned.fill(
               child: Opacity(
                 opacity: 0.15,
                 child: Image.asset(
-                  'assets/pattern.png', // optional pattern
+                  'assets/pattern.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -45,17 +44,14 @@ class HamburgerHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Top Bar
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Status time (Mock)
                         const Text(
                           '9:41',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
 
-                        // Logo
                         Row(
                           children: [
                             const Text(
@@ -90,10 +86,8 @@ class HamburgerHeader extends StatelessWidget {
 
                     const Spacer(),
 
-                    // User Info
                     Row(
                       children: [
-                        // Icon Circle
                         Container(
                           width: 44,
                           height: 44,
@@ -115,7 +109,6 @@ class HamburgerHeader extends StatelessWidget {
 
                         const SizedBox(width: 12),
 
-                        // Name & Location
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
@@ -139,7 +132,6 @@ class HamburgerHeader extends StatelessWidget {
 
                         const Spacer(),
 
-                        // Avatar
                         CircleAvatar(
                           radius: 28,
                           backgroundImage: NetworkImage(

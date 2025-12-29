@@ -158,7 +158,6 @@ class TextFiledAatene extends StatelessWidget {
             ),
           ),
         ),
-        // Removed the manual error text display since we're using errorText property
       ],
     );
   }

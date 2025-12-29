@@ -35,7 +35,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
         color: Colors.white,
         child: Column(
           children: [
-            // AppBar مخصص
             Container(
               color: Colors.white,
               padding: EdgeInsets.only(
@@ -70,7 +69,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     BuildContext context,
   ) {
 
-      // هنا يمكنك إرسال التوكن إلى 
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
     }
@@ -225,7 +223,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               ),
             ),
           ),
-          // Text('token device is : $token'),
           Container(
             margin: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
             padding: const EdgeInsets.all(16.0),
@@ -273,7 +270,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
             ),
           ),
 
-          // مساحة إضافية للكيبورد
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 20),
         ],
       ),

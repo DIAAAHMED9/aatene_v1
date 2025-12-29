@@ -1,5 +1,3 @@
-
-// lib/view/screens_navigator_bottom_bar/chat/chat.dart
 import 'package:flutter/material.dart';
 import 'chat_all.dart';
 

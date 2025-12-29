@@ -43,7 +43,6 @@ class SafetyRulesScreen extends StatelessWidget {
                 style: getRegular(fontSize: 14, color: Colors.grey),
               ),
 
-              // Tabs
               Row(
                 children: [
                   Expanded(
@@ -104,7 +103,6 @@ class SafetyRulesScreen extends StatelessWidget {
                 "نصائح وإرشادات لضمان تجربة بيع وشراء آمنة",
                 style: getRegular(color: Colors.grey, fontSize: 12),
               ),
-              // Card Privacy
               SizedBox(
                 height: 170,
                 child: ListView(
@@ -125,7 +123,6 @@ class SafetyRulesScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              // indicators
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -183,7 +180,6 @@ class SafetyRulesScreen extends StatelessWidget {
       child: Center(
         child: Row(
           spacing: 10,
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,

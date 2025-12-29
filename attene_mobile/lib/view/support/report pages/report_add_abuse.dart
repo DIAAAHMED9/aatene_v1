@@ -60,9 +60,7 @@ class ReportAddAbuse extends StatelessWidget {
                 spacing: 5,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
                   Text('الإبلاغ عن إساءة', style: getBold(fontSize: 18)),
-                  // Subtitle
                   Text(
                     'ما الذي تقدر أن نساعدك به ؟',
                     style: getRegular(fontSize: 12, color: Colors.grey),
@@ -85,7 +83,6 @@ class ReportAddAbuse extends StatelessWidget {
                     textInputAction: TextInputAction.done,
                   ),
                   SizedBox(height: 10),
-                  // Next Button
                   AateneButton(
                     onTap: () {
                       Navigator.push(

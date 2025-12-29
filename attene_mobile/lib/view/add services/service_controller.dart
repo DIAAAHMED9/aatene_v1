@@ -15,7 +15,6 @@ class ServiceController extends GetxController {
   static const int maxImages = 10;
   static const int maxFAQs = 5;
 
-  // النص الافتراضي للوصف
   static const String defaultDescriptionPlaceholder = 'ابدأ الكتابة هنا...';
 
   RxInt currentStep = 0.obs;
@@ -33,7 +32,6 @@ class ServiceController extends GetxController {
   FocusNode editorFocusNode = FocusNode();
   ScrollController editorScrollController = ScrollController();
 
-  // متغيرات لحالة الوصف
   RxBool hasUserTypedInDescription = false.obs;
   RxBool isEditorEmpty = true.obs;
   RxBool showDescriptionPlaceholder = true.obs;
@@ -118,18 +116,15 @@ class ServiceController extends GetxController {
   void _initializeQuill() {
     print('🔧 تهيئة محرر Quill...');
 
-    // بدء المحرر بمستند فارغ
     quillController = QuillController(
       document: Document(),
       selection: const TextSelection.collapsed(offset: 0),
     );
 
-    // إضافة مستمع لـ FocusNode أولاً
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) {
         print('🎯 التركيز على محرر الوصف');
 
-        // عندما يلمس المستخدم المحرر، نعتبر أنه بدأ الكتابة
         if (!hasUserTypedInDescription.value) {
           hasUserTypedInDescription.value = true;
           showDescriptionPlaceholder.value = false;
@@ -137,7 +132,6 @@ class ServiceController extends GetxController {
           update(['description_field']);
         }
       } else {
-        // عندما يترك التركيز، تحقق من المحتوى النهائي
         final plainText = quillController.document.toPlainText();
         final hasRealContent = _hasRealContent(plainText);
 
@@ -149,7 +143,6 @@ class ServiceController extends GetxController {
       }
     });
 
-    // مستمع لتغييرات المحتوى - يتم بعد إعداد FocusNode
     quillController.document.changes.listen((event) {
       try {
         final plainText = quillController.document.toPlainText();
@@ -158,11 +151,9 @@ class ServiceController extends GetxController {
         serviceDescriptionPlainText.value = plainText;
         serviceDescriptionRichText.value = getQuillContentAsJson();
 
-        // التحقق من المحتوى الفعلي
         final hasRealContent = _hasRealContent(plainText);
         isEditorEmpty.value = !hasRealContent;
 
-        // تسجيل التغيير للمساعدة في التنقيح
         print('✍️ تغيير في محتوى الوصف:');
         print('- النص الكامل: "$plainText"');
         print('- النص بعد trim: "$trimmedText"');
@@ -173,7 +164,6 @@ class ServiceController extends GetxController {
           '- hasUserTypedInDescription: ${hasUserTypedInDescription.value}',
         );
 
-        // إذا كان هناك محتوى حقيقي، فقد كتب المستخدم
         if (hasRealContent) {
           hasUserTypedInDescription.value = true;
           showDescriptionPlaceholder.value = false;
@@ -181,14 +171,11 @@ class ServiceController extends GetxController {
           print('✅ تم اكتشاف كتابة المستخدم في الوصف');
           print('📝 المحتوى المكتوب: "$plainText"');
 
-          // إزالة الخطأ إذا كان هناك محتوى
           isDescriptionError.value = false;
         } else {
-          // إذا لم يكن هناك محتوى حقيقي ولكن المستخدم بدأ الكتابة
           showDescriptionPlaceholder.value = !hasUserTypedInDescription.value;
         }
 
-        // تحديث حالة الخطأ - فقط إذا بدأ المستخدم الكتابة
         if (hasUserTypedInDescription.value) {
           isDescriptionError.value = isEditorEmpty.value;
         } else {
@@ -200,7 +187,6 @@ class ServiceController extends GetxController {
           '- showDescriptionPlaceholder: ${showDescriptionPlaceholder.value}',
         );
 
-        // تحديث الواجهة
         update(['description_field']);
       } catch (e) {
         print('❌ خطأ في مستمع تغييرات Quill: $e');
@@ -208,17 +194,13 @@ class ServiceController extends GetxController {
     });
   }
 
-  // دالة مساعدة للتحقق من المحتوى الفعلي
   bool _hasRealContent(String text) {
     if (text.isEmpty) return false;
 
-    // إزالة المسافات البيضاء والأسطر الجديدة
     final trimmed = text.trim();
 
-    // تحقق من أن النص ليس مجرد مسافات أو أسطر جديدة
     if (trimmed.isEmpty) return false;
 
-    // تحقق من أن النص ليس مجرد أحرف غير مرئية
     if (trimmed == '\n' ||
         trimmed == '\r\n' ||
         trimmed == '\n\n' ||
@@ -226,15 +208,13 @@ class ServiceController extends GetxController {
       return false;
     }
 
-    // تحقق من أن هناك أحرف حقيقية (أكبر من ASCII 32 = مسافة)
     final hasRealChars = trimmed.codeUnits.any((unit) {
-      return unit > 32; // ASCII codes above space
+      return unit > 32;
     });
 
     return hasRealChars;
   }
 
-  // دالة للتحقق من المحتوى المباشر
   void checkDescriptionContent() {
     try {
       final plainText = quillController.document.toPlainText();
@@ -256,7 +236,6 @@ class ServiceController extends GetxController {
 
         print('✅ تم العثور على محتوى حقيقي في الوصف');
       } else if (hasUserTypedInDescription.value) {
-        // المستخدم لمس المحرر ولكن المحتوى غير صالح
         isDescriptionError.value = true;
         print('❌ المستخدم بدأ الكتابة لكن المحتوى غير صالح');
       }
@@ -267,7 +246,6 @@ class ServiceController extends GetxController {
     }
   }
 
-  // دالة لفحص الوصف بشكل مفصل
   void debugDescription() {
     print('🔍 فحص الوصف المفصل:');
     print(
@@ -285,7 +263,6 @@ class ServiceController extends GetxController {
     print('- isDescriptionError: ${isDescriptionError.value}');
   }
 
-  // الحصول على النصوص الحالية من Quill مباشرة
   String get descriptionPlainText {
     return quillController.document.toPlainText();
   }
@@ -294,14 +271,12 @@ class ServiceController extends GetxController {
     return getQuillContentAsJson();
   }
 
-  // تحديث نصوص الوصف من Quill
   void updateDescriptionTexts() {
     try {
       final plainText = quillController.document.toPlainText();
       serviceDescriptionPlainText.value = plainText;
       serviceDescriptionRichText.value = getQuillContentAsJson();
 
-      // تسجيل التحديث للمساعدة في التنقيح
       print('🔄 تحديث نصوص الوصف:');
       print('- Plain text: "$plainText"');
       print('- Plain text length: ${plainText.length}');
@@ -316,12 +291,12 @@ class ServiceController extends GetxController {
   }
 
   bool get isValidDescription {
-    if (!hasUserTypedInDescription.value) return true; // لم يلمس المحرر بعد
+    if (!hasUserTypedInDescription.value) return true;
     return !isDescriptionError.value;
   }
 
   bool get hasValidDescription {
-    if (!hasUserTypedInDescription.value) return true; // لم يبدأ الكتابة بعد
+    if (!hasUserTypedInDescription.value) return true;
 
     final plainText = serviceDescriptionPlainText.value.trim();
     return _hasRealContent(plainText);
@@ -330,10 +305,8 @@ class ServiceController extends GetxController {
   bool validateDescriptionForm() {
     print('✅ بدء التحقق من صحة الوصف...');
 
-    // التحقق المباشر من المحتوى أولاً
     checkDescriptionContent();
 
-    // حالات خاصة للتحقق
     final plainText = serviceDescriptionPlainText.value;
     final hasRealContent = _hasRealContent(plainText);
 
@@ -342,51 +315,41 @@ class ServiceController extends GetxController {
     print('- hasRealContent: $hasRealContent');
     print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
 
-    // الحالات:
-    // 1. إذا لم يلمس المستخدم المحرر أصلاً => صالح (لا نطلب منه الوصف)
     if (!hasUserTypedInDescription.value) {
       print('📝 الحالة 1: المستخدم لم يلمس المحرر - صالح');
       isDescriptionError.value = false;
       return true;
     }
 
-    // 2. إذا لمس المستخدم المحرر والمحتوى صالح => صالح
     if (hasUserTypedInDescription.value && hasRealContent) {
       print('📝 الحالة 2: المستخدم لمس المحرر والمحتوى صالح - صالح');
       isDescriptionError.value = false;
       return true;
     }
 
-    // 3. إذا لمس المستخدم المحرر ولكن المحتوى غير صالح => خطأ
     if (hasUserTypedInDescription.value && !hasRealContent) {
       print('📝 الحالة 3: المستخدم لمس المحرر لكن المحتوى غير صالح - خطأ');
       isDescriptionError.value = true;
       return false;
     }
 
-    // الحالة الافتراضية: صالح
     print('📝 الحالة الافتراضية: صالح');
     isDescriptionError.value = false;
     return true;
   }
 
-  // التحقق النهائي للوصف قبل الإرسال
   Future<bool> validateAndPrepareDescription() async {
     print('🔍 التحقق النهائي للوصف قبل الإرسال...');
 
-    // تحديث نصوص الوصف
     updateDescriptionTexts();
 
-    // تسجيل البيانات
     debugDescription();
 
-    // التحقق من صحة الوصف
     if (!validateDescriptionForm()) {
       print('❌ الوصف غير صالح');
       return false;
     }
 
-    // التحقق من وجود محتوى فعلي إذا كان المستخدم قد بدأ الكتابة
     if (hasUserTypedInDescription.value) {
       final plainText = serviceDescriptionPlainText.value.trim();
       if (!_hasRealContent(plainText)) {
@@ -414,18 +377,15 @@ class ServiceController extends GetxController {
   void setDescription(String? description) {
     if (description != null && description.trim().isNotEmpty) {
       try {
-        // محاولة تحميل كمحتوى Quill Delta
         if (description.trim().startsWith('[') ||
             description.trim().startsWith('{')) {
           try {
             final delta = jsonDecode(description);
             quillController.document = Document.fromJson(delta);
           } catch (e) {
-            // إذا فشل تحويل JSON، حمله كنص عادي
             quillController.document = Document()..insert(0, description);
           }
         } else {
-          // تحميل كنص عادي
           quillController.document = Document()..insert(0, description);
         }
 
@@ -434,7 +394,6 @@ class ServiceController extends GetxController {
         showDescriptionPlaceholder.value = false;
         isDescriptionError.value = false;
 
-        // تحديث كلا النصين
         serviceDescriptionPlainText.value = quillController.document
             .toPlainText();
         serviceDescriptionRichText.value = getQuillContentAsJson();
@@ -540,7 +499,6 @@ class ServiceController extends GetxController {
   }
 
   bool validateAllForms() {
-    // تأكد من التحقق من الوصف بشكل صحيح
     validateDescriptionForm();
 
     return validateServiceForm() &&
@@ -1068,7 +1026,6 @@ class ServiceController extends GetxController {
   }
 
   Map<String, dynamic> getAllData() {
-    // تحديث نصوص الوصف قبل الحصول على البيانات
     updateDescriptionTexts();
 
     return {
@@ -1166,7 +1123,6 @@ class ServiceController extends GetxController {
 
       print('🚀 بدء إضافة خدمة جديدة...');
 
-      // التحقق النهائي للوصف
       if (!await validateAndPrepareDescription()) {
         Get.snackbar(
           'خطأ',
@@ -1195,7 +1151,6 @@ class ServiceController extends GetxController {
 
       final serviceData = _prepareServiceData();
 
-      // سجل البيانات المرسلة للمساعدة في التنقيح
       print('📦 البيانات المرسلة للخادم:');
       print(jsonEncode(serviceData));
 
@@ -1229,7 +1184,6 @@ class ServiceController extends GetxController {
           'service_id': serviceId.value,
         };
       } else {
-        // سجل الخطأ بالتفصيل
         print('❌ خطأ من الخادم: ${response?['message']}');
         print('❌ تفاصيل الخطأ: ${response}');
         throw Exception(response?['message'] ?? 'فشل في إضافة الخدمة');
@@ -1260,7 +1214,6 @@ class ServiceController extends GetxController {
 
       print('🔄 بدء تحديث الخدمة $serviceId...');
 
-      // التحقق النهائي للوصف
       if (!await validateAndPrepareDescription()) {
         Get.snackbar(
           'خطأ',
@@ -1289,7 +1242,6 @@ class ServiceController extends GetxController {
 
       final serviceData = _prepareServiceData(forUpdate: true);
 
-      // سجل البيانات المرسلة للمساعدة في التنقيح
       print('📦 البيانات المرسلة للخادم (تحديث):');
       print(jsonEncode(serviceData));
 
@@ -1528,7 +1480,6 @@ class ServiceController extends GetxController {
   }
 
   Map<String, dynamic> _prepareServiceData({bool forUpdate = false}) {
-    // تأكد من تحديث نصوص الوصف قبل الإرسال
     updateDescriptionTexts();
 
     final slug = _generateSlug(serviceTitle.value);
@@ -1560,16 +1511,13 @@ class ServiceController extends GetxController {
               .where((url) => url.isNotEmpty)
               .toList();
 
-    // الحصول على الوصف النصي (Plain text)
     String descriptionText = serviceDescriptionPlainText.value.trim();
 
-    // سجل الوصف للمساعدة في التنقيح
     print('📝 وصف الخدمة للإرسال:');
     print(
       '- النص العادي (${descriptionText.length} حرف): ${descriptionText.length > 100 ? descriptionText.substring(0, 100) + '...' : descriptionText}',
     );
 
-    // التحقق من وجود وصف إذا كان المستخدم قد بدأ الكتابة
     if (hasUserTypedInDescription.value && descriptionText.isEmpty) {
       throw Exception('الرجاء إضافة وصف مفصل للخدمة');
     }
@@ -1597,7 +1545,6 @@ class ServiceController extends GetxController {
       serviceData['store_id'] = storeId;
     }
 
-    // سجل البيانات المرسلة كاملة
     print('📦 البيانات المرسلة للخادم (JSON):');
     try {
       final jsonStr = jsonEncode(serviceData);
@@ -1627,7 +1574,6 @@ class ServiceController extends GetxController {
 
     faqs.assignAll(service.questions);
 
-    // تحميل الوصف
     setDescription(service.description);
 
     serviceImages.clear();
@@ -1717,7 +1663,6 @@ class ServiceController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> saveService() async {
-    // التحقق النهائي من جميع السياسات
     if (!allPoliciesAccepted) {
       Get.snackbar(
         'خطأ',
@@ -1824,7 +1769,6 @@ class ServiceController extends GetxController {
     }
   }
 
-  // دالة لإعادة تعيين حالة الوصف فقط
   void resetDescriptionState() {
     hasUserTypedInDescription.value = false;
     isDescriptionError.value = false;

@@ -18,7 +18,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // تأخير 5 ثواني قبل بدء التهيئة
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         _startApp();
@@ -35,10 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     try {
-      // تهيئة التطبيق
       await AppInitializationService.initialize();
       if (mounted) {
-        // الانتقال إلى شاشة onboarding
         Navigator.pushReplacementNamed(context, '/onboarding');
       }
     } catch (error) {
@@ -79,7 +76,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // عرض رسالة الخطأ إذا حدث خطأ
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_showError && mounted) {
         _showErrorDialog();
@@ -98,7 +94,6 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Image.asset('assets/images/gif/aatene.gif', fit: BoxFit.contain),
               const SizedBox(height: 20),
-              // إظهار مؤشر التحميل فقط أثناء التهيئة
               if (_isInitializing)
                 SizedBox(
                   width: ResponsiveDimensions.w(40),

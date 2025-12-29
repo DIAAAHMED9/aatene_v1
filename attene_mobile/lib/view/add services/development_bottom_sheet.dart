@@ -208,7 +208,6 @@ class DevelopmentBottomSheet extends StatelessWidget {
                     ],
                   ),
 
-                  // SizedBox(height: ResponsiveDimensions.responsiveHeight(40)),
                 ],
               ),
             ),

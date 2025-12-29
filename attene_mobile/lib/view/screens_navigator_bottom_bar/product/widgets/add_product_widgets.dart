@@ -577,7 +577,6 @@ class CategoriesSectionWidget extends StatelessWidget {
                               final categoryId = foundCategory['id'] as int;
                               controller.updateCategory(categoryId);
 
-                              // Clear category error if exists
                               if (controller.fieldErrors.containsKey(
                                 'category',
                               )) {
@@ -785,7 +784,6 @@ class ProductConditionSectionWidget extends StatelessWidget {
                 onChanged: (value) {
                   controller.updateCondition(value);
 
-                  // Clear condition error if exists
                   if (controller.fieldErrors.containsKey('condition')) {
                     controller.fieldErrors.remove('condition');
                     controller.productCentralController.validationErrors.remove(

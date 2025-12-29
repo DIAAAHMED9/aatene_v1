@@ -73,11 +73,8 @@ class _ResponsiveCustomStepperState extends State<ResponsiveCustomStepper>
 
     return Column(
       children: [
-        // الرأس فقط عندما لا يكون الكيبورد مفتوحاً
-        // if (!isKeyboardVisible)
         _buildResponsiveStepperHeader(isMobile, isTablet),
 
-        // المحتوى الرئيسي
         Expanded(child: widget.builder(context, widget.currentStep)),
       ],
     );

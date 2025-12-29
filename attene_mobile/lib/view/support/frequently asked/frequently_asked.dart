@@ -71,7 +71,6 @@ class _ServicesPageViewState extends State<ServicesPageView> {
     );
   }
 
-  // ---------- Tabs ----------
   Widget _buildTabs() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -117,7 +116,6 @@ class _ServicesPageViewState extends State<ServicesPageView> {
     );
   }
 
-  // ---------- Search ----------
   Widget _buildSearch() {
     final isRTL = LanguageUtils.isRTL;
     return Padding(
@@ -131,7 +129,6 @@ class _ServicesPageViewState extends State<ServicesPageView> {
     );
   }
 
-  // ---------- FAQ ----------
   Widget _servicesFAQ() {
     return ListView(
       padding: const EdgeInsets.all(16),

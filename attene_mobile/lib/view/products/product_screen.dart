@@ -137,7 +137,6 @@ class ProductScreen extends GetView<ProductController> {
                     }),
                   ),
                 ),
-                // مساحة للكيبورد فقط
                 SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
               ],
             );
@@ -336,7 +335,6 @@ class ProductScreen extends GetView<ProductController> {
               ),
             ),
           ),
-          // مساحة إضافية للكيبورد
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
         ],
       ),
@@ -407,7 +405,6 @@ class ProductScreen extends GetView<ProductController> {
                 ),
               ),
             ),
-          // مساحة إضافية للكيبورد
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
         ],
       ),
@@ -512,7 +509,6 @@ class ProductScreen extends GetView<ProductController> {
               style: getRegular(fontSize: ResponsiveDimensions.f(14)),
             ),
           ),
-          // مساحة إضافية للكيبورد
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
         ],
       ),

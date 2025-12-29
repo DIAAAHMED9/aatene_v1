@@ -1,7 +1,5 @@
 import 'dart:async';
 
-
-
 import 'package:attene_mobile/firebase_options.dart';
 import 'package:attene_mobile/notification_services.dart';
 import 'package:attene_mobile/view/add%20new%20store/choose%20type%20store/manage_account_store_controller.dart';
@@ -76,7 +74,6 @@ class AppBindings extends Bindings {
     
     print('🔄 [APP BINDINGS] تسجيل المتحكمات الأساسية فقط...');
     
-    // فقط الأساسيات اللازمة لبدء التشغيل
     Get.lazyPut(() => GetStorage(), fenix: true);
     Get.lazyPut(() => MyAppController(), fenix: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
@@ -84,7 +81,6 @@ class AppBindings extends Bindings {
     
     print('✅ [APP BINDINGS] تم تسجيل الأساسيات');
     
-    // تأجيل الباقي
     _delayOtherBindings();
     
     _initialized = true;
@@ -94,14 +90,12 @@ class AppBindings extends Bindings {
     Future.delayed(const Duration(seconds: 3), () {
       print('🔄 [APP BINDINGS] تسجيل المتحكمات المتبقية...');
       
-      // المتحكمات الأقل أهمية
       Get.lazyPut(() => DataInitializerService(), fenix: true);
       Get.lazyPut(() => BottomSheetController(), fenix: true);
       Get.lazyPut(() => CreateStoreController(), fenix: true);
       Get.lazyPut(() => DataSyncService(), fenix: true);
       Get.lazyPut(() => ChatController(), fenix: true);
       
-      // المزيد من التأخير للباقي
       Future.delayed(const Duration(seconds: 2), () {
         Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
         Get.lazyPut(() => ProductCentralController(), fenix: true);
@@ -253,68 +247,54 @@ void main() async {
   
   print('🚀 بدء تشغيل التطبيق...');
 
-  // 1. فقط الخدمات الأساسية الضرورية
   await _initializeEssentialServices();
   
-  // 2. تشغيل التطبيق فوراً
   runApp(const MyApp());
   
-  // 3. تأجيل كل شيء آخر
   _initializeBackgroundServices();
 }
 
 Future<void> _initializeEssentialServices() async {
   print('🔄 تهيئة الخدمات الأساسية...');
   
-  // فقط GetStorage - لأنه ضروري للغاية
   await GetStorage.init();
   
   print('✅ تم تهيئة الخدمات الأساسية');
 }
 
 void _initializeBackgroundServices() {
-  // انتظر حتى يتم بناء أول frame
   WidgetsBinding.instance.addPostFrameCallback((_) async {
         final GetStorage storage = GetStorage();
 
     print('🔄 بدء الخدمات الخلفية...');
-    // تأخير إضافي لضمان تجاوب الواجهة
     await Future.delayed(const Duration(seconds: 2));
     
     try {
-      // 1. الحصول على اسم الجهاز أولاً
       String deviceName = await DeviceNameService.getDeviceName();
       storage.write('device_name',deviceName);
       print('📱 الجهاز المستخدم: $deviceName');
       
-      // 2. تهيئة Firebase
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       print('✅ تم تهيئة Firebase في الخلفية');
       
-      // 3. خدمات الإشعارات
       await PushNotificationService().setupInteractedMessage();
       
-      // 4. AppLifecycleManager
       Get.put(AppLifecycleManager(), permanent: true);
       
-      // 5. الحصول على FCM token
       final token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
               storage.write('device_token',token );
 
         print('📱 FCM Token: $token');
         
-        // يمكنك إرسال التوكن إلى خادمك هنا مع اسم الجهاز
       }
       
-      // 6. التحقق من الإشعارات الأولية
       final RemoteMessage? initialMessage =
           await FirebaseMessaging.instance.getInitialMessage();
       if (initialMessage != null) {
         print('📨 تم تشغيل التطبيق من خلال إشعار');
-        // Get.toNamed('/mainScreen'); // إذا أردت
       }
       
       print('✅ اكتملت الخدمات الخلفية');

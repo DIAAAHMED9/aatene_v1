@@ -50,14 +50,11 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    // نستخدم Stack بدلاً من Column للحفاظ على البار ثابتًا
     return Stack(
       children: [
-        // المحتوى الرئيسي
         Positioned.fill(
           child: widget.pages[_currentIndex],
         ),
-        // طبقة شفافة لمنع النقر على المحتوى خلف البار
         if (MediaQuery
             .of(context)
             .viewInsets
@@ -90,7 +87,6 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // الخلفية البيضاء مع الظل
           Positioned(
             bottom: 20,
             left: (screenWidth - containerWidth) / 2,
@@ -110,7 +106,6 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
             ),
           ),
 
-          // البار مع Notch
           Positioned(
             bottom: 20,
             left: (screenWidth - containerWidth) / 2,
@@ -143,9 +138,8 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
             ),
           ),
 
-          // زر الفاب - جزء من الـ BottomNavigationBar
           Positioned(
-            bottom: 20 + 34, // 34 = نصف ارتفاع البار (68/2)
+            bottom: 20 + 34,
             left: (screenWidth - _fabSize) / 2,
             child: _buildFloatingActionButton(context),
           ),

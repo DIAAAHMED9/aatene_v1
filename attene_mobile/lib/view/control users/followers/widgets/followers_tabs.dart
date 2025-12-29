@@ -32,7 +32,6 @@ class FollowersTabs extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          /// Animated Indicator
           AnimatedAlign(
             duration: const Duration(milliseconds: 300),
             alignment: controller.currentIndex.value == 0

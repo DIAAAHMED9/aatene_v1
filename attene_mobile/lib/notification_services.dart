@@ -11,14 +11,11 @@ class PushNotificationService {
       if (!Get.isRegistered<ChatController>()) return;
       final c = ChatController.to;
 
-      // Try parse conversation id from common keys
       final rawId = data['conversation_id'] ?? data['conversationId'] ?? data['cid'] ?? data['chat_id'];
       final convId = int.tryParse(rawId?.toString() ?? '');
 
-      // Always refresh list to bump last message/unread
       c.loadConversations();
 
-      // If user is currently inside this conversation, refresh messages silently
       if (convId != null && c.currentConversation.value?.id == convId) {
         c.loadConversationMessages(convId, silent: true);
       }
@@ -28,7 +25,6 @@ class PushNotificationService {
   Future<void> setupInteractedMessage() async {
     await Firebase.initializeApp();
 
-    // التعامل مع النقر على الإشعار عندما يكون التطبيق في الخلفية
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       Get.toNamed('/mainScreen');
       if (message.data['type'] == 'chat') {
@@ -49,11 +45,9 @@ class PushNotificationService {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    // إعدادات Android (محدثة)
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // إعدادات iOS/macOS باستخدام DarwinInitializationSettings
     const DarwinInitializationSettings darwinSettings =
         DarwinInitializationSettings(
       requestSoundPermission: false,
@@ -67,7 +61,6 @@ class PushNotificationService {
       macOS: darwinSettings,
     );
 
-    // التهيئة باستخدام onDidReceiveNotificationResponse
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
@@ -76,7 +69,6 @@ class PushNotificationService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    // التعامل مع الإشعارات في الواجهة
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       if (message.data['type'] == 'chat') {
         _tryRefreshChatFromPayload(message.data);
@@ -117,10 +109,8 @@ class PushNotificationService {
     });
   }
 
-  // دالة معالجة الإشعارات في الخلفية
   @pragma('vm:entry-point')
   static Future<void> notificationTapBackground(NotificationResponse notificationResponse) async {
-    // معالجة النقر على الإشعار عندما يكون التطبيق في الخلفية
   }
 
   AndroidNotificationChannel androidNotificationChannel() =>

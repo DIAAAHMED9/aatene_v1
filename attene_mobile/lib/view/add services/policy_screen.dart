@@ -20,7 +20,6 @@ class PolicyScreen extends StatelessWidget {
             _buildCopyrightSection(),
             _buildTermsSection(),
             _buildPrivacySection(),
-            // _buildFooter(),
           ],
         ),
       ),
@@ -82,36 +81,6 @@ class PolicyScreen extends StatelessWidget {
           ),
 
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
-          // GetBuilder<ServiceController>(
-          //   id: 'copyright_section',
-          //   builder: (controller) {
-          //     return Row(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Checkbox(
-          //           value: controller.acceptedCopyright.value,
-          //           onChanged: (value) {
-          //             controller.updateCopyrightAcceptance(value ?? false);
-          //           },
-          //           activeColor: AppColors.primary400,
-          //           shape: RoundedRectangleBorder(
-          //             borderRadius: BorderRadius.circular(4),
-          //           ),
-          //         ),
-          //         SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-          //         Expanded(
-          //           child: Text(
-          //             'أقرّ بأني أملك الحقوق الكاملة للمواد المقدمة ولا أنتهك حقوق أي طرف ثالث',
-          //             style: TextStyle(
-          //               fontSize: ResponsiveDimensions.responsiveFontSize(14),
-          //               color: Colors.grey[800],
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     );
-          //   },
-          // ),
         ],
       ),
     );
@@ -323,10 +292,6 @@ class PolicyScreen extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // _buildPolicyStatus(
-                  //   'إشعار حقوق النشر',
-                  //   controller.acceptedCopyright.value,
-                  // ),
                   SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                   _buildPolicyStatus(
                     'شروط الخدمة',

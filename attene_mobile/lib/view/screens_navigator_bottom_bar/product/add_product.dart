@@ -29,7 +29,6 @@ class AddProductContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        // padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -69,9 +68,6 @@ class AddProductContent extends StatelessWidget {
 
             SizedBox(height: ResponsiveDimensions.f(20)),
 
-            // NextButtonWidget(selectedSection: selectedSection),
-
-            // SizedBox(height: ResponsiveDimensions.f(20)),
           ],
         ),
       ),

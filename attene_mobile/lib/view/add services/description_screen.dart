@@ -42,16 +42,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // معلومات عن قسم الوصف
             _buildDescriptionInfo(),
 
-            // محرر النص الثري مع شريط الأدوات المحسّن
             _buildEnhancedEditor(),
 
-            // قسم الأسئلة الشائعة
             _buildFAQsSection(),
 
-            // أزرار التنقل
             _buildNavigationButtons(),
           ],
         ),
@@ -77,7 +73,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   fontSize: ResponsiveDimensions.responsiveFontSize(20),
                 ),
               ),
-              // زر تصحيح
               IconButton(
                 onPressed: () {
                   controller.debugDescription();
@@ -134,7 +129,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       ),
       child: Column(
         children: [
-          // حاوية المحرر مع النص الافتراضي
           Container(
             height: ResponsiveDimensions.responsiveHeight(300),
             decoration: BoxDecoration(
@@ -162,10 +156,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             ),
             child: Column(
               children: [
-                // شريط الأدوات المتكامل
                 _buildEnhancedToolbar(),
 
-                // المحرر
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(
@@ -178,20 +170,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
 
                       return Stack(
                         children: [
-                          // المحرر الفعلي
                           QuillEditor(
                             controller: controller.quillController,
                             focusNode: controller.editorFocusNode,
                             scrollController: controller.editorScrollController,
-                            // scrollable: true,
-                            // autoFocus: false,
-                            // readOnly: false,
-                            // expands: true,
-                            // padding: EdgeInsets.zero,
-                            // placeholder: '',
                           ),
 
-                          // النص الافتراضي الذي يظهر عندما يكون المحرر فارغاً
                           if (showPlaceholder)
                             Positioned(
                               top: 0,
@@ -255,15 +239,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // الصف الأول: التنسيقات الأساسية
           _buildBasicFormattingRow(),
           Divider(color: Colors.grey.shade300),
 
-          // الصف الثاني: التنسيقات المتقدمة (الألوان والمحاذاة)
           _buildAdvancedFormattingRow(),
           Divider(color: Colors.grey.shade300),
 
-          // الصف الثالث: العناوين والكتل الخاصة
           _buildHeadingsAndSpecialRow(),
         ],
       ),
@@ -715,7 +696,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       ),
       child: Row(
         children: [
-          // زر الرجوع
           Expanded(
             child: Material(
               color: Colors.grey[200],
@@ -755,16 +735,13 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
 
           SizedBox(width: ResponsiveDimensions.responsiveWidth(16)),
 
-          // زر التالي
           Expanded(
             child: Obx(() {
-              // التحقق من صحة الوصف فقط إذا كتب المستخدم شيئاً
               bool shouldValidate = controller.hasUserTypedInDescription.value;
               bool isValid = shouldValidate
                   ? controller.validateDescriptionForm()
                   : true;
 
-              // تسجيل بيانات الوصف للمساعدة في التنقيح
               print('🔍 حالة الوصف في زر التالي:');
               print(
                 '- hasUserTypedInDescription: ${controller.hasUserTypedInDescription.value}',
@@ -781,10 +758,8 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   borderRadius: BorderRadius.circular(10),
                   onTap: isValid
                       ? () {
-                          // التحقق النهائي مع تسجيل البيانات
                           print('✅ التحقق النهائي قبل الانتقال:');
 
-                          // تحديث محتوى الوصف قبل التحقق
                           final plainText = controller.quillController.document
                               .toPlainText();
                           final richText = controller.getQuillContentAsJson();
@@ -797,7 +772,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                           print('📝 النص العادي: $plainText');
                           print('📝 طول النص العادي: ${plainText.length}');
 
-                          // التحقق من الصحة
                           if (controller.validateDescriptionForm()) {
                             print('✅ الوصف صالح، الانتقال إلى الخطوة التالية');
                             Get.to(() => const ImagesScreen());
@@ -840,8 +814,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       ),
     );
   }
-
-  // ============ دوال مساعدة للتنسيقات ============
 
   void _toggleFormat(String format) {
     final selection = controller.quillController.selection;
@@ -1015,8 +987,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       },
     );
   }
-
-  // ============ دوال مساعدة للإدراج ============
 
   void _showImageInsertDialog() {
     showModalBottomSheet(
@@ -1253,8 +1223,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
       );
     }
   }
-
-  // ============ دوال الأسئلة الشائعة ============
 
   void _showAddFAQDialog() {
     Get.bottomSheet(const FAQBottomSheet(), isScrollControlled: true);

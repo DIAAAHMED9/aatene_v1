@@ -119,13 +119,6 @@ class Login extends StatelessWidget {
                   spacing: 20,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // GestureDetector(
-                    //   child: SizedBox(
-                    //     width: ResponsiveDimensions.w(40),
-                    //     height: ResponsiveDimensions.h(40),
-                    //     child: const Icon(Icons.g_mobiledata),
-                    //   ),
-                    // ),
                     GestureDetector(
                       onTap: () => controller.socialLogin('google'),
                       child: Container(
