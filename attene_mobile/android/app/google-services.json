@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "1026858119799",
+    "project_id": "aatene-36a8c",
+    "storage_bucket": "aatene-36a8c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026858119799:android:195b837011c6ecd0700c72",
+        "android_client_info": {
+          "package_name": "com.aatene.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026858119799-b8v55h9s1pkck42sa9h7qtn4el16p3od.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUA1ODd2ooz_OmUwjcMq66K-VquWpoZbw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026858119799-b8v55h9s1pkck42sa9h7qtn4el16p3od.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026858119799-k03gcl822njqkj2m20i83p1qfqaii064.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nami.Aatene"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026858119799:android:a3191a0dcfdcd903700c72",
+        "android_client_info": {
+          "package_name": "com.nami.Aatene"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026858119799-kduiqpgsleht4mraou1q2snbuftjo0q4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nami.Aatene",
+            "certificate_hash": "62c0c059ecaef79901b7185d078c78ee29682d37"
+          }
+        },
+        {
+          "client_id": "1026858119799-b8v55h9s1pkck42sa9h7qtn4el16p3od.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUA1ODd2ooz_OmUwjcMq66K-VquWpoZbw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026858119799-b8v55h9s1pkck42sa9h7qtn4el16p3od.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026858119799-k03gcl822njqkj2m20i83p1qfqaii064.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nami.Aatene"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

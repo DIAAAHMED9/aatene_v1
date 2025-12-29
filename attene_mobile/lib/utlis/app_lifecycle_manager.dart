@@ -12,8 +12,12 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   @override
   void onInit() {
     super.onInit();
-    WidgetsBinding.instance.addObserver(this);
-    print('🔄 [LIFECYCLE] بدء إدارة دورة حياة التطبيق');
+    
+    // لا تبدأ المراقبة فوراً - انتظر حتى يتم تحميل الواجهة
+    Future.delayed(const Duration(seconds: 5), () {
+      WidgetsBinding.instance.addObserver(this);
+      print('🔄 [LIFECYCLE] بدء إدارة دورة حياة التطبيق');
+    });
   }
 
   @override
@@ -25,83 +29,72 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _currentState.value = state;
-    print('🔄 [LIFECYCLE] تغيير حالة التطبيق: $state');
+    
+    // طباعة محدودة للتقليل من load
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.paused) {
+      print('🔄 [LIFECYCLE] تغيير حالة: $state');
+    }
 
+    // معالجة الحالات المهمة فقط
     switch (state) {
       case AppLifecycleState.resumed:
         _onAppResumed();
         break;
-      case AppLifecycleState.inactive:
-        _onAppInactive();
-        break;
       case AppLifecycleState.paused:
         _onAppPaused();
         break;
-      case AppLifecycleState.hidden:
-        _onAppHidden();
-        break;
-      case AppLifecycleState.detached:
-        _onAppDetached();
+      default:
         break;
     }
   }
 
   void _onAppResumed() {
-    print('✅ [LIFECYCLE] التطبيق عاد للعمل');
-    _reloadDataOnResume();
-  }
-
-  void _onAppInactive() {
-    print('⚠️ [LIFECYCLE] التطبيق غير نشط');
+    // تأجيل إعادة التحميل لتفادي التحميل الزائد
+    Future.delayed(const Duration(seconds: 1), () {
+      _reloadDataOnResume();
+    });
   }
 
   void _onAppPaused() {
-    print('⏸️ [LIFECYCLE] التطبيق متوقف');
-    _saveDataBeforePause();
-  }
-
-  void _onAppHidden() {
-    print('🙈 [LIFECYCLE] التطبيق مخفي');
-    _saveDataBeforePause();
-  }
-
-  void _onAppDetached() {
-    print('❌ [LIFECYCLE] التطبيق مغلق');
-    _saveDataBeforePause();
+    // حفظ البيانات بشكل غير متزامن
+    _quickSave();
   }
 
   Future<void> _reloadDataOnResume() async {
     try {
       final myAppController = Get.find<MyAppController>();
       if (myAppController.isLoggedIn.value) {
-        print('🔄 [LIFECYCLE] إعادة تحميل البيانات بعد استئناف التطبيق');
-        _refreshCriticalData();
+        // تأجيل المهام الثقيلة أكثر
+        Future.delayed(const Duration(seconds: 2), () {
+          _refreshCriticalData();
+        });
       }
     } catch (e) {
-      print('⚠️ [LIFECYCLE] خطأ في إعادة تحميل البيانات: $e');
+      // تجاهل الأخطاء البسيطة
     }
   }
 
   Future<void> _refreshCriticalData() async {
     try {
-      print('🔄 [LIFECYCLE] تحديث البيانات الحرجة...');
+      print('🔄 [LIFECYCLE] تحديث البيانات...');
+      // إضافة تحديث البيانات المهمة هنا
     } catch (e) {
       print('⚠️ [LIFECYCLE] خطأ في تحديث البيانات: $e');
     }
   }
 
-  Future<void> _saveDataBeforePause() async {
+  Future<void> _quickSave() async {
     try {
-      print('💾 [LIFECYCLE] حفظ البيانات قبل توقف التطبيق');
-
       final myAppController = Get.find<MyAppController>();
       if (myAppController.isLoggedIn.value) {
-        await myAppController.saveUserPreferences();
+        // حفظ سريع بدون await لبيانات المستخدم
+        myAppController.saveUserPreferences();
       }
 
+      // حفظ حالة التطبيق
       await _saveAppState();
     } catch (e) {
-      print('⚠️ [LIFECYCLE] خطأ في حفظ البيانات: $e');
+      // تجاهل أخطاء الحفظ
     }
   }
 
@@ -112,21 +105,20 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
         'last_active_time',
         DateTime.now().toIso8601String(),
       );
-      print('💾 [LIFECYCLE] تم حفظ حالة التطبيق');
     } catch (e) {
-      print('⚠️ [LIFECYCLE] خطأ في حفظ حالة التطبيق: $e');
+      // تجاهل أخطاء SharedPreferences
     }
   }
 
   bool get isAppActive => _currentState.value == AppLifecycleState.resumed;
-
+  
   bool get isAppBackground =>
       _currentState.value == AppLifecycleState.paused ||
       _currentState.value == AppLifecycleState.inactive ||
       _currentState.value == AppLifecycleState.hidden;
-
+  
   AppLifecycleState get currentState => _currentState.value;
-
+  
   bool get canShowDialogs {
     return _currentState.value == AppLifecycleState.resumed &&
         Get.context != null &&

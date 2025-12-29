@@ -1,15 +1,18 @@
+
+// lib/view/screens_navigator_bottom_bar/chat/chat_detail_page.dart
+import 'package:flutter/material.dart';
+import 'package:attene_mobile/models/chat_models.dart';
+
+import 'chat_massege.dart';
 import 'chat_message_model.dart';
 
-List<ChatMessage> messages = [
-  ChatMessage(messageContent: "Hello, Will", messageType: "receiver"),
-  ChatMessage(messageContent: "How have you been?", messageType: "receiver"),
-  ChatMessage(
-    messageContent: "Hey Kriss, I am doing fine dude. wbu?",
-    messageType: "sender",
-  ),
-  ChatMessage(messageContent: "ehhhh, doing OK.", messageType: "receiver"),
-  ChatMessage(
-    messageContent: "Is there any thing wrong?",
-    messageType: "sender",
-  ),
-];
+class ChatDetailPage extends StatelessWidget {
+  final ChatConversation conversation;
+
+  const ChatDetailPage({super.key, required this.conversation});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChatMassege(conversation: conversation);
+  }
+}

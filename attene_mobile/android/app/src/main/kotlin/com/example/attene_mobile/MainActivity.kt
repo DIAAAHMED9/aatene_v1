@@ -1,4 +1,4 @@
-package com.example.attene_mobile
+package com.attene.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

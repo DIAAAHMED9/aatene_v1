@@ -1,430 +1,411 @@
+
+// lib/view/screens_navigator_bottom_bar/chat/chat_all.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/models/chat_models.dart';
-import 'package:attene_mobile/utlis/connection_status.dart';
 
-import '../../../controller/chat_controller.dart';
-import 'Chat_Interested.dart';
-import 'Chat_Unread.dart';
-import 'chat_massege.dart';
+import 'chat_detail_page.dart';
+import 'chat_message_model.dart';
 
-class ChatAll extends StatelessWidget {
-  ChatAll({super.key});
+class ChatAll extends StatefulWidget {
+  const ChatAll({super.key});
 
-  final ChatController chatController = Get.find<ChatController>();
+  @override
+  State<ChatAll> createState() => _ChatAllState();
+}
+
+class _ChatAllState extends State<ChatAll> {
+  final ChatController c = Get.find<ChatController>();
+  final TextEditingController _search = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    c.refreshConversations();
+  }
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: _buildAppBar(), body: _buildBody());
-  }
+    return Obx(() {
+      final list = c.filteredConversations;
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      title: Row(
-        children: [
-          const Text(
-            "الدردشة",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('المحادثات'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => c.refreshConversations(),
             ),
-          ),
-          const SizedBox(width: 8),
-          GetBuilder<ChatController>(
-            builder: (controller) {
-              return Row(
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    margin: const EdgeInsets.only(left: 4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: ConnectionStatusHelper.getColor(
-                        controller.connectionStatus.value,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    ConnectionStatusHelper.getDisplayName(
-                      controller.connectionStatus.value,
-                    ),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: ConnectionStatusHelper.getColor(
-                        controller.connectionStatus.value,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-      actions: [
-        GetBuilder<ChatController>(
-          builder: (controller) {
-            if (controller.connectionStatus.value ==
-                    ConnectionStatus.disconnected ||
-                controller.connectionStatus.value == ConnectionStatus.error) {
-              return IconButton(
-                icon: const Icon(Icons.refresh, color: Colors.blue),
-                onPressed: () {
-                  controller.reconnectWebSocket();
-                },
-              );
-            }
-            return const SizedBox();
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBody() {
-    return GetBuilder<ChatController>(
-      builder: (controller) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              _buildSearchBar(controller),
-              const SizedBox(height: 10),
-
-              _buildTabButtons(controller),
-              const Divider(color: Colors.grey, height: 15),
-
-              if (controller.isLoading.value)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else
-                Expanded(child: _buildConversationsList(controller)),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSearchBar(ChatController controller) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.light1000,
-      height: 55,
-      child: TextField(
-        onChanged: (value) {
-          controller.updateSearchQuery(value);
-        },
-        decoration: InputDecoration(
-          hintText: 'ابحث عن دردشة ...',
-          prefixIcon: IconButton(
-            icon: Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                color: AppColors.primary400,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(Icons.search, color: Colors.white),
-            ),
-            onPressed: () {},
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(40.0)),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabButtons(ChatController controller) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildTabButton(
-          label: "الكل",
-          isActive: controller.currentTab.value == ChatTab.all,
-          badgeCount: null,
-          onTap: () {
-            controller.setCurrentTab(ChatTab.all);
-          },
-        ),
-        const SizedBox(width: 10),
-
-        _buildTabButton(
-          label: "غير مقروء",
-          isActive: controller.currentTab.value == ChatTab.unread,
-          badgeCount: controller.totalUnreadCount.value,
-          onTap: () {
-            controller.setCurrentTab(ChatTab.unread);
-          },
-        ),
-        const SizedBox(width: 10),
-
-        _buildTabButton(
-          label: "المهتمين",
-          isActive: controller.currentTab.value == ChatTab.interested,
-          badgeCount: null,
-          onTap: () {
-            controller.setCurrentTab(ChatTab.interested);
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTabButton({
-    required String label,
-    required bool isActive,
-    required int? badgeCount,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      width: 100,
-      height: 35,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: isActive ? const Color(0xff2176ff) : Colors.white,
-        border: isActive ? null : Border.all(color: Colors.grey.shade300),
-      ),
-      child: Stack(
-        children: [
-          MaterialButton(
-            onPressed: onTap,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isActive ? Colors.white : Colors.black,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          if (badgeCount != null && badgeCount > 0)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                child: Text(
-                  badgeCount > 99 ? '99+' : badgeCount.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildConversationsList(ChatController controller) {
-    final conversations = controller.getFilteredConversations();
-
-    if (conversations.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.chat_outlined, size: 80, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(
-              controller.searchQuery.value.isNotEmpty
-                  ? 'لا توجد نتائج بحث'
-                  : 'لا توجد محادثات',
-              style: const TextStyle(color: Colors.grey, fontSize: 16),
-            ),
-            if (controller.searchQuery.value.isEmpty)
-              TextButton(
-                onPressed: () {
-                  controller.refreshConversations();
-                },
-                child: const Text('تحديث القائمة'),
-              ),
           ],
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: () async {
-        await controller.refreshConversations();
-      },
-      child: ListView.separated(
-        itemCount: conversations.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final conversation = conversations[index];
-          return _buildConversationItem(conversation, controller);
-        },
-      ),
-    );
-  }
-
-  Widget _buildConversationItem(
-    ChatConversation conversation,
-    ChatController controller,
-  ) {
-    return MaterialButton(
-      onPressed: () {
-        controller.setCurrentConversation(conversation);
-        Get.to(
-          () => ChatMassege(conversation: conversation),
-          transition: Transition.rightToLeft,
-        );
-      },
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          _buildUserAvatar(conversation),
-          const SizedBox(width: 12),
-
-          Expanded(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(98),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        conversation.name ?? 'بدون اسم',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: conversation.unreadCount > 0
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: conversation.unreadCount > 0
-                              ? Colors.black
-                              : Colors.grey[700],
-                        ),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                  child: TextField(
+                    controller: _search,
+                    onChanged: c.setSearch,
+                    decoration: InputDecoration(
+                      hintText: 'بحث...',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     ),
-                    Text(
-                      _formatTime(conversation.lastMessageTime),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        conversation.lastMessage ?? 'لا توجد رسائل',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: conversation.unreadCount > 0
-                              ? Colors.black
-                              : Colors.grey,
-                        ),
-                      ),
-                    ),
-                    if (conversation.unreadCount > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xff2176ff),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          conversation.unreadCount.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                _TabsRow(controller: c),
+                const SizedBox(height: 8),
               ],
             ),
           ),
+        ),
+        body: Stack(
+          children: [
+            if (c.isLoading.value && list.isEmpty)
+              const Center(child: CircularProgressIndicator())
+            else if (list.isEmpty)
+              const Center(child: Text('لا توجد محادثات'))
+            else
+              RefreshIndicator(
+                onRefresh: () async => c.refreshConversations(),
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(bottom: 96),
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, index) => _ConversationTile(
+                    conversation: list[index],
+                    controller: c,
+                  ),
+                ),
+              ),
 
-          IconButton(
-            icon: Icon(
-              conversation.isInterested ? Icons.star : Icons.star_outline,
-              color: conversation.isInterested
-                  ? Colors.amber
-                  : Colors.grey.shade400,
+            // Floating button (works even with custom bottom bars)
+            Positioned(
+              bottom: 18,
+              right: 18,
+              child: SafeArea(
+                child: Material(
+                  elevation: 6,
+                  shape: const CircleBorder(),
+                  color: Theme.of(context).colorScheme.primary,
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: _openNewChatSheet,
+                    child: const SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: Icon(Icons.chat, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
             ),
-            onPressed: () {
-              controller.toggleInterest(
-                conversation.id,
-                !conversation.isInterested,
-              );
-            },
-          ),
-        ],
+          ],
+        ),
+      );
+    });
+  }
+
+  Future<void> _openNewChatSheet() async {
+    await c.loadPreviousParticipants();
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _NewChatSheet(controller: c),
+    );
+  }
+}
+
+class _TabsRow extends StatelessWidget {
+  final ChatController controller;
+  const _TabsRow({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final tab = controller.currentTab.value;
+      Widget chip(String label, ChatTab t) {
+        final selected = tab == t;
+        return ChoiceChip(
+          label: Text(label),
+          selected: selected,
+          onSelected: (_) => controller.setTab(t),
+        );
+      }
+
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Row(
+          children: [
+            chip('الكل', ChatTab.all),
+            const SizedBox(width: 8),
+            chip('غير مقروء', ChatTab.unread),
+            const SizedBox(width: 8),
+            chip('نشط', ChatTab.active),
+            const SizedBox(width: 8),
+            chip('غير نشط', ChatTab.notActive),
+            const SizedBox(width: 8),
+            chip('مهتم', ChatTab.interested),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class _ConversationTile extends StatelessWidget {
+  final ChatConversation conversation;
+  final ChatController controller;
+
+  const _ConversationTile({
+    required this.conversation,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final title = conversation.displayName(
+      myOwnerType: controller.myOwnerType,
+      myOwnerId: controller.myOwnerId,
+    );
+
+    final avatarUrl = conversation.displayAvatar(
+      myOwnerType: controller.myOwnerType,
+      myOwnerId: controller.myOwnerId,
+    );
+
+    final unread = conversation.totalUnread;
+
+    final subtitle = _lastMessageText(conversation.lastMessage);
+
+    return InkWell(
+      onTap: () async {
+        await controller.openConversation(conversation);
+        // ignore: use_build_context_synchronously
+        Get.to(() => ChatDetailPage(conversation: conversation));
+      },
+      onLongPress: () => _openActions(context),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            _Avatar(url: avatarUrl, isGroup: conversation.type == 'group'),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey.shade700),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (unread > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text('$unread', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildUserAvatar(ChatConversation conversation) {
-    return Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        CircleAvatar(
-          radius: 25,
-          backgroundImage: conversation.avatar != null
-              ? NetworkImage(conversation.avatar!)
-              : const AssetImage("assets/image/1.png") as ImageProvider,
-        ),
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: conversation.isOnline ? Colors.green : Colors.grey,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-          ),
-        ),
-      ],
-    );
+  String _lastMessageText(dynamic lastMessage) {
+    if (lastMessage == null) return '';
+    if (lastMessage is String) return lastMessage;
+    if (lastMessage is Map) {
+      if (lastMessage['body'] != null) return lastMessage['body'].toString();
+      if (lastMessage['message'] != null) return lastMessage['message'].toString();
+    }
+    return lastMessage.toString();
   }
 
-  String _formatTime(DateTime? time) {
-    if (time == null) return '';
+  void _openActions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: const Text('حذف المحادثة'),
+              onTap: () async {
+                Navigator.pop(context);
+                await controller.deleteConversation(conversation.id);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-    final now = DateTime.now();
-    final difference = now.difference(time);
+class _Avatar extends StatelessWidget {
+  final String? url;
+  final bool isGroup;
+  const _Avatar({this.url, required this.isGroup});
 
-    if (difference.inSeconds < 60) {
-      return 'الآن';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}د';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}س';
-    } else if (difference.inDays == 1) {
-      return 'أمس';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}أيام';
-    } else {
-      return '${time.day}/${time.month}';
-    }
+  @override
+  Widget build(BuildContext context) {
+    final placeholder = CircleAvatar(
+      radius: 22,
+      child: Icon(isGroup ? Icons.groups : Icons.person),
+    );
+
+    if (url == null || url!.trim().isEmpty) return placeholder;
+
+    return ClipOval(
+      child: CachedNetworkImage(
+        imageUrl: url!,
+        width: 44,
+        height: 44,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => placeholder,
+        errorWidget: (_, __, ___) => placeholder,
+      ),
+    );
+  }
+}
+
+class _NewChatSheet extends StatefulWidget {
+  final ChatController controller;
+  const _NewChatSheet({required this.controller});
+
+  @override
+  State<_NewChatSheet> createState() => _NewChatSheetState();
+}
+
+class _NewChatSheetState extends State<_NewChatSheet> {
+  final TextEditingController _q = TextEditingController();
+
+  @override
+  void dispose() {
+    _q.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final raw = widget.controller.previousParticipants.toList();
+
+      final query = _q.text.trim().toLowerCase();
+      final filtered = query.isEmpty
+          ? raw
+          : raw.where((e) {
+              final pd = (e['participant_data'] is Map) ? Map<String, dynamic>.from(e['participant_data']) : <String, dynamic>{};
+              final name = (pd['name'] ?? '').toString().toLowerCase();
+              return name.contains(query);
+            }).toList();
+
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 12,
+          right: 12,
+          top: 8,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _q,
+              onChanged: (_) => setState(() {}),
+              decoration: InputDecoration(
+                hintText: 'ابحث عن مستخدم...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (filtered.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 18),
+                child: Text('لا يوجد مستخدمون'),
+              )
+            else
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: filtered.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, i) {
+                    final item = filtered[i];
+                    final pd = (item['participant_data'] is Map)
+                        ? Map<String, dynamic>.from(item['participant_data'])
+                        : <String, dynamic>{};
+
+                    final name = (pd['name'] ?? 'مستخدم').toString();
+                    final avatar = pd['avatar']?.toString();
+                    final type = pd['type']?.toString();
+                    final id = pd['id']?.toString();
+
+                    return ListTile(
+                      leading: _Avatar(url: avatar, isGroup: false),
+                      title: Text(name),
+                      subtitle: Text(type ?? ''),
+                      onTap: () async {
+                        if (id == null || type == null) return;
+
+                        // create direct conversation
+                        final conv = await widget.controller.createConversation(
+                          type: 'direct',
+                          participants: [
+                            {'type': type, 'id': id},
+                          ],
+                        );
+
+                        if (!mounted) return;
+                        if (conv != null) {
+                          Navigator.pop(context);
+                          await widget.controller.openConversation(conv);
+                          Get.to(() => ChatDetailPage(conversation: conv));
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      );
+    });
   }
 }

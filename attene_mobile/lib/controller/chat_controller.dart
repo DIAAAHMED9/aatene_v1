@@ -1,754 +1,547 @@
+
+// lib/controller/chat_controller.dart
 import 'dart:async';
-import 'dart:convert';
-import 'package:get/get.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
+
+import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/models/chat_models.dart';
+import 'package:attene_mobile/my_app/my_app_controller.dart';
 
-import '../api/api_request.dart';
-import '../my_app/my_app_controller.dart';
-import '../utlis/connection_status.dart';
+import '../view/screens_navigator_bottom_bar/chat/chat_message_model.dart';
 
-enum ChatTab { all, unread, interested }
+/// Tabs for the chat list.
+enum ChatTab { all, unread, active, notActive, interested }
 
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
 
-  WebSocketChannel? _channel;
-  Rx<ConnectionStatus> connectionStatus = ConnectionStatus.disconnected.obs;
-  StreamSubscription? _webSocketSubscription;
+  // Identity (best effort) to know "me" among participants
+  String? myOwnerType; // 'user' | 'store'
+  String? myOwnerId; // string id
 
-  RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
-  RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
-  RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
-  RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
-  RxList<ChatBlock> blocks = <ChatBlock>[].obs;
+  // UI state
+  final Rx<ChatTab> currentTab = ChatTab.all.obs;
+  final RxString searchQuery = ''.obs;
 
-  Rx<ChatTab> currentTab = ChatTab.all.obs;
+  final RxBool isLoading = false.obs;
+  final RxBool isLoadingMessages = false.obs;
 
-  RxBool isLoading = false.obs;
-  RxBool isLoadingMessages = false.obs;
-  RxString searchQuery = ''.obs;
-  RxInt totalUnreadCount = 0.obs;
+  // Data
+  final RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
+  final RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
+  final RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
+  final RxList<ChatConversation> filteredConversations = <ChatConversation>[].obs;
 
-  Rx<ChatConversation?> currentConversation = Rx<ChatConversation?>(null);
+  final RxList<Map<String, dynamic>> previousParticipants = <Map<String, dynamic>>[].obs;
 
-  Timer? _reconnectTimer;
-  int _reconnectAttempts = 0;
-  final int _maxReconnectAttempts = 5;
+  // Current conversation
+  final Rxn<ChatConversation> currentConversation = Rxn<ChatConversation>();
+  final RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
+
+  Timer? _pollTimer;
 
   @override
   void onInit() {
     super.onInit();
+    _resolveIdentity();
     loadInitialData();
-    _connectToWebSocket();
   }
 
   @override
   void onClose() {
-    _disconnectWebSocket();
-    _reconnectTimer?.cancel();
+    _stopPolling();
     super.onClose();
   }
 
-  Future<void> refreshConversations() async {
-    try {
-      isLoading.value = true;
-      await Future.wait([loadConversations(), loadUnreadCount()]);
-      update();
-    } catch (e) {
-      print('خطأ في تحديث المحادثات: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> refreshAllData() async {
-    try {
-      await Future.wait([loadConversations(), loadUnreadCount(), loadBlocks()]);
-      update();
-    } catch (e) {
-      print('خطأ في تحديث جميع البيانات: $e');
-    }
-  }
-
-  void _connectToWebSocket() async {
-    try {
-      if (!Get.isRegistered<MyAppController>()) {
-        print('❌ MyAppController غير مسجل');
-        connectionStatus.value = ConnectionStatus.error;
-        return;
-      }
-
-      final MyAppController myAppController = Get.find<MyAppController>();
-      String? token;
-
-      if (myAppController.isLoggedIn.value &&
-          myAppController.userData.isNotEmpty &&
-          myAppController.userData['token'] != null) {
-        token = myAppController.userData['token'];
-      }
-
-      if (token == null) {
-        print('❌ لا يوجد توكن للاتصال بـ WebSocket');
-        connectionStatus.value = ConnectionStatus.error;
-        return;
-      }
-
-      final baseUrl = ApiHelper.getBaseUrl()
-          .replaceAll('https://', 'wss://')
-          .replaceAll('http://', 'ws://');
-      final wsUrl = '$baseUrl/ws/chat?token=$token';
-
-      print('🔌 محاولة الاتصال بـ WebSocket: $wsUrl');
-
-      connectionStatus.value = ConnectionStatus.connecting;
-
-      _channel = IOWebSocketChannel.connect(
-        wsUrl,
-        pingInterval: const Duration(seconds: 30),
-      );
-
-      _webSocketSubscription = _channel!.stream.listen(
-        _handleWebSocketMessage,
-        onError: (error) {
-          print('❌ خطأ في WebSocket: $error');
-          connectionStatus.value = ConnectionStatus.error;
-          _scheduleReconnection();
-        },
-        onDone: () {
-          print('🔌 تم إغلاق اتصال WebSocket');
-          connectionStatus.value = ConnectionStatus.disconnected;
-          _scheduleReconnection();
-        },
-      );
-
-      connectionStatus.value = ConnectionStatus.connected;
-      _reconnectAttempts = 0;
-      print('✅ تم الاتصال بنجاح بـ WebSocket');
-    } catch (e) {
-      print('❌ فشل الاتصال بـ WebSocket: $e');
-      connectionStatus.value = ConnectionStatus.error;
-      _scheduleReconnection();
-    }
-  }
-
-  void _disconnectWebSocket() {
-    _webSocketSubscription?.cancel();
-    _channel?.sink.close();
-    connectionStatus.value = ConnectionStatus.disconnected;
-    print('🔌 تم قطع اتصال WebSocket');
-  }
-
-  void _scheduleReconnection() {
-    if (_reconnectAttempts >= _maxReconnectAttempts) {
-      print('⏰ تجاوزت الحد الأقصى لمحاولات إعادة الاتصال');
-      return;
-    }
-
-    _reconnectTimer?.cancel();
-
-    final delay = Duration(seconds: 2 << _reconnectAttempts);
-    _reconnectAttempts++;
-
-    print('⏰ إعادة الاتصال بعد $delay (المحاولة $_reconnectAttempts)');
-
-    _reconnectTimer = Timer(delay, () {
-      _connectToWebSocket();
-    });
-  }
-
-  void _handleWebSocketMessage(dynamic message) {
-    try {
-      final data = jsonDecode(message);
-      final eventType = data['event'];
-      final payload = data['data'];
-
-      print('📨 حدث WebSocket: $eventType');
-
-      switch (eventType) {
-        case 'new_message':
-          _handleNewMessage(payload);
-          break;
-        case 'message_read':
-          _handleMessageRead(payload);
-          break;
-        case 'conversation_updated':
-          _handleConversationUpdated(payload);
-          break;
-        case 'user_online':
-          _handleUserOnline(payload);
-          break;
-        case 'user_offline':
-          _handleUserOffline(payload);
-          break;
-        case 'typing':
-          _handleTyping(payload);
-          break;
-        case 'message_deleted':
-          _handleMessageDeleted(payload);
-          break;
-        case 'conversation_created':
-          _handleConversationCreated(payload);
-          break;
-        case 'block_update':
-          _handleBlockUpdate(payload);
-          break;
-        default:
-          print('⚠️ حدث غير معروف: $eventType');
-      }
-    } catch (e) {
-      print('❌ خطأ في معالجة رسالة WebSocket: $e');
-    }
-  }
-
-  void _handleNewMessage(Map<String, dynamic> payload) {
-    final message = ChatMessage.fromJson(payload['message']);
-    final conversationId = payload['conversation_id'];
-
-    if (currentConversation.value?.id == conversationId) {
-      currentMessages.add(message);
-      _sendReadReceipt(conversationId);
-    }
-
-    _updateConversationLastMessage(conversationId, message.content);
-
-    if (currentConversation.value?.id != conversationId) {
-      totalUnreadCount.value = totalUnreadCount.value + 1;
-    }
-
-    if (currentConversation.value?.id != conversationId) {
-      _showMessageNotification(message);
-    }
-  }
-
-  void _handleMessageRead(Map<String, dynamic> payload) {
-    final conversationId = payload['conversation_id'];
-    final userId = payload['user_id'];
-
-    for (var i = 0; i < currentMessages.length; i++) {
-      if (currentMessages[i].messageType == 'receiver') {
-        currentMessages[i] = ChatMessage(
-          id: currentMessages[i].id,
-          content: currentMessages[i].content,
-          messageType: currentMessages[i].messageType,
-          timestamp: currentMessages[i].timestamp,
-          isRead: true,
-          conversationId: currentMessages[i].conversationId,
-          senderName: currentMessages[i].senderName,
-          senderAvatar: currentMessages[i].senderAvatar,
-        );
-      }
-    }
-
-    _updateConversationUnreadCount(conversationId, 0);
-  }
-
-  void _handleConversationUpdated(Map<String, dynamic> payload) {
-    final conversation = ChatConversation.fromJson(payload);
-
-    final index = allConversations.indexWhere((c) => c.id == conversation.id);
-    if (index != -1) {
-      allConversations[index] = conversation;
-    } else {
-      allConversations.add(conversation);
-    }
-
-    updateFilteredLists();
-  }
-
-  void _handleUserOnline(Map<String, dynamic> payload) {
-    final userId = payload['user_id'];
-
-    for (var i = 0; i < allConversations.length; i++) {
-      if (allConversations[i].participantType == 'user' &&
-          allConversations[i].participantId == userId) {
-        allConversations[i] = ChatConversation(
-          id: allConversations[i].id,
-          name: allConversations[i].name,
-          lastMessage: allConversations[i].lastMessage,
-          lastMessageTime: allConversations[i].lastMessageTime,
-          avatar: allConversations[i].avatar,
-          isOnline: true,
-          unreadCount: allConversations[i].unreadCount,
-          isInterested: allConversations[i].isInterested,
-          participantType: allConversations[i].participantType,
-          participantId: allConversations[i].participantId,
-          isGroup: allConversations[i].isGroup,
-        );
-      }
-    }
-
-    updateFilteredLists();
-  }
-
-  void _handleUserOffline(Map<String, dynamic> payload) {
-    final userId = payload['user_id'];
-
-    for (var i = 0; i < allConversations.length; i++) {
-      if (allConversations[i].participantType == 'user' &&
-          allConversations[i].participantId == userId) {
-        allConversations[i] = ChatConversation(
-          id: allConversations[i].id,
-          name: allConversations[i].name,
-          lastMessage: allConversations[i].lastMessage,
-          lastMessageTime: allConversations[i].lastMessageTime,
-          avatar: allConversations[i].avatar,
-          isOnline: false,
-          unreadCount: allConversations[i].unreadCount,
-          isInterested: allConversations[i].isInterested,
-          participantType: allConversations[i].participantType,
-          participantId: allConversations[i].participantId,
-          isGroup: allConversations[i].isGroup,
-        );
-      }
-    }
-
-    updateFilteredLists();
-  }
-
-  void _handleTyping(Map<String, dynamic> payload) {
-    final conversationId = payload['conversation_id'];
-    final userId = payload['user_id'];
-    final isTyping = payload['is_typing'];
-  }
-
-  void _handleMessageDeleted(Map<String, dynamic> payload) {
-    final messageId = payload['message_id'];
-    final conversationId = payload['conversation_id'];
-
-    currentMessages.removeWhere((msg) => msg.id == messageId);
-
-    if (currentMessages.isNotEmpty) {
-      final lastMessage = currentMessages.last;
-      _updateConversationLastMessage(conversationId, lastMessage.content);
-    }
-  }
-
-  void _handleConversationCreated(Map<String, dynamic> payload) {
-    final conversation = ChatConversation.fromJson(payload);
-    allConversations.add(conversation);
-    updateFilteredLists();
-  }
-
-  void _handleBlockUpdate(Map<String, dynamic> payload) {
-    final isBlocked = payload['is_blocked'];
-    final blockedId = payload['blocked_id'];
-    final blockedType = payload['blocked_type'];
-
-    if (isBlocked) {
-      final block = ChatBlock(
-        id: payload['id'],
-        blockedType: blockedType,
-        blockedId: blockedId,
-        blockedAt: DateTime.parse(payload['blocked_at']),
-      );
-      blocks.add(block);
-    } else {
-      blocks.removeWhere(
-        (b) => b.blockedType == blockedType && b.blockedId == blockedId,
-      );
-    }
-  }
-
-  void _updateConversationLastMessage(int conversationId, String lastMessage) {
-    final index = allConversations.indexWhere((c) => c.id == conversationId);
-    if (index != -1) {
-      final updated = allConversations[index];
-      allConversations[index] = ChatConversation(
-        id: updated.id,
-        name: updated.name,
-        lastMessage: lastMessage,
-        lastMessageTime: DateTime.now(),
-        avatar: updated.avatar,
-        isOnline: updated.isOnline,
-        unreadCount:
-            updated.unreadCount +
-            (currentConversation.value?.id == conversationId ? 0 : 1),
-        isInterested: updated.isInterested,
-        participantType: updated.participantType,
-        participantId: updated.participantId,
-        isGroup: updated.isGroup,
-      );
-
-      updateFilteredLists();
-    }
-  }
-
-  void _updateConversationUnreadCount(int conversationId, int unreadCount) {
-    final index = allConversations.indexWhere((c) => c.id == conversationId);
-    if (index != -1) {
-      final updated = allConversations[index];
-      allConversations[index] = ChatConversation(
-        id: updated.id,
-        name: updated.name,
-        lastMessage: updated.lastMessage,
-        lastMessageTime: updated.lastMessageTime,
-        avatar: updated.avatar,
-        isOnline: updated.isOnline,
-        unreadCount: unreadCount,
-        isInterested: updated.isInterested,
-        participantType: updated.participantType,
-        participantId: updated.participantId,
-        isGroup: updated.isGroup,
-      );
-
-      updateFilteredLists();
-    }
-  }
-
-  void _sendReadReceipt(int conversationId) {
-    if (_channel != null &&
-        connectionStatus.value == ConnectionStatus.connected) {
-      final message = jsonEncode({
-        'event': 'message_read',
-        'data': {
-          'conversation_id': conversationId,
-          'timestamp': DateTime.now().toIso8601String(),
-        },
-      });
-
-      _channel!.sink.add(message);
-    }
-  }
-
-  void _showMessageNotification(ChatMessage message) {
-    Get.snackbar(
-      'رسالة جديدة',
-      message.content,
-      duration: Duration(seconds: 3),
-      snackPosition: SnackPosition.TOP,
-    );
-  }
-
-  void sendTypingStatus(int conversationId, bool isTyping) {
-    if (_channel != null &&
-        connectionStatus.value == ConnectionStatus.connected) {
-      final message = jsonEncode({
-        'event': 'typing',
-        'data': {'conversation_id': conversationId, 'is_typing': isTyping},
-      });
-
-      _channel!.sink.add(message);
-    }
-  }
-
   Future<void> loadInitialData() async {
+    await Future.wait([
+      loadConversations(),
+      loadPreviousParticipants(),
+    ]);
+  }
+
+  void _resolveIdentity() {
     try {
-      isLoading.value = true;
-      await Future.wait([loadConversations(), loadUnreadCount(), loadBlocks()]);
-    } catch (e) {
-      print('خطأ في تحميل البيانات الأولية: $e');
-    } finally {
-      isLoading.value = false;
+      if (!Get.isRegistered<MyAppController>()) return;
+      final c = Get.find<MyAppController>();
+
+      final ud = (c.userData is Map)
+          ? Map<String, dynamic>.from(c.userData)
+          : <String, dynamic>{};
+
+      final type = (ud['type'] ?? ud['owner_type'] ?? ud['user_type'])?.toString();
+
+      if (type == 'store') {
+        myOwnerType = 'store';
+        myOwnerId = (ud['store_id'] ?? ud['id'] ?? ud['owner_id'])?.toString();
+        return;
+      }
+      if (type == 'user') {
+        myOwnerType = 'user';
+        myOwnerId = (ud['user_id'] ?? ud['id'] ?? ud['owner_id'])?.toString();
+        return;
+      }
+
+      // fallback: store_id implies store
+      if (ud['store_id'] != null) {
+        myOwnerType = 'store';
+        myOwnerId = (ud['store_id'] ?? ud['id'])?.toString();
+        return;
+      }
+
+      // fallback: if API layer uses storeId header, adopt it
+      final sid = ApiHelper.getStoreIdOrNull();
+      if (sid != null) {
+        myOwnerType = 'store';
+        myOwnerId = sid.toString();
+        return;
+      }
+
+      // fallback: assume user
+      if (ud['id'] != null) {
+        myOwnerType = 'user';
+        myOwnerId = ud['id']?.toString();
+      }
+    } catch (_) {
+      // ignore
     }
   }
 
-  Future<void> loadConversations() async {
+  ChatConversation? _findConversation(int id) {
+    final idx = allConversations.indexWhere((c) => c.id == id);
+    if (idx >= 0) return allConversations[idx];
+    return null;
+  }
+
+  ChatParticipant? _myParticipantForConversation(ChatConversation conv) {
+    for (final p in conv.participants) {
+      final d = p.participantData;
+      if (d == null) continue;
+      final isMe = (myOwnerType != null &&
+          myOwnerId != null &&
+          d.type == myOwnerType &&
+          d.id == myOwnerId);
+      if (isMe) return p;
+    }
+    return null;
+  }
+
+  /// Refresh list
+  Future<void> refreshConversations() async {
+    await loadConversations();
+    await loadPreviousParticipants();
+  }
+
+  /// Load conversations list from API
+  Future<void> loadConversations({bool silent = false}) async {
     try {
-      final response = await ApiHelper.get(
+      if (!silent) isLoading.value = true;
+
+      final res = await ApiHelper.get(
         path: '/conversations',
         withLoading: false,
         shouldShowMessage: false,
       );
 
-      if (response != null && response['data'] is List) {
-        final List conversations = response['data'];
-        allConversations.assignAll(
-          conversations.map((conv) => ChatConversation.fromJson(conv)).toList(),
-        );
+      if (res is Map && res['status'] == true) {
+        final raw = res['conversations'] ?? res['data'];
+        if (raw is List) {
+          final list = raw
+              .whereType<Map>()
+              .map((e) => ChatConversation.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
 
-        updateFilteredLists();
+          // Keep order (API usually returns newest first). If not, sort by updatedAt.
+          allConversations.assignAll(list);
+
+          // unread is: conversation has any participant unread > 0
+          unreadConversations.assignAll(
+            list.where((c) => c.totalUnread > 0).toList(),
+          );
+
+          // interested: optional tab, here just keep direct/group with lastMessage null? (adjust if your API has flag)
+          interestedConversations.assignAll(
+            list.where((c) => (c.type == 'direct' || c.type == 'group')).toList(),
+          );
+
+          _applyFilters();
+        }
       }
     } catch (e) {
-      print('خطأ في تحميل المحادثات: $e');
+      // ignore: avoid_print
+      print('❌ loadConversations: $e');
+    } finally {
+      if (!silent) isLoading.value = false;
     }
   }
 
-  Future<void> loadConversationMessages(int conversationId) async {
+  void _applyFilters() {
+    final q = searchQuery.value.trim().toLowerCase();
+
+    List<ChatConversation> base;
+    switch (currentTab.value) {
+      case ChatTab.unread:
+        base = unreadConversations.toList();
+        break;
+      case ChatTab.interested:
+        base = interestedConversations.toList();
+        break;
+      case ChatTab.active:
+        base = allConversations.where((c) => c.lastMessage != null).toList();
+        break;
+      case ChatTab.notActive:
+        base = allConversations.where((c) => c.lastMessage == null).toList();
+        break;
+      case ChatTab.all:
+      default:
+        base = allConversations.toList();
+        break;
+    }
+
+    if (q.isNotEmpty) {
+      base = base.where((c) {
+        final name = c.displayName(myOwnerType: myOwnerType, myOwnerId: myOwnerId).toLowerCase();
+        return name.contains(q);
+      }).toList();
+    }
+
+    filteredConversations.assignAll(base);
+  }
+
+  void setSearch(String v) {
+    searchQuery.value = v;
+    _applyFilters();
+  }
+
+  void setTab(ChatTab tab) {
+    currentTab.value = tab;
+    _applyFilters();
+  }
+
+  /// Participants list used by "New chat" screen
+  Future<void> loadPreviousParticipants() async {
     try {
-      isLoadingMessages.value = true;
-      final response = await ApiHelper.get(
+      final res = await ApiHelper.get(
+        path: '/conversations/prev_participants',
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+      if (res is Map && res['status'] == true && res['participants'] is List) {
+        previousParticipants.assignAll(
+          (res['participants'] as List)
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList(),
+        );
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('❌ loadPreviousParticipants: $e');
+    }
+  }
+
+  /// For old code that calls it
+  Future<void> loadUnreadCounts() async {
+    // unread counts already included in conversations response
+    await loadConversations();
+  }
+
+  /// Opens conversation and starts polling (no sockets)
+  Future<void> openConversation(ChatConversation conversation) async {
+    currentConversation.value = conversation;
+    await loadConversationMessages(conversation.id);
+    _startPolling(conversation.id);
+  }
+
+  void _startPolling(int conversationId) {
+    _stopPolling();
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      if (currentConversation.value?.id != conversationId) return;
+      await loadConversationMessages(conversationId, silent: true);
+    });
+  }
+
+  void _stopPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+  }
+
+  /// Loads conversation details (fallback to local list)
+  Future<ChatConversation?> loadConversationDetails(int conversationId) async {
+    final local = _findConversation(conversationId);
+    if (local != null) return local;
+
+    // Try refresh then find
+    await loadConversations();
+    return _findConversation(conversationId);
+  }
+
+  /// Loads messages list and sorts ASC by createdAt if possible.
+  Future<void> loadConversationMessages(int conversationId, {bool silent = false}) async {
+    try {
+      if (!silent) isLoadingMessages.value = true;
+
+      final res = await ApiHelper.get(
         path: '/conversations/$conversationId/messages',
         withLoading: false,
         shouldShowMessage: false,
       );
 
-      if (response != null && response['data'] is List) {
-        final List messages = response['data'];
-        currentMessages.assignAll(
-          messages.map((msg) => ChatMessage.fromJson(msg)).toList(),
-        );
+      if (res is Map && res['status'] == true) {
+        final raw = res['messages'] ?? res['data'];
+        if (raw is List) {
+          final list = raw
+              .whereType<Map>()
+              .map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
 
-        _sendReadReceipt(conversationId);
+          list.sort((a, b) {
+            final aa = a.createdAt ?? '';
+            final bb = b.createdAt ?? '';
+            return aa.compareTo(bb);
+          });
+
+          currentMessages.assignAll(list);
+        }
       }
     } catch (e) {
-      print('خطأ في تحميل الرسائل: $e');
+      // ignore: avoid_print
+      print('❌ loadConversationMessages: $e');
     } finally {
-      isLoadingMessages.value = false;
+      if (!silent) isLoadingMessages.value = false;
     }
   }
 
-  Future<void> sendMessage(String message, int conversationId) async {
+  /// Unified sender: sends text only
+  Future<ChatMessage?> sendTextMessage({
+    required int conversationId,
+    required String text,
+  }) async {
+    return sendMessage(conversationId: conversationId, body: text);
+  }
+
+  /// Unified sender: sends files (images/audio/docs) + optional text
+  Future<ChatMessage?> sendFilesMessage({
+    required int conversationId,
+    required List<File> files,
+    String? text,
+  }) async {
+    final paths = files.map((f) => f.path).toList();
+    return sendMessage(conversationId: conversationId, body: text, filePaths: paths);
+  }
+
+  /// Original sender (kept) - uses participant_id as required by your backend.
+  Future<ChatMessage?> sendMessage({
+    required int conversationId,
+    String? body,
+    List<String>? filePaths,
+    int? productId,
+    int? serviceId,
+    int? varationId, // backend: varation_id
+  }) async {
     try {
-      final Map<String, dynamic> body = {
-        'content': message,
-        'conversation_id': conversationId,
+      final conv = _findConversation(conversationId) ?? currentConversation.value;
+      if (conv == null) {
+        throw 'Conversation not found locally';
+      }
+
+      // Identify sender without relying on participants list.
+// Backend typically expects owner type + owner id (e.g. storeId/userId), not the participant-row id.
+final ownerType = myOwnerType;
+final ownerId = myOwnerId ?? ApiHelper.getStoreIdOrNull();
+if (ownerType == null || ownerId == null) {
+  throw 'Cannot determine my participant identity (type/id)';
+}
+
+final form = FormData();
+
+// REQUIRED BY BACKEND
+form.fields.add(MapEntry('conversation_id', conversationId.toString()));
+form.fields.add(MapEntry('participant_type', ownerType));
+form.fields.add(MapEntry('participant_id', ownerId.toString()));
+if (body != null && body.trim().isNotEmpty) {
+        form.fields.add(MapEntry('body', body.trim()));
+      }
+      if (productId != null) form.fields.add(MapEntry('product_id', productId.toString()));
+      if (serviceId != null) form.fields.add(MapEntry('service_id', serviceId.toString()));
+      if (varationId != null) form.fields.add(MapEntry('varation_id', varationId.toString()));
+
+      if (filePaths != null && filePaths.isNotEmpty) {
+        for (final p in filePaths) {
+          form.files.add(MapEntry('files[]', await MultipartFile.fromFile(p)));
+        }
+      }
+
+      final res = await ApiHelper.post(
+        path: '/messages',
+        body: form,
+        withLoading: true,
+        shouldShowMessage: false,
+      );
+
+      if (res is Map && res['status'] == true && res['message'] is Map) {
+        final msg = ChatMessage.fromJson(Map<String, dynamic>.from(res['message']));
+
+        // append if open
+        if (currentConversation.value?.id == conversationId) {
+          currentMessages.add(msg);
+        }
+
+        // update conversation if returned
+        final convJson = (res['message'] as Map)['conversation'];
+        if (convJson is Map) {
+          final updated = ChatConversation.fromJson(Map<String, dynamic>.from(convJson));
+          _upsertConversation(updated);
+        } else {
+          // otherwise, bump conversation to top
+          final idx = allConversations.indexWhere((c) => c.id == conversationId);
+          if (idx >= 0) {
+            final c0 = allConversations.removeAt(idx);
+            allConversations.insert(0, c0);
+          }
+        }
+        _applyFilters();
+        return msg;
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('❌ sendMessage: $e');
+    }
+    return null;
+  }
+
+  void _upsertConversation(ChatConversation conv) {
+    final idx = allConversations.indexWhere((c) => c.id == conv.id);
+    if (idx < 0) {
+      allConversations.insert(0, conv);
+    } else {
+      allConversations[idx] = conv;
+      // move to top
+      final c0 = allConversations.removeAt(idx);
+      allConversations.insert(0, c0);
+    }
+  }
+
+  Future<bool> markMessageSeen(int messageId) async {
+    try {
+      final res = await ApiHelper.post(
+        path: '/messages/$messageId/seen',
+        body: {},
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+      return (res is Map && res['status'] == true);
+    } catch (_) {}
+    return false;
+  }
+
+  // ---- Conversation management (already supported by your backend) ----
+
+  Future<ChatConversation?> createConversation({
+    required String type, // direct | group
+    String? name,
+    required List<Map<String, dynamic>> participants,
+  }) async {
+    try {
+      final body = <String, dynamic>{
+        'type': type,
+        if (name != null) 'name': name,
+        'participants': participants,
       };
 
-      final response = await ApiHelper.post(
-        path: '/messages',
+      final res = await ApiHelper.post(
+        path: '/conversations',
         body: body,
         withLoading: true,
         shouldShowMessage: true,
       );
 
-      if (response != null) {
-        final ChatMessage newMessage = ChatMessage.fromJson(response['data']);
-        currentMessages.add(newMessage);
-
-        if (_channel != null &&
-            connectionStatus.value == ConnectionStatus.connected) {
-          final wsMessage = jsonEncode({
-            'event': 'new_message',
-            'data': {
-              'message': newMessage.toJson(),
-              'conversation_id': conversationId,
-            },
-          });
-
-          _channel!.sink.add(wsMessage);
-        }
+      if (res is Map && res['status'] == true && res['conversation'] is Map) {
+        final conv = ChatConversation.fromJson(Map<String, dynamic>.from(res['conversation']));
+        _upsertConversation(conv);
+        _applyFilters();
+        return conv;
       }
     } catch (e) {
-      print('خطأ في إرسال الرسالة: $e');
-      rethrow;
+      // ignore: avoid_print
+      print('❌ createConversation: $e');
     }
+    return null;
   }
 
-  Future<void> markMessagesAsRead(int conversationId) async {
+  Future<bool> deleteConversation(int conversationId) async {
     try {
-      await ApiHelper.post(
-        path: '/conversations/$conversationId/mark-as-read',
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-
-      if (_channel != null &&
-          connectionStatus.value == ConnectionStatus.connected) {
-        final message = jsonEncode({
-          'event': 'message_read',
-          'data': {
-            'conversation_id': conversationId,
-            'user_id': Get.find<MyAppController>().userData['id'],
-          },
-        });
-
-        _channel!.sink.add(message);
-      }
-    } catch (e) {
-      print('خطأ في تحديث حالة القراءة: $e');
-    }
-  }
-
-  Future<void> loadUnreadCount() async {
-    try {
-      final response = await ApiHelper.get(
-        path: '/conversations/unread-count',
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-
-      if (response != null && response['total_unread'] != null) {
-        totalUnreadCount.value = response['total_unread'];
-      }
-    } catch (e) {
-      print('خطأ في تحميل عدد الرسائل غير المقروءة: $e');
-    }
-  }
-
-  Future<void> toggleInterest(int conversationId, bool isInterested) async {
-    try {
-      final response = await ApiHelper.post(
-        path: '/conversations/$conversationId/toggle-interest',
-        body: {'is_interested': isInterested},
+      final res = await ApiHelper.delete(
+        path: '/conversations/$conversationId',
         withLoading: true,
         shouldShowMessage: true,
       );
 
-      if (response != null) {
-        if (_channel != null &&
-            connectionStatus.value == ConnectionStatus.connected) {
-          final message = jsonEncode({
-            'event': 'conversation_updated',
-            'data': response['data'],
-          });
+      if (res is Map && res['status'] == true) {
+        allConversations.removeWhere((c) => c.id == conversationId);
+        unreadConversations.removeWhere((c) => c.id == conversationId);
+        interestedConversations.removeWhere((c) => c.id == conversationId);
+        filteredConversations.removeWhere((c) => c.id == conversationId);
 
-          _channel!.sink.add(message);
+        if (currentConversation.value?.id == conversationId) {
+          currentConversation.value = null;
+          currentMessages.clear();
         }
+        _applyFilters();
+        return true;
       }
     } catch (e) {
-      print('خطأ في تغيير حالة الاهتمام: $e');
+      // ignore: avoid_print
+      print('❌ deleteConversation: $e');
     }
+    return false;
   }
 
-  Future<void> blockUser(String blockedType, int blockedId) async {
+  Future<bool> addParticipant({
+    required int conversationId,
+    required Map<String, dynamic> participant,
+  }) async {
     try {
-      final response = await ApiHelper.post(
-        path: '/blocks/block',
-        body: {'blocked_type': blockedType, 'blocked_id': blockedId},
+      final res = await ApiHelper.post(
+        path: '/conversations/$conversationId/participants',
+        body: participant,
         withLoading: true,
         shouldShowMessage: true,
       );
 
-      if (response != null) {
-        if (_channel != null &&
-            connectionStatus.value == ConnectionStatus.connected) {
-          final message = jsonEncode({
-            'event': 'block_update',
-            'data': response['data'],
-          });
-
-          _channel!.sink.add(message);
-        }
+      if (res is Map && res['status'] == true) {
+        await loadConversations();
+        return true;
       }
     } catch (e) {
-      print('خطأ في حظر المستخدم: $e');
+      // ignore: avoid_print
+      print('❌ addParticipant: $e');
     }
+    return false;
   }
 
-  Future<void> unblockUser(int blockId) async {
+  Future<bool> removeParticipant({
+    required int conversationId,
+    required int participantRecordId,
+  }) async {
     try {
-      final response = await ApiHelper.delete(
-        path: '/blocks/unblock/$blockId',
+      final res = await ApiHelper.delete(
+        path: '/conversations/$conversationId/participants/$participantRecordId',
         withLoading: true,
         shouldShowMessage: true,
       );
 
-      if (response != null) {
-        if (_channel != null &&
-            connectionStatus.value == ConnectionStatus.connected) {
-          final message = jsonEncode({
-            'event': 'block_update',
-            'data': response['data'],
-          });
-
-          _channel!.sink.add(message);
-        }
+      if (res is Map && res['status'] == true) {
+        await loadConversations();
+        return true;
       }
     } catch (e) {
-      print('خطأ في إلغاء حظر المستخدم: $e');
+      // ignore: avoid_print
+      print('❌ removeParticipant: $e');
     }
-  }
-
-  Future<void> loadBlocks() async {
-    try {
-      final response = await ApiHelper.get(
-        path: '/blocks',
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-
-      if (response != null && response['data'] is List) {
-        final List blocksData = response['data'];
-        blocks.assignAll(
-          blocksData.map((block) => ChatBlock.fromJson(block)).toList(),
-        );
-      }
-    } catch (e) {
-      print('خطأ في تحميل قائمة المحظورين: $e');
-    }
-  }
-
-  Future<void> createConversation(Map<String, dynamic> participantData) async {
-    try {
-      final response = await ApiHelper.post(
-        path: '/conversations',
-        body: participantData,
-        withLoading: true,
-        shouldShowMessage: true,
-      );
-
-      if (response != null) {
-        if (_channel != null &&
-            connectionStatus.value == ConnectionStatus.connected) {
-          final message = jsonEncode({
-            'event': 'conversation_created',
-            'data': response['data'],
-          });
-
-          _channel!.sink.add(message);
-        }
-      }
-    } catch (e) {
-      print('خطأ في إنشاء محادثة جديدة: $e');
-    }
-  }
-
-  void updateFilteredLists() {
-    unreadConversations.assignAll(
-      allConversations.where((conv) => conv.unreadCount > 0).toList(),
-    );
-
-    interestedConversations.assignAll(
-      allConversations.where((conv) => conv.isInterested).toList(),
-    );
-
-    totalUnreadCount.value = allConversations.fold(
-      0,
-      (sum, conv) => sum + conv.unreadCount,
-    );
-
-    update();
-  }
-
-  void setCurrentTab(ChatTab tab) {
-    currentTab.value = tab;
-    update();
-  }
-
-  void setCurrentConversation(ChatConversation conversation) {
-    currentConversation.value = conversation;
-  }
-
-  void clearCurrentConversation() {
-    currentConversation.value = null;
-    currentMessages.clear();
-  }
-
-  void updateSearchQuery(String query) {
-    searchQuery.value = query;
-    update();
-  }
-
-  List<ChatConversation> getFilteredConversations() {
-    List<ChatConversation> sourceList;
-
-    switch (currentTab.value) {
-      case ChatTab.unread:
-        sourceList = unreadConversations;
-        break;
-      case ChatTab.interested:
-        sourceList = interestedConversations;
-        break;
-      default:
-        sourceList = allConversations;
-    }
-
-    if (searchQuery.value.isEmpty) {
-      return sourceList;
-    }
-
-    return sourceList.where((conv) {
-      return conv.name?.toLowerCase().contains(
-            searchQuery.value.toLowerCase(),
-          ) ??
-          false;
-    }).toList();
-  }
-
-  void reconnectWebSocket() {
-    _reconnectAttempts = 0;
-    _connectToWebSocket();
+    return false;
   }
 }

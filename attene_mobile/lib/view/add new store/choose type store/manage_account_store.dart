@@ -11,6 +11,7 @@ import 'package:attene_mobile/utlis/language/language_utils.dart';
 import 'package:attene_mobile/view/add%20new%20store/add_new_store.dart';
 import 'package:attene_mobile/view/Services/data_lnitializer_service.dart';
 import 'package:attene_mobile/view/Services/unified_loading_screen.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'manage_account_store_controller.dart';
 
@@ -19,6 +20,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
 
   @override
   Widget build(BuildContext context) {
+    
     final ManageAccountStoreController controller = Get.put(
       ManageAccountStoreController(),
     );
@@ -67,6 +69,8 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     MyAppController myAppController,
     BuildContext context,
   ) {
+
+      // هنا يمكنك إرسال التوكن إلى 
     if (!myAppController.isLoggedIn.value) {
       return _buildLoginRequiredView();
     }
@@ -91,6 +95,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          
           CircularProgressIndicator(),
           const SizedBox(height: 16),
           Text('جاري تحميل المتاجر...'),
@@ -220,7 +225,7 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
               ),
             ),
           ),
-
+          // Text('token device is : $token'),
           Container(
             margin: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
             padding: const EdgeInsets.all(16.0),

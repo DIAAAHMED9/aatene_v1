@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _startApp() async {
     if (_isInitializing) return;
-
+    
     setState(() {
       _isInitializing = true;
       _showError = false;
@@ -37,7 +37,6 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       // تهيئة التطبيق
       await AppInitializationService.initialize();
-
       if (mounted) {
         // الانتقال إلى شاشة onboarding
         Navigator.pushReplacementNamed(context, '/onboarding');

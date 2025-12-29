@@ -6,6 +6,7 @@ import 'package:attene_mobile/utlis/language/language_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
+import 'package:get_storage/get_storage.dart';
 
 const String postMethod = 'POST';
 const String getMethod = 'GET';
@@ -66,6 +67,26 @@ class ApiHelper {
     }
   }
 
+  /// Best-effort helper: returns current storeId if available (as string).
+  /// Used by chat when MyAppController doesn't expose owner identity clearly.
+  static String? getStoreIdOrNull() {
+    try {
+      if (Get.isRegistered<MyAppController>()) {
+        final c = Get.find<MyAppController>();
+        final ud = (c.userData is Map) ? Map<String, dynamic>.from(c.userData) : <String, dynamic>{};
+        final v = (ud['store_id'] ?? ud['storeId'] ?? ud['store']?['id']);
+        if (v != null) return v.toString();
+      }
+      // Fallback to the header default (if you keep it constant in _getBaseHeaders)
+      final h = _getBaseHeaders();
+      final v2 = h['storeId'];
+      return v2?.toString();
+    } catch (_) {
+      return null;
+    }
+  }
+
+
   static String _getBaseUrl() {
     switch (currentMode) {
       case AppMode.dev:
@@ -76,6 +97,9 @@ class ApiHelper {
         return 'https://api.aatene.com/api/v1';
     }
   }
+
+
+  // getBaseUrl() is defined near the bottom to keep backward compatibility
 
   static Future<dynamic> get({
     required String path,
@@ -202,6 +226,18 @@ class ApiHelper {
     }
   }
 
+  static String _safeJsonEncode(dynamic value) {
+    try {
+      return const JsonEncoder.withIndent('  ').convert(value);
+    } catch (_) {
+      try {
+        return jsonEncode(value);
+      } catch (e) {
+        return value.toString();
+      }
+    }
+  }
+
   static Future<dynamic> delete({
     required String path,
     dynamic body,
@@ -264,6 +300,12 @@ class ApiHelper {
 
       final requestHeaders = {..._getBaseHeaders(), ...?headers};
 
+      // If sending FormData (multipart), remove Content-Type to let Dio set the boundary
+      if (body is FormData) {
+        requestHeaders.removeWhere((k, _) => k.toLowerCase() == 'content-type');
+      }
+
+
       if (method.toUpperCase() == 'POST' && path.contains('/auth/login')) {
         requestHeaders.removeWhere(
           (key, value) => key.toLowerCase() == 'authorization',
@@ -274,7 +316,7 @@ class ApiHelper {
       print('''
 🎯 [API REQUEST] $method ${_getBaseUrl()}$path
 📦 Headers: $requestHeaders
-📤 Body: ${body != null ? jsonEncode(body) : 'null'}
+📤 Body: ${body == null ? 'null' : (body is FormData ? '[FormData]' : _safeJsonEncode(body))}
     ''');
 
       final Dio dio = Dio(
@@ -341,10 +383,14 @@ class ApiHelper {
     required String password,
     bool withLoading = true,
   }) async {
+   final  GetStorage storage= GetStorage();
     final bool isEmail = email.contains('@');
 
     Map<String, dynamic> body = {'password': password};
     body['login'] = email;
+    body['device_name'] =storage.read('device_name') ;
+    body['device_token'] =storage.read('device_token') ;
+    // body['device_unique_id']='bjh89';
 
     print('''
 🔑 محاولة تسجيل الدخول للمستخدم: $email
@@ -368,6 +414,8 @@ class ApiHelper {
     required String passwordConfirmation,
     bool withLoading = true,
   }) async {
+       final  GetStorage storage= GetStorage();
+
     return await post(
       path: '/auth/register',
       body: {
@@ -376,6 +424,9 @@ class ApiHelper {
         'phone': phone,
         'password': password,
         'password_confirmation': passwordConfirmation,
+            'device_name': storage.read('device_name') ,
+    'device_token': storage.read('device_token') ,
+    // 'device_unique_id':'bjh89'
       },
       withLoading: withLoading,
       shouldShowMessage: true,
@@ -469,7 +520,74 @@ class ApiHelper {
       shouldShowMessage: false,
     );
   }
+static Future<dynamic> getChatConversations({
+  int? lastMessageId,
+  int? limit = 50,
+}) async {
+  Map<String, dynamic> queryParams = {};
+  if (lastMessageId != null) {
+    queryParams['last_message_id'] = lastMessageId;
+  }
+  if (limit != null) {
+    queryParams['limit'] = limit;
+  }
+  
+  return await get(
+    path: '/conversations',
+    queryParameters: queryParams,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
 
+static Future<dynamic> getConversationMessages(
+  int conversationId, {
+  int? lastMessageId,
+  int? page,
+  int? perPage,
+}) async {
+  Map<String, dynamic> queryParams = {};
+  if (lastMessageId != null) {
+    queryParams['last_message_id'] = lastMessageId;
+  }
+  if (page != null) {
+    queryParams['page'] = page;
+  }
+  if (perPage != null) {
+    queryParams['per_page'] = perPage;
+  }
+  
+  return await get(
+    path: '/conversations/$conversationId/messages',
+    queryParameters: queryParams,
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+// أضف هذه الطرق إلى ApiHelper
+static Future<dynamic> markMessageAsSeen(int messageId) async {
+  return await post(
+    path: '/messages/$messageId/seen',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getUnreadCounts() async {
+  return await get(
+    path: '/conversations/unread-counts',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
+
+static Future<dynamic> getConversationDetails(int conversationId) async {
+  return await get(
+    path: '/conversations/$conversationId',
+    withLoading: false,
+    shouldShowMessage: false,
+  );
+}
   static Future<dynamic> updateUserProfile(Map<String, dynamic> data) async {
     return await put(
       path: '/user/profile',
