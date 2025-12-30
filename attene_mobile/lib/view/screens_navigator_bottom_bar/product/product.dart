@@ -495,7 +495,7 @@ class ProductScreen extends GetView<ProductController> {
             onPressed: () {
               controller.reloadProducts();
             },
-            child: Text('إعادة المحاولة'),
+            child: Text('إعادة المحاولة', style: getRegular(color: Colors.white),),
           ),
         ],
       ),

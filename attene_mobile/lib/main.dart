@@ -220,7 +220,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => BlockScreen()),
+        GetPage(name: '/', page: () => SplashScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -234,6 +234,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
       ],
       debugShowCheckedModeBanner: false,
+
     );
   }
 }

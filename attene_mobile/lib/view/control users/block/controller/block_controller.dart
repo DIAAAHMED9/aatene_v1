@@ -80,7 +80,7 @@ class BlockController extends GetxController {
     );
   }
 
-  /// ❌ Unblock with smart undo
+  /// ❌ Unblock
   void unblock({required int tab, required int index}) {
     _undoTimer?.cancel();
 
@@ -107,7 +107,7 @@ class BlockController extends GetxController {
 
     _showUndoSnackbar();
 
-    /// timeout ذكي
+    /// timeout
     _undoTimer = Timer(const Duration(seconds: 4), () {
       _clearUndo();
     });

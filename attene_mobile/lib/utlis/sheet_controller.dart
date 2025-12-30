@@ -737,7 +737,7 @@ class BottomSheetController extends GetxController {
               prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
               isRTL: isRTL,
               hintText: 'ابحث في الأقسام',
-              textInputAction: TextInputAction.next,
+              textInputAction: TextInputAction.done,
             ),
             const SizedBox(height: 20),
 
@@ -823,7 +823,7 @@ class BottomSheetController extends GetxController {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: loadSections,
-                child: const Text('إعادة المحاولة'),
+                child:  Text('إعادة المحاولة', style: getRegular(color: Colors.white),),
               ),
             ],
           ),
@@ -831,13 +831,13 @@ class BottomSheetController extends GetxController {
       }
 
       if (_filteredSections.isEmpty) {
-        return const Center(
+        return  Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.folder_open_rounded, size: 60, color: Colors.grey),
               SizedBox(height: 16),
-              Text('لا توجد أقسام'),
+              Text('لا توجد أقسام', style: getRegular(),),
             ],
           ),
         );
