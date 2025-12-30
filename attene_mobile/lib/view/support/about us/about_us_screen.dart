@@ -542,14 +542,28 @@ class AboutUsScreen extends StatelessWidget {
                         onPressed: () {
                           UrlHelper.open("https://wa.me/+972526213879");
                         },
-                        child: Text('واتس خدمة العملاء'),
+                        child: Text(
+                          'واتس خدمة العملاء',
+                          style: getMedium(color: Colors.white),
+                        ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        UrlHelper.open("https://wa.me/+972559390851");
-                      },
-                      child: Text('واتس لاستعلام عن الخدمات والمنتجات'),
+                    Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary500,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          UrlHelper.open("https://wa.me/+972559390851");
+                        },
+                        child: Text(
+                          'واتس لاستعلام عن الخدمات والمنتجات',
+                          style: getMedium(color: Colors.white),
+                        ),
+                      ),
                     ),
                   ],
                 ),

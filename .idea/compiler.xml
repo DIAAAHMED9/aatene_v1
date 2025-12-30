@@ -3,9 +3,11 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="android.file_picker" target="21" />
-      <module name="gradle" target="21" />
-      <module name="gradle.main" target="11" />
-      <module name="gradle.test" target="11" />
+      <module name="android.flutter_secure_storage" target="21" />
+      <module name="android.fluttertoast" target="21" />
+      <module name="android.package_info_plus" target="21" />
+      <module name="android.share_plus" target="21" />
+      <module name="android.wakelock_plus" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

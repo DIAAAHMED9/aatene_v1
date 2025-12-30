@@ -22,7 +22,7 @@ class BlockScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          "تغيير البريد الالكتروني",
+          "قائمة الحظر",
           style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,

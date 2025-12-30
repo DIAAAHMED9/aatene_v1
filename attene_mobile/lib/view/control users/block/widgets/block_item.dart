@@ -58,20 +58,41 @@ class BlockItem extends StatelessWidget {
       AlertDialog(
         title: Text(
           'تأكيد',
-          style: getBold(color: AppColors.primary500, fontSize: 18),
+          style: getBold(color: AppColors.primary500, fontSize: 20),
         ),
         content: Text('هل أنت متأكد من إلغاء الحظر؟', style: getMedium()),
         actions: [
-          TextButton(
-            onPressed: Get.back,
-            child: Text('إلغاء', style: getRegular()),
+          Container(
+            height: 40,
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.primary400),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: TextButton(
+              onPressed: Get.back,
+              child: Text(
+                'إلغاء',
+                style: getMedium(color: AppColors.primary400),
+              ),
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              Get.back(); // ⬅️ إغلاق الـ Dialog أولاً
-              controller.unblock(tab: tab, index: index);
-            },
-            child: Text('تأكيد', style: getRegular(color: AppColors.error300)),
+          Container(
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(50),
+            ),
+
+            child: TextButton(
+              onPressed: () {
+                Get.back(); // ⬅️ إغلاق الـ Dialog أولاً
+                controller.unblock(tab: tab, index: index);
+              },
+              child: Text(
+                'تأكيد',
+                style: getMedium(color: AppColors.light1000),
+              ),
+            ),
           ),
         ],
       ),
