@@ -221,7 +221,7 @@ class AboutUsScreen extends StatelessWidget {
                             subtitle:
                                 "إعادة بيع الأجهزة الكهربائية بحالة ممتازة، الأثاث المستعمل، الأدوات المنزلية الزائدة، أو الملابس التي لم تعد تستخدمها.",
                             icon: Icon(
-                              Icons.shopping_basket_rounded,
+                              Icons.museum_sharp,
                               color: AppColors.light1000,
                             ),
                           ),

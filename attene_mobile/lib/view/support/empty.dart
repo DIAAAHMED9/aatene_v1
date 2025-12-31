@@ -9,7 +9,9 @@ class Empty extends StatelessWidget {
     return Scaffold(
       body: Column(
         spacing: 50,
+        
         children: [
+          
           Text("ضياء اعطيني", style: getBlack(color: Colors.black, fontSize: 40)),
           Text("ضياءءءء اعطيني", style: TextStyle(fontSize: 40)),
         ],
