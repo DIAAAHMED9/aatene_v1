@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../../component/text/aatene_custom_text.dart';
 import 'chat_message_model.dart';
 
 class ChatMassege extends StatefulWidget {
@@ -99,61 +100,71 @@ class _ChatMassegeState extends State<ChatMassege> {
       final conv = (c.currentConversation.value?.id == widget.conversation.id)
           ? c.currentConversation.value!
           : widget.conversation;
-      final title = conv.displayName(myOwnerType: c.myOwnerType, myOwnerId: c.myOwnerId);
+      final title = conv.displayName(
+        myOwnerType: c.myOwnerType,
+        myOwnerId: c.myOwnerId,
+      );
 
       return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: _openConversationActions,
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(() {
-              if (c.isLoadingMessages.value && c.currentMessages.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final msgs = c.currentMessages;
+        appBar: AppBar(
+          title: Text(title),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: _openConversationActions,
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Obx(() {
+                if (c.isLoadingMessages.value && c.currentMessages.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final msgs = c.currentMessages;
 
-              return ListView.builder(
-                controller: _scroll,
-                reverse: true,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                itemCount: msgs.length,
-                itemBuilder: (context, index) {
-                  final m = msgs[msgs.length - 1 - index];
-                  final isMe = _isMe(m);
-                  return _MessageBubble(
-                    message: m,
-                    isMe: isMe,
-                    isGroup: widget.conversation.type == 'group',
-                  );
-                },
-              );
-            }),
-          ),
+                return ListView.builder(
+                  controller: _scroll,
+                  reverse: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 12,
+                  ),
+                  itemCount: msgs.length,
+                  itemBuilder: (context, index) {
+                    final m = msgs[msgs.length - 1 - index];
+                    final isMe = _isMe(m);
+                    return _MessageBubble(
+                      message: m,
+                      isMe: isMe,
+                      isGroup: widget.conversation.type == 'group',
+                    );
+                  },
+                );
+              }),
+            ),
 
-          if (_pendingFiles.isNotEmpty) _PendingAttachmentsBar(files: _pendingFiles, onRemove: (i) => setState(() => _pendingFiles.removeAt(i))),
+            if (_pendingFiles.isNotEmpty)
+              _PendingAttachmentsBar(
+                files: _pendingFiles,
+                onRemove: (i) => setState(() => _pendingFiles.removeAt(i)),
+              ),
 
-          _Composer(
-            textController: _text,
-            isRecording: _isRecording,
-            recordDuration: _recordDuration,
-            onPickImages: _pickImages,
-            onPickFiles: _pickFiles,
-            onSend: _send,
-            onStartRecord: _startRecording,
-            onStopRecord: _stopRecordingAndSend,
-            onCancelRecord: _cancelRecording,
-          ),
-        ],
-      ),
-    );
+            _Composer(
+              textController: _text,
+              isRecording: _isRecording,
+              recordDuration: _recordDuration,
+              onPickImages: _pickImages,
+              onPickFiles: _pickFiles,
+              onSend: _send,
+              onStartRecord: _startRecording,
+              onStopRecord: _stopRecordingAndSend,
+              onCancelRecord: _cancelRecording,
+            ),
+          ],
+        ),
+      );
     });
   }
 
@@ -204,12 +215,18 @@ class _ChatMassegeState extends State<ChatMassege> {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (_) => _AddParticipantSheet(conversation: widget.conversation, controller: c),
+      builder: (_) => _AddParticipantSheet(
+        conversation: widget.conversation,
+        controller: c,
+      ),
     );
   }
 
   Future<void> _renameGroup() async {
-    final tc = TextEditingController(text: (c.currentConversation.value?.name ?? widget.conversation.name) ?? '');
+    final tc = TextEditingController(
+      text:
+          (c.currentConversation.value?.name ?? widget.conversation.name) ?? '',
+    );
     final newName = await showDialog<String?>(
       context: context,
       builder: (_) => AlertDialog(
@@ -219,15 +236,24 @@ class _ChatMassegeState extends State<ChatMassege> {
           decoration: const InputDecoration(hintText: 'اسم المجموعة'),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, tc.text.trim()), child: const Text('حفظ')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, tc.text.trim()),
+            child: const Text('حفظ'),
+          ),
         ],
       ),
     );
 
     if (newName == null || newName.isEmpty) return;
 
-    final ok = await c.updateGroupName(conversationId: widget.conversation.id, name: newName);
+    final ok = await c.updateGroupName(
+      conversationId: widget.conversation.id,
+      name: newName,
+    );
     if (ok) {
       if (mounted) setState(() {});
     }
@@ -242,7 +268,10 @@ class _ChatMassegeState extends State<ChatMassege> {
     final paths = result.paths.whereType<String>().toList();
     if (paths.isEmpty) return;
 
-    final toAdd = paths.take(10 - _pendingFiles.length).map((p) => File(p)).toList();
+    final toAdd = paths
+        .take(10 - _pendingFiles.length)
+        .map((p) => File(p))
+        .toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
 
@@ -255,7 +284,10 @@ class _ChatMassegeState extends State<ChatMassege> {
     final paths = result.paths.whereType<String>().toList();
     if (paths.isEmpty) return;
 
-    final toAdd = paths.take(10 - _pendingFiles.length).map((p) => File(p)).toList();
+    final toAdd = paths
+        .take(10 - _pendingFiles.length)
+        .map((p) => File(p))
+        .toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
 
@@ -270,7 +302,11 @@ class _ChatMassegeState extends State<ChatMassege> {
     if (hasFiles) {
       final files = List<File>.from(_pendingFiles);
       setState(() => _pendingFiles.clear());
-      await c.sendFilesMessage(conversationId: convId, files: files, text: text.isEmpty ? null : text);
+      await c.sendFilesMessage(
+        conversationId: convId,
+        files: files,
+        text: text.isEmpty ? null : text,
+      );
       _text.clear();
       return;
     }
@@ -288,11 +324,12 @@ class _ChatMassegeState extends State<ChatMassege> {
       }
 
       final dir = await getTemporaryDirectory();
-      final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
+      final path =
+          '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
       _recordPath = path;
 
       await _recorder.start(
-         RecordConfig(
+        RecordConfig(
           encoder: AudioEncoder.wav,
           bitRate: 128000,
           sampleRate: 44100,
@@ -351,7 +388,11 @@ class _ChatMassegeState extends State<ChatMassege> {
       final f = File(path);
       if (!await f.exists()) return;
 
-      await c.sendFilesMessage(conversationId: widget.conversation.id, files: [f], text: null);
+      await c.sendFilesMessage(
+        conversationId: widget.conversation.id,
+        files: [f],
+        text: null,
+      );
     } catch (e) {
       print('❌ stopRecordingAndSend: $e');
     } finally {
@@ -404,7 +445,7 @@ class _PendingAttachmentsBar extends StatelessWidget {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 11),
+                                style: getRegular(fontSize: 11),
                               ),
                             ),
                           ),
@@ -419,7 +460,11 @@ class _PendingAttachmentsBar extends StatelessWidget {
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: () => onRemove(i),
-                      child: const SizedBox(width: 22, height: 22, child: Icon(Icons.close, size: 14, color: Colors.white)),
+                      child: const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: Icon(Icons.close, size: 14, color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -478,7 +523,10 @@ class _Composer extends StatelessWidget {
             ),
             Expanded(
               child: isRecording
-                  ? _RecordingBar(duration: recordDuration, onCancel: onCancelRecord)
+                  ? _RecordingBar(
+                      duration: recordDuration,
+                      onCancel: onCancelRecord,
+                    )
                   : TextField(
                       controller: textController,
                       minLines: 1,
@@ -486,8 +534,13 @@ class _Composer extends StatelessWidget {
                       textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
                         hintText: 'اكتب رسالة...',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
                       ),
                     ),
             ),
@@ -504,7 +557,9 @@ class _Composer extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.mic,
-                  color: isRecording ? Theme.of(context).colorScheme.primary : Colors.grey.shade800,
+                  color: isRecording
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.grey.shade800,
                 ),
               ),
             ),
@@ -518,14 +573,19 @@ class _Composer extends StatelessWidget {
 class _RecordingBar extends StatefulWidget {
   final Duration duration;
   final Future<void> Function() onCancel;
+
   const _RecordingBar({required this.duration, required this.onCancel});
 
   @override
   State<_RecordingBar> createState() => _RecordingBarState();
 }
 
-class _RecordingBarState extends State<_RecordingBar> with SingleTickerProviderStateMixin {
-  late final AnimationController _a = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))..repeat(reverse: true);
+class _RecordingBarState extends State<_RecordingBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _a = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 700),
+  )..repeat(reverse: true);
 
   @override
   void dispose() {
@@ -547,7 +607,7 @@ class _RecordingBarState extends State<_RecordingBar> with SingleTickerProviderS
         children: [
           const Icon(Icons.fiber_manual_record, color: Colors.red, size: 16),
           const SizedBox(width: 8),
-          Text(t, style: const TextStyle(fontWeight: FontWeight.w600)),
+          Text(t, style: getMedium()),
           const SizedBox(width: 10),
           Expanded(child: _FakeWaves(animation: _a)),
           IconButton(
@@ -568,7 +628,9 @@ class _RecordingBarState extends State<_RecordingBar> with SingleTickerProviderS
 }
 
 class _FakeWaves extends AnimatedWidget {
-  const _FakeWaves({required Animation<double> animation}) : super(listenable: animation);
+  const _FakeWaves({required Animation<double> animation})
+    : super(listenable: animation);
+
   Animation<double> get animation => listenable as Animation<double>;
 
   @override
@@ -578,7 +640,14 @@ class _FakeWaves extends AnimatedWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(12, (i) {
         final h = (8 + ((i % 4) * 6)) * (0.6 + v * 0.4);
-        return Container(width: 3, height: h, decoration: BoxDecoration(color: Colors.grey.shade700, borderRadius: BorderRadius.circular(99)));
+        return Container(
+          width: 3,
+          height: h,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade700,
+            borderRadius: BorderRadius.circular(99),
+          ),
+        );
       }),
     );
   }
@@ -602,7 +671,9 @@ class _MessageBubble extends StatelessWidget {
     final text = (message.body ?? '').trim();
 
     final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
-    final bubbleColor = isMe ? Theme.of(context).colorScheme.primary.withOpacity(0.14) : Colors.grey.shade200;
+    final bubbleColor = isMe
+        ? Theme.of(context).colorScheme.primary.withOpacity(0.14)
+        : Colors.grey.shade200;
 
     final created = DateTime.tryParse(message.createdAt ?? '');
     final timeText = created == null ? '' : _formatArabicTime(created);
@@ -611,7 +682,9 @@ class _MessageBubble extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           if (!isMe && isGroup) ...[
             _SenderAvatar(url: message.senderData?.avatar),
@@ -621,16 +694,23 @@ class _MessageBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: align,
               children: [
-                if (!isMe && isGroup && (message.senderData?.name?.trim().isNotEmpty ?? false))
+                if (!isMe &&
+                    isGroup &&
+                    (message.senderData?.name?.trim().isNotEmpty ?? false))
                   Padding(
                     padding: const EdgeInsets.only(bottom: 2),
                     child: Text(
                       message.senderData!.name!,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
+                      style: getMedium(
+                        fontSize: 12,
+                        color: Colors.grey.shade700,
+                      ),
                     ),
                   ),
                 ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.78,
+                  ),
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -646,10 +726,11 @@ class _MessageBubble extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (hasAttachments) _AttachmentsGrid(urls: urls),
-                        if (hasAttachments && text.isNotEmpty) const SizedBox(height: 8),
+                        if (hasAttachments && text.isNotEmpty)
+                          const SizedBox(height: 8),
                         if (text.isNotEmpty) Text(text),
-                        if (!hasAttachments && _looksLikeAudio(text, urls)) ...[
-                        ],
+                        if (!hasAttachments && _looksLikeAudio(text, urls))
+                          ...[],
                       ],
                     ),
                   ),
@@ -660,13 +741,12 @@ class _MessageBubble extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
                       timeText,
-                      style: TextStyle(
+                      style: getRegular(
                         fontSize: 11,
                         color: Colors.grey.shade600,
                       ),
                     ),
                   ),
-
               ],
             ),
           ),
@@ -678,12 +758,16 @@ class _MessageBubble extends StatelessWidget {
 
 class _SenderAvatar extends StatelessWidget {
   final String? url;
+
   const _SenderAvatar({this.url});
 
   @override
   Widget build(BuildContext context) {
     if (url == null || url!.trim().isEmpty) {
-      return const CircleAvatar(radius: 14, child: Icon(Icons.person, size: 16));
+      return const CircleAvatar(
+        radius: 14,
+        child: Icon(Icons.person, size: 16),
+      );
     }
     return ClipOval(
       child: CachedNetworkImage(
@@ -692,7 +776,8 @@ class _SenderAvatar extends StatelessWidget {
         height: 28,
         fit: BoxFit.cover,
         placeholder: (_, __) => const CircleAvatar(radius: 14),
-        errorWidget: (_, __, ___) => const CircleAvatar(radius: 14, child: Icon(Icons.person, size: 16)),
+        errorWidget: (_, __, ___) =>
+            const CircleAvatar(radius: 14, child: Icon(Icons.person, size: 16)),
       ),
     );
   }
@@ -700,6 +785,7 @@ class _SenderAvatar extends StatelessWidget {
 
 class _AttachmentsGrid extends StatelessWidget {
   final List<String> urls;
+
   const _AttachmentsGrid({required this.urls});
 
   @override
@@ -730,11 +816,14 @@ class _AttachmentsGrid extends StatelessWidget {
               if (isLast)
                 Positioned.fill(
                   child: Container(
-                    decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(
+                      color: Colors.black45,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Center(
                       child: Text(
                         '+${show.length - 3}',
-                        style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+                        style: getBold(color: Colors.white, fontSize: 22),
                       ),
                     ),
                   ),
@@ -750,6 +839,7 @@ class _AttachmentsGrid extends StatelessWidget {
 class _AttachmentTile extends StatelessWidget {
   final String url;
   final bool big;
+
   const _AttachmentTile({required this.url, this.big = false});
 
   @override
@@ -770,8 +860,11 @@ class _AttachmentTile extends StatelessWidget {
             ? CachedNetworkImage(
                 imageUrl: url,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                errorWidget: (_, __, ___) => const Center(child: Icon(Icons.broken_image_outlined)),
+                placeholder: (_, __) => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                errorWidget: (_, __, ___) =>
+                    const Center(child: Icon(Icons.broken_image_outlined)),
               )
             : Center(
                 child: Padding(
@@ -798,6 +891,7 @@ class _AttachmentTile extends StatelessWidget {
 
 class _AudioTile extends StatefulWidget {
   final String url;
+
   const _AudioTile({required this.url});
 
   @override
@@ -828,8 +922,7 @@ class _AudioTileState extends State<_AudioTile> {
       });
 
       setState(() => _ready = true);
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   @override
@@ -863,7 +956,9 @@ class _AudioTileState extends State<_AudioTile> {
                       }
                       setState(() {});
                     },
-              icon: Icon(playing ? Icons.pause_circle_filled : Icons.play_circle_fill),
+              icon: Icon(
+                playing ? Icons.pause_circle_filled : Icons.play_circle_fill,
+              ),
             ),
             Expanded(
               child: Slider(
@@ -874,7 +969,7 @@ class _AudioTileState extends State<_AudioTile> {
                     : (v) => _player.seek(Duration(milliseconds: v.toInt())),
               ),
             ),
-            Text(_fmt(_pos), style: const TextStyle(fontSize: 12)),
+            Text(_fmt(_pos), style: getRegular(fontSize: 12)),
           ],
         ),
       ),
@@ -892,7 +987,11 @@ class _AudioTileState extends State<_AudioTile> {
 class _AddParticipantSheet extends StatelessWidget {
   final ChatConversation conversation;
   final ChatController controller;
-  const _AddParticipantSheet({required this.conversation, required this.controller});
+
+  const _AddParticipantSheet({
+    required this.conversation,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -923,7 +1022,9 @@ class _AddParticipantSheet extends StatelessWidget {
             final filtered = q.isEmpty
                 ? raw
                 : raw.where((e) {
-                    final pd = (e['participant_data'] is Map) ? Map<String, dynamic>.from(e['participant_data']) : <String, dynamic>{};
+                    final pd = (e['participant_data'] is Map)
+                        ? Map<String, dynamic>.from(e['participant_data'])
+                        : <String, dynamic>{};
                     final name = (pd['name'] ?? '').toString().toLowerCase();
                     return name.contains(q);
                   }).toList();
@@ -971,12 +1072,20 @@ class _AddParticipantSheet extends StatelessWidget {
 
 bool _isImageUrl(String url) {
   final u = url.toLowerCase();
-  return u.endsWith('.png') || u.endsWith('.jpg') || u.endsWith('.jpeg') || u.endsWith('.webp') || u.contains('image');
+  return u.endsWith('.png') ||
+      u.endsWith('.jpg') ||
+      u.endsWith('.jpeg') ||
+      u.endsWith('.webp') ||
+      u.contains('image');
 }
 
 bool _isAudioUrl(String url) {
   final u = url.toLowerCase();
-  return u.endsWith('.m4a') || u.endsWith('.aac') || u.endsWith('.mp3') || u.endsWith('.wav') || u.contains('audio');
+  return u.endsWith('.m4a') ||
+      u.endsWith('.aac') ||
+      u.endsWith('.mp3') ||
+      u.endsWith('.wav') ||
+      u.contains('audio');
 }
 
 bool _looksLikeAudio(String text, List<String> urls) {
@@ -1001,7 +1110,10 @@ String _formatArabicTime(DateTime dt) {
 
 bool _isImagePath(String path) {
   final p = path.toLowerCase();
-  return p.endsWith('.png') || p.endsWith('.jpg') || p.endsWith('.jpeg') || p.endsWith('.webp');
+  return p.endsWith('.png') ||
+      p.endsWith('.jpg') ||
+      p.endsWith('.jpeg') ||
+      p.endsWith('.webp');
 }
 
 String _fileName(String path) => path.split(Platform.pathSeparator).last;

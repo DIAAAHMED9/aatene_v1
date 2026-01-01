@@ -10,7 +10,9 @@ class ChatUnread extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ChatController c = Get.find<ChatController>();
-    WidgetsBinding.instance.addPostFrameCallback((_) => c.setTab(ChatTab.unread));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => c.setTab(ChatTab.unread),
+    );
     return const ChatAll();
   }
 }

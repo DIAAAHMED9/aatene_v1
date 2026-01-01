@@ -11,7 +11,11 @@ class PushNotificationService {
       if (!Get.isRegistered<ChatController>()) return;
       final c = ChatController.to;
 
-      final rawId = data['conversation_id'] ?? data['conversationId'] ?? data['cid'] ?? data['chat_id'];
+      final rawId =
+          data['conversation_id'] ??
+          data['conversationId'] ??
+          data['cid'] ??
+          data['chat_id'];
       final convId = int.tryParse(rawId?.toString() ?? '');
 
       c.loadConversations();
@@ -31,7 +35,7 @@ class PushNotificationService {
         _tryRefreshChatFromPayload(message.data);
       }
     });
-    
+
     await registerNotificationListeners();
   }
 
@@ -42,7 +46,8 @@ class PushNotificationService {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
     const AndroidInitializationSettings androidSettings =
@@ -50,10 +55,10 @@ class PushNotificationService {
 
     const DarwinInitializationSettings darwinSettings =
         DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
-    );
+          requestSoundPermission: false,
+          requestBadgePermission: false,
+          requestAlertPermission: false,
+        );
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
@@ -63,9 +68,10 @@ class PushNotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
-        Get.toNamed('/mainScreen');
-      },
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) async {
+            Get.toNamed('/mainScreen');
+          },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
@@ -110,8 +116,9 @@ class PushNotificationService {
   }
 
   @pragma('vm:entry-point')
-  static Future<void> notificationTapBackground(NotificationResponse notificationResponse) async {
-  }
+  static Future<void> notificationTapBackground(
+    NotificationResponse notificationResponse,
+  ) async {}
 
   AndroidNotificationChannel androidNotificationChannel() =>
       const AndroidNotificationChannel(

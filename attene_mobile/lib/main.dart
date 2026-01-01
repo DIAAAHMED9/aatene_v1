@@ -15,6 +15,7 @@ import 'package:attene_mobile/view/control%20users/personal_info.dart';
 import 'package:attene_mobile/view/login%20and%20start/set%20new%20password/set_new_password.dart';
 import 'package:attene_mobile/view/product%20variations/product_variation_controller.dart';
 import 'package:attene_mobile/view/products/product_service.dart';
+import 'package:attene_mobile/view/story/screen/add_story_screen.dart';
 import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
 import 'package:attene_mobile/view/support/empty.dart';
 import 'package:attene_mobile/view/support/frequently%20asked/frequently_asked.dart';
@@ -220,7 +221,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => HomeControl()),
+        GetPage(name: '/', page: () => AddStoryScreen()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

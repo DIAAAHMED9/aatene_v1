@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -75,7 +76,10 @@ class _ChatAllState extends State<ChatAll> {
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
                   ),
                 ),
               ),
@@ -89,16 +93,15 @@ class _ChatAllState extends State<ChatAll> {
                     if (c.isLoading.value && list.isEmpty)
                       const Center(child: CircularProgressIndicator())
                     else if (list.isEmpty)
-                      _EmptyState(
-                        onNewChat: _openNewChatSheet,
-                      )
+                      _EmptyState(onNewChat: _openNewChatSheet)
                     else
                       RefreshIndicator(
                         onRefresh: () async => c.refreshConversations(),
                         child: ListView.separated(
                           padding: const EdgeInsets.fromLTRB(12, 6, 12, 96),
                           itemCount: list.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
                           itemBuilder: (context, index) => _ConversationCard(
                             conversation: list[index],
                             controller: c,
@@ -110,7 +113,10 @@ class _ChatAllState extends State<ChatAll> {
                         left: 0,
                         right: 0,
                         top: 0,
-                        child: LinearProgressIndicator(minHeight: 2, color: cs.primary),
+                        child: LinearProgressIndicator(
+                          minHeight: 2,
+                          color: cs.primary,
+                        ),
                       ),
                   ],
                 ),
@@ -122,23 +128,23 @@ class _ChatAllState extends State<ChatAll> {
     });
   }
 
-Future<void> _openNewChatSheet() async {
-  if (!mounted) return;
+  Future<void> _openNewChatSheet() async {
+    if (!mounted) return;
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (_) => _NewChatSheet(controller: c),
-  );
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _NewChatSheet(controller: c),
+    );
 
-  c.loadPreviousParticipants();
-}
-
+    c.loadPreviousParticipants();
+  }
 }
 
 class _TabsRow extends StatelessWidget {
   final ChatController controller;
+
   const _TabsRow({required this.controller});
 
   @override
@@ -219,7 +225,10 @@ class _ConversationCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _ConversationAvatar(conversation: conversation, controller: controller),
+              _ConversationAvatar(
+                conversation: conversation,
+                controller: controller,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -232,13 +241,14 @@ class _ConversationCard extends StatelessWidget {
                             title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
+                            style: getBold(),
                           ),
                         ),
                         if (time.isNotEmpty)
                           Text(
                             time,
-                            style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+                            style:getRegular(  fontSize: 12,
+                              color: cs.onSurfaceVariant,) ,
                           ),
                       ],
                     ),
@@ -247,35 +257,47 @@ class _ConversationCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            subtitle.isEmpty ? (isGroup ? 'مجموعة' : 'محادثة') : subtitle,
+                            subtitle.isEmpty
+                                ? (isGroup ? 'مجموعة' : 'محادثة')
+                                : subtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: cs.onSurfaceVariant),
+                            style:getRegular(color: cs.onSurfaceVariant) ,
                           ),
                         ),
                         if (isGroup && participantsCount > 0)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: cs.surfaceContainerHighest.withOpacity(0.6),
+                              color: cs.surfaceContainerHighest.withOpacity(
+                                0.6,
+                              ),
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
                               '$participantsCount',
-                              style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+                              style:getRegular( fontSize: 12,
+                                color: cs.onSurfaceVariant,) ,
                             ),
                           ),
                         if (unread > 0) ...[
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: cs.primary,
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
                               '$unread',
-                              style: TextStyle(color: cs.onPrimary, fontSize: 12, fontWeight: FontWeight.w700),
+                              style:getBold( color: cs.onPrimary,
+    fontSize: 12,) ,
                             ),
                           ),
                         ],
@@ -318,7 +340,8 @@ class _ConversationCard extends StatelessWidget {
     if (lastMessage is String) return lastMessage;
     if (lastMessage is Map) {
       if (lastMessage['body'] != null) return lastMessage['body'].toString();
-      if (lastMessage['message'] != null) return lastMessage['message'].toString();
+      if (lastMessage['message'] != null)
+        return lastMessage['message'].toString();
       if (lastMessage['text'] != null) return lastMessage['text'].toString();
     }
     return lastMessage.toString();
@@ -336,7 +359,10 @@ class _ConversationCard extends StatelessWidget {
 
       final now = DateTime.now();
       final local = dt.toLocal();
-      final sameDay = now.year == local.year && now.month == local.month && now.day == local.day;
+      final sameDay =
+          now.year == local.year &&
+          now.month == local.month &&
+          now.day == local.day;
       if (sameDay) {
         final hh = local.hour.toString().padLeft(2, '0');
         final mm = local.minute.toString().padLeft(2, '0');
@@ -354,7 +380,11 @@ class _ConversationCard extends StatelessWidget {
 class _ConversationAvatar extends StatelessWidget {
   final ChatConversation conversation;
   final ChatController controller;
-  const _ConversationAvatar({required this.conversation, required this.controller});
+
+  const _ConversationAvatar({
+    required this.conversation,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -376,7 +406,8 @@ class _ConversationAvatar extends StatelessWidget {
         final pid = pd?.id?.toString();
         final ptype = pd?.type?.toString();
         if (pid == null || ptype == null) continue;
-        if (pid == controller.myOwnerId && ptype == controller.myOwnerType) continue;
+        if (pid == controller.myOwnerId && ptype == controller.myOwnerType)
+          continue;
         final a = pd?.avatar;
         if (a != null && a.toString().trim().isNotEmpty) urls.add(a.toString());
         if (urls.length >= 2) break;
@@ -410,6 +441,7 @@ class _ConversationAvatar extends StatelessWidget {
 
 class _EmptyState extends StatelessWidget {
   final VoidCallback onNewChat;
+
   const _EmptyState({required this.onNewChat});
 
   @override
@@ -428,12 +460,21 @@ class _EmptyState extends StatelessWidget {
                 color: cs.surfaceContainerHighest.withOpacity(0.7),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.forum_rounded, size: 36, color: cs.onSurfaceVariant),
+              child: Icon(
+                Icons.forum_rounded,
+                size: 36,
+                color: cs.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 14),
-            const Text('لا توجد محادثات', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+             Text(
+              'لا توجد محادثات',
+              style:getBold(),
+            ),
             const SizedBox(height: 6),
-            Text('ابدأ محادثة فردية أو أنشئ مجموعة جديدة.', style: TextStyle(color: cs.onSurfaceVariant)),
+            Text(
+              'ابدأ محادثة فردية أو أنشئ مجموعة جديدة.',
+              style:getRegular(color: cs.onSurfaceVariant)) ,
             const SizedBox(height: 14),
             FilledButton.icon(
               onPressed: onNewChat,
@@ -451,6 +492,7 @@ class _Avatar extends StatelessWidget {
   final String? url;
   final bool isGroup;
   final double radius;
+
   const _Avatar({this.url, required this.isGroup, this.radius = 22});
 
   @override
@@ -477,6 +519,7 @@ class _Avatar extends StatelessWidget {
 
 class _NewChatSheet extends StatefulWidget {
   final ChatController controller;
+
   const _NewChatSheet({required this.controller});
 
   @override
@@ -515,7 +558,8 @@ class _NewChatSheetState extends State<_NewChatSheet> {
             }).toList();
 
       final cs = Theme.of(context).colorScheme;
-      final canCreateGroup = _groupName.text.trim().isNotEmpty && _selected.isNotEmpty;
+      final canCreateGroup =
+          _groupName.text.trim().isNotEmpty && _selected.isNotEmpty;
 
       return Padding(
         padding: EdgeInsets.only(
@@ -564,8 +608,12 @@ class _NewChatSheetState extends State<_NewChatSheet> {
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   hintText: 'اسم المجموعة (مطلوب)',
-                  prefixIcon: const Icon(Icons.drive_file_rename_outline_rounded),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  prefixIcon: const Icon(
+                    Icons.drive_file_rename_outline_rounded,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -575,9 +623,13 @@ class _NewChatSheetState extends State<_NewChatSheet> {
               controller: _q,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                hintText: _mode == 0 ? 'ابحث عن مستخدم...' : 'ابحث واختر أعضاء...',
+                hintText: _mode == 0
+                    ? 'ابحث عن مستخدم...'
+                    : 'ابحث واختر أعضاء...',
                 prefixIcon: const Icon(Icons.search_rounded),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
             ),
 
@@ -588,7 +640,7 @@ class _NewChatSheetState extends State<_NewChatSheet> {
                   Expanded(
                     child: Text(
                       'تم اختيار ${_selected.length} عضو',
-                      style: TextStyle(color: cs.onSurfaceVariant),
+                      style:getRegular(color: cs.onSurfaceVariant) ,
                     ),
                   ),
                   FilledButton(
@@ -599,11 +651,12 @@ class _NewChatSheetState extends State<_NewChatSheet> {
                               return {'type': sp[0], 'id': sp[1]};
                             }).toList();
 
-                            final conv = await widget.controller.createConversation(
-                              type: 'group',
-                              name: _groupName.text.trim(),
-                              participants: parts,
-                            );
+                            final conv = await widget.controller
+                                .createConversation(
+                                  type: 'group',
+                                  name: _groupName.text.trim(),
+                                  participants: parts,
+                                );
 
                             if (!mounted) return;
                             if (conv != null) {
@@ -660,12 +713,13 @@ class _NewChatSheetState extends State<_NewChatSheet> {
                         subtitle: Text(type),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () async {
-                          final conv = await widget.controller.createConversation(
-                            type: 'direct',
-                            participants: [
-                              {'type': type, 'id': id},
-                            ],
-                          );
+                          final conv = await widget.controller
+                              .createConversation(
+                                type: 'direct',
+                                participants: [
+                                  {'type': type, 'id': id},
+                                ],
+                              );
 
                           if (!mounted) return;
                           if (conv != null) {
@@ -711,6 +765,7 @@ class _ModeButton extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onTap;
+
   const _ModeButton({
     required this.selected,
     required this.label,
@@ -732,14 +787,16 @@ class _ModeButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 18, color: selected ? cs.onPrimary : cs.onSurfaceVariant),
+              Icon(
+                icon,
+                size: 18,
+                color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+              ),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: selected ? cs.onPrimary : cs.onSurfaceVariant,
-                ),
+                style:getBold(                  color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+                ) ,
               ),
             ],
           ),

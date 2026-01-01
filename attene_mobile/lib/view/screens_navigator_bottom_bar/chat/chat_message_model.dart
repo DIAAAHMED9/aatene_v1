@@ -12,7 +12,8 @@ class ParticipantData {
 
   const ParticipantData({this.id, this.name, this.avatar, this.type});
 
-  factory ParticipantData.fromJson(Map<String, dynamic> json) => ParticipantData(
+  factory ParticipantData.fromJson(Map<String, dynamic> json) =>
+      ParticipantData(
         id: json['id']?.toString(),
         name: json['name']?.toString(),
         avatar: json['avatar']?.toString(),
@@ -45,14 +46,19 @@ class ChatParticipant {
   });
 
   String? get name => participantData?.name;
+
   String? get avatar => participantData?.avatar;
+
   String? get type => participantData?.type;
 
-  factory ChatParticipant.fromJson(Map<String, dynamic> json) => ChatParticipant(
+  factory ChatParticipant.fromJson(Map<String, dynamic> json) =>
+      ChatParticipant(
         id: _toInt(json['id']) ?? 0,
         conversationId: json['conversation_id']?.toString(),
         participantData: (json['participant_data'] is Map)
-            ? ParticipantData.fromJson(Map<String, dynamic>.from(json['participant_data']))
+            ? ParticipantData.fromJson(
+                Map<String, dynamic>.from(json['participant_data']),
+              )
             : null,
         unreadMessagesCount: _toInt(json['unread_messages_count']),
         createdAt: json['created_at']?.toString(),
@@ -89,7 +95,8 @@ class ChatConversation {
     required this.updatedAt,
   });
 
-  factory ChatConversation.fromJson(Map<String, dynamic> json) => ChatConversation(
+  factory ChatConversation.fromJson(Map<String, dynamic> json) =>
+      ChatConversation(
         id: _toInt(json['id']) ?? 0,
         type: (json['type'] ?? '').toString(),
         name: json['name']?.toString(),
@@ -98,9 +105,12 @@ class ChatConversation {
         participantsCount: _toInt(json['participants_count']) ?? 0,
         participants: (json['participants'] is List)
             ? (json['participants'] as List)
-                .whereType<Map>()
-                .map((e) => ChatParticipant.fromJson(Map<String, dynamic>.from(e)))
-                .toList()
+                  .whereType<Map>()
+                  .map(
+                    (e) =>
+                        ChatParticipant.fromJson(Map<String, dynamic>.from(e)),
+                  )
+                  .toList()
             : <ChatParticipant>[],
         lastMessage: json['last_message'],
         createdAt: json['created_at']?.toString(),
@@ -111,12 +121,14 @@ class ChatConversation {
       participants.fold<int>(0, (sum, p) => sum + (p.unreadMessagesCount ?? 0));
 
   String displayName({String? myOwnerType, String? myOwnerId}) {
-    if (type == 'group') return (name?.trim().isNotEmpty ?? false) ? name!.trim() : 'مجموعة';
+    if (type == 'group')
+      return (name?.trim().isNotEmpty ?? false) ? name!.trim() : 'مجموعة';
 
     for (final p in participants) {
       final d = p.participantData;
       if (d == null) continue;
-      final isMe = (myOwnerType != null &&
+      final isMe =
+          (myOwnerType != null &&
           myOwnerId != null &&
           d.type == myOwnerType &&
           d.id == myOwnerId);
@@ -130,7 +142,8 @@ class ChatConversation {
     for (final p in participants) {
       final d = p.participantData;
       if (d == null) continue;
-      final isMe = (myOwnerType != null &&
+      final isMe =
+          (myOwnerType != null &&
           myOwnerId != null &&
           d.type == myOwnerType &&
           d.id == myOwnerId);
@@ -149,11 +162,11 @@ class SenderData {
   const SenderData({this.id, this.name, this.avatar, this.type});
 
   factory SenderData.fromJson(Map<String, dynamic> json) => SenderData(
-        id: json['id']?.toString(),
-        name: json['name']?.toString(),
-        avatar: json['avatar']?.toString(),
-        type: json['type']?.toString(),
-      );
+    id: json['id']?.toString(),
+    name: json['name']?.toString(),
+    avatar: json['avatar']?.toString(),
+    type: json['type']?.toString(),
+  );
 }
 
 class ChatMessage {
@@ -194,21 +207,21 @@ class ChatMessage {
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
-        id: _toInt(json['id']) ?? 0,
-        conversationId: json['conversation_id']?.toString(),
-        body: json['body']?.toString(),
-        files: json['files'],
-        filesUrl: json['files_url'],
-        senderId: json['sender_id']?.toString(),
-        productId: _toInt(json['product_id']),
-        variationId: _toInt(json['variation_id'] ?? json['varation_id']),
-        serviceId: _toInt(json['service_id']),
-        senderData: (json['sender_data'] is Map)
-            ? SenderData.fromJson(Map<String, dynamic>.from(json['sender_data']))
-            : null,
-        createdAt: json['created_at']?.toString(),
-        updatedAt: json['updated_at']?.toString(),
-      );
+    id: _toInt(json['id']) ?? 0,
+    conversationId: json['conversation_id']?.toString(),
+    body: json['body']?.toString(),
+    files: json['files'],
+    filesUrl: json['files_url'],
+    senderId: json['sender_id']?.toString(),
+    productId: _toInt(json['product_id']),
+    variationId: _toInt(json['variation_id'] ?? json['varation_id']),
+    serviceId: _toInt(json['service_id']),
+    senderData: (json['sender_data'] is Map)
+        ? SenderData.fromJson(Map<String, dynamic>.from(json['sender_data']))
+        : null,
+    createdAt: json['created_at']?.toString(),
+    updatedAt: json['updated_at']?.toString(),
+  );
 
   List<String> get attachmentUrls {
     final urls = <String>[];

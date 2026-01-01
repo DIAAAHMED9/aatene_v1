@@ -10,7 +10,9 @@ class ChatInterested extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ChatController c = Get.find<ChatController>();
-    WidgetsBinding.instance.addPostFrameCallback((_) => c.setTab(ChatTab.interested));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => c.setTab(ChatTab.interested),
+    );
     return const ChatAll();
   }
 }
