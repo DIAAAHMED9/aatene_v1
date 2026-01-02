@@ -1,6 +1,7 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
-import 'app_color.dart';
+
+
+
+import '../../general_index.dart';
 
 extension AppColorScheme on ColorScheme {
   Color get warning => AppColors.warning300;

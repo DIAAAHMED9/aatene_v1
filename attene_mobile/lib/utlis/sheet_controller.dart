@@ -1,19 +1,10 @@
-import 'dart:async';
-import 'package:attene_mobile/api/api_request.dart';
-import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
-import 'package:attene_mobile/component/aatene_text_filed.dart';
-import 'package:attene_mobile/controller/product_controller.dart';
-import 'package:attene_mobile/add_product_stepper_screen.dart';
-import 'package:attene_mobile/my_app/my_app_controller.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:attene_mobile/utlis/language/language_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../component/text/aatene_custom_text.dart';
-import '../models/section_model.dart';
-import '../view/product variations/product_variation_controller.dart';
-import '../view/product variations/product_variation_model.dart';
+
+
+import 'dart:async';
+
+
+import '../general_index.dart';
 
 enum BottomSheetType {
   filter,
@@ -837,7 +828,7 @@ class BottomSheetController extends GetxController {
             children: [
               Icon(Icons.folder_open_rounded, size: 60, color: Colors.grey),
               SizedBox(height: 16),
-              Text('لا توجد أقسام', style: getRegular(),),
+              Text('لا توجد أقسام',style: getRegular(),),
             ],
           ),
         );

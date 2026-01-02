@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+
+
 class PaginationController<T> extends GetxController {
   final RxList<T> items = <T>[].obs;
   final RxInt currentPage = 1.obs;

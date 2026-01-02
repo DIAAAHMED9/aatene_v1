@@ -1,6 +1,7 @@
-import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
-import 'package:flutter/material.dart';
+
+
+import '../general_index.dart';
+import '../utlis/responsive/index.dart';
 
 class TextFiledAatene extends StatelessWidget {
   const TextFiledAatene({
@@ -132,7 +133,8 @@ class TextFiledAatene extends StatelessWidget {
               borderSide: const BorderSide(color: Colors.red, width: 2.0),
             ),
             filled: true,
-            fillColor: hasError ? Colors.red[50] : fillColor ?? Colors.grey[50],
+                fillColor: hasError ? Colors.red[50] : fillColor ?? Colors.grey[50],
+
             contentPadding: EdgeInsets.symmetric(
               horizontal: ResponsiveDimensions.w(20),
               vertical: ResponsiveDimensions.h(16),

@@ -1,4 +1,5 @@
-import '../models/story_item_model.dart';
+
+import '../../../general_index.dart';
 
 class StoryAnalytics {
   static void storyViewed(StoryItem item) {

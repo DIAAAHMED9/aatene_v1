@@ -1,8 +1,8 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import '../../general_index.dart';
 
-import '../../utlis/colors/app_color.dart';
+
+
+
 
 class AateneButtonWithIcon extends StatelessWidget {
   const AateneButtonWithIcon({

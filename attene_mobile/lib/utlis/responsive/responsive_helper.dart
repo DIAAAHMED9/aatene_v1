@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
+
+
+import '../../general_index.dart';
+import 'index.dart';
+
 
 class VariationResponsive {
   static bool get isMobile => Get.width < 600;

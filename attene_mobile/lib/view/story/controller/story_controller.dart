@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:get/get.dart';
-import '../models/story_item_model.dart';
-import 'story_analytics.dart';
+
+import '../../../general_index.dart';
+
 
 class StoryController extends GetxController {
   final stories = <StoryItem>[].obs;

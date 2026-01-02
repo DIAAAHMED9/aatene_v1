@@ -1,6 +1,8 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../general_index.dart';
 import 'inward_top_notch_clipper.dart';
 
 class CustomBottomNavigation extends StatefulWidget {
@@ -97,7 +99,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0x26000000),
+                    color:  AppColors.customBottomNavigation,
                     offset: const Offset(0, 4),
                     blurRadius: 16,
                   ),
@@ -166,7 +168,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
             color: widget.fabColor,
             boxShadow: [
               BoxShadow(
-                color: const Color(0x26000000),
+                color:  AppColors.customBottomNavigation,
                 offset: const Offset(0, 4),
                 blurRadius: 16,
               ),
