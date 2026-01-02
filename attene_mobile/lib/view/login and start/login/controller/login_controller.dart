@@ -46,7 +46,7 @@ class LoginController extends GetxController {
   void _checkLoginStatus() {
     final MyAppController myAppController = Get.find<MyAppController>();
     if (myAppController.isLoggedIn.value) {
-      _redirectToMainScreen();
+      _redirectAfterLogin();
     }
   }
 
@@ -210,7 +210,30 @@ class LoginController extends GetxController {
 
     _showSuccessMessage(response['message'] ?? 'تم تسجيل الدخول بنجاح');
 
-    await _redirectToMainScreen();
+    await _redirectAfterLogin();
+  }
+
+  /// بعد نجاح تسجيل الدخول (أو إذا كان المستخدم مسجل دخول سابقاً)
+  /// نتحقق هل تم اختيار متجر أم لا.
+  /// - إذا لا يوجد store_id/active_store_id => نذهب لشاشة اختيار المتجر.
+  /// - إذا موجود => نكمل إلى الشاشة الرئيسية.
+  Future<void> _redirectAfterLogin() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final userData = DataInitializerService.to.getUserData();
+    final storeId = userData['active_store_id'] ?? userData['store_id'];
+
+    if (storeId == null || storeId.toString().isEmpty) {
+      Get.offAllNamed('/selectStore');
+      return;
+    }
+
+    // تهيئة بيانات المتجر/التطبيق (صامت)
+    try {
+      await DataInitializerService.to.initializeAppData(silent: true);
+    } catch (_) {}
+
+    Get.offAllNamed('/mainScreen');
   }
 
   void _handleFailedLogin(dynamic response) {

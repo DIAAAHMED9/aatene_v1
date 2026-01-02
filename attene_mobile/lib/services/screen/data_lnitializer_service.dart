@@ -32,6 +32,12 @@ class DataInitializerService extends GetxService {
     try {
       print('🔄 [DATA SERVICE] Refreshing products...');
 
+      final storeId = _getActiveStoreId();
+      if (storeId == null) {
+        print('⚠️ [DATA SERVICE] No active storeId. Skip refreshProducts.');
+        return;
+      }
+
       final response = await ApiHelper.get(
         path: '/merchants/products',
         withLoading: false,
@@ -40,11 +46,21 @@ class DataInitializerService extends GetxService {
       if (response != null && response['status'] == true) {
         final products = response['data'] ?? [];
 
-        await _storage.write('products', json.encode(products));
+        // ✅ store-scoped + unified type (List)
+        await _storage.write(_kProducts(storeId), products);
+        await _storage.write(
+          _kLastUpdateProducts(storeId),
+          DateTime.now().toIso8601String(),
+        );
+
+        // ✅ rebuild enhanced sections after products update
+        await _rebuildEnhancedSections(storeId);
 
         notifyProductsUpdated();
 
-        print('✅ [DATA SERVICE] Products refreshed successfully');
+        print(
+          '✅ [DATA SERVICE] Products refreshed successfully (storeId=$storeId)',
+        );
       }
     } catch (e) {
       print('❌ [DATA SERVICE] Error refreshing products: $e');
@@ -89,6 +105,81 @@ class DataInitializerService extends GetxService {
 
   MyAppController get _myAppController => Get.find<MyAppController>();
 
+  // ========= STORE SCOPE HELPERS (Phase 1) =========
+  int? _getActiveStoreId() {
+    try {
+      final userData = getUserData();
+      final dynamic s1 = userData['active_store_id'] ?? userData['store_id'];
+
+      if (s1 != null) {
+        final parsed = int.tryParse(s1.toString());
+        if (parsed != null) return parsed;
+      }
+
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String _kProducts(int storeId) => '${_PRODUCTS_KEY}_store_$storeId';
+  String _kSections(int storeId) => '${_SECTIONS_KEY}_store_$storeId';
+  String _kMedia(int storeId) => '${_MEDIA_KEY}_store_$storeId';
+  String _kEnhancedSections(int storeId) =>
+      '${_CACHED_SECTIONS_KEY}_store_$storeId';
+
+  String _kLastUpdateProducts(int storeId) =>
+      'last_update_products_store_$storeId';
+  String _kLastUpdateSections(int storeId) =>
+      'last_update_sections_store_$storeId';
+  String _kLastUpdateMedia(int storeId) => 'last_update_media_store_$storeId';
+
+  // Legacy key (كان يتم تخزين المنتجات فيه بشكل String JSON)
+  static const String _LEGACY_PRODUCTS_KEY = 'products';
+
+  Future<void> _migrateLegacyProductsIfNeeded() async {
+    try {
+      final storeId = _getActiveStoreId();
+      if (storeId == null) return;
+
+      // legacy: app_products العام
+      if (_storage.hasData(_PRODUCTS_KEY) &&
+          !_storage.hasData(_kProducts(storeId))) {
+        final legacy = _storage.read(_PRODUCTS_KEY);
+        if (legacy is List) {
+          await _storage.write(_kProducts(storeId), legacy);
+          print('🧭 [MIGRATION] Moved app_products -> ${_kProducts(storeId)}');
+        }
+      }
+
+      // legacy: key 'products' قد يكون String JSON أو List
+      if (_storage.hasData(_LEGACY_PRODUCTS_KEY)) {
+        final v = _storage.read(_LEGACY_PRODUCTS_KEY);
+        if (v is String && v.isNotEmpty) {
+          try {
+            final decoded = json.decode(v);
+            if (decoded is List) {
+              await _storage.write(_kProducts(storeId), decoded);
+              print(
+                '🧭 [MIGRATION] Moved products(String) -> ${_kProducts(storeId)}',
+              );
+            }
+          } catch (_) {
+            // ignore
+          }
+        } else if (v is List) {
+          await _storage.write(_kProducts(storeId), v);
+          print('🧭 [MIGRATION] Moved products(List) -> ${_kProducts(storeId)}');
+        }
+
+        await _storage.remove(_LEGACY_PRODUCTS_KEY);
+        print('🧹 [MIGRATION] Removed legacy key: $_LEGACY_PRODUCTS_KEY');
+      }
+    } catch (e) {
+      print('⚠️ [MIGRATION] Legacy products migration failed: $e');
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -120,6 +211,9 @@ class DataInitializerService extends GetxService {
       print('✅ [STORAGE] تم تهيئة GetStorage بنجاح');
 
       await _loadInitialStatistics();
+
+      // Phase 1: migrate legacy products keys to store-scoped storage
+      await _migrateLegacyProductsIfNeeded();
 
       if (_hasCachedData()) {
         print('📂 [DATA] تم العثور على بيانات مخزنة مسبقاً');
@@ -271,6 +365,12 @@ class DataInitializerService extends GetxService {
       _currentStep.value = 'جاري تحميل المنتجات...';
       await _loadProducts();
 
+      // Phase 1: build enhanced sections after products are available
+      final storeId = _getActiveStoreId();
+      if (storeId != null) {
+        await _rebuildEnhancedSections(storeId);
+      }
+
       currentStep++;
       _progress.value = currentStep / totalSteps;
       _currentStep.value = 'جاري تحميل الوسائط...';
@@ -306,10 +406,14 @@ class DataInitializerService extends GetxService {
   }
 
   bool _hasCachedData() {
+    final storeId = _getActiveStoreId();
+    if (storeId == null) return false;
+
+    // الحد الأدنى للمرحلة 1
     return _storage.hasData(_STORES_KEY) &&
-        _storage.hasData(_CITIES_KEY) &&
-        _storage.hasData(_SECTIONS_KEY) &&
-        _storage.hasData(_CATEGORIES_KEY);
+        _storage.hasData(_SETTINGS_KEY) &&
+        _storage.hasData(_kSections(storeId)) &&
+        _storage.hasData(_kProducts(storeId));
   }
 
   bool _hasOfflineData() {
@@ -434,6 +538,12 @@ class DataInitializerService extends GetxService {
 
   Future<void> _loadSections() async {
     try {
+      final storeId = _getActiveStoreId();
+      if (storeId == null) {
+        print('⚠️ [SECTIONS] لا يوجد متجر محدد، تخطي تحميل الأقسام');
+        return;
+      }
+
       if (!_isOnline.value) {
         print('⚠️ [SECTIONS] استخدام الأقسام المخزنة (غير متصل)');
         return;
@@ -447,22 +557,40 @@ class DataInitializerService extends GetxService {
 
       if (response != null && response['status'] == true) {
         final sections = response['data'] ?? [];
-        await _storage.write(_SECTIONS_KEY, sections);
 
-        final enhancedSections = sections.map((section) {
-          return {
-            ...section,
-            'store_name': _getStoreName(section['store_id']),
-            'product_count': _countProductsInSection(section['id']),
-            'is_active': section['status'] == 'active',
-          };
-        }).toList();
+        await _storage.write(_kSections(storeId), sections);
+        await _storage.write(
+          _kLastUpdateSections(storeId),
+          DateTime.now().toIso8601String(),
+        );
 
-        await _storage.write(_CACHED_SECTIONS_KEY, enhancedSections);
-        print('✅ [SECTIONS] تم تحميل ${sections.length} قسم');
+        print('✅ [SECTIONS] تم تحميل ${sections.length} قسم (storeId=$storeId)');
       }
     } catch (e) {
       print('⚠️ [SECTIONS] فشل في تحميل الأقسام: $e');
+    }
+  }
+
+  Future<void> _rebuildEnhancedSections(int storeId) async {
+    try {
+      final sections = _storage.read<List<dynamic>>(_kSections(storeId)) ?? [];
+      if (sections.isEmpty) return;
+
+      final enhancedSections = sections.map((section) {
+        return {
+          ...Map<String, dynamic>.from(section),
+          'store_name': _getStoreName(section['store_id']),
+          'product_count': _countProductsInSection(section['id'], storeId),
+          'is_active': section['status'] == 'active',
+        };
+      }).toList();
+
+      await _storage.write(_kEnhancedSections(storeId), enhancedSections);
+      print(
+        '✅ [SECTIONS] Enhanced sections rebuilt (${enhancedSections.length}) for storeId=$storeId',
+      );
+    } catch (e) {
+      print('⚠️ [SECTIONS] Failed to rebuild enhanced sections: $e');
     }
   }
 
@@ -521,6 +649,12 @@ class DataInitializerService extends GetxService {
 
   Future<void> _loadProducts() async {
     try {
+      final storeId = _getActiveStoreId();
+      if (storeId == null) {
+        print('⚠️ [PRODUCTS] لا يوجد متجر محدد، تخطي تحميل المنتجات');
+        return;
+      }
+
       if (!_isOnline.value) {
         print('⚠️ [PRODUCTS] استخدام المنتجات المخزنة (غير متصل)');
         return;
@@ -539,8 +673,13 @@ class DataInitializerService extends GetxService {
 
       if (response != null && response['status'] == true) {
         final products = response['data'] ?? [];
-        await _storage.write(_PRODUCTS_KEY, products);
-        print('✅ [PRODUCTS] تم تحميل ${products.length} منتج');
+        await _storage.write(_kProducts(storeId), products);
+        await _storage.write(
+          _kLastUpdateProducts(storeId),
+          DateTime.now().toIso8601String(),
+        );
+
+        print('✅ [PRODUCTS] تم تحميل ${products.length} منتج (storeId=$storeId)');
       }
     } catch (e) {
       print('⚠️ [PRODUCTS] فشل في تحميل المنتجات: $e');
@@ -549,6 +688,12 @@ class DataInitializerService extends GetxService {
 
   Future<void> _loadMedia() async {
     try {
+      final storeId = _getActiveStoreId();
+      if (storeId == null) {
+        print('⚠️ [MEDIA] لا يوجد متجر محدد، تخطي تحميل الوسائط');
+        return;
+      }
+
       if (!_isOnline.value) {
         print('⚠️ [MEDIA] استخدام الوسائط المخزنة (غير متصل)');
         return;
@@ -599,8 +744,12 @@ class DataInitializerService extends GetxService {
         return dateB.compareTo(dateA);
       });
 
-      await _storage.write(_MEDIA_KEY, allMedia);
-      print('✅ [MEDIA] تم تحميل ${allMedia.length} وسائط');
+      await _storage.write(_kMedia(storeId), allMedia);
+      await _storage.write(
+        _kLastUpdateMedia(storeId),
+        DateTime.now().toIso8601String(),
+      );
+      print('✅ [MEDIA] تم تحميل ${allMedia.length} وسائط (storeId=$storeId)');
     } catch (e) {
       print('⚠️ [MEDIA] فشل في تحميل الوسائط: $e');
     }
@@ -714,7 +863,10 @@ class DataInitializerService extends GetxService {
       }).toList();
 
       if (recentMedia.length < media.length) {
-        await _storage.write(_MEDIA_KEY, recentMedia);
+        final storeId = _getActiveStoreId();
+        if (storeId != null) {
+          await _storage.write(_kMedia(storeId), recentMedia);
+        }
         print(
           '🧹 [CLEANUP] تم تنظيف الوسائط القديمة: ${media.length - recentMedia.length} عنصر',
         );
@@ -731,7 +883,10 @@ class DataInitializerService extends GetxService {
       }).toList();
 
       if (activeProducts.length < products.length) {
-        await _storage.write(_PRODUCTS_KEY, activeProducts);
+        final storeId = _getActiveStoreId();
+        if (storeId != null) {
+          await _storage.write(_kProducts(storeId), activeProducts);
+        }
         print(
           '🧹 [CLEANUP] تم تنظيف المنتجات غير النشطة: ${products.length - activeProducts.length} منتج',
         );
@@ -751,15 +906,27 @@ class DataInitializerService extends GetxService {
 
   List<dynamic> getCurrencies() => _storage.read(_CURRENCIES_KEY) ?? [];
 
-  List<dynamic> getSections() => _storage.read(_SECTIONS_KEY) ?? [];
+  List<dynamic> getSections() {
+    final storeId = _getActiveStoreId();
+    if (storeId == null) return [];
+    return _storage.read(_kSections(storeId)) ?? [];
+  }
 
   List<dynamic> getAttributes() => _storage.read(_ATTRIBUTES_KEY) ?? [];
 
   List<dynamic> getCategories() => _storage.read(_CATEGORIES_KEY) ?? [];
 
-  List<dynamic> getMedia() => _storage.read(_MEDIA_KEY) ?? [];
+  List<dynamic> getMedia() {
+    final storeId = _getActiveStoreId();
+    if (storeId == null) return [];
+    return _storage.read(_kMedia(storeId)) ?? [];
+  }
 
-  List<dynamic> getProducts() => _storage.read(_PRODUCTS_KEY) ?? [];
+  List<dynamic> getProducts() {
+    final storeId = _getActiveStoreId();
+    if (storeId == null) return [];
+    return _storage.read(_kProducts(storeId)) ?? [];
+  }
 
   Map<String, dynamic> getSettings() => _storage.read(_SETTINGS_KEY) ?? {};
 
@@ -768,10 +935,12 @@ class DataInitializerService extends GetxService {
   Map<String, dynamic> getAppConfig() => _storage.read(_APP_CONFIG_KEY) ?? {};
 
   List<Map<String, dynamic>> getEnhancedSections() {
-    final sections = _storage.read<List<dynamic>>(_CACHED_SECTIONS_KEY) ?? [];
-    return sections
-        .map((section) => Map<String, dynamic>.from(section))
-        .toList();
+    final storeId = _getActiveStoreId();
+    if (storeId == null) return [];
+
+    final sections =
+        _storage.read<List<dynamic>>(_kEnhancedSections(storeId)) ?? [];
+    return sections.map((s) => Map<String, dynamic>.from(s)).toList();
   }
 
   List<ProductAttribute> getAttributesForVariations() {
@@ -813,9 +982,9 @@ class DataInitializerService extends GetxService {
     return store?['name']?.toString() ?? 'غير معروف';
   }
 
-  int _countProductsInSection(dynamic sectionId) {
+  int _countProductsInSection(dynamic sectionId, int storeId) {
     try {
-      final products = getProducts();
+      final products = _storage.read<List<dynamic>>(_kProducts(storeId)) ?? [];
       return products.where((product) {
         final productSectionId = product['section_id']?.toString();
         return productSectionId == sectionId.toString();
@@ -1202,16 +1371,32 @@ class DataInitializerService extends GetxService {
         await _storage.write(_DISTRICTS_KEY, importData['districts']);
       if (importData['currencies'] != null)
         await _storage.write(_CURRENCIES_KEY, importData['currencies']);
-      if (importData['sections'] != null)
-        await _storage.write(_SECTIONS_KEY, importData['sections']);
+      final storeId = _getActiveStoreId();
+      if (importData['sections'] != null) {
+        if (storeId != null) {
+          await _storage.write(_kSections(storeId), importData['sections']);
+        } else {
+          await _storage.write(_SECTIONS_KEY, importData['sections']);
+        }
+      }
       if (importData['attributes'] != null)
         await _storage.write(_ATTRIBUTES_KEY, importData['attributes']);
       if (importData['categories'] != null)
         await _storage.write(_CATEGORIES_KEY, importData['categories']);
-      if (importData['products'] != null)
-        await _storage.write(_PRODUCTS_KEY, importData['products']);
-      if (importData['media'] != null)
-        await _storage.write(_MEDIA_KEY, importData['media']);
+      if (importData['products'] != null) {
+        if (storeId != null) {
+          await _storage.write(_kProducts(storeId), importData['products']);
+        } else {
+          await _storage.write(_PRODUCTS_KEY, importData['products']);
+        }
+      }
+      if (importData['media'] != null) {
+        if (storeId != null) {
+          await _storage.write(_kMedia(storeId), importData['media']);
+        } else {
+          await _storage.write(_MEDIA_KEY, importData['media']);
+        }
+      }
       if (importData['settings'] != null)
         await _storage.write(_SETTINGS_KEY, importData['settings']);
       if (importData['user_data'] != null)

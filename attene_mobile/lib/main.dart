@@ -5,13 +5,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
-import 'firebase_options.dart';
 import 'general_index.dart';
-import 'services/notification_services.dart';
 import 'utlis/responsive/index.dart';
-import 'utlis/services/device_name_service.dart';
-
+import 'utlis/services/index.dart';
 import 'utlis/sheet_controller.dart';
+
+// import 'firebase_options.dart';
+// import 'general_index.dart';
+// import 'services/notification_services.dart';
+// import 'utlis/responsive/index.dart';
+// import 'utlis/services/device_name_service.dart';
+
+// import 'utlis/sheet_controller.dart';
 
 class AppBindings extends Bindings {
   static bool _initialized = false;
@@ -26,6 +31,9 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => MyAppController(), fenix: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
+    // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
+    Get.lazyPut(() => DataInitializerService(), fenix: true);
+    Get.lazyPut(() => StoreSelectionController(), fenix: true);
 
     print('✅ [APP BINDINGS] تم تسجيل الأساسيات');
 
@@ -38,7 +46,6 @@ class AppBindings extends Bindings {
     Future.delayed(const Duration(seconds: 3), () {
       print('🔄 [APP BINDINGS] تسجيل المتحكمات المتبقية...');
 
-      Get.lazyPut(() => DataInitializerService(), fenix: true);
       Get.lazyPut(() => BottomSheetController(), fenix: true);
       Get.lazyPut(() => CreateStoreController(), fenix: true);
       Get.lazyPut(() => DataSyncService(), fenix: true);
@@ -176,6 +183,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/forget_password', page: () => ForgetPassword()),
         GetPage(name: '/verification', page: () => Verification()),
         GetPage(name: '/set_new_password', page: () => SetNewPassword()),
+        GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
         GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
@@ -227,7 +235,21 @@ void _initializeBackgroundServices() {
 
       Get.put(AppLifecycleManager(), permanent: true);
 
+      // ✅ Ensure notification permission (Android 13+/iOS) and never store a null token
+      try {
+        await FirebaseMessaging.instance.requestPermission();
+      } catch (_) {}
+
+      // Listen for token refresh updates
+      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+        if (newToken.trim().isNotEmpty) {
+          storage.write('device_token', newToken);
+          print('🔄 FCM Token refreshed: $newToken');
+        }
+      });
+
       final token = await FirebaseMessaging.instance.getToken();
+
       if (token != null) {
         storage.write('device_token', token);
 

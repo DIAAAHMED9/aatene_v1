@@ -1,9 +1,5 @@
-import 'package:attene_mobile/component/aatene_text_filed.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../../utlis/language/language_utils.dart';
-import '../controller/followers_controller.dart';
+
+import '../../../general_index.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({super.key});
