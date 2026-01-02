@@ -16,3 +16,12 @@ export 'widget/edit_profile_label.dart';
 export 'widget/follower_item.dart';
 export 'widget/followers_tabs.dart';
 export 'widget/generic_tabs.dart';
+export 'widget/search_fiel.dart';
+export '../home/index.dart';
+export 'screen/about_us_screen.dart';
+export 'screen/privacy_screen.dart';
+export 'screen/sellect_report.dart';
+export 'screen/terms_of_use_screen.dart';
+export 'models/follower_model.dart';
+export 'widget/unfollow_dialog.dart';
+

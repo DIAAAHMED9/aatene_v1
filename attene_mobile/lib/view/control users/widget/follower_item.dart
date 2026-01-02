@@ -1,10 +1,6 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../controller/followers_controller.dart';
-import '../models/follower_model.dart';
-import 'unfollow_dialog.dart';
+
+
+import '../../../general_index.dart';
 
 class FollowerItem extends StatelessWidget {
   final FollowerModel model;

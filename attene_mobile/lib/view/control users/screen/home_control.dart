@@ -1,19 +1,6 @@
-import 'package:attene_mobile/component/name_control.dart';
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:attene_mobile/view/control%20users/edit_profile.dart';
-import 'package:attene_mobile/view/control%20users/followers/screen/followers.dart';
-import 'package:attene_mobile/view/control%20users/personal_info.dart';
-import 'package:attene_mobile/view/screens_navigator_bottom_bar/home/home.dart';
-import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
-import 'package:attene_mobile/view/support/privacy/privacy_screen.dart';
-import 'package:attene_mobile/view/support/report%20pages/sellect_report.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 
-import '../../utlis/colors/app_color.dart';
-import '../support/terms of use/terms_of_use_screen.dart';
-import 'block/screen/block_screen.dart';
-import 'notification_feed.dart';
+
+import '../../../general_index.dart';
 
 class HomeControl extends StatelessWidget {
   const HomeControl({super.key});

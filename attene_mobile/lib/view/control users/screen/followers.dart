@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../controller/followers_controller.dart';
-import '../widgets/followers_tabs.dart';
-import '../widgets/search_fiel.dart';
-import '../widgets/follower_item.dart';
+
+
+import '../../../general_index.dart';
 
 class FollowersScreen extends StatelessWidget {
   const FollowersScreen({super.key});

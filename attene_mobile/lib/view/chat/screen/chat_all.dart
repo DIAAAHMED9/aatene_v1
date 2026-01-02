@@ -1,6 +1,5 @@
 
 import '../../../general_index.dart';
-import '../widget/chat_list_widgets.dart';
 
 
 class ChatAll extends StatefulWidget {

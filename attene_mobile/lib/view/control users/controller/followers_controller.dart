@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../models/follower_model.dart';
+
+
+import '../../../general_index.dart';
 
 class FollowersController extends GetxController {
   var selectedTab = 0.obs;

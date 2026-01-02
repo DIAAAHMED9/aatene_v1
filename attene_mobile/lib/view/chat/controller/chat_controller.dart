@@ -3,11 +3,10 @@
 import 'dart:async';
 import 'dart:io';
 import '../../../general_index.dart';
-import '../index.dart';
 
 
 /// Tabs for the chat list.
-enum ChatTab { all, unread, active, notActive, interested }
+enum ChatTab { all, unread, active, notActive, interested,groub }
 
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
@@ -27,6 +26,7 @@ class ChatController extends GetxController {
   final RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
+  final RxList<ChatConversation> groubConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> filteredConversations = <ChatConversation>[].obs;
 
   final RxList<Map<String, dynamic>> previousParticipants = <Map<String, dynamic>>[].obs;
@@ -296,7 +296,9 @@ class ChatController extends GetxController {
           interestedConversations.assignAll(
             list.where((c) => (c.type == 'direct' || c.type == 'group')).toList(),
           );
-
+groubConversations.assignAll(
+            list.where((c) => (c.type == 'group')).toList(),
+          );
           _applyFilters();
         }
       }
@@ -318,6 +320,9 @@ class ChatController extends GetxController {
         break;
       case ChatTab.interested:
         base = interestedConversations.toList();
+        break;
+           case ChatTab.groub:
+        base = groubConversations.toList();
         break;
       case ChatTab.active:
         base = allConversations.where((c) => c.lastMessage != null).toList();
@@ -657,6 +662,7 @@ if (body != null && body.trim().isNotEmpty) {
         allConversations.removeWhere((c) => c.id == conversationId);
         unreadConversations.removeWhere((c) => c.id == conversationId);
         interestedConversations.removeWhere((c) => c.id == conversationId);
+        groubConversations.removeWhere((c) => c.id == conversationId);
         filteredConversations.removeWhere((c) => c.id == conversationId);
 
         if (currentConversation.value?.id == conversationId) {
