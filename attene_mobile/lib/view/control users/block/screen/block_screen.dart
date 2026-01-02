@@ -45,25 +45,21 @@ class BlockScreen extends StatelessWidget {
           children: [
             Obx(
               () => GenericTabs(
-                tabs: ['مستخدمين', 'متاجر', 'محادثات'],
+                tabs: const ['مستخدمين', 'متاجر'],
                 selectedIndex: controller.currentIndex.value,
                 onTap: controller.changeTab,
                 selectedColor: AppColors.primary500,
                 unSelectedColor: const Color(0xFFDCE6F3),
               ),
             ),
-
             const SizedBox(height: 12),
-
             TextFiledAatene(
               isRTL: isRTL,
               hintText: 'بحث',
               textInputAction: TextInputAction.done,
               onChanged: controller.onSearch,
             ),
-
             const SizedBox(height: 12),
-
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
@@ -76,9 +72,9 @@ class BlockScreen extends StatelessWidget {
                   children: [
                     Obx(
                       () => ListView.builder(
-                        itemCount: controller.blockedUsers.length,
+                        itemCount: controller.filteredUsers.length,
                         itemBuilder: (_, i) => BlockItem(
-                          name: controller.blockedUsers[i],
+                          entry: controller.filteredUsers[i],
                           index: i,
                           tab: 0,
                         ),
@@ -86,21 +82,11 @@ class BlockScreen extends StatelessWidget {
                     ),
                     Obx(
                       () => ListView.builder(
-                        itemCount: controller.blockedStores.length,
+                        itemCount: controller.filteredStores.length,
                         itemBuilder: (_, i) => BlockItem(
-                          name: controller.blockedStores[i],
+                          entry: controller.filteredStores[i],
                           index: i,
                           tab: 1,
-                        ),
-                      ),
-                    ),
-                    Obx(
-                      () => ListView.builder(
-                        itemCount: controller.blockedChats.length,
-                        itemBuilder: (_, i) => BlockItem(
-                          name: controller.blockedChats[i],
-                          index: i,
-                          tab: 2,
                         ),
                       ),
                     ),

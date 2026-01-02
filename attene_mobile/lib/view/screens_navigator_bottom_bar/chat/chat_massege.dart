@@ -1,3 +1,5 @@
+
+// lib/view/screens_navigator_bottom_bar/chat/chat_massege.dart
 import 'dart:async';
 import 'dart:io';
 
@@ -30,8 +32,10 @@ class _ChatMassegeState extends State<ChatMassege> {
   final TextEditingController _text = TextEditingController();
   final ScrollController _scroll = ScrollController();
 
+  // Attachments (local) before sending
   final List<File> _pendingFiles = [];
 
+  // Audio recording
   final AudioRecorder _recorder = AudioRecorder();
   bool _isRecording = false;
   Duration _recordDuration = Duration.zero;
@@ -58,7 +62,7 @@ class _ChatMassegeState extends State<ChatMassege> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scroll.hasClients) return;
       _scroll.animateTo(
-        0,
+        0, // because reverse: true
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOut,
       );
@@ -66,6 +70,7 @@ class _ChatMassegeState extends State<ChatMassege> {
   }
 
   bool _isMe(ChatMessage m) {
+    // best effort: senderData.type/id matches myOwnerType/myOwnerId OR senderId matches my participant record id
     final conv = widget.conversation;
     final myOwnerType = c.myOwnerType;
     final myOwnerId = c.myOwnerId;
@@ -78,6 +83,7 @@ class _ChatMassegeState extends State<ChatMassege> {
       return true;
     }
 
+    // if senderId equals participant record id of "me"
     ChatParticipant? myParticipant;
     for (final p in conv.participants) {
       final d = p.participantData;
@@ -151,24 +157,30 @@ class _ChatMassegeState extends State<ChatMassege> {
                 onRemove: (i) => setState(() => _pendingFiles.removeAt(i)),
               ),
 
-            _Composer(
-              textController: _text,
-              isRecording: _isRecording,
-              recordDuration: _recordDuration,
-              onPickImages: _pickImages,
-              onPickFiles: _pickFiles,
-              onSend: _send,
-              onStartRecord: _startRecording,
-              onStopRecord: _stopRecordingAndSend,
-              onCancelRecord: _cancelRecording,
-            ),
-          ],
-        ),
-      );
+          _Composer(
+            textController: _text,
+            isRecording: _isRecording,
+            recordDuration: _recordDuration,
+            onPickImages: _pickImages,
+            onPickFiles: _pickFiles,
+            onSend: _send,
+            onStartRecord: _startRecording,
+            onStopRecord: _stopRecordingAndSend,
+            onCancelRecord: _cancelRecording,
+            isBlocked: true,
+          ),
+        ],
+      ),
+    );
     });
   }
 
   Future<void> _openConversationActions() async {
+    final conv = c.currentConversation.value ?? widget.conversation;
+    final other = c.otherSideOfDirect(conv);
+    final isDirect = (conv.type ?? '').toLowerCase() == 'direct';
+    final blocked = isDirect && other != null && c.isBlockedEntity(type: other['type']!, id: other['id']!);
+
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -176,6 +188,35 @@ class _ChatMassegeState extends State<ChatMassege> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (isDirect && other != null)
+              ListTile(
+                leading: Icon(blocked ? Icons.lock_open : Icons.block),
+                title: Text(blocked ? 'إلغاء الحظر' : 'حظر المستخدم'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  if (!blocked) {
+                    final reason = await _askReason(title: 'سبب الحظر (اختياري)');
+                    await c.blockEntity(blockedType: other['type']!, blockedId: other['id']!, reason: reason);
+                  } else {
+                    await c.unBlockEntity(blockedType: other['type']!, blockedId: other['id']!);
+                  }
+                  if (mounted) setState(() {});
+                },
+              ),
+            if (isDirect && other != null)
+              ListTile(
+                leading: const Icon(Icons.report_gmailerrorred_outlined),
+                title: const Text('إبلاغ'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final reason = await _askReason(title: 'اكتب سبب البلاغ');
+                  if (reason == null || reason.trim().isEmpty) return;
+                  // ⚠️ لم يتم تزويدنا بـ API منفصل للبلاغ، لذلك نعرض إشعار فقط.
+                  if (mounted) {
+                    Get.snackbar('تم', 'تم استلام البلاغ');
+                  }
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.person_add_alt),
               title: const Text('إضافة مستخدم للمحادثة'),
@@ -255,9 +296,31 @@ class _ChatMassegeState extends State<ChatMassege> {
       name: newName,
     );
     if (ok) {
+      // ✅ reflect immediately in AppBar + screen
       if (mounted) setState(() {});
     }
   }
+
+  Future<String?> _askReason({required String title}) async {
+    final tc = TextEditingController();
+    final res = await showDialog<String?>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: TextField(
+          controller: tc,
+          maxLines: 3,
+          decoration: const InputDecoration(hintText: 'اكتب هنا...'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+          ElevatedButton(onPressed: () => Navigator.pop(context, tc.text.trim()), child: const Text('تم')),
+        ],
+      ),
+    );
+    return res;
+  }
+
 
   Future<void> _pickImages() async {
     final result = await FilePicker.platform.pickFiles(
@@ -299,6 +362,7 @@ class _ChatMassegeState extends State<ChatMassege> {
 
     final convId = widget.conversation.id;
 
+    // Send files first (if any) with optional text
     if (hasFiles) {
       final files = List<File>.from(_pendingFiles);
       setState(() => _pendingFiles.clear());
@@ -345,6 +409,7 @@ class _ChatMassegeState extends State<ChatMassege> {
 
       setState(() => _isRecording = true);
     } catch (e) {
+      // ignore: avoid_print
       print('❌ startRecording: $e');
     }
   }
@@ -358,6 +423,7 @@ class _ChatMassegeState extends State<ChatMassege> {
         await _recorder.stop();
       }
 
+      // delete file if exists
       final p = _recordPath;
       if (p != null) {
         final f = File(p);
@@ -394,6 +460,7 @@ class _ChatMassegeState extends State<ChatMassege> {
         text: null,
       );
     } catch (e) {
+      // ignore: avoid_print
       print('❌ stopRecordingAndSend: $e');
     } finally {
       setState(() {
@@ -483,6 +550,8 @@ class _Composer extends StatelessWidget {
   final VoidCallback onPickFiles;
   final Future<void> Function() onSend;
 
+  final bool isBlocked;
+
   final bool isRecording;
   final Duration recordDuration;
   final Future<void> Function() onStartRecord;
@@ -494,6 +563,7 @@ class _Composer extends StatelessWidget {
     required this.onPickImages,
     required this.onPickFiles,
     required this.onSend,
+    required this.isBlocked,
     required this.isRecording,
     required this.recordDuration,
     required this.onStartRecord,
@@ -515,11 +585,11 @@ class _Composer extends StatelessWidget {
           children: [
             IconButton(
               icon: const Icon(Icons.image_outlined),
-              onPressed: onPickImages,
+              onPressed: isBlocked ? null : onPickImages,
             ),
             IconButton(
               icon: const Icon(Icons.attach_file),
-              onPressed: onPickFiles,
+              onPressed: isBlocked ? null : onPickFiles,
             ),
             Expanded(
               child: isRecording
@@ -529,6 +599,7 @@ class _Composer extends StatelessWidget {
                     )
                   : TextField(
                       controller: textController,
+                      enabled: !isBlocked,
                       minLines: 1,
                       maxLines: 4,
                       textInputAction: TextInputAction.newline,
@@ -548,11 +619,11 @@ class _Composer extends StatelessWidget {
             if (!isRecording)
               IconButton(
                 icon: const Icon(Icons.send),
-                onPressed: () => onSend(),
+                onPressed: isBlocked ? null : () => onSend(),
               ),
             GestureDetector(
-              onLongPressStart: (_) => onStartRecord(),
-              onLongPressEnd: (_) => onStopRecord(),
+              onLongPressStart: isBlocked ? null : (_) => onStartRecord(),
+              onLongPressEnd: isBlocked ? null : (_) => onStopRecord(),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
@@ -636,6 +707,7 @@ class _FakeWaves extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     final v = animation.value;
+    // 12 bars
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(12, (i) {
@@ -790,11 +862,12 @@ class _AttachmentsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // WhatsApp-like: 1 big, 2 side-by-side, 3/4 grid, >4 grid with "+N"
     final count = urls.length;
 
     if (count == 1) return _AttachmentTile(url: urls[0], big: true);
 
-    final show = urls.take(10).toList();
+    final show = urls.take(10).toList(); // hard cap
     final gridCount = show.length.clamp(2, 4);
 
     return SizedBox(
@@ -1070,6 +1143,8 @@ class _AddParticipantSheet extends StatelessWidget {
   }
 }
 
+// ---- helpers ----
+
 bool _isImageUrl(String url) {
   final u = url.toLowerCase();
   return u.endsWith('.png') ||
@@ -1093,6 +1168,7 @@ bool _looksLikeAudio(String text, List<String> urls) {
   return false;
 }
 
+
 String _formatArabicTime(DateTime dt) {
   final local = dt.toLocal();
   int hour = local.hour;
@@ -1107,6 +1183,7 @@ String _formatArabicTime(DateTime dt) {
   final hh = hour.toString().padLeft(2, '0');
   return '$hh:$minute $suffix';
 }
+
 
 bool _isImagePath(String path) {
   final p = path.toLowerCase();

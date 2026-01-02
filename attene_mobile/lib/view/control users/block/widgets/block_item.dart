@@ -1,3 +1,4 @@
+
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,13 +6,13 @@ import '../../../../component/text/aatene_custom_text.dart';
 import '../controller/block_controller.dart';
 
 class BlockItem extends StatelessWidget {
-  final String name;
+  final BlockEntry entry;
   final int index;
   final int tab;
 
   BlockItem({
     super.key,
-    required this.name,
+    required this.entry,
     required this.index,
     required this.tab,
   });
@@ -20,17 +21,34 @@ class BlockItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final avatar = (entry.avatar ?? '').trim();
+    final hasAvatar = avatar.isNotEmpty;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 26,
-            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+            backgroundColor: Colors.grey[200],
+            backgroundImage: hasAvatar ? NetworkImage(avatar) : null,
+            child: hasAvatar
+                ? null
+                : Icon(
+                    entry.type.toLowerCase() == 'store' ? Icons.store : Icons.person,
+                    color: Colors.grey[600],
+                  ),
           ),
           const SizedBox(width: 10),
-          Text(name, style: getBold()),
-          const Spacer(),
+          Expanded(
+            child: Text(
+              entry.displayName,
+              style: getBold(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 10),
           GestureDetector(
             onTap: _confirmDialog,
             child: Container(

@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:attene_mobile/controller/chat_controller.dart';
 import 'package:attene_mobile/models/chat_models.dart';
 
+import '../../control users/block/screen/block_screen.dart';
 import 'chat_detail_page.dart';
 import 'chat_message_model.dart';
 
@@ -43,6 +44,7 @@ class _ChatAllState extends State<ChatAll> {
           title: const Text('المحادثات'),
           centerTitle: false,
           actions: [
+          IconButton(onPressed: ()=>Get.to(BlockScreen()), icon: Icon(Icons.block_rounded)),
             IconButton(
               tooltip: 'تحديث',
               icon: const Icon(Icons.refresh_rounded),
@@ -174,6 +176,8 @@ class _TabsRow extends StatelessWidget {
             chip('غير نشط', ChatTab.notActive),
             const SizedBox(width: 8),
             chip('مهتم', ChatTab.interested),
+            const SizedBox(width: 8,),
+            chip('المجموعات',ChatTab.group),
           ],
         ),
       );
