@@ -166,8 +166,6 @@ flutter:
     # - packages/flutter_quill/assets/
     - assets/images/
     - assets/icons/svg/
-    - assets/icons/svg/bottom_nav_bar/
-    - assets/images/svg images/
     - assets/images/png/
     - assets/images/gif/
     - assets/images/splash_screen/

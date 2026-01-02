@@ -45,11 +45,15 @@ class ChangeEmail extends StatelessWidget {
               heightTextFiled: 45,
               textInputAction: TextInputAction.done,
             ),
-            AateneButton(
-              buttonText: "حفظ",
-              color: AppColors.primary400,
-              borderColor: AppColors.primary400,
-              textColor: AppColors.light1000,
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: AateneButton(
+                buttonText: "حفظ",
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                textColor: AppColors.light1000,
+              ),
             ),
           ],
         ),

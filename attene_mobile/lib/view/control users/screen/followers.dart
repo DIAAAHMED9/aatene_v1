@@ -1,95 +1,53 @@
-import '../../../general_index.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/followers_controller.dart';
+import '../widgets/followers_tabs.dart';
+import '../widgets/search_fiel.dart';
+import '../widgets/follower_item.dart';
 
-
-class Followers extends StatelessWidget {
-  Followers({super.key});
-
-  final controller = Get.put(FollowersController());
+class FollowersScreen extends StatelessWidget {
+  const FollowersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isRTL = LanguageUtils.isRTL;
+    final controller = Get.put(FollowersController());
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
-        title: Text(
-          "قائمة المتابعين",
-          style: getBold(color: AppColors.neutral100, fontSize: 20),
+        title: const Text(
+          'قائمة المتابعين',
+          style: TextStyle(color: Colors.black),
         ),
-        centerTitle: false,
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[100],
-            ),
-            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
-          ),
-        ),
+        centerTitle: true,
+        leading: const Icon(Icons.arrow_back, color: Colors.black),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FollowersTabs(),
-
-            const SizedBox(height: 12),
-
-            Row(
-              children: [
-                Text("350K", style: getBold(fontSize: 18)),
-                const SizedBox(width: 6),
-                Text("متابع", style: getRegular(fontSize: 18)),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            TextFiledAatene(
-              isRTL: isRTL,
-              hintText: "بحث",
-              suffixIcon: IconButton(
-                onPressed: () {},
-                icon: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primary400,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Icon(Icons.search, color: AppColors.light1000),
-                ),
-              ),
-              textInputAction: TextInputAction.done,
-            ),
-
-            const SizedBox(height: 12),
-
+            const FollowersTabBar(),
+            const SizedBox(height: 16),
+            const SearchField(),
+            const SizedBox(height: 16),
             Expanded(
-              child: PageView(
-                controller: controller.pageController,
-                onPageChanged: controller.onPageChanged,
-                children: const [_FollowersList(), _FollowersList()],
+              child: Obx(
+                    () => ListView.separated(
+                  itemCount: controller.filteredFollowers.length,
+                  separatorBuilder: (_, __) =>
+                  const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    return FollowerItem(
+                      model: controller.filteredFollowers[index],
+                    );
+                  },
+                ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _FollowersList extends StatelessWidget {
-  const _FollowersList();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (_, __) => FollowerItem(),
     );
   }
 }

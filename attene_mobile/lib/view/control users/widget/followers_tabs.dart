@@ -1,73 +1,62 @@
-import '../../../general_index.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
+import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/followers_controller.dart';
 
-
-class FollowersTabs extends StatelessWidget {
-  FollowersTabs({super.key});
-
-  final controller = Get.find<FollowersController>();
+class FollowersTabBar extends StatelessWidget {
+  const FollowersTabBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Column(
+    final controller = Get.find<FollowersController>();
+
+    return Obx(
+          () => Row(
+            spacing: 10,
         children: [
-          Row(
-            children: [
-              _tab(
-                text: 'أشخاص تتابعهم',
-                index: 0,
-                selected: controller.currentIndex.value == 0,
-              ),
-              const SizedBox(width: 12),
-              _tab(
-                text: 'المتابعين',
-                index: 1,
-                selected: controller.currentIndex.value == 1,
-              ),
-            ],
+          _TabItem(
+            title: 'المتابعين',
+            isSelected: controller.selectedTab.value == 0,
+            onTap: () => controller.selectedTab.value = 0,
           ),
-
-          const SizedBox(height: 6),
-
-          // AnimatedAlign(
-          //   duration: const Duration(milliseconds: 300),
-          //   alignment: controller.currentIndex.value == 0
-          //       ? Alignment.centerLeft
-          //       : Alignment.centerRight,
-          //   child: Container(
-          //     width: MediaQuery.of(context).size.width / 2 - 30,
-          //     height: 3,
-          //     decoration: BoxDecoration(
-          //       color: AppColors.primary500,
-          //       borderRadius: BorderRadius.circular(4),
-          //     ),
-          //   ),
-          // ),
+          _TabItem(
+            title: 'أشخاص تتابعهم',
+            isSelected: controller.selectedTab.value == 1,
+            onTap: () => controller.selectedTab.value = 1,
+          ),
         ],
-      );
-    });
+      ),
+    );
   }
+}
 
-  Widget _tab({
-    required String text,
-    required int index,
-    required bool selected,
-  }) {
+class _TabItem extends StatelessWidget {
+  final String title;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _TabItem({
+    required this.title,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: () => controller.changeTab(index),
+        onTap: onTap,
         child: Container(
-          height: 42,
-          alignment: Alignment.center,
+          height: 50,
           decoration: BoxDecoration(
-            color: selected ? AppColors.primary500 :  AppColors.customColor10,
-            borderRadius: BorderRadius.circular(24),
+            color: isSelected ? AppColors.primary400 : AppColors.primary50,
+            borderRadius: BorderRadius.circular(50),
           ),
+          alignment: Alignment.center,
           child: Text(
-            text,
-            style: getMedium(
-              color: selected ? Colors.white : AppColors.primary400,
-            ),
+            title,
+            style:getBold(  color: isSelected ? Colors.white : Colors.black,) ,
           ),
         ),
       ),

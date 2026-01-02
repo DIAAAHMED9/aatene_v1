@@ -13,10 +13,7 @@ class ChangePassword extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "تغيير كلمة المرور",
-          style:getBold(
-            color: AppColors.neutral100,
-            fontSize: 20,
-          ) ,
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         centerTitle: false,
         leading: IconButton(
@@ -37,34 +34,40 @@ class ChangePassword extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("كلمة المرور القديمة", style:getRegular(fontSize: 12)),
+            Text("كلمة المرور القديمة", style: getRegular(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.next,
+              textInputType: TextInputType.visiblePassword,
+              textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 12),
             Divider(),
             SizedBox(height: 12),
-            Text("كلمة المرور الجديدة", style:getRegular(fontSize: 12),),
+            Text("كلمة المرور الجديدة", style: getRegular(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.next,
+              textInputType: TextInputType.visiblePassword,
+              textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 12),
-            Text("تأكيد كلمة المرور الجديدة",  style:getRegular(fontSize: 12),),
+            Text("تأكيد كلمة المرور الجديدة", style: getRegular(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword, textInputAction: TextInputAction.done,
+              textInputType: TextInputType.visiblePassword,
+              textInputAction: TextInputAction.done,
             ),
-            SizedBox(height: 20),
-            AateneButton(
-              buttonText: "اعادة تعيين",
-              color: AppColors.primary400,
-              textColor: AppColors.light1000,
-              borderColor: AppColors.primary400,
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: AateneButton(
+                buttonText: "اعادة تعيين",
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                textColor: AppColors.light1000,
+              ),
             ),
           ],
         ),

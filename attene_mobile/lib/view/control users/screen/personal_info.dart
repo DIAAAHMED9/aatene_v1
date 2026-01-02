@@ -74,6 +74,7 @@ class PersonalInfo extends StatelessWidget {
               ),
               Text("النبذة الشخصية", style: getRegular(fontSize: 14)),
               TextFiledAatene(
+                
                 isRTL: isRTL,
                 hintText: "هنا مثال لوص....",
                 textInputType: TextInputType.name,

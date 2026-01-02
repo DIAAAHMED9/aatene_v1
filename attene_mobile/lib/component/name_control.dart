@@ -33,7 +33,7 @@ class NameControl extends StatelessWidget {
             spacing: 10,
             children: [
               icon,
-              Text(name, style: getBold()),
+              Text(name, style: getRegular()),
             ],
           ),
           Divider(color: AppColors.neutral800),

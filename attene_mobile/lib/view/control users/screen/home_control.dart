@@ -1,12 +1,19 @@
+import 'package:attene_mobile/component/name_control.dart';
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
+import 'package:attene_mobile/view/control%20users/edit_profile.dart';
+import 'package:attene_mobile/view/control%20users/followers/screen/followers.dart';
+import 'package:attene_mobile/view/control%20users/personal_info.dart';
+import 'package:attene_mobile/view/screens_navigator_bottom_bar/home/home.dart';
+import 'package:attene_mobile/view/support/about%20us/about_us_screen.dart';
+import 'package:attene_mobile/view/support/privacy/privacy_screen.dart';
+import 'package:attene_mobile/view/support/report%20pages/sellect_report.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
-import '../../../general_index.dart';
-import '../../home/index.dart';
-import 'about_us_screen.dart';
-import 'privacy_screen.dart';
-import 'sellect_report.dart';
-import 'terms_of_use_screen.dart';
-
-
+import '../../utlis/colors/app_color.dart';
+import '../support/terms of use/terms_of_use_screen.dart';
+import 'block/screen/block_screen.dart';
+import 'notification_feed.dart';
 
 class HomeControl extends StatelessWidget {
   const HomeControl({super.key});
@@ -21,7 +28,7 @@ class HomeControl extends StatelessWidget {
               width: double.infinity,
               height: 240,
               decoration: BoxDecoration(
-                color:  AppColors.customControlerVindor,
+                color: const Color(0xFFF5F6F8),
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(24),
                 ),
@@ -36,6 +43,7 @@ class HomeControl extends StatelessWidget {
               child: Stack(
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center ,
                     children: [
                       SizedBox(height: 20),
                       Padding(
@@ -45,8 +53,7 @@ class HomeControl extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 40),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 70),
+                      Center(
                         child: Row(
                           spacing: 10,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,13 +141,22 @@ class HomeControl extends StatelessWidget {
                       screen: Edit_Profile(),
                     ),
                     NameControl(
+                      name: "اعدادات التنبيهعات",
+                      icon: Icon(
+                        Icons.notifications,
+                        color: AppColors.primary400,
+                        size: 25,
+                      ),
+                      screen: NotificationFeed(),
+                    ),
+                    NameControl(
                       name: "المتابعين",
                       icon: Icon(
                         Icons.person_add_alt,
                         color: AppColors.primary400,
                         size: 25,
                       ),
-                      screen: Followers(),
+                      screen: FollowersScreen(),
                     ),
                     NameControl(
                       name: "قائمة الحظر",
@@ -219,7 +235,6 @@ class HomeControl extends StatelessWidget {
                 ),
               ),
             ),
-         
           ],
         ),
       ),

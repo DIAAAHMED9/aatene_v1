@@ -1,80 +1,68 @@
-import '../../../general_index.dart';
-
+import 'package:attene_mobile/component/text/aatene_custom_text.dart';
+import 'package:attene_mobile/utlis/colors/app_color.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/followers_controller.dart';
+import '../models/follower_model.dart';
+import 'unfollow_dialog.dart';
 
 class FollowerItem extends StatelessWidget {
-  FollowerItem({super.key});
+  final FollowerModel model;
 
-  final RxBool isFollowing = false.obs;
+  const FollowerItem({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 26,
-            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-          ),
+    final controller = Get.find<FollowersController>();
 
-          const SizedBox(width: 10),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+    return Row(
+      children: [
+        CircleAvatar(radius: 28, backgroundImage: NetworkImage(model.avatar)),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('SideLimited', style: getBold(fontSize: 15)),
-              const SizedBox(height: 4),
+              Text(model.name, style: getBold(fontSize: 14)),
               Text(
-                '249K متابعين',
-                style: getRegular(color: Colors.grey, fontSize: 13),
+                '${model.followersCount ~/ 1000}K متابع',
+                style: getMedium(fontSize: 13),
               ),
             ],
           ),
-
-          const Spacer(),
-
-          Obx(() {
-            return GestureDetector(
-              onTap: () {
-                isFollowing.value = !isFollowing.value;
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                height: 36,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: isFollowing.value
-                      ?  AppColors.customColor10
-                      : AppColors.primary400,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      isFollowing.value
-                          ? Icons.done
-                          : Icons.person_add_alt,
-                      color: isFollowing.value
-                          ? AppColors.primary400
-                          : Colors.white,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      isFollowing.value ? 'تمت المتابعة' : 'رد المتابعة',
-                      style: getMedium(
-                        color: isFollowing.value
-                            ? AppColors.primary400
-                            : Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
+        ),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: model.isFollowing
+                ? AppColors.primary50
+                : AppColors.primary400,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+          icon: Icon(
+            model.isFollowing ? Icons.person_remove : Icons.person_add,
+            size: 18,
+            color: model.isFollowing
+                ? AppColors.primary400
+                : AppColors.primary50,
+          ),
+          label: Text(
+            model.isFollowing ? 'إلغاء المتابعة' : 'رد المتابعة',
+            style: getMedium(
+              color: model.isFollowing
+                  ? AppColors.primary400
+                  : AppColors.primary50,
+            ),
+          ),
+          onPressed: () {
+            if (model.isFollowing) {
+              Get.dialog(UnfollowDialog(model: model));
+            } else {
+            }
+          },
+        ),
+      ],
     );
   }
 }

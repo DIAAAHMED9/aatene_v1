@@ -32,10 +32,11 @@ class TextFiledAatene extends StatelessWidget {
     this.style,
     this.hintStyle,
     this.labelText,
-    this.floatingLabelBehavior,
+    this.floatingLabelBehavior, this.filled,
   });
 
   final bool isRTL;
+  final bool? filled;
   final String hintText;
   final String? errorText;
   final Function(String)? onChanged;
