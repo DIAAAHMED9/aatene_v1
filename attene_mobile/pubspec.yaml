@@ -165,10 +165,10 @@ flutter:
   assets:
     # - packages/flutter_quill/assets/
     - assets/images/
-    - assets/icons/svg/
     - assets/images/png/
     - assets/images/gif/
     - assets/images/splash_screen/
+    - assets/images/svg_images/
     - assets/
     - assets/fonts/
     - assets/fonts/ping_font_tlwen/

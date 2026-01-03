@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class HomeControl extends StatelessWidget {
@@ -30,7 +28,7 @@ class HomeControl extends StatelessWidget {
               child: Stack(
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center ,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 20),
                       Padding(
@@ -42,6 +40,7 @@ class HomeControl extends StatelessWidget {
                       SizedBox(height: 40),
                       Center(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           spacing: 10,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -102,46 +101,50 @@ class HomeControl extends StatelessWidget {
                   children: [
                     NameControl(
                       name: "لوحة القيادة",
-                      icon: Icon(
-                        Icons.home_outlined,
-                        color: AppColors.primary400,
-                        size: 25,
+                      icon: SvgPicture.asset(
+                        'assets/images/svg_images/home.svg',
+                        semanticsLabel: 'My SVG Image',
+                        height: 25,
+                        width: 25,
                       ),
                       screen: HomeScreen(),
                     ),
                     NameControl(
                       name: "حساباتي",
-                      icon: Icon(
-                        Icons.person_outline,
-                        color: AppColors.primary400,
-                        size: 25,
-                      ),
                       screen: HomeControl(),
+                      icon: Icon(
+                        Icons.person_outlined,
+                        color: AppColors.primary400,
+                        size: 30,
+                      ),
                     ),
                     NameControl(
                       name: "تعديل الملف الشخصي",
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        color: AppColors.primary400,
-                        size: 25,
+                      icon: SvgPicture.asset(
+                        'assets/images/svg_images/edit.svg',
+                        semanticsLabel: 'My SVG Image',
+                        height: 25,
+                        width: 25,
                       ),
                       screen: Edit_Profile(),
                     ),
                     NameControl(
                       name: "اعدادات التنبيهعات",
-                      icon: Icon(
-                        Icons.notifications,
-                        color: AppColors.primary400,
-                        size: 25,
+                      icon: SvgPicture.asset(
+                        'assets/images/svg_images/Notification.svg',
+                        semanticsLabel: 'My SVG Image',
+                        height: 25,
+                        width: 25,
                       ),
                       screen: NotificationFeed(),
                     ),
                     NameControl(
                       name: "المتابعين",
-                      icon: Icon(
-                        Icons.person_add_alt,
-                        color: AppColors.primary400,
-                        size: 25,
+                      icon: SvgPicture.asset(
+                        'assets/images/svg_images/add-team.svg',
+                        semanticsLabel: 'My SVG Image',
+                        height: 25,
+                        width: 25,
                       ),
                       screen: FollowersScreen(),
                     ),
@@ -158,31 +161,34 @@ class HomeControl extends StatelessWidget {
                       maintainState: true,
                       title: Text("الدعم", style: getBold(fontSize: 18)),
                       children: [
-                        SizedBox(height: 10),
+                        SizedBox(height: 10),//
                         NameControl(
                           name: "اتصل بنا",
-                          icon: Icon(
-                            Icons.contact_support_outlined,
-                            color: AppColors.primary400,
-                            size: 25,
+                          icon: SvgPicture.asset(
+                            'assets/images/svg_images/bx_message.svg',
+                            semanticsLabel: 'My SVG Image',
+                            height: 25,
+                            width: 25,
                           ),
                           screen: HomeControl(),
                         ),
                         NameControl(
                           name: "سياسة الخصوصية",
-                          icon: Icon(
-                            Icons.privacy_tip_outlined,
-                            color: AppColors.primary400,
-                            size: 25,
+                          icon: SvgPicture.asset(
+                            'assets/images/svg_images/privecy.svg',
+                            semanticsLabel: 'My SVG Image',
+                            height: 25,
+                            width: 25,
                           ),
                           screen: PrivacyScreen(),
                         ),
                         NameControl(
                           name: "شروط الخدمة",
-                          icon: Icon(
-                            Icons.local_police_outlined,
-                            color: AppColors.primary400,
-                            size: 25,
+                          icon:  SvgPicture.asset(
+                            'assets/images/svg_images/shode_services.svg',
+                            semanticsLabel: 'My SVG Image',
+                            height: 25,
+                            width: 25,
                           ),
                           screen: TermsOfUseScreen(),
                         ),
@@ -197,10 +203,11 @@ class HomeControl extends StatelessWidget {
                         ),
                         NameControl(
                           name: "عن أعطيني",
-                          icon: Icon(
-                            Icons.lightbulb_circle_outlined,
-                            color: AppColors.primary400,
-                            size: 25,
+                          icon:  SvgPicture.asset(
+                            'assets/images/svg_images/ix_about.svg',
+                            semanticsLabel: 'My SVG Image',
+                            height: 25,
+                            width: 25,
                           ),
                           screen: AboutUsScreen(),
                         ),
