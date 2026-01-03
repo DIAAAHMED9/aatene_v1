@@ -324,16 +324,16 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
 
       print('✅ تم تسجيل الخروج بنجاح');
 
-      if (showMessage) {
-        Get.snackbar(
-          'انتهت الجلسة',
-          'يرجى تسجيل الدخول مرة أخرى',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-      }
+      // if (showMessage) {
+      //   Get.snackbar(
+      //     'انتهت الجلسة',
+      //     'يرجى تسجيل الدخول مرة أخرى',
+      //     snackPosition: SnackPosition.BOTTOM,
+      //     backgroundColor: Colors.orange,
+      //     colorText: Colors.white,
+      //     duration: const Duration(seconds: 3),
+      //   );
+      // }
 
       await Future.delayed(const Duration(milliseconds: 500));
       Get.offAllNamed('/login');
