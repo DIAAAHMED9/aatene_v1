@@ -59,18 +59,23 @@ class StoreSelectionController extends GetxController {
   Future<void> confirmSelection() async {
     final store = selectedStore.value;
     if (store == null) return;
-    final storeId = store['id'];
+
+    final storeIdRaw = store['id'];
+    if (storeIdRaw == null) return;
+
+    final storeId = int.tryParse(storeIdRaw.toString());
     if (storeId == null) return;
 
-    // ✅ تحديث user_data عبر الخدمة (بدون التعامل المباشر مع Rx/Map)
+    // حفظ المتجر بالطريقة الصحيحة داخل user_data
     await DataInitializerService.to.updateUserData({
       'store_id': storeId,
       'active_store_id': storeId,
       'store': store,
     });
 
-    // ✅ تهيئة البيانات بعد اختيار المتجر
-    await DataInitializerService.to.initializeAppData(silent: true);
+    // ✅ Phase 2: تهيئة عامة للجميع + تهيئة بيانات المتجر للتاجر
+    await DataInitializerService.to.initializeCoreData(silent: true);
+    await DataInitializerService.to.initializeStoreData(storeId: storeId, silent: true);
 
     Get.offAllNamed('/mainScreen');
   }

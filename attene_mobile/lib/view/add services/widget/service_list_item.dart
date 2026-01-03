@@ -98,39 +98,34 @@ class ServiceListItem extends StatelessWidget {
 
                     SizedBox(height: ResponsiveDimensions.f(6)),
 
-                    if (service.sectionId != null && service.sectionId != 0)
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.category_outlined,
-                            color: Colors.grey[600],
-                            size: ResponsiveDimensions.f(14),
-                          ),
-                          SizedBox(width: ResponsiveDimensions.f(4)),
-                          Text(
-                            _getSectionName(service.sectionId!),
-                            style: getRegular(
-                              fontSize: ResponsiveDimensions.f(12),
-                              color: Color(0xFF757575),
-                            ),
-                          ),
-                        ],
-                      ),
+                    // if (service.sectionId != null && service.sectionId != 0)
+                    //   Row(
+                    //     children: [
+                    //       Icon(
+                    //         Icons.category_outlined,
+                    //         color: Colors.grey[600],
+                    //         size: ResponsiveDimensions.f(14),
+                    //       ),
+                    //       SizedBox(width: ResponsiveDimensions.f(4)),
+                    //       Text(
+                    //         _getSectionName(service.sectionId!),
+                    //         style: getRegular(
+                    //           fontSize: ResponsiveDimensions.f(12),
+                    //           color: Color(0xFF757575),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
 
                     SizedBox(height: ResponsiveDimensions.f(8)),
-
-                    Row(
-                      children: [
-                        Text('${service.price} ₪', style: getBold()),
-                        SizedBox(width: ResponsiveDimensions.f(12)),
-                        _buildStatusChip(service.status),
-                      ],
-                    ),
+   _buildStatusChip(service.status),
+                 
                   ],
                 ),
               ),
             ),
-
+                        Text('${service.price} ₪', style: getBold()),
+                        SizedBox(width: ResponsiveDimensions.f(12),),
             if (!isSelectionMode)
               IconButton(
                 onPressed: _showServiceOptions,
@@ -159,11 +154,11 @@ class ServiceListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: Colors.grey[200],
       ),
-      child: service.imagesUrl != null
+      child: service.imagesUrl.isNotEmpty
           ? ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                service.imagesUrl ?? '',
+                (service.imagesUrl.isNotEmpty ? service.imagesUrl.first : ''),
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -231,7 +226,7 @@ class ServiceListItem extends StatelessWidget {
         text = status;
     }
 
-    return Container(
+    return Container( 
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveDimensions.f(8),
         vertical: ResponsiveDimensions.f(4),

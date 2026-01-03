@@ -2,6 +2,7 @@
 
 
 import '../../general_index.dart';
+enum StoreMode { products, services, mixed }
 
 class DataInitializerService extends GetxService {
   final RxBool _isInitializing = false.obs;
@@ -19,6 +20,54 @@ class DataInitializerService extends GetxService {
   RxBool get isOnlineRx => _isOnline;
 
   RxBool get isDataLoadedRx => _isDataLoaded;
+
+// ========= Phase 2: Role & TTL helpers =========
+bool get isMerchantUser {
+  final ud = getUserData();
+  final user = ud['user'];
+  if (user is Map) {
+    final t = (user['user_type'] ?? '').toString().toLowerCase();
+    return t == 'merchant';
+  }
+  final t2 = (ud['user_type'] ?? ud['role'] ?? ud['type'] ?? '').toString().toLowerCase();
+  return t2 == 'merchant';
+}
+
+
+StoreMode get currentStoreMode {
+  if (!isMerchantUser) return StoreMode.products;
+
+  final ud = getUserData();
+  final store = ud['store'];
+  if (store is! Map) return StoreMode.products;
+
+  final t = (store['type'] ?? store['store_type'] ?? '').toString().toLowerCase().trim();
+  if (t == 'services' || t.contains('service') || t.contains('خدمات')) {
+    return StoreMode.services;
+  }
+  if (t == 'mixed' || t == 'both') {
+    return StoreMode.mixed;
+  }
+  return StoreMode.products;
+}
+
+bool _isFresh(String key, {required int maxAgeHours}) {
+  try {
+    final v = _storage.read<String>(key);
+    if (v == null) return false;
+    final last = DateTime.tryParse(v);
+    if (last == null) return false;
+    return DateTime.now().difference(last).inHours <= maxAgeHours;
+  } catch (_) {
+    return false;
+  }
+}
+
+Future<void> _touch(String key) async {
+  await _storage.write(key, DateTime.now().toIso8601String());
+}
+
+
   final RxBool _productsUpdated = false.obs;
 
   RxBool get productsUpdated => _productsUpdated;
@@ -226,7 +275,179 @@ class DataInitializerService extends GetxService {
     }
   }
 
-  Future<void> initializeAppData({
+  
+// ========= Phase 2: Split initialization (Core vs Store) =========
+
+/// تهيئة بيانات عامة (تعمل للمستخدم والتاجر)
+Future<void> initializeCoreData({bool forceRefresh = false, bool silent = false}) async {
+  if (_isInitializing.value) return;
+
+  Future<void> run() async {
+    _isInitializing.value = true;
+    _progress.value = 0.0;
+    _currentStep.value = 'تهيئة البيانات العامة...';
+
+    try {
+      // إذا لم يكن المستخدم مسجل دخول، لا نحمّل من الشبكة
+      if (!_isUserAuthenticated()) {
+        _isDataLoaded.value = true;
+        _progress.value = 1.0;
+        _currentStep.value = 'جاهز';
+        return;
+      }
+
+      if (!_isOnline.value && forceRefresh) {
+        throw Exception('لا يوجد اتصال بالإنترنت');
+      }
+
+      // SETTINGS (24h)
+      _currentStep.value = 'جاري تحميل الإعدادات...';
+      if (forceRefresh || !_isFresh('last_update_settings', maxAgeHours: 24)) {
+        await _loadSettings();
+        await _touch('last_update_settings');
+      }
+
+      // STORES (24h) - للتاجر مهم لاختيار المتجر
+      _currentStep.value = 'جاري تحميل المتاجر...';
+      if (forceRefresh || !_isFresh('last_update_stores', maxAgeHours: 24)) {
+        await _loadStores();
+        await _touch('last_update_stores');
+      }
+
+      // CITIES (72h)
+      _currentStep.value = 'جاري تحميل المدن...';
+      if (forceRefresh || !_isFresh('last_update_cities', maxAgeHours: 72)) {
+        await _loadCities();
+        await _touch('last_update_cities');
+      }
+
+      // DISTRICTS (72h)
+      _currentStep.value = 'جاري تحميل المناطق...';
+      if (forceRefresh || !_isFresh('last_update_districts', maxAgeHours: 72)) {
+        await _loadDistricts();
+        await _touch('last_update_districts');
+      }
+
+      // CURRENCIES (72h)
+      _currentStep.value = 'جاري تحميل العملات...';
+      if (forceRefresh || !_isFresh('last_update_currencies', maxAgeHours: 72)) {
+        await _loadCurrencies();
+        await _touch('last_update_currencies');
+      }
+
+      _progress.value = 1.0;
+      _currentStep.value = 'تمت تهيئة البيانات العامة';
+      _isDataLoaded.value = true;
+    } finally {
+      _isInitializing.value = false;
+    }
+  }
+
+  if (!silent) {
+    return UnifiedLoadingScreen.showWithFuture<void>(
+      run(),
+      message: 'جاري تهيئة البيانات...',
+      dialogId: 'core_initialization',
+    );
+  }
+  return run();
+}
+
+/// تهيئة بيانات المتجر (تعمل للتاجر فقط بعد اختيار المتجر)
+Future<void> initializeStoreData({
+  required int storeId,
+  bool forceRefresh = false,
+  bool silent = false,
+}) async {
+  if (_isInitializing.value) return;
+
+  Future<void> run() async {
+    _isInitializing.value = true;
+    _progress.value = 0.0;
+    _currentStep.value = 'تهيئة بيانات المتجر...';
+
+    try {
+      if (!_isUserAuthenticated()) return;
+
+      if (!_isOnline.value && forceRefresh) {
+        throw Exception('لا يوجد اتصال بالإنترنت');
+      }
+
+      // SECTIONS (12h)
+      _currentStep.value = 'جاري تحميل الأقسام...';
+      if (forceRefresh || !_isFresh(_kLastUpdateSections(storeId), maxAgeHours: 12)) {
+        await _loadSections();
+        await _touch(_kLastUpdateSections(storeId));
+      }
+
+      // ATTRIBUTES (24h)
+      _currentStep.value = 'جاري تحميل السمات...';
+      if (forceRefresh || !_isFresh('last_update_attributes', maxAgeHours: 24)) {
+        await _loadAttributes();
+        await _touch('last_update_attributes');
+      }
+
+      // CATEGORIES (24h)
+      _currentStep.value = 'جاري تحميل الفئات...';
+      if (forceRefresh || !_isFresh('last_update_categories', maxAgeHours: 24)) {
+        await _loadCategories();
+        await _touch('last_update_categories');
+      }
+
+      // PRODUCTS (6h)
+      _currentStep.value = 'جاري تحميل المنتجات...';
+      if (forceRefresh || !_isFresh(_kLastUpdateProducts(storeId), maxAgeHours: 6)) {
+        await _loadProducts();
+        await _touch(_kLastUpdateProducts(storeId));
+      }
+
+      // ✅ rebuild enhanced sections AFTER products
+      await _rebuildEnhancedSections(storeId);
+
+      // MEDIA (12h)
+      _currentStep.value = 'جاري تحميل الوسائط...';
+      if (forceRefresh || !_isFresh(_kLastUpdateMedia(storeId), maxAgeHours: 12)) {
+        await _loadMedia();
+        await _touch(_kLastUpdateMedia(storeId));
+      }
+
+      _progress.value = 1.0;
+      _currentStep.value = 'تمت تهيئة بيانات المتجر';
+      _isDataLoaded.value = true;
+    } finally {
+      _isInitializing.value = false;
+    }
+  }
+
+  if (!silent) {
+    return UnifiedLoadingScreen.showWithFuture<void>(
+      run(),
+      message: 'جاري تهيئة بيانات المتجر...',
+      dialogId: 'store_initialization',
+    );
+  }
+  return run();
+}
+
+/// Wrapper: تهيئة مناسبة حسب نوع المستخدم
+Future<void> initializeData({bool forceRefresh = false, bool silent = false}) async {
+  await initializeCoreData(forceRefresh: forceRefresh, silent: true);
+
+  if (isMerchantUser) {
+    final sid = _getActiveStoreId();
+    if (sid != null) {
+      await initializeStoreData(storeId: sid, forceRefresh: forceRefresh, silent: true);
+    }
+  }
+
+  if (!silent) {
+    // لو استدعيت هذه الدالة بدون silent نعرض رسالة بسيطة بعد إنتهاء العمل
+    // (بدون فتح لودينج ثاني حتى لا نكرر الـ UI)
+    print('✅ [DATA] initializeData complete');
+  }
+}
+
+Future<void> initializeAppData({
     bool forceRefresh = false,
     bool silent = false,
   }) async {

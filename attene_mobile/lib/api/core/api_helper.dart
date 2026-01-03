@@ -10,10 +10,97 @@ import '../../general_index.dart';
 export 'package:get/get.dart' hide FormData, MultipartFile,Response;
 
 class ApiHelper {
-static Map<String, dynamic> _getBaseHeaders() {
-  try {
-    // fallback headers إذا لم يكن Get جاهز
-    if (!Get.isRegistered<MyAppController>()) {
+  static Map<String, dynamic> _getBaseHeaders() {
+    try {
+      if (!Get.isRegistered<MyAppController>()) {
+        return {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Device-Type': 'MOBILE',
+          'Accept-Language': 'ar',
+        };
+      }
+
+      final MyAppController myAppController = Get.find<MyAppController>();
+
+      final String lang = Get.isRegistered<LanguageController>()
+          ? Get.find<LanguageController>().appLocale.value
+          : 'ar';
+
+      // Authorization
+      String authorization = '';
+      if (myAppController.isLoggedIn.value &&
+          myAppController.userData.isNotEmpty &&
+          myAppController.userData['token'] != null) {
+        authorization = 'Bearer ${myAppController.userData['token']}';
+        print('🔑 [API] Token ready');
+      } else {
+        print('⚠️ [API] No token / not logged in');
+      }
+
+      // Determine if merchant
+      bool isMerchant = false;
+      try {
+        final ud = (myAppController.userData is Map)
+            ? Map<String, dynamic>.from(myAppController.userData)
+            : <String, dynamic>{};
+        final user = ud['user'];
+        if (user is Map) {
+          final t = (user['user_type'] ?? '').toString().toLowerCase();
+          isMerchant = t == 'merchant';
+        } else {
+          final t2 = (ud['user_type'] ?? ud['role'] ?? ud['type'] ?? '').toString().toLowerCase();
+          isMerchant = t2 == 'merchant';
+        }
+      } catch (_) {}
+
+      // storeId (merchant only) from controller then storage
+      String? storeId;
+      if (isMerchant) {
+        try {
+          final ud = (myAppController.userData is Map)
+              ? Map<String, dynamic>.from(myAppController.userData)
+              : <String, dynamic>{};
+
+          final v = ud['active_store_id'] ??
+              ud['store_id'] ??
+              ud['storeId'] ??
+              (ud['store'] is Map ? ud['store']['id'] : null);
+
+          if (v != null) storeId = v.toString();
+
+          if ((storeId == null || storeId!.isEmpty) &&
+              Get.isRegistered<GetStorage>()) {
+            final s = Get.find<GetStorage>();
+            final userData = s.read('user_data');
+            if (userData is Map) {
+              final vv = userData['active_store_id'] ??
+                  userData['store_id'] ??
+                  userData['storeId'] ??
+                  (userData['store'] is Map ? userData['store']['id'] : null);
+
+              if (vv != null) storeId = vv.toString();
+            }
+          }
+        } catch (_) {}
+
+        if (storeId != null && storeId!.isNotEmpty) {
+          print('🏪 [API] storeId in headers = $storeId');
+        } else {
+          print('⚠️ [API] storeId is NULL (merchant request may fail)');
+        }
+      }
+
+      return {
+        if (authorization.isNotEmpty) 'Authorization': authorization,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Device-Type': 'MOBILE',
+        'Accept-Language': lang,
+        if (isMerchant && storeId != null && storeId!.isNotEmpty) 'storeId': storeId!,
+      };
+    } catch (e) {
+      print('❌ [API] Headers error: $e');
       return {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -21,80 +108,7 @@ static Map<String, dynamic> _getBaseHeaders() {
         'Accept-Language': 'ar',
       };
     }
-
-    final MyAppController myAppController = Get.find<MyAppController>();
-
-    // LanguageController قد لا يكون جاهز دائمًا
-    final String lang = Get.isRegistered<LanguageController>()
-        ? Get.find<LanguageController>().appLocale.value
-        : 'ar';
-
-    // ✅ Authorization مرة واحدة فقط
-    String authorization = '';
-    if (myAppController.isLoggedIn.value &&
-        myAppController.userData.isNotEmpty &&
-        myAppController.userData['token'] != null) {
-      authorization = 'Bearer ${myAppController.userData['token']}';
-      print('🔑 [API] Token ready');
-    } else {
-      print('⚠️ [API] No token / not logged in');
-    }
-
-    // ✅ storeId بشكل قوي (Controller + Storage)
-    String? storeId;
-    try {
-      final ud = (myAppController.userData is Map)
-          ? Map<String, dynamic>.from(myAppController.userData)
-          : <String, dynamic>{};
-
-      final v = ud['active_store_id'] ??
-          ud['store_id'] ??
-          ud['storeId'] ??
-          (ud['store'] is Map ? ud['store']['id'] : null);
-
-      if (v != null) storeId = v.toString();
-
-      // fallback من GetStorage
-      if ((storeId == null || storeId!.isEmpty) &&
-          Get.isRegistered<GetStorage>()) {
-        final s = Get.find<GetStorage>();
-        final userData = s.read('user_data');
-        if (userData is Map) {
-          final vv = userData['active_store_id'] ??
-              userData['store_id'] ??
-              userData['storeId'] ??
-              (userData['store'] is Map ? userData['store']['id'] : null);
-
-          if (vv != null) storeId = vv.toString();
-        }
-      }
-    } catch (_) {}
-
-    if (storeId != null && storeId!.isNotEmpty) {
-      print('🏪 [API] storeId in headers = $storeId');
-    } else {
-      print('⚠️ [API] storeId is NULL (will not be sent)');
-    }
-
-    return {
-      if (authorization.isNotEmpty) 'Authorization': authorization,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Device-Type': 'MOBILE',
-      'Accept-Language': lang,
-      if (storeId != null && storeId!.isNotEmpty) 'storeId': storeId!,
-    };
-  } catch (e) {
-    print('❌ [API] Headers error: $e');
-    return {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Device-Type': 'MOBILE',
-      'Accept-Language': 'ar',
-    };
   }
-}
-
 
   static String? getStoreIdOrNull() {
     try {

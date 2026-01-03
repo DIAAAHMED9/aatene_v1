@@ -33,6 +33,9 @@ class TabsRow extends StatelessWidget {
             chip('غير نشط', ChatTab.notActive),
             const SizedBox(width: 8),
             chip('مهتم', ChatTab.interested),
+            const SizedBox(width: 8),
+
+            chip('المجموعات', ChatTab.groub),
           ],
         ),
       );

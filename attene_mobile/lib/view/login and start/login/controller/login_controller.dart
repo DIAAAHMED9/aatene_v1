@@ -220,18 +220,31 @@ class LoginController extends GetxController {
   Future<void> _redirectAfterLogin() async {
     await Future.delayed(const Duration(milliseconds: 300));
 
-    final userData = DataInitializerService.to.getUserData();
-    final storeId = userData['active_store_id'] ?? userData['store_id'];
+    // ✅ Phase 2: تهيئة عامة للجميع
+    try {
+      await DataInitializerService.to.initializeCoreData(silent: true);
+    } catch (_) {}
 
-    if (storeId == null || storeId.toString().isEmpty) {
+    final isMerchant = DataInitializerService.to.isMerchantUser;
+    final ud = DataInitializerService.to.getUserData();
+    final dynamic storeIdRaw = ud['active_store_id'] ?? ud['store_id'];
+    final String storeIdStr = storeIdRaw?.toString() ?? '';
+
+    // ✅ للتاجر فقط: إذا لا يوجد متجر => شاشة اختيار المتجر
+    if (isMerchant && storeIdStr.isEmpty) {
       Get.offAllNamed('/selectStore');
       return;
     }
 
-    // تهيئة بيانات المتجر/التطبيق (صامت)
-    try {
-      await DataInitializerService.to.initializeAppData(silent: true);
-    } catch (_) {}
+    // ✅ للتاجر: تهيئة بيانات المتجر بعد توفر storeId
+    if (isMerchant && storeIdStr.isNotEmpty) {
+      final sid = int.tryParse(storeIdStr);
+      if (sid != null) {
+        try {
+          await DataInitializerService.to.initializeStoreData(storeId: sid, silent: true);
+        } catch (_) {}
+      }
+    }
 
     Get.offAllNamed('/mainScreen');
   }
