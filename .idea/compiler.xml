@@ -3,11 +3,12 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="android.file_picker" target="21" />
-      <module name="android.flutter_secure_storage" target="21" />
-      <module name="android.fluttertoast" target="21" />
-      <module name="android.package_info_plus" target="21" />
-      <module name="android.share_plus" target="21" />
-      <module name="android.wakelock_plus" target="21" />
+      <module name="android.permission_handler_android" target="21" />
+      <module name="com.it_nomads.fluttersecurestorage.android.flutter_secure_storage" target="21" />
+      <module name="dev.fluttercommunity.plus.packageinfo.android.package_info_plus" target="21" />
+      <module name="dev.fluttercommunity.plus.share.android.share_plus" target="21" />
+      <module name="dev.fluttercommunity.plus.wakelock.android.wakelock_plus" target="21" />
+      <module name="io.github.ponnamkarthik.toast.fluttertoast.android.fluttertoast" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
