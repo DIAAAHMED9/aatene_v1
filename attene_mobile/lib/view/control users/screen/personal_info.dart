@@ -55,7 +55,12 @@ class PersonalInfo extends StatelessWidget {
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "4/11/1998",
-                suffixIcon: Icon(Icons.date_range, color: AppColors.primary400),
+                suffixIcon: SvgPicture.asset(
+                  'assets/images/svg_images/Calendar.svg',
+                  semanticsLabel: 'My SVG Image',
+                  height: 20,
+                  width: 20,
+                ),
                 textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "المدينة"),
@@ -74,12 +79,12 @@ class PersonalInfo extends StatelessWidget {
               ),
               Text("النبذة الشخصية", style: getRegular(fontSize: 14)),
               TextFiledAatene(
-                
                 isRTL: isRTL,
                 hintText: "هنا مثال لوص....",
                 textInputType: TextInputType.name,
                 heightTextFiled: 100,
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.done,
+                maxLines: 5,
               ),
               Row(
                 spacing: 5,
@@ -90,17 +95,25 @@ class PersonalInfo extends StatelessWidget {
                     size: 20,
                   ),
                   Text(
-                    "لا بأس إن تجاوز النص 300 كلمة.\n يسمح بمرونة في عدد الكلمات حسب الحاجة.",
+                    "لا بأس إن تجاوز النص 300 كلمة.يسمح بمرونة في عدد\n  الكلمات حسب الحاجة.",
                     style: getRegular(
-                      fontSize: 12,
+                      fontSize: 10,
                       color: AppColors.neutral400,
                     ),
                   ),
-                  Spacer(),
                   Text("0/50"),
                 ],
               ),
               AateneButton(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => HomeControl(),
+                    ),
+                  );
+                },
+
                 buttonText: "حفظ",
                 color: AppColors.primary400,
                 borderColor: AppColors.primary400,

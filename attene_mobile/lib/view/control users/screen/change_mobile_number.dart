@@ -48,6 +48,15 @@ class ChangeMobileNumber extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: AateneButton(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => HomeControl(),
+                    ),
+                  );
+                },
+
                 buttonText: "حفظ",
                 color: AppColors.primary400,
                 borderColor: AppColors.primary400,

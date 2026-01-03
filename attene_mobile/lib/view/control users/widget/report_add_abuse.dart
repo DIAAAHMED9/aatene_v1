@@ -72,7 +72,6 @@ class ReportAddAbuse extends StatelessWidget {
                   TextFiledAatene(
                     isRTL: isRTL,
                     hintText: "اكتب هنا",
-                    hintStyle: getRegular(),
                     textInputType: TextInputType.multiline,
                     maxLines: 5,
                     textInputAction: TextInputAction.done,

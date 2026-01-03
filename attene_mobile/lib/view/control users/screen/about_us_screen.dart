@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../widget/card.dart';
 import '../widget/section_card3.dart';
@@ -242,12 +240,14 @@ class AboutUsScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: AppColors.light1000,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: AppColors.customColor01),
+                              border: Border.all(
+                                color: AppColors.customColor01,
+                              ),
                             ),
                             child: Center(
                               child: Text(
                                 "تصفح العروض الآن",
-                                style: getBold(fontSize: 12),
+                                style: getMedium(fontSize: 10),
                               ),
                             ),
                           ),
@@ -258,12 +258,14 @@ class AboutUsScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: AppColors.light1000,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: AppColors.customColor01),
+                              border: Border.all(
+                                color: AppColors.customColor01,
+                              ),
                             ),
                             child: Center(
                               child: Text(
-                                "ابحث عن خدمة أو منتج محدّد",
-                                style: getBold(fontSize: 12),
+                                "ابحث عن خدمة أو منتج",
+                                style: getMedium(fontSize: 10),
                               ),
                             ),
                           ),

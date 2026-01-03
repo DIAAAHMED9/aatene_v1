@@ -28,7 +28,7 @@ class ReportCard extends StatelessWidget {
         height: 200,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.primary400),
+          border: Border.all(color: AppColors.primary100),
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),

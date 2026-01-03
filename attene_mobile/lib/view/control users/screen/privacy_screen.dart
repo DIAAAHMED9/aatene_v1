@@ -52,7 +52,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         backgroundColor: Colors.white,
         title: Text(
           "سياسة الخصوصية",
-          style: getBold(color: AppColors.neutral100, fontSize: 20),
+          style: getBold(color: AppColors.neutral100, fontSize: 18),
         ),
         centerTitle: false,
         leading: IconButton(

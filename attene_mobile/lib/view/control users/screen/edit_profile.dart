@@ -142,7 +142,7 @@ class Edit_Profile extends StatelessWidget {
                               title: "البريد الالكتروني",
                               subtitle: "تغيير البريد الالكتروني",
                               icon: Icon(
-                                Icons.email,
+                                Icons.email_outlined,
                                 size: 20,
                                 color: AppColors.neutral50,
                               ),
@@ -152,7 +152,7 @@ class Edit_Profile extends StatelessWidget {
                               title: "رقم الهاتف",
                               subtitle: "غير رقم الهاتف",
                               icon: Icon(
-                                Icons.phone_android_outlined,
+                                Icons.phone_iphone_sharp,
                                 size: 20,
                                 color: AppColors.neutral50,
                               ),
@@ -161,10 +161,11 @@ class Edit_Profile extends StatelessWidget {
                             EditProfileLabel(
                               title: " كلمة المرور",
                               subtitle: "تغيير كلمة المرور",
-                              icon: Icon(
-                                Icons.password,
-                                size: 20,
-                                color: AppColors.neutral50,
+                              icon: SvgPicture.asset(
+                                'assets/images/svg_images/password.svg',
+                                semanticsLabel: 'My SVG Image',
+                                height: 20,
+                                width: 20,
                               ),
                               screen: ChangePassword(),
                             ),

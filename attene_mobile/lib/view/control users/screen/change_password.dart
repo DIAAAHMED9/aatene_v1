@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class ChangePassword extends StatelessWidget {
   const ChangePassword({super.key});
 
@@ -63,6 +62,14 @@ class ChangePassword extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: AateneButton(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => HomeControl(),
+                    ),
+                  );
+                },
                 buttonText: "اعادة تعيين",
                 color: AppColors.primary400,
                 borderColor: AppColors.primary400,

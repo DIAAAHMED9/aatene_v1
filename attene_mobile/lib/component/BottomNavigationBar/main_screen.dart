@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
       ManageAccountStore(),
       ProductScreen(),
       ChatScreen(),
-      ServicesListScreen(),
+      HomeControl(),
     ];
     List<IconData> icons = const [
       Icons.home_filled,
@@ -54,9 +54,9 @@ class MainScreen extends StatelessWidget {
       mPages.add(ChatScreen());
       mIcons.add(Icons.chat_sharp);
 
-      // User/Profile (ضع شاشة البروفايل إن كانت موجودة)
+      // User/Profile
       mNames.add('USER');
-      mPages.add(ServicesListScreen());
+      mPages.add(HomeControl());
       mIcons.add(Icons.person_sharp);
 
       names = mNames;
@@ -98,7 +98,10 @@ class MainScreen extends StatelessWidget {
                   Get.offAllNamed('/selectStore');
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.white,
@@ -110,7 +113,10 @@ class MainScreen extends StatelessWidget {
                       SizedBox(width: 6),
                       Text(
                         'تغيير المتجر',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),

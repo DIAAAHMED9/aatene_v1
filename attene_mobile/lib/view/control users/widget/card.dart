@@ -47,8 +47,10 @@ class CardWidget extends StatelessWidget {
               style: getBold(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             Text(
+
               subtitle,
               style: getRegular(fontSize: 12, color: AppColors.neutral400),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

@@ -104,8 +104,8 @@ class HomeControl extends StatelessWidget {
                       icon: SvgPicture.asset(
                         'assets/images/svg_images/home.svg',
                         semanticsLabel: 'My SVG Image',
-                        height: 25,
-                        width: 25,
+                        height: 20,
+                        width: 20,
                       ),
                       screen: HomeScreen(),
                     ),
@@ -115,7 +115,7 @@ class HomeControl extends StatelessWidget {
                       icon: Icon(
                         Icons.person_outlined,
                         color: AppColors.primary400,
-                        size: 30,
+                        size: 25,
                       ),
                     ),
                     NameControl(
@@ -123,8 +123,8 @@ class HomeControl extends StatelessWidget {
                       icon: SvgPicture.asset(
                         'assets/images/svg_images/edit.svg',
                         semanticsLabel: 'My SVG Image',
-                        height: 25,
-                        width: 25,
+                        height: 20,
+                        width: 20,
                       ),
                       screen: Edit_Profile(),
                     ),
@@ -133,8 +133,8 @@ class HomeControl extends StatelessWidget {
                       icon: SvgPicture.asset(
                         'assets/images/svg_images/Notification.svg',
                         semanticsLabel: 'My SVG Image',
-                        height: 25,
-                        width: 25,
+                        height: 20,
+                        width: 20,
                       ),
                       screen: NotificationFeed(),
                     ),
@@ -148,20 +148,20 @@ class HomeControl extends StatelessWidget {
                       ),
                       screen: FollowersScreen(),
                     ),
-                    // NameControl(
-                    //   name: "قائمة الحظر",
-                    //   icon: Icon(
-                    //     Icons.block_outlined,
-                    //     color: AppColors.primary400,
-                    //     size: 25,
-                    //   ),
-                    //   screen: BlockScreen(),
-                    // ),
+                    NameControl(
+                      name: "قائمة الحظر",
+                      icon: Icon(
+                        Icons.block_outlined,
+                        color: AppColors.primary400,
+                        size: 22,
+                      ),
+                      screen: BlockScreen(),
+                    ),
                     ExpansionTile(
                       maintainState: true,
                       title: Text("الدعم", style: getBold(fontSize: 18)),
                       children: [
-                        SizedBox(height: 10),//
+                        SizedBox(height: 10), //
                         NameControl(
                           name: "اتصل بنا",
                           icon: SvgPicture.asset(
@@ -177,14 +177,14 @@ class HomeControl extends StatelessWidget {
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/privecy.svg',
                             semanticsLabel: 'My SVG Image',
-                            height: 25,
-                            width: 25,
+                            height: 20,
+                            width: 20,
                           ),
                           screen: PrivacyScreen(),
                         ),
                         NameControl(
                           name: "شروط الخدمة",
-                          icon:  SvgPicture.asset(
+                          icon: SvgPicture.asset(
                             'assets/images/svg_images/shode_services.svg',
                             semanticsLabel: 'My SVG Image',
                             height: 25,
@@ -203,11 +203,11 @@ class HomeControl extends StatelessWidget {
                         ),
                         NameControl(
                           name: "عن أعطيني",
-                          icon:  SvgPicture.asset(
+                          icon: SvgPicture.asset(
                             'assets/images/svg_images/ix_about.svg',
                             semanticsLabel: 'My SVG Image',
-                            height: 25,
-                            width: 25,
+                            height: 20,
+                            width: 20,
                           ),
                           screen: AboutUsScreen(),
                         ),

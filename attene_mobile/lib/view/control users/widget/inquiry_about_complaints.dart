@@ -61,7 +61,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                   ),
                   ComplaintsCard(
                     number: "2",
-                    title: "قيد المراجعة",
+                    title: "المراجعة",
                     backgroundColor: AppColors.customColor05,
                     textColor: AppColors.customColor06,
                   ),
@@ -88,9 +88,11 @@ class InquiryAboutComplaints extends StatelessWidget {
                     backgroundColor: AppColors.primary50,
                     child: IconButton(
                       onPressed: () {},
-                      icon: Icon(
-                        Icons.filter_list,
-                        color: AppColors.primary400,
+                      icon: SvgPicture.asset(
+                        'assets/images/svg_images/Filter.svg',
+                        semanticsLabel: 'My SVG Image',
+                        height: 18,
+                        width: 18,
                       ),
                     ),
                   ),
@@ -161,19 +163,26 @@ class InquiryAboutComplaints extends StatelessWidget {
                               color: AppColors.primary400,
                             ),
                           ),
-                          Text(
-                            "التاريخ :",
-                            style: getRegular(fontSize: 10, color: Colors.grey),
-                          ),
-                          Text(
-                            "C-2020-001",
-                            style: getRegular(
-                              fontSize: 10,
-                              color: AppColors.primary400,
-                            ),
-                          ),
+
                         ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        spacing: 5,
+                        children: [
+                        Text(
+                          "التاريخ :",
+                          style: getRegular(fontSize: 10, color: Colors.grey),
+                        ),
+                        Text(
+                          "C-2020-001",
+                          style: getRegular(
+                            fontSize: 10,
+                            color: AppColors.primary400,
+                          ),
+                        ),
+                      ],),
+
                       GestureDetector(
                         onTap: () {
                           Navigator.push(

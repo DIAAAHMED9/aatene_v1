@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class EditProfileLabel extends StatelessWidget {
@@ -38,18 +36,21 @@ class EditProfileLabel extends StatelessWidget {
             spacing: 12,
             children: [
               icon,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: getRegular(fontSize: 14)),
-                  Text(
-                    subtitle,
-                    style: getRegular(
-                      fontSize: 12,
-                      color: AppColors.neutral300,
+              Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(title, style: getMedium(fontSize: 14)),
+                    Text(
+                      subtitle,
+                      style: getRegular(
+                        fontSize: 12,
+                        color: AppColors.neutral300,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Spacer(),
               Icon(
