@@ -148,15 +148,15 @@ class HomeControl extends StatelessWidget {
                       ),
                       screen: FollowersScreen(),
                     ),
-                    NameControl(
-                      name: "قائمة الحظر",
-                      icon: Icon(
-                        Icons.block_outlined,
-                        color: AppColors.primary400,
-                        size: 25,
-                      ),
-                      screen: BlockScreen(),
-                    ),
+                    // NameControl(
+                    //   name: "قائمة الحظر",
+                    //   icon: Icon(
+                    //     Icons.block_outlined,
+                    //     color: AppColors.primary400,
+                    //     size: 25,
+                    //   ),
+                    //   screen: BlockScreen(),
+                    // ),
                     ExpansionTile(
                       maintainState: true,
                       title: Text("الدعم", style: getBold(fontSize: 18)),

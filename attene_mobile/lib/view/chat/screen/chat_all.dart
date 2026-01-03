@@ -36,7 +36,7 @@ class _ChatAllState extends State<ChatAll> {
           title: const Text('المحادثات'),
           centerTitle: false,
           actions: [
-          IconButton(onPressed: ()=>Get.to(BlockScreen()), icon: Icon(Icons.block_rounded)),
+          // IconButton(onPressed: ()=>Get.to(BlockScreen()), icon: Icon(Icons.block_rounded)),
             IconButton(
               tooltip: 'تحديث',
               icon: const Icon(Icons.refresh_rounded),
