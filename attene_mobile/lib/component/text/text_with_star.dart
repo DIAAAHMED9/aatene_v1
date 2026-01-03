@@ -1,5 +1,6 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
+
+
+import '../../general_index.dart';
 
 class TextWithStar extends StatelessWidget {
   const TextWithStar({super.key, required this.text});

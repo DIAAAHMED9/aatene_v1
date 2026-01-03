@@ -1,9 +1,11 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
+
+
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:get/get.dart';
-import '../../utlis/colors/app_color.dart';
-import '../custom_stepper/responsive_custom_stepper.dart';
+
+import '../../general_index.dart';
+import 'responsive_custom_stepper.dart';
+import 'stepper_step.dart';
+// import 'responsive_custom_stepper.dart';
 
 abstract class StepperScreenBase extends StatefulWidget {
   final String appBarTitle;

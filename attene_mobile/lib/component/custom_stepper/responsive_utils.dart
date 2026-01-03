@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+
 class DeviceType {
   static bool isMobile(BuildContext context) =>
       MediaQuery.of(context).size.width < 600;

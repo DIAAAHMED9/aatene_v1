@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+
+import '../../general_index.dart';
 import '../../utlis/responsive/responsive_dimensions.dart';
+
 
 class AateneButton extends StatelessWidget {
   const AateneButton({
@@ -32,7 +34,7 @@ class AateneButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(raduis),
-          border: Border.all(color: borderColor ?? Color(0xFF000000), width: 1),
+          border: Border.all(color: borderColor ?? AppColors.neutral100, width: 1),
         ),
         child: isLoading
             ? SizedBox(

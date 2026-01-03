@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
+
 class ResponsiveService extends GetxService {
   static ResponsiveService get instance => Get.find<ResponsiveService>();
   final double mobileBreakpoint = 600;

@@ -1,7 +1,7 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
-import 'responsive_utils.dart';
-import 'stepper_constants.dart';
+import '../../general_index.dart'hide DeviceType;
+import 'index.dart';
+import 'stepper_step.dart';
+
 
 class ResponsiveStepper extends StatelessWidget {
   final List<StepperStep> steps;
@@ -345,20 +345,4 @@ class ResponsiveStepper extends StatelessWidget {
       color: isActive ? activeColor : Colors.grey[400],
     );
   }
-}
-
-class StepperStep {
-  final String title;
-  final String subtitle;
-  final IconData? icon;
-  final bool isOptional;
-  final bool isCompleted;
-
-  const StepperStep({
-    required this.title,
-    this.subtitle = '',
-    this.icon,
-    this.isOptional = false,
-    this.isCompleted = false,
-  });
 }

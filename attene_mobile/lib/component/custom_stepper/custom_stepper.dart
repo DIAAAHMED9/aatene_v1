@@ -1,7 +1,9 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:flutter/material.dart';
+
+
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
+import '../../general_index.dart';
+import 'stepper_step.dart';
 
 class CustomStepperFixed extends StatefulWidget {
   final List<StepperStep> steps;
@@ -377,12 +379,4 @@ class _StepConnectorPainter extends CustomPainter {
   bool shouldRepaint(covariant _StepConnectorPainter oldDelegate) {
     return progress != oldDelegate.progress || isActive != oldDelegate.isActive;
   }
-}
-
-class StepperStep {
-  final String title;
-  final String subtitle;
-  final IconData? icon;
-
-  const StepperStep({required this.title, required this.subtitle, this.icon});
 }

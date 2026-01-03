@@ -1,7 +1,5 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
 
-import '../../utlis/colors/app_color.dart';
+import '../../general_index.dart';
 
 class AateneButtonWithChatIcon extends StatelessWidget {
   const AateneButtonWithChatIcon({super.key, required this.buttonText});

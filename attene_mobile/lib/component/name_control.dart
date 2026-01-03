@@ -1,7 +1,6 @@
-import 'package:attene_mobile/component/text/aatene_custom_text.dart';
-import 'package:flutter/material.dart';
 
-import '../utlis/colors/app_color.dart';
+
+import '../general_index.dart';
 
 class NameControl extends StatelessWidget {
   const NameControl({
@@ -34,7 +33,7 @@ class NameControl extends StatelessWidget {
             spacing: 10,
             children: [
               icon,
-              Text(name, style: getBold()),
+              Text(name, style: getRegular()),
             ],
           ),
           Divider(color: AppColors.neutral800),

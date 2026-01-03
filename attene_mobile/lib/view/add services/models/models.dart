@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 class FAQ {
@@ -142,20 +143,32 @@ class Service {
   final int? id;
   final String slug;
   final String title;
+
   final int sectionId;
   final int categoryId;
+
   final List<String> specialties;
   final List<String> tags;
+
   final String? storeId;
   final String status;
+
   final double price;
   final String executeType;
   final int executeCount;
+
   final List<Development> extras;
+
+  /// images: مسارات نسبية غالباً (images/xxx.jpg) أو قد تأتي List
   final List<String> images;
-  final String? imagesUrl;
+
+  /// imagesUrl: روابط كاملة غالباً (https://.../storage/images/xxx.jpg)
+  /// ✅ هذا هو التعديل الأساسي: كانت String وأصبحت List<String>
+  final List<String> imagesUrl;
+
   final String description;
   final List<FAQ> questions;
+
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -178,9 +191,9 @@ class Service {
     required this.executeCount,
     required this.extras,
     required this.images,
+    required this.imagesUrl,
     required this.description,
     required this.questions,
-    this.imagesUrl,
     this.createdAt,
     this.updatedAt,
     this.acceptedCopyright = false,
@@ -189,57 +202,45 @@ class Service {
   });
 
   factory Service.fromApiJson(Map<String, dynamic> json) {
-    List<String> imagesList = [];
-    if (json['images'] is String) {
-      final imagesString = json['images'] as String;
-      imagesList = imagesString.split(',').map((img) => img.trim()).toList();
-    } else if (json['images'] is List) {
-      imagesList = List<String>.from(json['images'] ?? []);
-    }
+    final imagesList = _asStringList(json['images']);
+    final imagesUrlList = _asStringList(json['images_url']); // ✅ الرسبونس عندك List :contentReference[oaicite:1]{index=1}
 
     return Service(
-      id: json['id'] as int?,
-      slug: json['slug'] ?? '',
-      title: json['title'] ?? '',
-      sectionId: json['section_id'] is String
-          ? int.tryParse(json['section_id']) ?? 0
-          : json['section_id'] as int? ?? 0,
-      categoryId: json['category_id'] is String
-          ? int.tryParse(json['category_id']) ?? 0
-          : json['category_id'] as int? ?? 0,
-      specialties: List<String>.from(json['specialties'] ?? []),
-      tags: List<String>.from(json['tags'] ?? []),
+      id: _asInt(json['id']),
+      slug: (json['slug'] ?? '').toString(),
+      title: (json['title'] ?? '').toString(),
+      sectionId: _asInt(json['section_id']) ?? 0,
+      categoryId: _asInt(json['category_id']) ?? 0,
+
+      specialties: _asStringList(json['specialties']),
+      tags: _asStringList(json['tags']),
+
       storeId: json['store_id']?.toString(),
-      status: json['status'] ?? 'pending',
-      price: json['price'] is String
-          ? double.tryParse(json['price']) ?? 0.0
-          : (json['price'] as num?)?.toDouble() ?? 0.0,
-      imagesUrl: json['images_url'],
-      executeType: json['execute_type'] ?? 'hour',
-      executeCount: json['execute_count'] is String
-          ? int.tryParse(json['execute_count']) ?? 0
-          : json['execute_count'] as int? ?? 0,
-      extras:
-          (json['extras'] as List<dynamic>?)
-              ?.map((extra) => Development.fromApiJson(extra))
-              .toList() ??
-          [],
+      status: (json['status'] ?? 'pending').toString(),
+      price: _asDouble(json['price']) ?? 0.0,
+
+      executeType: (json['execute_type'] ?? 'hour').toString(),
+      executeCount: _asInt(json['execute_count']) ?? 0,
+
+      extras: _asMapList(json['extras'])
+          .map((e) => Development.fromApiJson(e))
+          .toList(),
+
       images: imagesList,
-      description: json['description'] ?? '',
-      questions:
-          (json['questions'] as List<dynamic>?)
-              ?.map((q) => FAQ.fromApiJson(q))
-              .toList() ??
-          [],
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'])
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? DateTime.tryParse(json['updated_at'])
-          : null,
-      acceptedCopyright: json['accepted_copyright'] as bool? ?? false,
-      acceptedTerms: json['accepted_terms'] as bool? ?? false,
-      acceptedPrivacy: json['accepted_privacy'] as bool? ?? false,
+      imagesUrl: imagesUrlList,
+
+      description: (json['description'] ?? '').toString(),
+
+      questions: _asMapList(json['questions'])
+          .map((q) => FAQ.fromApiJson(q))
+          .toList(),
+
+      createdAt: _asDate(json['created_at']),
+      updatedAt: _asDate(json['updated_at']),
+
+      acceptedCopyright: _asBool(json['accepted_copyright']) ?? false,
+      acceptedTerms: _asBool(json['accepted_terms']) ?? false,
+      acceptedPrivacy: _asBool(json['accepted_privacy']) ?? false,
     );
   }
 
@@ -255,7 +256,7 @@ class Service {
       'price': price,
       'execute_type': executeType,
       'execute_count': executeCount,
-      'extras': extras.map((extra) => extra.toApiJson()).toList(),
+      'extras': extras.map((e) => e.toApiJson()).toList(),
       'images': images,
       'description': description,
       'questions': questions.map((q) => q.toApiJson()).toList(),
@@ -286,6 +287,7 @@ class Service {
     int? executeCount,
     List<Development>? extras,
     List<String>? images,
+    List<String>? imagesUrl,
     String? description,
     List<FAQ>? questions,
     bool? acceptedCopyright,
@@ -307,13 +309,124 @@ class Service {
       executeCount: executeCount ?? this.executeCount,
       extras: extras ?? this.extras,
       images: images ?? this.images,
+      imagesUrl: imagesUrl ?? this.imagesUrl,
       description: description ?? this.description,
       questions: questions ?? this.questions,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
       acceptedCopyright: acceptedCopyright ?? this.acceptedCopyright,
       acceptedTerms: acceptedTerms ?? this.acceptedTerms,
       acceptedPrivacy: acceptedPrivacy ?? this.acceptedPrivacy,
     );
   }
+}
+
+/* -------------------- Helpers (Robust Parsing) -------------------- */
+
+int? _asInt(dynamic v) {
+  if (v == null) return null;
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  return int.tryParse(v.toString());
+}
+
+double? _asDouble(dynamic v) {
+  if (v == null) return null;
+  if (v is double) return v;
+  if (v is num) return v.toDouble();
+  return double.tryParse(v.toString());
+}
+
+bool? _asBool(dynamic v) {
+  if (v == null) return null;
+  if (v is bool) return v;
+  final s = v.toString().toLowerCase();
+  if (s == '1' || s == 'true' || s == 'yes') return true;
+  if (s == '0' || s == 'false' || s == 'no') return false;
+  return null;
+}
+
+DateTime? _asDate(dynamic v) {
+  if (v == null) return null;
+  if (v is DateTime) return v;
+  return DateTime.tryParse(v.toString());
+}
+
+/// يقبل:
+/// - List<String>
+/// - List<dynamic>
+/// - String (comma separated)
+/// - String JSON Array: '["a","b"]'
+/// - Map فيه data: [...]
+List<String> _asStringList(dynamic v) {
+  if (v == null) return <String>[];
+
+  if (v is List) {
+    return v.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+  }
+
+  if (v is Map && v['data'] is List) {
+    final list = v['data'] as List;
+    return list.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+  }
+
+  if (v is String) {
+    final s = v.trim();
+    if (s.isEmpty) return <String>[];
+
+    // JSON array?
+    if (s.startsWith('[') && s.endsWith(']')) {
+      try {
+        final decoded = jsonDecode(s);
+        if (decoded is List) {
+          return decoded.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+        }
+      } catch (_) {}
+    }
+
+    // comma-separated
+    if (s.contains(',')) {
+      return s.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    }
+
+    return <String>[s];
+  }
+
+  return <String>[];
+}
+
+List<Map<String, dynamic>> _asMapList(dynamic v) {
+  if (v == null) return <Map<String, dynamic>>[];
+
+  if (v is List) {
+    return v
+        .where((e) => e is Map)
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  if (v is String) {
+    final s = v.trim();
+    if (s.startsWith('[') && s.endsWith(']')) {
+      try {
+        final decoded = jsonDecode(s);
+        if (decoded is List) {
+          return decoded
+              .where((e) => e is Map)
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
+        }
+      } catch (_) {}
+    }
+  }
+
+  if (v is Map && v['data'] is List) {
+    final list = v['data'] as List;
+    return list
+        .where((e) => e is Map)
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  return <Map<String, dynamic>>[];
 }

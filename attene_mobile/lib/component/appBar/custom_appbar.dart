@@ -1,11 +1,7 @@
-import 'package:attene_mobile/component/appBar/tab_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:attene_mobile/component/aatene_text_filed.dart';
-import 'package:attene_mobile/utlis/colors/app_color.dart';
-import 'package:attene_mobile/utlis/language/language_utils.dart';
-import 'package:attene_mobile/utlis/responsive/responsive_dimensions.dart';
+
+
+import '../../general_index.dart';
+
 
 class CustomAppBarWithTabs extends StatelessWidget
     implements PreferredSizeWidget {

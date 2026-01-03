@@ -1,6 +1,8 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io' show Platform;
 
+
+
 class DeviceNameService {
   static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
   
