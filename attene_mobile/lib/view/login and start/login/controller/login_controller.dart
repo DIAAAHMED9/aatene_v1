@@ -202,6 +202,22 @@ class LoginController extends GetxController {
       ..['token'] = token
       ..['login_time'] = DateTime.now().toString();
 
+    // ✅ Fix: sync session to GetStorage (DataInitializerService depends on it)
+    try {
+      final storage = Get.find<GetStorage>();
+      await storage.write('user_data', {
+        'user': Map<String, dynamic>.from(userData),
+        'token': token,
+        'user_type': (userData['user_type'] ?? '').toString(),
+        'login_time': DateTime.now().toIso8601String(),
+        'store_id': null,
+        'active_store_id': null,
+        'store': null,
+      });
+    } catch (e) {
+      print('⚠️ [LOGIN] Failed to sync user_data to GetStorage: $e');
+    }
+
     myAppController.updateUserData(completeUserData);
 
     await myAppController.onLoginSuccess(completeUserData);
