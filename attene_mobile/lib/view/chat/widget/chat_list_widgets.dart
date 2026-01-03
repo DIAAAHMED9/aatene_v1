@@ -13,9 +13,11 @@ class TabsRow extends StatelessWidget {
       Widget chip(String label, ChatTab t) {
         final selected = tab == t;
         return ChoiceChip(
-          label: Text(label),
+          label: Text(label,style: TextStyle(color: selected?AppColors.backgroundColor:AppColors.primary400),),
           selected: selected,
           onSelected: (_) => controller.setTab(t),
+          selectedColor: AppColors.primary400,
+        backgroundColor: AppColors.backgroundColor,
         );
       }
 
@@ -23,14 +25,15 @@ class TabsRow extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             chip('الكل', ChatTab.all),
             const SizedBox(width: 8),
             chip('غير مقروء', ChatTab.unread),
-            const SizedBox(width: 8),
-            chip('نشط', ChatTab.active),
-            const SizedBox(width: 8),
-            chip('غير نشط', ChatTab.notActive),
+            // const SizedBox(width: 8),
+            // chip('نشط', ChatTab.active),
+            // const SizedBox(width: 8),
+            // chip('غير نشط', ChatTab.notActive),
             const SizedBox(width: 8),
             chip('مهتم', ChatTab.interested),
             const SizedBox(width: 8),

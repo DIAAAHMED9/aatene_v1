@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 
@@ -309,6 +310,14 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('user_data');
       await prefs.setBool('is_logged_in', false);
+
+      // ✅ Also clear GetStorage session (used by DataInitializerService)
+      try {
+        if (Get.isRegistered<GetStorage>()) {
+          final s = Get.find<GetStorage>();
+          await s.remove('user_data');
+        }
+      } catch (_) {}
 
       _userData.clear();
       _isLoggedIn.value = false;
