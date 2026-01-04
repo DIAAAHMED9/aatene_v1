@@ -42,6 +42,7 @@ class TextFiledAatene extends StatelessWidget {
   final Function(String)? onChanged;
   final Function(String)? onSubmitted;
   final bool? obscureText;
+  final double? radios =50;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final TextInputType? textInputType;
@@ -112,7 +113,7 @@ class TextFiledAatene extends StatelessWidget {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
+              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(radios!)),
               borderSide: BorderSide(
                 color: hasError ? Colors.red : Colors.grey[300]!,
                 width: hasError ? 2.0 : 1.5,

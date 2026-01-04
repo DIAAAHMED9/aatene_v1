@@ -247,7 +247,7 @@ class AboutUsScreen extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "تصفح العروض الآن",
-                                style: getMedium(fontSize: 10),
+                                style: getMedium(fontSize: 14),
                               ),
                             ),
                           ),
@@ -265,7 +265,7 @@ class AboutUsScreen extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "ابحث عن خدمة أو منتج",
-                                style: getMedium(fontSize: 10),
+                                style: getMedium(fontSize: 14),
                               ),
                             ),
                           ),

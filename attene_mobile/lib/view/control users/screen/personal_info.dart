@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class PersonalInfo extends StatelessWidget {
   const PersonalInfo({super.key});
 
@@ -33,7 +32,7 @@ class PersonalInfo extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
-            spacing: 5,
+            spacing: 10,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("الاسم الكامل", style: getRegular(fontSize: 14)),
@@ -45,46 +44,106 @@ class PersonalInfo extends StatelessWidget {
                 textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "الجنس"),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "ذكر",
-                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                textInputAction: TextInputAction.next,
+              DropdownButtonFormField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(),
+                    borderRadius: BorderRadius.circular((50)),
+                  ),
+                ),
+                dropdownColor: AppColors.primary50,
+                icon: Icon(Icons.arrow_forward_ios, size: 15),
+                value: selectedLanguage,
+                hint: Text("اختر اللغة"),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: 'ar',
+                    child: Text('ذكر', style: getRegular(fontSize: 14)),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'he',
+                    child: Text('انتى', style: getRegular(fontSize: 14)),
+                  ),
+                ],
+                onChanged: (value) {
+                  selectedLanguage = value;
+
+                  Get.updateLocale(Locale(value!));
+                },
               ),
               TextWithStar(text: "تاريخ الميلاد"),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "4/11/1998",
-                suffixIcon: SvgPicture.asset(
-                  'assets/images/svg_images/Calendar.svg',
-                  semanticsLabel: 'My SVG Image',
-                  height: 20,
-                  width: 20,
-                ),
+                suffixIcon: Image.asset('assets/images/png/Calendar.png',width: 24,height: 24,),
                 textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "المدينة"),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "الناصرة",
-                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                textInputAction: TextInputAction.next,
+              DropdownButtonFormField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular((50)),
+                  ),
+                ),
+                dropdownColor: AppColors.primary50,
+                value: selectedLanguage,
+                icon: Icon(Icons.arrow_forward_ios, size: 15),
+                hint: Text("اختر اللغة"),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: 'ar',
+                    child: Text('الناصرة', style: getRegular(fontSize: 14)),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'he',
+                    child: Text('القدس', style: getRegular(fontSize: 14)),
+                  ),
+                ],
+                onChanged: (value) {
+                  selectedLanguage = value;
+                  Get.updateLocale(Locale(value!));
+                },
               ),
+
               TextWithStar(text: "الحي"),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "الناصرة",
-                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                textInputAction: TextInputAction.next,
+              DropdownButtonFormField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular((50)),
+                  ),
+                ),
+                dropdownColor: AppColors.primary50,
+                icon: Icon(Icons.arrow_forward_ios, size: 15),
+                value: selectedLanguage,
+                hint: Text("اختر اللغة"),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: 'ar',
+                    child: Text('الناصرة', style: getRegular(fontSize: 14)),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'he',
+                    child: Text('القدس', style: getRegular(fontSize: 14)),
+                  ),
+                ],
+                onChanged: (value) {
+                  selectedLanguage = value;
+
+                  Get.updateLocale(Locale(value!));
+                },
               ),
               Text("النبذة الشخصية", style: getRegular(fontSize: 14)),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "هنا مثال لوص....",
-                textInputType: TextInputType.name,
-                heightTextFiled: 100,
-                textInputAction: TextInputAction.done,
+              TextField(
                 maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: "اكتب نبذة عن نفسك....",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
               ),
               Row(
                 spacing: 5,
@@ -95,7 +154,7 @@ class PersonalInfo extends StatelessWidget {
                     size: 20,
                   ),
                   Text(
-                    "لا بأس إن تجاوز النص 300 كلمة.يسمح بمرونة في عدد\n  الكلمات حسب الحاجة.",
+                    "لا بأس إن تجاوز النص 300 كلمة.يسمح بمرونة في \n عدد الكلمات حسب الحاجة.",
                     style: getRegular(
                       fontSize: 10,
                       color: AppColors.neutral400,
@@ -104,16 +163,57 @@ class PersonalInfo extends StatelessWidget {
                   Text("0/50"),
                 ],
               ),
+              SizedBox(height: 10),
               AateneButton(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => HomeControl(),
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            spacing: 15,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: Colors.green,
+                                size: 80,
+                              ),
+                              Text(
+                                "تمت العملية بنجاح",
+                                style: getBlack(fontSize: 25),
+                              ),
+                              Text(
+                                "تم حفظ التغييرات بنجاح",
+                                style: getRegular(
+                                  fontSize: 12,
+                                  color: AppColors.neutral400,
+                                ),
+                              ),
+                              AateneButton(
+                                buttonText: "العودة للاعدادات",
+                                color: AppColors.primary400,
+                                borderColor: AppColors.primary400,
+                                textColor: AppColors.light1000,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (context) => HomeControl(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },
-
                 buttonText: "حفظ",
                 color: AppColors.primary400,
                 borderColor: AppColors.primary400,

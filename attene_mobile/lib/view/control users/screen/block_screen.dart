@@ -1,18 +1,18 @@
-
-
-
+//
+//
+//
 // import '../../../general_index.dart';
-
-
+//
+//
 // class BlockScreen extends StatelessWidget {
 //   BlockScreen({super.key});
-
+//
 //   final controller = Get.put(BlockController());
-
+//
 //   @override
 //   Widget build(BuildContext context) {
 //     final isRTL = LanguageUtils.isRTL;
-
+//
 //     return Scaffold(
 //       appBar: AppBar(
 //         backgroundColor: Colors.white,
@@ -60,7 +60,7 @@
 //                 if (controller.isLoading.value) {
 //                   return const BlockSkeleton();
 //                 }
-
+//
 //                 return PageView(
 //                   controller: controller.pageController,
 //                   onPageChanged: controller.onPageChanged,

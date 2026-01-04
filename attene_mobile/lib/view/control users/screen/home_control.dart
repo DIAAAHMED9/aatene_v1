@@ -146,17 +146,17 @@ class HomeControl extends StatelessWidget {
                         height: 25,
                         width: 25,
                       ),
-                      screen: FollowersScreen(),
+                      screen: FollowersPage(),
                     ),
-                    NameControl(
-                      name: "قائمة الحظر",
-                      icon: Icon(
-                        Icons.block_outlined,
-                        color: AppColors.primary400,
-                        size: 22,
-                      ),
-                      screen: BlockScreen(),
-                    ),
+                    // NameControl(
+                    //   name: "قائمة الحظر",
+                    //   icon: Icon(
+                    //     Icons.block_outlined,
+                    //     color: AppColors.primary400,
+                    //     size: 22,
+                    //   ),
+                    //   screen: BlockScreen(),
+                    // ),
                     ExpansionTile(
                       maintainState: true,
                       title: Text("الدعم", style: getBold(fontSize: 18)),
@@ -167,8 +167,8 @@ class HomeControl extends StatelessWidget {
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/bx_message.svg',
                             semanticsLabel: 'My SVG Image',
-                            height: 25,
-                            width: 25,
+                            height: 27,
+                            width: 27,
                           ),
                           screen: HomeControl(),
                         ),
@@ -177,8 +177,8 @@ class HomeControl extends StatelessWidget {
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/privecy.svg',
                             semanticsLabel: 'My SVG Image',
-                            height: 20,
-                            width: 20,
+                            height: 18,
+                            width: 18,
                           ),
                           screen: PrivacyScreen(),
                         ),
@@ -187,8 +187,8 @@ class HomeControl extends StatelessWidget {
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/shode_services.svg',
                             semanticsLabel: 'My SVG Image',
-                            height: 25,
-                            width: 25,
+                            height: 22,
+                            width: 22,
                           ),
                           screen: TermsOfUseScreen(),
                         ),
@@ -197,7 +197,7 @@ class HomeControl extends StatelessWidget {
                           icon: Icon(
                             Icons.report_problem_outlined,
                             color: AppColors.primary400,
-                            size: 25,
+                            size: 22,
                           ),
                           screen: SellectReport(),
                         ),
@@ -206,8 +206,8 @@ class HomeControl extends StatelessWidget {
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/ix_about.svg',
                             semanticsLabel: 'My SVG Image',
-                            height: 20,
-                            width: 20,
+                            height: 18,
+                            width: 18,
                           ),
                           screen: AboutUsScreen(),
                         ),

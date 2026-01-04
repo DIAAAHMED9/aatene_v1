@@ -69,22 +69,31 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.neutral700),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    Icon(Icons.language, size: 12),
-                    Text("عربي (AR)", style: getRegular(fontSize: 10)),
-                    Icon(Icons.keyboard_arrow_down_outlined, size: 12),
-                  ],
+            padding: const EdgeInsets.only(left: 10, top: 4),
+            child: SizedBox(
+              width: 110,
+              height: 55,
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular((5)),
+                  ),
                 ),
+                dropdownColor: AppColors.primary50,
+                icon: Icon(Icons.language, size: 15),
+                value: selectedLanguage,
+                hint: Text("اختر اللغة"),
+                items: [
+                  DropdownMenuItem<String>(value: 'ar', child: Text('العربية',style: getRegular(fontSize: 14),)),
+                  DropdownMenuItem<String>(value: 'he', child: Text('عبري',style: getRegular(fontSize: 14),)),
+                  DropdownMenuItem<String>(value: 'en', child: Text('english',style: getRegular(fontSize: 14),)),
+                ],
+                onChanged: (value) {
+                  selectedLanguage = value;
+
+                  Get.updateLocale(Locale(value!));
+                },
               ),
             ),
           ),
@@ -94,13 +103,17 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Center(
-            child: Image.asset(
-              'assets/images/gif/Privacy_policy.gif',
-              height: 220,
-              width: double.infinity,
-              fit: BoxFit.contain,
-            ),
+          Column(
+            children: [
+              Center(
+                child: Image.asset(
+                  'assets/images/gif/Privacy_policy.gif',
+                  height: 220,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 24),

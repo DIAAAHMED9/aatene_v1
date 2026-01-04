@@ -1,45 +1,66 @@
-
+import 'package:attene_mobile/view/control%20users/screen/you_follow.dart';
 
 import '../../../general_index.dart';
+import 'followers_list.dart';
 
-class FollowersScreen extends StatelessWidget {
-  const FollowersScreen({super.key});
+
+class FollowersPage extends StatelessWidget {
+  FollowersPage({super.key});
+
+  final controller = Get.put(FollowersController());
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(FollowersController());
-
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.white,
-        title: const Text(
-          'قائمة المتابعين',
-          style: TextStyle(color: Colors.black),
+        title: Text(
+          "قائمة المتابعين",
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
-        centerTitle: true,
-        leading: const Icon(Icons.arrow_back, color: Colors.black),
+        centerTitle: false,
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey[100],
+            ),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
+          spacing: 15,
           children: [
-            const FollowersTabBar(),
-            const SizedBox(height: 16),
-            const SearchField(),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Obx(
-                    () => ListView.separated(
-                  itemCount: controller.filteredFollowers.length,
-                  separatorBuilder: (_, __) =>
-                  const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    return FollowerItem(
-                      model: controller.filteredFollowers[index],
-                    );
-                  },
+            Obx(() => Row(
+              spacing: 15,
+              children: [
+                FollowersTabItem(
+                  title: 'أشخاص تتابعهم',
+                  isSelected: controller.selectedTab.value == 0,
+                  onTap: () => controller.changeTab(0),
                 ),
+                FollowersTabItem(
+                  title: 'المتابعين',
+                  isSelected: controller.selectedTab.value == 1,
+                  onTap: () => controller.changeTab(1),
+                ),
+              ],
+            )),
+            const FollowersSearchField(),
+            Expanded(
+              child: PageView(
+                controller: controller.pageController,
+                onPageChanged: controller.changeTab,
+                children: [
+                  YouFollowPage(),
+                  FollowersListPage(),
+                ],
               ),
             ),
           ],

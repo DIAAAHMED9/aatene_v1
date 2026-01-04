@@ -50,10 +50,51 @@ class ChangeEmail extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20),
               child: AateneButton(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => HomeControl(),
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            spacing: 15,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: Colors.green,
+                                size: 80,
+                              ),
+                              Text(
+                                "تمت العملية بنجاح",
+                                style: getBlack(fontSize: 25),
+                              ),
+                              Text(
+                                "تم حفظ التغييرات بنجاح",
+                                style: getRegular(
+                                  fontSize: 12,
+                                  color: AppColors.neutral400,
+                                ),
+                              ),
+                              AateneButton(
+                                buttonText: "العودة للاعدادات",
+                                color: AppColors.primary400,
+                                borderColor: AppColors.primary400,
+                                textColor: AppColors.light1000,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (context) => HomeControl(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },

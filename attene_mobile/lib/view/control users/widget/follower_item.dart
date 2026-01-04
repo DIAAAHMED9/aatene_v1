@@ -1,64 +1,49 @@
-
-
 import '../../../general_index.dart';
 
-class FollowerItem extends StatelessWidget {
+class FollowerListItem extends StatelessWidget {
   final FollowerModel model;
+  final String actionText;
+  final Image actionIcon;
+  final VoidCallback onAction;
 
-  const FollowerItem({super.key, required this.model});
+  const FollowerListItem({
+    super.key,
+    required this.model,
+    required this.actionText,
+    required this.actionIcon,
+    required this.onAction,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<FollowersController>();
-
-    return Row(
-      children: [
-        CircleAvatar(radius: 28, backgroundImage: NetworkImage(model.avatar)),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(model.name, style: getBold(fontSize: 14)),
-              Text(
-                '${model.followersCount ~/ 1000}K متابع',
-                style: getMedium(fontSize: 13),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        spacing: 10,
+        children: [
+          CircleAvatar(
+            radius: 28,
+            backgroundImage: NetworkImage(model.avatar),
           ),
-        ),
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: model.isFollowing
-                ? AppColors.primary50
-                : AppColors.primary400,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(model.name, style: getBold(fontSize: 15)),
+                Text(
+                  '${model.followersCount} متابع',
+                  style: getMedium(fontSize: 13, color: AppColors.neutral500),
+                ),
+              ],
             ),
           ),
-          icon: Icon(
-            model.isFollowing ? Icons.person_remove : Icons.person_add,
-            size: 18,
-            color: model.isFollowing
-                ? AppColors.primary400
-                : AppColors.primary50,
+          ElevatedButton.icon(
+            onPressed: onAction,
+            icon: actionIcon,
+            label: Text(actionText),
           ),
-          label: Text(
-            model.isFollowing ? 'إلغاء المتابعة' : 'رد المتابعة',
-            style: getMedium(
-              color: model.isFollowing
-                  ? AppColors.primary400
-                  : AppColors.primary50,
-            ),
-          ),
-          onPressed: () {
-            if (model.isFollowing) {
-              Get.dialog(UnfollowDialog(model: model));
-            } else {
-            }
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

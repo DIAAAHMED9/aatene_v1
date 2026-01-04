@@ -1,14 +1,10 @@
-
-
 import 'dart:async';
 
 import '../../../general_index.dart';
 
-
-/// يمثل عنصر واحد في قائمة المحظورين (مستخدم أو متجر) بشكل "فريد"
 class BlockEntry {
   final String type; // "user" | "store"
-  final String id;   // participant_id
+  final String id; // participant_id
   final String? name;
   final String? slug;
   final String? avatar;
@@ -81,7 +77,6 @@ class BlockController extends GetxController {
 
   void onPageChanged(int index) => currentIndex.value = index;
 
-  /// ✅ GET /blocks/blocked-users
   Future<void> fetchBlocked() async {
     try {
       isLoading.value = true;
@@ -96,12 +91,13 @@ class BlockController extends GetxController {
           ? (res['participants'] as List)
           : const [];
 
-      // Deduplicate (API قد يعيد نفس الشخص أكثر من مرة بسبب اختلاف conversation_id)
       final Map<String, BlockEntry> uniq = {};
 
       for (final raw in list) {
         if (raw is! Map) continue;
-        final entry = BlockEntry.fromParticipantJson(Map<String, dynamic>.from(raw));
+        final entry = BlockEntry.fromParticipantJson(
+          Map<String, dynamic>.from(raw),
+        );
         if (entry.type.isEmpty || entry.id.isEmpty) continue;
         uniq[entry.key] = entry;
       }
@@ -153,10 +149,10 @@ class BlockController extends GetxController {
   /// ✅ هل هذا الحساب محظور؟
   bool isBlocked({required String type, required String id}) {
     final key = '${type.toLowerCase()}:$id';
-    return blockedUsers.any((e) => e.key == key) || blockedStores.any((e) => e.key == key);
+    return blockedUsers.any((e) => e.key == key) ||
+        blockedStores.any((e) => e.key == key);
   }
 
-  /// ✅ POST /blocks/block  (FormData: blocked_type, blocked_id, reason)
   Future<bool> block({
     required String blockedType,
     required String blockedId,
@@ -218,7 +214,6 @@ class BlockController extends GetxController {
     }
   }
 
-  /// ✅ إلغاء حظر من شاشة القائمة (مع Undo بسيط)
   Future<void> unblock({required int tab, required int index}) async {
     _undoTimer?.cancel();
 
@@ -239,7 +234,10 @@ class BlockController extends GetxController {
     _lastRemoved = removed;
     _showUndoSnackbar();
 
-    final ok = await unblockDirect(blockedType: removed.type, blockedId: removed.id);
+    final ok = await unblockDirect(
+      blockedType: removed.type,
+      blockedId: removed.id,
+    );
     if (!ok) {
       undo();
       return;
@@ -249,7 +247,10 @@ class BlockController extends GetxController {
   }
 
   void undo() {
-    if (_lastRemoved == null || _lastRemovedIndex == null || _lastRemovedTab == null) return;
+    if (_lastRemoved == null ||
+        _lastRemovedIndex == null ||
+        _lastRemovedTab == null)
+      return;
 
     if (_lastRemovedTab == 0) {
       blockedUsers.insert(_lastRemovedIndex!, _lastRemoved!);
@@ -273,10 +274,7 @@ class BlockController extends GetxController {
       'يمكنك التراجع',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 4),
-      mainButton: TextButton(
-        onPressed: undo,
-        child: const Text('تراجع'),
-      ),
+      mainButton: TextButton(onPressed: undo, child: const Text('تراجع')),
     );
   }
 }

@@ -67,6 +67,37 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
             child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 4),
+            child: SizedBox(
+              width: 110,
+              height: 55,
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular((5)),
+                  ),
+                ),
+                dropdownColor: AppColors.primary50,
+                icon: Icon(Icons.language, size: 15),
+                value: selectedLanguage,
+                hint: Text("اختر اللغة"),
+                items: [
+                  DropdownMenuItem<String>(value: 'ar', child: Text('العربية',style: getRegular(fontSize: 14),)),
+                  DropdownMenuItem<String>(value: 'he', child: Text('عبري',style: getRegular(fontSize: 14),)),
+                  DropdownMenuItem<String>(value: 'en', child: Text('english',style: getRegular(fontSize: 14),)),
+                ],
+                onChanged: (value) {
+                  selectedLanguage = value;
+
+                  Get.updateLocale(Locale(value!));
+                },
+              ),
+            ),
+          ),
+        ],
       ),
 
       body: ListView(
