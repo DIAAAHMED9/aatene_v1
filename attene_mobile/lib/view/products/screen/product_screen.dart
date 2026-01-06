@@ -436,7 +436,7 @@ class ProductScreen extends GetView<ProductController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(color: AppColors.primary400),
-          SizedBox(height: ResponsiveDimensions.f(16)),
+          SizedBox(height: ResponsiveDimensions.h(16)),
           Text(
             'جاري تحميل المنتجات...',
             style: getRegular(

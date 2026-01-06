@@ -1,127 +1,164 @@
 import '../../../general_index.dart';
+import '../controller/vendor_controller.dart';
+import '../widget/control_menu_item.dart';
+import '../widget/control_stats.dart';
+import '../widget/membership_card.dart';
 
+class DashboardView extends StatelessWidget {
+  DashboardView({super.key});
 
-class VindorHome extends StatelessWidget {
-  const VindorHome({super.key});
+  final controller = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
           "لوحة القيادة",
-          style:getBold( color: AppColors.neutral100,
-            fontSize: 20,) ,
+          style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
+        centerTitle: false,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () => Get.back(),
           icon: Container(
             width: 50,
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[300],
+              color: Colors.grey[100],
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary500),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 20,
-            children: [
-              Image.asset("assets/images/png/aatene_logo_horiz.png"),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          spacing: 16,
+          children: [
+            Center(
+              child: Image.asset('assets/images/png/aatene_logo_horiz.png'),
+            ),
+            MembershipCard(points: controller.points),
+            Container(
+              padding: EdgeInsets.only(right: 10, left: 7),
+              width: double.infinity,
+              height: 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: AppColors.primary50, width: 2),
               ),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: AppColors.primary500,
-                      ),
-                      width: 40,
-                      height: 30,
-                      child: IconButton(
-                        icon: Icon(Icons.search_rounded),
-                        iconSize: 25,
-                        onPressed: () {},
-                        splashColor: Colors.black,
-                        color: AppColors.light1000,
-                      ),
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.neutral100),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-              ),
-              Row(
+              child: Row(
                 children: [
-                  Icon(Icons.adb_sharp),
-                  Text("المحتوي (الشهر الحالي)"),
+                  Text(
+                    "ابحث عن المستخدمين والتجار والخدمات",
+                    style: getMedium(fontSize: 12, color: Colors.grey),
+                  ),
                   Spacer(),
-                  MaterialButton(
-                    onPressed: () {},
-                    child: Container(
-                      width: 160,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: AppColors.neutral700,
-                          width: 2,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: Row(
-                          spacing: 10,
-                          children: [
-                            Icon(Icons.calendar_month_outlined),
-                            Text("الشهر الحالي", style:getRegular(),),
-                            Icon(Icons.keyboard_arrow_down_rounded),
-                          ],
-                        ),
-                      ),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary400,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(
+                      Icons.search_rounded,
+                      color: AppColors.light1000,
                     ),
                   ),
                 ],
               ),
-              Row(
-                spacing: 50,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 150,
-                      color: Colors.redAccent,
-                      child: Text("data"),
-                    ),
+            ),
+            Row(
+              spacing: 5,
+              children: [
+                Icon(Icons.campaign_outlined, size: 28),
+                Text("المحتوي (الشهر الحالي)", style: getMedium(fontSize: 14)),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.all(8),
+
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: AppColors.primary50),
                   ),
-                  Expanded(
-                    child: Container(
-                      height: 100,
-                      color: AppColors.neutral100,
-                      child: Text("data"),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 4,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/svg_images/calender_black.svg',
+                        semanticsLabel: 'My SVG Image',
+                        height: 17,
+                        width: 17,
+                      ),
+                      Text("الشهر الحالي", style: getMedium(fontSize: 12)),
+                      Icon(Icons.keyboard_arrow_down_outlined, size: 20),
+                    ],
                   ),
-                ],
+                ),
+              ],
+            ),
+
+            DashboardStats(controller: controller),
+
+            _sectionTitle('المزيد'),
+            Divider(
+              color: AppColors.primary50,
+              height: 3,
+              indent: 4,
+              thickness: 1,
+            ),
+            DashboardMenuItem(
+              title: 'الحملات الاعلانية',
+              subtitle: 'قم بإضافة إعلانات بكل سهولةمن خلال \n  التطبيق',
+              icon: SvgPicture.asset(
+                'assets/images/svg_images/volume.svg',
+                semanticsLabel: 'My SVG Image',
+                height: 22,
+                width: 22,
               ),
-              Text("data"),
-              Divider(color: AppColors.neutral700, endIndent: 4),
-            ],
-          ),
+            ),
+            DashboardMenuItem(
+              title: 'شراء عملات ذهبية',
+              subtitle: 'قم بشراء عملات ذهبية',
+              icon: Image.asset(
+                'assets/images/png/coin.png',
+                height: 30,
+                width: 30,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _searchBar() {
+    return TextField(
+      decoration: InputDecoration(
+        hintText: 'ابحث عن المستخدمين والتجار والخدمات والمزيد',
+        prefixIcon: const Icon(Icons.search),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
