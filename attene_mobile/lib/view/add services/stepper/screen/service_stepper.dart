@@ -69,7 +69,7 @@ class _ServiceStepperScreenState
   }
 
   @override
-  void initializeControllers() {
+  Future<void> initializeControllers() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!Get.isRegistered<ServiceController>()) {
         Get.put(ServiceController(), permanent: true);

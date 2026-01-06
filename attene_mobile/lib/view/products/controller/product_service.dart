@@ -127,7 +127,8 @@ class ProductService extends GetxService {
     Map<String, dynamic> productData,
   ) async {
     try {
-      final response = await ApiHelper.put(
+      // NOTE: Backend uses POST for update: POST /merchants/products/:id
+      final response = await ApiHelper.post(
         path: '/merchants/products/$productId',
         body: productData,
       );

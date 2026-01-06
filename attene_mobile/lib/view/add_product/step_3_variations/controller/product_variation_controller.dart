@@ -393,10 +393,23 @@ class ProductVariationController extends GetxController {
   }
 
   bool _allAttributesHaveSelectedValues() {
+    // In edit flows the user may change variation attributes directly from
+    // the variation cards without opening the attributes bottom sheet.
+    // In that case `isSelected` might not reflect the current state.
+    // So we consider an attribute "has selected values" if:
+    // - at least one value isSelected in the UI, OR
+    // - at least one existing variation has a value for this attribute.
     for (final attribute in _selectedAttributes) {
-      if (attribute.values.where((value) => value.isSelected.value).isEmpty) {
-        return false;
-      }
+      final hasUiSelection =
+          attribute.values.any((value) => value.isSelected.value);
+      if (hasUiSelection) continue;
+
+      final hasAnyInVariations = _variations.any((v) {
+        final val = v.attributes[attribute.name];
+        return val != null && val.toString().trim().isNotEmpty;
+      });
+
+      if (!hasAnyInVariations) return false;
     }
     return true;
   }
@@ -495,26 +508,22 @@ class ProductVariationController extends GetxController {
           );
         }
       }
-
+      // SKU is optional for variations (backend doesn't require it).
+      // If provided, we still ensure it isn't duplicated among variations.
       final sku = variation.sku.value.trim();
-      if (sku.isEmpty) {
-        return ValidationResult(
-          isValid: false,
-          errorMessage: 'يرجى إدخال SKU لجميع الاختلافات',
-        );
-      }
+      if (sku.isNotEmpty) {
+        final sameSkuVariations = _variations
+            .where((v) => v.id != variation.id && v.sku.value.trim() == sku)
+            .length;
 
-      final sameSkuVariations = _variations
-          .where((v) => v.id != variation.id && v.sku.value.trim() == sku)
-          .length;
-
-      if (sameSkuVariations > 0) {
-        return ValidationResult(
-          isValid: false,
-          errorMessage: 'SKU $sku مكرر في أكثر من اختلاف',
-        );
+        if (sameSkuVariations > 0) {
+          return ValidationResult(
+            isValid: false,
+            errorMessage: 'SKU $sku مكرر في أكثر من اختلاف',
+          );
+        }
       }
-    }
+}
 
     return ValidationResult(isValid: true, errorMessage: '');
   }
@@ -669,10 +678,27 @@ class ProductVariationController extends GetxController {
   List<Map<String, dynamic>> prepareVariationsForApi() {
     final List<Map<String, dynamic>> apiVariations = [];
 
-    for (final variation in _variations) {
-      if (!variation.isActive.value) {
-        continue;
+    /// Backend expects relative paths like: images/xxx.jpg or gallery/xxx.jpg
+    /// This helper converts any stored value (full URL, /storage/..., etc.)
+    /// into a relative path.
+    String _toRelativePath(String input) {
+      final v = input.trim();
+      if (v.isEmpty) return '';
+
+      // Full URL -> keep only after /storage/
+      final storageIdx = v.indexOf('/storage/');
+      if (storageIdx != -1) {
+        final after = v.substring(storageIdx + '/storage/'.length);
+        return after.startsWith('/') ? after.substring(1) : after;
       }
+
+      // Leading slash paths
+      if (v.startsWith('/')) return v.substring(1);
+
+      return v;
+    }
+
+    for (final variation in _variations) {
 
       final attributeOptions = <Map<String, dynamic>>[];
 
@@ -699,16 +725,21 @@ class ProductVariationController extends GetxController {
       }
 
       final variationData = {
+        // If this variation already exists (edit mode), keep its id so backend can update it.
+        if (int.tryParse(variation.id) != null) 'id': int.parse(variation.id),
         'price': variation.price.value,
         'attributeOptions': attributeOptions,
-        'sku': variation.sku.value,
-        'stock': variation.stock.value,
-        'is_active': variation.isActive.value,
+        // Backend uses string status: active / not-active
+        'status': variation.isActive.value ? 'active' : 'not-active',
       };
 
       if (variation.images.isNotEmpty) {
-        variationData['image'] = variation.images.first;
-        variationData['gallery'] = variation.images;
+        // API examples show only a single "image" field for variation.
+        // Use the first selected image.
+        final img = _toRelativePath(variation.images.first);
+        if (img.isNotEmpty) {
+          variationData['image'] = img;
+        }
       }
 
       apiVariations.add(variationData);
@@ -717,6 +748,158 @@ class ProductVariationController extends GetxController {
     print('🎯 [VARIATIONS] تم إعداد ${apiVariations.length} اختلاف للإرسال');
 
     return apiVariations;
+  }
+
+  /// Prefill variation system from API product response.
+  /// Expected productData['variations'] to be a list with items like:
+  /// {id, price, image, status, attributeOptions:[{attribute_id, option_id}]}
+  ///
+  /// It will map attribute_id/option_id into human readable names/values using
+  /// already loaded attributes (call loadAttributesOnOpen() before this).
+  Future<void> loadFromProductApi({
+    required Map<String, dynamic> productData,
+    bool isEditMode = false,
+  }) async {
+    try {
+      // The API response may be wrapped (e.g. {status:true, data:{...}}). Unwrap if needed.
+      final Map<String, dynamic> p = (productData['data'] is Map)
+          ? Map<String, dynamic>.from(productData['data'] as Map)
+          : (productData['product'] is Map)
+              ? Map<String, dynamic>.from(productData['product'] as Map)
+              : productData;
+
+      final rawVariations = p['variations'];
+      if (rawVariations is! List) {
+        // In edit mode, do NOT auto-disable variations just because the payload shape is unexpected.
+        // This avoids the "variations disabled on edit" issue when backend responses differ slightly.
+        if (!isEditMode) {
+          toggleHasVariations(false);
+        }
+        return;
+      }
+
+      _hasVariations.value = rawVariations.isNotEmpty;
+
+      // Collect used attribute ids to mark selected attributes
+      final Set<String> usedAttributeIds = <String>{};
+      // Collect used option ids per attribute id so we can mark selected values
+      // This is critical in edit mode; validation requires at least one selected value per attribute.
+      final Map<String, Set<String>> usedOptionIdsByAttrId = <String, Set<String>>{};
+      final List<ProductVariation> parsedVariations = [];
+
+      for (final v in rawVariations) {
+        if (v is! Map) continue;
+        final vm = Map<String, dynamic>.from(v as Map);
+
+        final String id = vm['id']?.toString() ?? '';
+        final double price = (vm['price'] is num)
+            ? (vm['price'] as num).toDouble()
+            : double.tryParse(vm['price']?.toString() ?? '0') ?? 0.0;
+        final int stock = (vm['stock'] is num)
+            ? (vm['stock'] as num).toInt()
+            : int.tryParse(vm['stock']?.toString() ?? '0') ?? 0;
+        final String sku = vm['sku']?.toString() ?? '';
+
+        final status = vm['status']?.toString().toLowerCase();
+        final bool isActive = status == null
+            ? true
+            : (status == 'active' || status == '1' || status == 'true');
+
+        final Map<String, String> attributes = {};
+        final List<dynamic> attrOptions =
+            (vm['attributeOptions'] is List) ? (vm['attributeOptions'] as List) : const [];
+
+        for (final ao in attrOptions) {
+          if (ao is! Map) continue;
+          final aom = Map<String, dynamic>.from(ao as Map);
+          final String attrId = aom['attribute_id']?.toString() ?? '';
+          final String optId = aom['option_id']?.toString() ?? '';
+          if (attrId.isEmpty || optId.isEmpty) continue;
+
+          usedAttributeIds.add(attrId);
+          (usedOptionIdsByAttrId[attrId] ??= <String>{}).add(optId);
+
+          // Track used option ids for this attribute
+          usedOptionIdsByAttrId.putIfAbsent(attrId, () => <String>{}).add(optId);
+
+          final attr = _allAttributes.firstWhereOrNull((a) => a.id == attrId);
+          if (attr == null) continue;
+          final opt = attr.values.firstWhereOrNull((o) => o.id == optId);
+          if (opt == null) continue;
+          attributes[attr.name] = opt.value;
+        }
+
+        // Images
+        final List<String> images = [];
+        if (vm['gallery'] is List) {
+          images.addAll((vm['gallery'] as List).map((e) => e.toString()));
+        } else if (vm['gallary'] is List) {
+          images.addAll((vm['gallary'] as List).map((e) => e.toString()));
+        }
+        final img = vm['image']?.toString();
+        if (img != null && img.trim().isNotEmpty) {
+          images.insert(0, img);
+        }
+
+        parsedVariations.add(
+          ProductVariation(
+            id: id,
+            attributes: attributes,
+            price: price,
+            stock: stock,
+            sku: sku,
+            isActive: isActive,
+            images: images,
+          ),
+        );
+      }
+
+      // Mark selected attributes in UI
+      final selected = _allAttributes
+          .where((a) => usedAttributeIds.contains(a.id))
+          .toList();
+
+      _selectedAttributes.assignAll(selected);
+
+      // IMPORTANT: mark the values as selected so validation passes and the user can
+      // add/edit variations without having to delete/recreate everything.
+      for (final attr in _selectedAttributes) {
+        final usedOptionIds = usedOptionIdsByAttrId[attr.id] ?? const <String>{};
+
+        // Clear previous selection state
+        for (final v in attr.values) {
+          v.isSelected.value = false;
+        }
+
+        // Select the values that exist in current variations (if any)
+        if (usedOptionIds.isNotEmpty) {
+          for (final v in attr.values) {
+            if (usedOptionIds.contains(v.id)) {
+              v.isSelected.value = true;
+            }
+          }
+        }
+
+        // Fallback (very rare): if no matching option found, select the first value
+        // so the attribute isn't "empty" for validation.
+        final hasAnySelected = attr.values.any((v) => v.isSelected.value);
+        if (!hasAnySelected && attr.values.isNotEmpty) {
+          attr.values.first.isSelected.value = true;
+        }
+      }
+
+      _variations.assignAll(parsedVariations);
+      _updateCounters();
+
+      update([attributesUpdateId, variationsUpdateId]);
+      _saveCurrentState();
+
+      print(
+        '✅ [VARIATIONS] Loaded from API: ${_variations.length} variations, ${_selectedAttributes.length} attributes',
+      );
+    } catch (e) {
+      print('❌ [VARIATIONS] Error loading from API: $e');
+    }
   }
 
   void reset() {}

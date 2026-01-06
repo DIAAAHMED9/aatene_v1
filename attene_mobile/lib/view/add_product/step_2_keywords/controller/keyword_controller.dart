@@ -91,6 +91,12 @@ class KeywordController extends GetxController {
     );
   }
 
+  /// Public helper for edit-mode: re-sync selected keywords from ProductCentralController.
+  void syncFromProductController() {
+    _syncWithProductController();
+    update();
+  }
+
   Future<void> loadStoresOnOpen() async {
     if (!myAppController.isLoggedIn.value) {
       storesError('يجب تسجيل الدخول أولاً');

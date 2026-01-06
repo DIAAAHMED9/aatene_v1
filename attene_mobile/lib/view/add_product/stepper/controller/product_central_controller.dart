@@ -31,6 +31,11 @@ class ProductCentralController extends GetxController {
   final RxBool isUpdatingSection = false.obs;
   final RxBool isProductReadyForSubmission = false.obs;
 
+  // Edit mode
+  final RxBool isEditMode = false.obs;
+  final RxInt editingProductId = 0.obs;
+  final RxString editingSku = ''.obs;
+
   final RxMap<String, String> validationErrors = <String, String>{}.obs;
 
   final RxMap<int, bool> stepValidationStatus = <int, bool>{}.obs;
@@ -361,10 +366,199 @@ class ProductCentralController extends GetxController {
 ''');
   }
 
+  /// Load product details and prefill controllers for editing.
+  /// This enables using the same "Add Product" stepper for update.
+  Future<bool> loadProductForEdit(int productId) async {
+    try {
+      final response = await ApiHelper.get(
+        path: '/merchants/products/$productId',
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+
+      if (response == null || response['status'] != true) {
+        print('❌ [EDIT PRODUCT] Failed to fetch product: ${response?['message']}');
+        return false;
+      }
+
+      dynamic data = response['data'];
+      if (data is List && data.isNotEmpty) {
+        data = data.first;
+      }
+
+      if (data is! Map) {
+        print('❌ [EDIT PRODUCT] Unexpected product data shape');
+        return false;
+      }
+
+      final productData = Map<String, dynamic>.from(data as Map);
+      await applyProductDataForEdit(productId: productId, productData: productData);
+      return true;
+    } catch (e) {
+      print('❌ [EDIT PRODUCT] Error loading product: $e');
+      return false;
+    }
+  }
+
+  /// Apply API product data into stepper controllers (basic info, media, keywords, variations, cross-sells)
+  Future<void> applyProductDataForEdit({
+    required int productId,
+    required Map<String, dynamic> productData,
+  }) async {
+    isEditMode(true);
+    editingProductId(productId);
+    editingSku(productData['sku']?.toString() ?? '');
+
+    productName(productData['name']?.toString() ?? '');
+    // Prefer full HTML description, fallback to short_description
+    productDescription(
+      (productData['description'] ?? productData['short_description'] ?? '').toString(),
+    );
+    price((productData['price'] ?? '').toString());
+    selectedCategoryId(
+      productData['category_id'] is int
+          ? productData['category_id']
+          : int.tryParse(productData['category_id']?.toString() ?? '') ?? 0,
+    );
+    selectedCondition(_toArabicCondition(productData['condition']?.toString()));
+
+    // Section
+    final int sectionId = productData['section_id'] is int
+        ? productData['section_id']
+        : int.tryParse(productData['section_id']?.toString() ?? '') ?? 0;
+    if (sectionId > 0) {
+      final sectionName = (productData['section'] is Map)
+          ? (productData['section']['name']?.toString() ?? '')
+          : (productData['section_name']?.toString() ?? '');
+      final Section? resolved = _resolveSection(sectionId, sectionName);
+      selectedSection(resolved);
+    }
+
+    // Media (cover + gallery)
+    final List<String> paths = [];
+    final cover = productData['cover']?.toString();
+    if (cover != null && cover.trim().isNotEmpty) paths.add(cover);
+    if (productData['gallary'] is List) {
+      paths.addAll((productData['gallary'] as List).map((e) => e.toString()));
+    } else if (productData['gallery'] is List) {
+      paths.addAll((productData['gallery'] as List).map((e) => e.toString()));
+    }
+    final uniquePaths = paths.where((p) => p.trim().isNotEmpty).toSet().toList();
+    selectedMedia.assignAll(uniquePaths.map(_mediaItemFromRelativePath).toList());
+
+    // Keywords/tags
+    if (productData['tags'] is List) {
+      keywords.assignAll((productData['tags'] as List).map((e) => e.toString()));
+    } else {
+      keywords.clear();
+    }
+
+    // Sync keyword controller UI if already initialized
+    if (Get.isRegistered<KeywordController>()) {
+      Get.find<KeywordController>().syncFromProductController();
+    }
+
+    // Variations
+    if (Get.isRegistered<ProductVariationController>()) {
+      final variationController = Get.find<ProductVariationController>();
+
+      final rawVars = productData['variations'];
+      final bool hasVars = rawVars is List && rawVars.isNotEmpty;
+
+      // بعض المنتجات قد تُرجع type مختلف رغم وجود variations، لذلك نعتمد على وجود القائمة فعلياً.
+      if (hasVars) {
+        // Ensure attributes are available for mapping attribute_id/option_id -> names/values
+        await variationController.loadAttributesOnOpen();
+        await variationController.loadFromProductApi(
+          productData: productData,
+          isEditMode: true,
+        );
+      } else {
+        // Only disable if there are truly no variations in API data.
+        variationController.toggleHasVariations(false);
+      }
+    }
+
+    // Cross-sells / related products
+
+    if (Get.isRegistered<RelatedProductsController>()) {
+      // Await so the controller can ensure products are loaded (cache/API)
+      // and apply selected ids before the UI builds.
+      await Get.find<RelatedProductsController>().loadFromProductApi(productData);
+    }
+
+    // Sync basic info text controllers
+    if (Get.isRegistered<AddProductController>()) {
+      Get.find<AddProductController>().applyCentralToTextFields();
+    }
+
+    print('✅ [EDIT PRODUCT] Prefilled stepper for product #$productId');
+  }
+
+  String _toArabicCondition(String? apiCondition) {
+    switch ((apiCondition ?? '').toLowerCase()) {
+      case 'used':
+        return 'مستعمل';
+      case 'refurbished':
+        return 'مجدول';
+      case 'new':
+      default:
+        return 'جديد';
+    }
+  }
+
+  Section? _resolveSection(int sectionId, String sectionName) {
+    try {
+      final sectionsData = dataService.getSections();
+      if (sectionsData is List && sectionsData.isNotEmpty) {
+        final sections = sectionsData
+            .whereType<Map>()
+            .map((e) => Section.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        final match = sections.firstWhereOrNull((s) => s.id == sectionId);
+        if (match != null) return match;
+      }
+    } catch (e) {
+      print('⚠️ [EDIT PRODUCT] Error resolving section locally: $e');
+    }
+    if (sectionId <= 0) return null;
+    return Section(id: sectionId, name: sectionName.isNotEmpty ? sectionName : 'قسم #$sectionId', storeId: '');
+  }
+
+  MediaItem _mediaItemFromRelativePath(String relativePath) {
+    final String url = _toFullMediaUrl(relativePath);
+    final String name = relativePath.split('/').last;
+    return MediaItem(
+      id: '${editingProductId.value}_${name}_${DateTime.now().millisecondsSinceEpoch}',
+      path: url,
+      type: MediaType.image,
+      name: name,
+      dateAdded: DateTime.now(),
+      size: 0,
+      isLocal: false,
+      fileName: name,
+      fileUrl: url,
+    );
+  }
+
+  String _toFullMediaUrl(String path) {
+    final p = path.trim();
+    if (p.isEmpty) return '';
+    if (p.startsWith('http://') || p.startsWith('https://')) return p;
+
+    // Most media served under /storage
+    final base = ApiHelper.getBaseUrl().replaceAll(RegExp(r'/$'), '');
+    final cleaned = p.startsWith('/') ? p.substring(1) : p;
+    if (cleaned.startsWith('storage/')) {
+      return '$base/$cleaned';
+    }
+    return '$base/storage/$cleaned';
+  }
+
   Future<Map<String, dynamic>?> submitProduct() async {
     return UnifiedLoadingScreen.showWithFuture<Map<String, dynamic>>(
       performSubmitProduct(),
-      message: 'جاري إضافة المنتج...',
+      message: isEditMode.value ? 'جاري تحديث المنتج...' : 'جاري إضافة المنتج...',
     );
   }
 
@@ -405,8 +599,13 @@ class ProductCentralController extends GetxController {
 
       print('📤 [PRODUCT] بيانات المنتج المرسلة: ${jsonEncode(productData)}');
 
+      final String path = isEditMode.value && editingProductId.value > 0
+          ? '/merchants/products/${editingProductId.value}'
+          : '/merchants/products';
+
+      // NOTE: Backend uses POST for both create and update.
       final response = await ApiHelper.post(
-        path: '/merchants/products',
+        path: path,
         body: productData,
         withLoading: false,
       );
@@ -414,19 +613,35 @@ class ProductCentralController extends GetxController {
       print('📥 [PRODUCT] استجابة API: ${jsonEncode(response)}');
 
       if (response != null && response['status'] == true) {
-        final product = response['data']?[0];
-        print('✅ [PRODUCT] تم إنشاء المنتج بنجاح: ${product?['name']}');
+        final dynamic data = response['data'];
+        final Map<String, dynamic>? product = data is List
+            ? (data.isNotEmpty ? Map<String, dynamic>.from(data.first) : null)
+            : (data is Map ? Map<String, dynamic>.from(data) : null);
+
+        print(
+          '✅ [PRODUCT] تم ${isEditMode.value ? 'تحديث' : 'إنشاء'} المنتج بنجاح: ${product?['name']}',
+        );
 
         await dataService.refreshProducts();
 
         _notifyProductUpdate();
 
-        resetAfterSuccess(variationController);
+        // In edit mode we keep controllers values (so user can continue) but we
+        // reset edit flag. In add mode we reset completely.
+        if (isEditMode.value) {
+          isEditMode(false);
+          editingProductId(0);
+          editingSku('');
+        } else {
+          resetAfterSuccess(variationController);
+        }
 
         return {'success': true, 'data': response['data']};
       } else {
         final errorMessage = parseErrorMessage(response);
-        print('❌ [PRODUCT] فشل إنشاء المنتج: $errorMessage');
+        print(
+          '❌ [PRODUCT] فشل ${isEditMode.value ? 'تحديث' : 'إنشاء'} المنتج: $errorMessage',
+        );
         return {'success': false, 'message': errorMessage};
       }
     } catch (e) {
@@ -447,13 +662,19 @@ class ProductCentralController extends GetxController {
     print('selectedSection.value?.id :: ${selectedSection.value?.id}');
     final productData = <String, dynamic>{
       'section_id': selectedSection.value!.id,
+      // Keep existing SKU in edit mode (backend may validate it)
+      if (isEditMode.value && editingSku.value.trim().isNotEmpty)
+        'sku': editingSku.value.trim(),
       'name': productName.value.trim(),
       'description': productDescription.value.trim(),
       'price': double.tryParse(price.value) ?? 0.0,
       'category_id': selectedCategoryId.value,
       'condition': formatCondition(selectedCondition.value),
       'short_description': getShortDescription(),
-      'sku': generateSku(),
+      // Keep SKU on edit if provided by API
+      'sku': (isEditMode.value && editingSku.value.trim().isNotEmpty)
+          ? editingSku.value.trim()
+          : generateSku(),
     };
 
     if (selectedMedia.isNotEmpty) {
@@ -516,6 +737,7 @@ class ProductCentralController extends GetxController {
   ) {
     return variationsData.map((variation) {
       final variationData = {
+        if (isEditMode.value && variation['id'] != null) 'id': variation['id'],
         'price': variation['price'],
         'attributeOptions': prepareAttributeOptions(
           variation['attributeOptions'] ?? [],
@@ -605,7 +827,18 @@ class ProductCentralController extends GetxController {
     return response['message'] ?? 'فشل في إضافة المنتج';
   }
 
-  void resetAfterSuccess(ProductVariationController variationController) {
+  
+  /// Reset ALL stepper-related data (used before starting add/edit flow)
+  void resetAllData() {
+    // reset core product fields + section
+    reset(resetSection: true);
+    // reset edit flags
+    isEditMode(false);
+    editingProductId(0);
+    editingSku('');
+  }
+
+void resetAfterSuccess(ProductVariationController variationController) {
     reset(resetSection: true);
     variationController.toggleHasVariations(false);
     variationController.selectedAttributes.clear();
@@ -635,6 +868,100 @@ class ProductCentralController extends GetxController {
       '🔄 [PRODUCT] إعادة تعيين بيانات المنتج ${resetSection ? 'مع القسم' : 'بدون القسم'}',
     );
     _checkProductReadiness();
+  }
+
+
+  String _apiConditionToArabic(String? apiCondition) {
+    switch ((apiCondition ?? '').toLowerCase()) {
+      case 'new':
+        return 'جديد';
+      case 'used':
+        return 'مستعمل';
+      case 'refurbished':
+        return 'مجدول';
+      default:
+        return 'جديد';
+    }
+  }
+
+  void _setSectionFromId(int sectionId, dynamic sectionObj) {
+    if (sectionId <= 0) return;
+
+    try {
+      final cached = dataService.getSections();
+      final sections = cached.map((e) => Section.fromJson(e)).toList();
+      final found = sections.firstWhereOrNull((s) => s.id == sectionId);
+
+      if (found != null) {
+        selectedSection(found);
+        return;
+      }
+    } catch (_) {}
+
+    // Fallback using API object
+    try {
+      if (sectionObj is Map) {
+        selectedSection(Section.fromJson(Map<String, dynamic>.from(sectionObj)));
+      } else {
+        selectedSection(Section(id: sectionId, name: 'قسم #$sectionId', storeId: ''));
+      }
+    } catch (_) {
+      selectedSection(Section(id: sectionId, name: 'قسم #$sectionId', storeId: ''));
+    }
+  }
+
+  void _setMediaFromApi(Map<String, dynamic> p) {
+    final List<String> paths = [];
+    final cover = p['cover']?.toString();
+    if (cover != null && cover.trim().isNotEmpty) {
+      paths.add(cover.trim());
+    }
+
+    if (p['gallary'] is List) {
+      for (final g in (p['gallary'] as List)) {
+        final s = g?.toString() ?? '';
+        if (s.trim().isNotEmpty) paths.add(s.trim());
+      }
+    }
+
+    final unique = <String>{};
+    final List<MediaItem> items = [];
+    for (final rel in paths) {
+      if (unique.contains(rel)) continue;
+      unique.add(rel);
+      final url = _fullMediaUrl(rel);
+      items.add(
+        MediaItem(
+          id: rel,
+          path: url,
+          type: MediaType.image,
+          name: rel.split('/').last,
+          dateAdded: DateTime.now(),
+          size: 0,
+          isLocal: false,
+          fileName: rel.split('/').last,
+          fileUrl: url,
+        ),
+      );
+    }
+    selectedMedia.assignAll(items);
+  }
+
+  String _fullMediaUrl(String relPath) {
+    final p = relPath.trim();
+    if (p.isEmpty) return '';
+    if (p.startsWith('http://') || p.startsWith('https://')) return p;
+
+    final base = ApiHelper.getBaseUrl();
+    // Most of backend files are served under /storage/
+    if (p.startsWith('storage/')) {
+      return '$base/$p';
+    }
+    if (p.startsWith('/storage/')) {
+      return '$base${p.startsWith('/') ? '' : '/'}$p';
+    }
+    final clean = p.startsWith('/') ? p.substring(1) : p;
+    return '$base/storage/$clean';
   }
 
   String formatCondition(String condition) {

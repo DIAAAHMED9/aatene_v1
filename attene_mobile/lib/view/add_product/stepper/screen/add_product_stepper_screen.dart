@@ -78,6 +78,39 @@ class _DemoStepperScreenState
       if (!Get.isRegistered<ProductVariationController>()) {
         Get.put(ProductVariationController(), permanent: true);
       }
+
+      // ✅ IMPORTANT:
+      // Controllers are registered as permanent to survive step navigation.
+      // When user returns from Edit -> Add, previous edited product data may
+      // still be stored in ProductCentralController and reflected in text fields.
+      // So we must reset the whole add flow state when opening this screen.
+      final central = Get.find<ProductCentralController>();
+      final variation = Get.find<ProductVariationController>();
+
+      // Preserve the selected section passed from the previous screen (Add flow)
+      final Section? argSection = Get.arguments?['selectedSection'] as Section?;
+
+      // Reset all shared data
+      central.resetAllData();
+      if (argSection != null) {
+        central.selectedSection(argSection);
+      }
+
+      // Reset variations/related/keywords state
+      variation.resetAllData();
+      if (Get.isRegistered<RelatedProductsController>()) {
+        Get.find<RelatedProductsController>().resetAll();
+      }
+      if (Get.isRegistered<KeywordController>()) {
+        // Keyword controller reads from central; central is already reset.
+        // Ensure its UI is refreshed.
+        Get.find<KeywordController>().syncFromProductController();
+      }
+
+      // Reset step-1 text fields if controller already exists
+      if (Get.isRegistered<AddProductController>()) {
+        Get.find<AddProductController>().resetForNewProduct();
+      }
     });
   }
 
@@ -308,7 +341,7 @@ class _DemoStepperScreenState
   }
 
   @override
-  void initializeControllers() {
+  Future<void> initializeControllers() async {
     print('🚀 [DEMO STEPPER] Initializing all required controllers');
 
     try {

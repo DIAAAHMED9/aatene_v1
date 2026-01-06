@@ -52,7 +52,11 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
 
   Widget buildStepContent(int stepIndex);
 
-  void initializeControllers();
+  /// Initialize any controllers used by the stepper screen.
+  ///
+  /// Note: This is `Future<void>` to be flexible across screens that need async
+  /// setup. It is called from `initState()` without awaiting.
+  Future<void> initializeControllers();
 
   int getInitialStep() => 0;
 
@@ -198,12 +202,25 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
     setState(() {
       currentStep = step;
     });
-    _pageController.animateToPage(
-      step,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-    onStepChanged(oldStep, step);
+
+    // PageController might temporarily have no clients (e.g., when returning from another route
+    // like MediaLibrary). Guard against 'PageController is not attached to a PageView.'
+    void go() {
+      if (!mounted) return;
+      if (!_pageController.hasClients) return;
+      _pageController.animateToPage(
+        step,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      onStepChanged(oldStep, step);
+    }
+
+    if (_pageController.hasClients) {
+      go();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => go());
+    }
   }
 
   void nextStep() {

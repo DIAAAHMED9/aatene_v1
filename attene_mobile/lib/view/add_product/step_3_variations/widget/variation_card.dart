@@ -471,6 +471,7 @@ class _VariationCardState extends State<VariationCard> {
                   itemCount: widget.variation.images.length,
                   itemBuilder: (context, index) {
                     final imageUrl = widget.variation.images[index];
+          final displayUrl = _mediaController.getDisplayUrlFromStoredValue(imageUrl);
                     return _buildImageItem(imageUrl, index);
                   },
                 ),
@@ -617,10 +618,10 @@ class _VariationCardState extends State<VariationCard> {
         }
 
         for (var media in selectedMedia) {
-          final mediaUrl = _mediaController.getMediaDisplayUrl(media);
-          if (mediaUrl.isNotEmpty && mediaUrl.startsWith('http')) {
-            if (!widget.variation.images.contains(mediaUrl)) {
-              widget.variation.images.add(mediaUrl);
+          final apiValue = _mediaController.getMediaApiValue(media);
+          if (apiValue.isNotEmpty) {
+            if (!widget.variation.images.contains(apiValue)) {
+              widget.variation.images.add(apiValue);
             }
           } else if (media.isLocal == true && media.path.isNotEmpty) {
             await _uploadLocalImage(media);

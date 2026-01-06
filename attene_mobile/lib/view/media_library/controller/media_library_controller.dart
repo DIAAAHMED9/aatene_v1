@@ -879,6 +879,34 @@ class MediaLibraryController extends GetxController
     return '';
   }
 
+  /// Return an URL suitable for display from a stored value.
+  /// Stored values may be:
+  /// - full URL (http...) -> returned as is
+  /// - relative path (images/.., gallery/.., etc) -> baseUrl/storage/<path>
+  String getDisplayUrlFromStoredValue(String value) {
+    final v = value.trim();
+    if (v.isEmpty) return '';
+    if (v.startsWith('http')) return v;
+    return '${ApiHelper.getBaseUrl()}/storage/$v';
+  }
+
+  /// Return the value that should be sent to backend when picking a media item.
+  /// If we got a full URL, we try to strip `/storage/` and send the relative path.
+  String getMediaApiValue(MediaItem media) {
+    // Prefer relative server path when available
+    final raw = (media.path.isNotEmpty) ? media.path : (media.fileUrl ?? '');
+    final v = raw.trim();
+    if (v.isEmpty) return '';
+    if (v.startsWith('http')) {
+      final idx = v.indexOf('/storage/');
+      if (idx != -1) return v.substring(idx + '/storage/'.length);
+      final uri = Uri.tryParse(v);
+      if (uri != null && uri.pathSegments.isNotEmpty) return uri.pathSegments.join('/');
+    }
+    return v;
+  }
+
+
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {
       currentTabIndex.value = tabController.index;

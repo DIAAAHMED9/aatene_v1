@@ -1,6 +1,7 @@
 
 
 import '../../../general_index.dart';
+import '../../add_product/stepper/screen/edit_product_stepper_screen.dart';
 
 class ProductListItem extends StatelessWidget {
   final Product product;
@@ -221,12 +222,17 @@ class ProductListItem extends StatelessWidget {
   }
 
   void _editProduct() {
-    Get.snackbar(
-      'تحرير المنتج',
-      'سيتم فتح شاشة تحرير ${product.name}',
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-    );
+    if (product.id <= 0) {
+      Get.snackbar(
+        'تنبيه',
+        'معرف المنتج غير صالح',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    Get.to(() => EditProductStepperScreen(productId: product.id));
   }
 
   void _confirmDeleteProduct() {

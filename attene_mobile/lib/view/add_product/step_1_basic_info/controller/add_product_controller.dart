@@ -65,6 +65,32 @@ class AddProductController extends GetxController {
     }
   }
 
+  /// Used by edit-product flow to push the current values from ProductCentralController
+  /// into the TextEditingControllers (name/description/price) and update UI.
+  void applyCentralToTextFields() {
+    _loadStoredData();
+    update();
+  }
+
+  /// Clear all step-1 form fields/state.
+  /// Used when starting a fresh "Add product" flow after coming back from
+  /// an "Edit product" flow to prevent leaking previous edited values.
+  void resetForNewProduct() {
+    productNameController.clear();
+    productDescriptionController.clear();
+    priceController.clear();
+
+    _selectedCondition.value = '';
+    _characterCount.value = 0;
+    _fieldErrors.clear();
+
+    // Also clear any cached validation errors stored in the central controller
+    productCentralController.validationErrors.clear();
+    // Do not change selected section here; add-stepper will preserve it from arguments.
+    _validateForm();
+    update();
+  }
+
   void _setupListeners() {
     productNameController.addListener(() {
       _onProductNameChanged();
