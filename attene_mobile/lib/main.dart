@@ -82,6 +82,7 @@ class MyApp extends StatelessWidget {
       ],
       color: AppColors.primary400,
       theme: ThemeData(
+        fontFamily: "PingAR",
         primaryColor: AppColors.primary500,
         scaffoldBackgroundColor: AppColors.light1000,
         dialogBackgroundColor: AppColors.light1000,
@@ -111,7 +112,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.light1000,
           elevation: 0,
-          centerTitle: true,
+          centerTitle: false,
           foregroundColor: AppColors.neutral200,
           titleTextStyle: getMedium(
             color: AppColors.neutral200,

@@ -26,29 +26,16 @@ class SetNewPassword extends StatelessWidget {
               children: [
                 Align(
                   alignment: isRTL ? Alignment.topLeft : Alignment.topRight,
-                  child: Container(
-                    height: ResponsiveDimensions.h(40),
-                    width: ResponsiveDimensions.w(40),
-                    padding: EdgeInsets.all(ResponsiveDimensions.w(8)),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey[300]!,
-                          blurRadius: 1,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: Icon(
-                        isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
-                        color: Colors.black,
-                        size: ResponsiveDimensions.f(16),
+                  child:  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Colors.grey[100],
                       ),
-                      onPressed: () {},
+                      child: Icon(Icons.arrow_back, color: AppColors.neutral100),
                     ),
                   ),
                 ),

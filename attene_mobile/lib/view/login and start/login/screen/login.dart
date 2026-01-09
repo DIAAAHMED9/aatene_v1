@@ -32,7 +32,7 @@ class Login extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
                 Text(
-                  isRTL ? 'أهلاً بك في اعطيني' : 'Welcome to Atene',
+                  isRTL ? 'أهلاً بك في اعطيني' : 'Welcome to Aatene',
                   style: getBold(color: AppColors.primary400),
                   textAlign: isRTL ? TextAlign.right : TextAlign.left,
                 ),
