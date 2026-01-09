@@ -1,108 +1,137 @@
-// // // // final RxString gender = ''.obs;
-// // // //
-// // // // Obx(() {
-// // // // return DropdownButtonFormField<String>(
-// // // // value: gender.value.isEmpty ? null : gender.value,
-// // // // hint: const Text('الجنس'),
-// // // // items: const [
-// // // // DropdownMenuItem(value: 'male', child: Text('ذكر')),
-// // // // DropdownMenuItem(value: 'female', child: Text('أنثى')),
-// // // // ],
-// // // // onChanged: (value) {
-// // // // gender.value = value!;
-// // // // },
-// // // // );
-// // // // });
-// // //
-// // // class DropdownTextField extends StatelessWidget {
-// // //   final String hint;
-// // //   final List<String> items;
-// // //   final ValueChanged<String?> onChanged;
-// // //
-// // //   const DropdownTextField({
-// // //     super.key,
-// // //     required this.hint,
-// // //     required this.items,
-// // //     required this.onChanged,
-// // //   });
-// // //
-// // //   @override
-// // //   Widget build(BuildContext context) {
-// // //     return DropdownButtonFormField<String>(
-// // //       hint: Text(hint),
-// // //       icon: const Icon(Icons.keyboard_arrow_down),
-// // //       items: items
-// // //           .map(
-// // //             (e) => DropdownMenuItem(
-// // //           value: e,
-// // //           child: Text(e),
-// // //         ),
-// // //       )
-// // //           .toList(),
-// // //       onChanged: onChanged,
-// // //       decoration: InputDecoration(
-// // //         filled: true,
-// // //         fillColor: Colors.grey.shade100,
-// // //         border: OutlineInputBorder(
-// // //           borderRadius: BorderRadius.circular(14),
-// // //           borderSide: BorderSide.none,
-// // //         ),
-// // //       ),
-// // //     );
-// // //   }
-// // // }
-// // //
-// //
-// // String? selectedLanguage = 'ar';
-// //
-// // DropdownButtonFormField<String>(
-// // value: selectedLanguage,
-// // hint: const Text('اختر اللغة'),
-// // items: const [
-// // DropdownMenuItem(
-// // value: 'ar',
-// // child: Text('العربية 🇸🇦'),
-// // ),
-// // DropdownMenuItem(
-// // value: 'en',
-// // child: Text('English 🇺🇸'),
-// // ),
-// // ],
-// // onChanged: (value) {
-// // selectedLanguage = value;
-// //
-// // // مثال ربط مع GetX
-// // // Get.updateLocale(Locale(value!));
-// // },
-// // decoration: InputDecoration(
-// // prefixIcon: const Icon(Icons.language),
-// // border: OutlineInputBorder(
-// // borderRadius: BorderRadius.circular(12),
-// // ),
-// // ),
-// // );
-// String selectedLanguage = 'ar';
-//
-// DropdownButtonFormField<String>(
-// value: selectedLanguage,
-// items: const [
-// DropdownMenuItem(
-// value: 'ar',
-// child: Text('العربية'),
-// ),
-// DropdownMenuItem(
-// value: 'en',
-// child: Text('English'),
-// ),
-// ],
-// onChanged: (value) {
-// selectedLanguage = value!;
-// // Get.updateLocale(Locale(value));
-// },
-// decoration: InputDecoration(
-// prefixIcon: const Icon(Icons.language),
-// border: OutlineInputBorder(
-// borderRadius: BorderRadius.circular(12),
-// ),
-// ),
-// );
+import 'package:flutter/material.dart';
+
+class PromoBanner extends StatelessWidget {
+  const PromoBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        height: 220,
+        margin: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            // Blue curved background
+            Positioned(
+              left: -60,
+              top: -40,
+              bottom: -40,
+              child: Container(
+                width: 220,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF2F6BFF),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(200),
+                    bottomRight: Radius.circular(200),
+                  ),
+                ),
+              ),
+            ),
+
+            // Darker wave
+            Positioned(
+              left: -20,
+              bottom: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1F4FD8),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+
+            // Text Content
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 20,
+                top: 32,
+                left: 160,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "بيع كبير",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "ما يصل إلى 50%",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "يحدث الآن",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Image
+            Positioned(
+              right: 0,
+              bottom: 0,
+              top: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                child: Image.asset(
+                  "assets/model.png", // replace with your image
+                  width: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
+            // Page Indicator
+            Positioned(
+              bottom: 16,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _dot(active: true),
+                  _dot(),
+                  _dot(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _dot({bool active = false}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: active ? 16 : 6,
+      height: 6,
+      decoration: BoxDecoration(
+        color: active ? Colors.white : Colors.white54,
+        borderRadius: BorderRadius.circular(10),
+      ),
+    );
+  }
+}

@@ -170,7 +170,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/', page: () => HomePage()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -237,7 +237,9 @@ void _initializeBackgroundServices() {
 
       // Listen for token refresh updates
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-        if (newToken.trim().isNotEmpty) {
+        if (newToken
+            .trim()
+            .isNotEmpty) {
           storage.write('device_token', newToken);
           print('🔄 FCM Token refreshed: $newToken');
         }
