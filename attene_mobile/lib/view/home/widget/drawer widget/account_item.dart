@@ -1,5 +1,5 @@
-import 'package:attene_mobile/component/index.dart';
-import 'package:flutter/material.dart';
+
+import '../../../../general_index.dart';
 
 class DrawerAccountItem extends StatelessWidget {
   final String name;

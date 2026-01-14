@@ -1,15 +1,13 @@
-import 'package:attene_mobile/view/control%20panel%20vendor/screen/add_coin.dart';
+import 'package:attene_mobile/view/home/controller/home_controller.dart';
+import 'package:attene_mobile/view/home/screen/home_services.dart';
+import 'package:attene_mobile/view/profile/user%20profile/screen/user_profile.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-
-import 'firebase_options.dart';
 import 'general_index.dart';
-import 'services/notification_services.dart';
 import 'utlis/responsive/index.dart';
 import 'utlis/services/device_name_service.dart';
-
 import 'utlis/sheet_controller.dart';
 
 class AppBindings extends Bindings {
@@ -28,6 +26,7 @@ class AppBindings extends Bindings {
     // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
     Get.lazyPut(() => DataInitializerService(), fenix: true);
     Get.lazyPut(() => StoreSelectionController(), fenix: true);
+    Get.lazyPut<HomeController>(() => HomeController());
 
     print('✅ [APP BINDINGS] تم تسجيل الأساسيات');
 
@@ -170,7 +169,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/', page: () => const ProfileSliverPage()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -237,9 +236,7 @@ void _initializeBackgroundServices() {
 
       // Listen for token refresh updates
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-        if (newToken
-            .trim()
-            .isNotEmpty) {
+        if (newToken.trim().isNotEmpty) {
           storage.write('device_token', newToken);
           print('🔄 FCM Token refreshed: $newToken');
         }

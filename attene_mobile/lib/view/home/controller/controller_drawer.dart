@@ -1,5 +1,6 @@
-import 'package:get/get.dart';
-import '../model/account_model.dart';
+
+import '../../../general_index.dart';
+
 
 class DrawerControllerX extends GetxController {
   final accounts = <DrawerAccount>[

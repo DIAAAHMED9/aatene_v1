@@ -12,5 +12,4 @@ export 'splash/index.dart';
 export 'story/index.dart';
 export 'add_product/index.dart';
 export 'chat/index.dart';
-export 'profile/index.dart';
 export 'store_selection/index.dart';

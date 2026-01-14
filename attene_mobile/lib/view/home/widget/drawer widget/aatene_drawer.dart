@@ -1,11 +1,7 @@
-import 'package:attene_mobile/component/index.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 
-import '../../../utlis/colors/app_color.dart';
-import '../../../utlis/responsive/index.dart';
-import '../controller/controller_drawer.dart';
+import '../../../../general_index.dart';
+import '../../../../utlis/responsive/responsive_dimensions.dart';
+import '../../controller/controller_drawer.dart';
 import 'account_item.dart';
 import 'menu_item.dart';
 
