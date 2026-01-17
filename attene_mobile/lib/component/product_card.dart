@@ -20,7 +20,7 @@ class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 170,
+      width: 150,
       height: 280,
       decoration: BoxDecoration(
         color: Colors.white,

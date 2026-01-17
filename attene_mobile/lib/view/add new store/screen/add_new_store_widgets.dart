@@ -17,10 +17,10 @@ class AddNewStoreForm extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
+          spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const TextWithStar(text: "اسم المتجر"),
-            const SizedBox(height: 5),
             TextFiledAatene(
               heightTextFiled: 50,
               isRTL: isRTL,
@@ -28,29 +28,22 @@ class AddNewStoreForm extends StatelessWidget {
               controller: controller.nameController,
               textInputAction: TextInputAction.next,
             ),
-            const SizedBox(height: 15),
             _StoreTypeBanner(controller: controller),
-            const SizedBox(height: 15),
             const TextWithStar(text: "شعار المتجر"),
-            const SizedBox(height: 5),
             Text(
               "اختر صورة أساسية للشعار (حد أقصى 5 صور)",
               style: getRegular(fontSize: 12, color: Colors.grey),
             ),
-            const SizedBox(height: 10),
             _LogoImagesList(controller: controller),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const TextWithStar(text: "صور الغلاف"),
-            const SizedBox(height: 5),
             Text(
               "اختر صورة واحدة على الأقل للغلاف (حد أقصى 10 صور)",
               style: getRegular(fontSize: 12, color: Colors.grey),
             ),
-            const SizedBox(height: 10),
             _CoverImagesList(controller: controller),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const TextWithStar(text: "وصف المتجر"),
-            const SizedBox(height: 5),
             TextFiledAatene(
               heightTextFiled: 50,
               isRTL: isRTL,
@@ -58,9 +51,7 @@ class AddNewStoreForm extends StatelessWidget {
               controller: controller.descriptionController,
               textInputAction: TextInputAction.next,
             ),
-            const SizedBox(height: 15),
             const TextWithStar(text: "البريد الالكتروني"),
-            const SizedBox(height: 5),
             TextFiledAatene(
               heightTextFiled: 50,
               isRTL: isRTL,
@@ -68,15 +59,10 @@ class AddNewStoreForm extends StatelessWidget {
               controller: controller.emailController,
               textInputAction: TextInputAction.done,
             ),
-            const SizedBox(height: 15),
             _CitySelector(controller: controller),
-            const SizedBox(height: 15),
             _DistrictSelector(controller: controller),
-            const SizedBox(height: 15),
             _CurrencySelector(controller: controller),
-            const SizedBox(height: 15),
             const TextWithStar(text: "الهاتف المحمول "),
-            const SizedBox(height: 5),
             TextFiledAatene(
               heightTextFiled: 50,
               isRTL: isRTL,
@@ -84,13 +70,12 @@ class AddNewStoreForm extends StatelessWidget {
               controller: controller.phoneController,
               textInputAction: TextInputAction.done,
             ),
-            const SizedBox(height: 15),
             _HidePhoneTile(controller: controller),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const _LibraryHintBox(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             _CreateButton(controller: controller),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -112,9 +97,9 @@ class _StoreTypeBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
+          spacing: 7,
           children: [
             Icon(Icons.store, color: AppColors.primary400),
-            const SizedBox(width: 8),
             Text(
               "نوع المتجر: ${controller.storeType.value == 'products' ? 'منتجات' : 'خدمات'}",
               style: getRegular(fontSize: 14, color: AppColors.primary500),
@@ -145,8 +130,9 @@ class _LogoImagesList extends StatelessWidget {
               style: getRegular(
                 fontSize: 12,
                 color: logoCount >= 5 ? Colors.red : Colors.grey,
-                fontWeight:
-                    logoCount >= 5 ? FontWeight.bold : FontWeight.normal,
+                fontWeight: logoCount >= 5
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
             ),
           ),
@@ -204,8 +190,9 @@ class _CoverImagesList extends StatelessWidget {
               style: getRegular(
                 fontSize: 12,
                 color: coverCount >= 10 ? Colors.red : Colors.grey,
-                fontWeight:
-                    coverCount >= 10 ? FontWeight.bold : FontWeight.normal,
+                fontWeight: coverCount >= 10
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
             ),
           ),
@@ -282,7 +269,10 @@ class _EmptyMediaPicker extends StatelessWidget {
           const SizedBox(height: 8),
           Text(title, style: getRegular(color: Colors.grey)),
           const SizedBox(height: 4),
-          Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
         ],
       ),
     );
@@ -425,7 +415,10 @@ class _AddMoreTile extends StatelessWidget {
   }
 }
 
-ImageProvider _getImageProvider(CreateStoreController controller, dynamic media) {
+ImageProvider _getImageProvider(
+  CreateStoreController controller,
+  dynamic media,
+) {
   if (media is MediaItem) {
     // from media library
     final url = media.fileUrl;
@@ -514,7 +507,8 @@ class _DistrictSelector extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Obx(() {
-                      final districtName = controller.selectedDistrictName.value;
+                      final districtName =
+                          controller.selectedDistrictName.value;
                       return Text(
                         districtName,
                         style: getRegular(
@@ -562,7 +556,8 @@ class _CurrencySelector extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Obx(() {
-                      final currencyName = controller.selectedCurrencyName.value;
+                      final currencyName =
+                          controller.selectedCurrencyName.value;
                       return Text(
                         currencyName,
                         style: getRegular(
@@ -601,7 +596,8 @@ class _HidePhoneTile extends StatelessWidget {
           children: [
             Checkbox(
               value: controller.hidePhone.value,
-              onChanged: (newValue) => controller.hidePhone.value = newValue ?? false,
+              onChanged: (newValue) =>
+                  controller.hidePhone.value = newValue ?? false,
               checkColor: Colors.white,
               fillColor: MaterialStateProperty.resolveWith<Color>((states) {
                 if (states.contains(MaterialState.selected)) {
@@ -665,7 +661,7 @@ class _CreateButton extends StatelessWidget {
       color: AppColors.primary400,
       borderColor: AppColors.primary400,
       raduis: 10,
-      onTap:()=> Get.to(AddShippingMethod()),
+      onTap: () => Get.to(AddShippingMethod()),
     );
   }
 }

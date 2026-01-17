@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.attene.mobile"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -47,7 +47,7 @@ flutter {
 }
 dependencies {
     // ⬇️ هذا dependency يلزم لـ core library desugaring
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     // أضف أيضاً dependency لـ multidex إذا كان minSdk أقل من 21
     implementation("androidx.multidex:multidex:2.0.1")
 }

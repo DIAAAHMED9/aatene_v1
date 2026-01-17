@@ -187,36 +187,38 @@ class _AccountsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final filteredStores = _filteredStores();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _SearchBar(controller: controller),
-          _InfoBanner(controller: controller),
-          ListView.builder(
-            itemCount: filteredStores.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              final store = filteredStores[index];
-              return _StoreCard(
-                store: store,
-                onEdit: () => controller.editStore(store),
-                onDelete: () => controller.deleteStore(store),
-              );
-            },
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            children: [
+              _SearchBar(controller: controller),
+              _InfoBanner(controller: controller),
+              ListView.builder(
+                itemCount: filteredStores.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final store = filteredStores[index];
+                  return _StoreCard(
+                    store: store,
+                    onEdit: () => controller.editStore(store),
+                    onDelete: () => controller.deleteStore(store),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // ✅ زر إضافة متجر جديد
+            ],
           ),
-               const SizedBox(height: 16),
-
-      // ✅ زر إضافة متجر جديد
-      _AddNewStoreButton(controller: controller),
-
-      const SizedBox(height: 80),
-
-        ],
-      ),
+        ),
+        _AddNewStoreButton(controller: controller),
+      ],
     );
   }
 }
+
 class _AddNewStoreButton extends StatelessWidget {
   final ManageAccountStoreController controller;
 
@@ -225,7 +227,7 @@ class _AddNewStoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
@@ -288,13 +290,14 @@ class _InfoBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, color: Colors.blue),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'يمكنك إدارة متاجرك من هنا (تعديل / حذف / إضافة متجر جديد).',
-              style: getRegular(fontSize: 13, color: Colors.blueGrey),
-            ),
+          Text(
+            "الحساب/المتجر",
+            style: getBold(fontSize: 14, color: AppColors.primary400),
+          ),
+          Spacer(),
+          Text(
+            "الاجراءات",
+            style: getMedium(fontSize: 14, color: AppColors.primary400),
           ),
         ],
       ),
@@ -379,9 +382,14 @@ class _StoreCard extends StatelessWidget {
 
               decoration: BoxDecoration(
                 color: AppColors.primary100,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(Icons.edit_outlined, color: AppColors.primary400),
+              child: SvgPicture.asset(
+                'assets/images/svg_images/edit_1.svg',
+                semanticsLabel: 'My SVG Image',
+                height: 16,
+                width: 16,
+              ),
             ),
           ),
           SizedBox(width: 15),
@@ -391,14 +399,15 @@ class _StoreCard extends StatelessWidget {
             ),
             child: Container(
               padding: EdgeInsets.all(7),
-
               decoration: BoxDecoration(
                 color: AppColors.error100,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                Icons.delete_outline_outlined,
-                color: AppColors.error300,
+              child: SvgPicture.asset(
+                'assets/images/svg_images/delete_2.svg',
+                semanticsLabel: 'My SVG Image',
+                height: 16,
+                width: 16,
               ),
             ),
           ),

@@ -20,13 +20,16 @@ class TypeStoreBody extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
+          spacing: 30,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             TypeStoreHeader(),
-            SizedBox(height: 32),
             StoreTypeOptions(),
-            SizedBox(height: 40),
-            TypeStoreNextButton(),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.only(bottom: 30),
+              child: TypeStoreNextButton(),
+            ),
           ],
         ),
       ),
@@ -74,7 +77,7 @@ class StoreTypeOptions extends GetView<CreateStoreController> {
             ),
           ],
         );
-      }
+      },
     );
   }
 }
@@ -97,41 +100,40 @@ class StoreTypeCard extends GetView<CreateStoreController> {
 
   @override
   Widget build(BuildContext context) {
-    return
-    GestureDetector(
-          onTap: () => controller.setStoreType(type),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isSelected ? AppColors.primary400 : const Color(0XFFAAAAAA),
-                width: isSelected ? 2 : 1,
+    return GestureDetector(
+      onTap: () => controller.setStoreType(type),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppColors.primary400 : const Color(0XFFAAAAAA),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? AppColors.primary400
+                  : const Color(0XFF393939),
+              size: 30,
+            ),
+            const SizedBox(width: 16),
+            Text(
+              title,
+              style: getRegular(
+                fontSize: 18,
+                color: isSelected
+                    ? AppColors.primary400
+                    : const Color(0XFF393939),
               ),
             ),
-            child: Row(
-              children: [
-                Icon(
-                  icon,
-                  color: isSelected ? AppColors.primary400 : const Color(0XFF393939),
-                  size: 30,
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  title,
-                  style: getRegular(
-                    fontSize: 18,
-                    color:
-                        isSelected ? AppColors.primary400 : const Color(0XFF393939),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        
-      
-
+          ],
+        ),
+      ),
     );
   }
 }
@@ -146,7 +148,6 @@ class TypeStoreNextButton extends GetView<CreateStoreController> {
       textColor: Colors.white,
       color: AppColors.primary400,
       borderColor: AppColors.primary400,
-      raduis: 10,
       onTap: () {
         if (controller.storeType.value.isEmpty) {
           Get.snackbar(

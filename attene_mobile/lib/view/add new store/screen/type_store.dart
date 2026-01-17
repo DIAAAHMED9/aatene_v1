@@ -27,13 +27,12 @@ class TypeStore extends GetView<CreateStoreController> {
               ),
             ),
           ),
-          body:  TypeStoreBody(
-              controller: controller,
-              myAppController: myAppController,
-            ),
-          
+          body: TypeStoreBody(
+            controller: controller,
+            myAppController: myAppController,
+          ),
         );
-      }
+      },
     );
   }
 }

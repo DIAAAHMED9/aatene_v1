@@ -421,11 +421,12 @@ class HomeProduct extends GetView<HomeController> {
               StoreCard(
                 storeName: "EtnixByron",
                 description:
-                    "متجر إلكتروني متخصص في أحدث صيحات الموضة والأزياء العصرية للشباب والشابات",
+                "متجر إلكتروني متخصص في أحدث صيحات الموضة والأزياء العصرية للشباب والشابات",
                 rating: 5.0,
                 imagePath:
-                    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80", // صورة تعبيرية
+                "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80", // صورة تعبيرية
               ),
+
             ],
           ),
         ),

@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/profile/user%20profile/screen/user_profile.dart';
+
 import '../../general_index.dart';
 
 class MainScreen extends StatelessWidget {
@@ -13,7 +15,7 @@ class MainScreen extends StatelessWidget {
       ManageAccountStore(),
       ProductScreen(),
       ChatScreen(),
-      HomeControl(),
+      ProfilePage(),
     ];
     List<IconData> icons = const [
       Icons.home_filled,
@@ -56,7 +58,7 @@ class MainScreen extends StatelessWidget {
 
       // User/Profile
       mNames.add('USER');
-      mPages.add(HomeControl());
+      mPages.add(ProfilePage());
       mIcons.add(Icons.person_sharp);
 
       names = mNames;
