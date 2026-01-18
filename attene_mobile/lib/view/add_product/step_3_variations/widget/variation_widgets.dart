@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/responsive_dimensions.dart';
 
@@ -104,7 +103,7 @@ class AttributesManagementWidget extends StatelessWidget {
 
     return AateneButton(
       buttonText: '+  إدارة السمات والصفات',
-      color: AppColors.primary100,
+      color: AppColors.primary50,
       textColor: AppColors.primary500,
       borderColor: AppColors.primary300,
       onTap: controller.openAttributesManagement,
@@ -139,7 +138,7 @@ class SelectedAttributesWidget extends StatelessWidget {
                     vertical: ResponsiveDimensions.h(4),
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary100,
+                    color: AppColors.primary50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -164,7 +163,7 @@ class SelectedAttributesWidget extends StatelessWidget {
 
                 return Chip(
                   label: Text(attribute.name),
-                  backgroundColor: AppColors.primary100,
+                  backgroundColor: AppColors.primary50,
                   deleteIconColor: AppColors.primary400,
                   onDeleted: () =>
                       controller.removeSelectedAttribute(attribute),
@@ -266,17 +265,16 @@ class VariationsListWidget extends StatelessWidget {
                 ],
               )
             : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextWithStar(text: "قيم الاختلافات"),
                   Spacer(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary100,
+                      backgroundColor: AppColors.primary50,
                       elevation: 0,
                     ),
                     onPressed: () {},
-
                     child: Text(
                       '+ قيمة جديدة',
                       style: getRegular(color: AppColors.primary400),

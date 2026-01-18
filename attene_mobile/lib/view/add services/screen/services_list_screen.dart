@@ -1,6 +1,4 @@
-
-
-import '../../../general_index.dart' ;
+import '../../../general_index.dart';
 import '../../../utlis/responsive/index.dart';
 
 class ServicesListScreen extends StatefulWidget {
@@ -153,17 +151,40 @@ class _ServicesListScreenState extends State<ServicesListScreen>
     final confirm = await Get.defaultDialog<bool>(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف الخدمة "${service.title}"؟',
-      textConfirm: 'نعم، احذف',
-      textCancel: 'إلغاء',
-      confirmTextColor: Colors.white,
-      onConfirm: () async {
-        final result = await _serviceController.deleteService(serviceId);
-        if (result?['success'] == true) {
-          Get.back(result: true);
-          await _refreshServices();
-        }
-      },
-      onCancel: () => Get.back(result: false),
+      // textConfirm: 'نعم، احذف',
+      // textCancel: 'إلغاء',
+      actions: [
+        AateneButton(
+          onTap: () async {
+            final result = await _serviceController.deleteService(serviceId);
+            if (result?['success'] == true) {
+              Get.back(result: true);
+              await _refreshServices();
+            }
+          },
+          buttonText: 'نعم، احذف',
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(result: false),
+          buttonText: "إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // confirmTextColor: Colors.white,
+      // onConfirm: () async {
+      //   final result = await _serviceController.deleteService(serviceId);
+      //   if (result?['success'] == true) {
+      //     Get.back(result: true);
+      //     await _refreshServices();
+      //   }
+      // },
     );
   }
 
@@ -738,21 +759,12 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           if (tabIndex == 0)
             SizedBox(
               width: ResponsiveDimensions.f(200),
-              child: ElevatedButton(
-                onPressed: _navigateToAddService,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary400,
-                  padding: EdgeInsets.symmetric(
-                    vertical: ResponsiveDimensions.f(16),
-                  ),
-                ),
-                child: Text(
-                  'إضافة خدمة جديدة',
-                  style: getRegular(
-                    color: Colors.white,
-                    fontSize: ResponsiveDimensions.f(14),
-                  ),
-                ),
+              child: AateneButton(
+                onTap: _navigateToAddService,
+                buttonText: "إضافة خدمة جديدة",
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary400,
+                color: AppColors.primary400,
               ),
             ),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
@@ -885,6 +897,5 @@ class _ServicesListScreenState extends State<ServicesListScreen>
     );
   }
 
-  void _openSort() {
-  }
+  void _openSort() {}
 }

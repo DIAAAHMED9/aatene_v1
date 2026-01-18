@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class AddProductStepperDialogs {
@@ -6,16 +5,37 @@ class AddProductStepperDialogs {
     final result = await Get.defaultDialog<bool>(
       title: 'تأكيد الإلغاء',
       middleText: 'هل أنت متأكد من إلغاء عملية إضافة المنتج؟',
-      textConfirm: 'نعم، إلغاء',
-      textCancel: 'لا، استمر',
-      confirmTextColor: Colors.white,
-      cancelTextColor: AppColors.primary400,
-      buttonColor: AppColors.primary400,
-      onConfirm: () {
-        Get.back(result: true);
-        Get.back();
-      },
-      onCancel: () => Get.back(result: false),
+
+      // textConfirm: 'نعم، إلغاء',
+      // textCancel: 'لا، استمر',
+      // confirmTextColor: Colors.white,
+      actions: [
+        AateneButton(
+          onTap: () {
+            Get.back(result: true);
+            Get.back();
+          },
+          buttonText: "لا،استمر",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(result: false),
+          buttonText: "نعم،إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      // cancelTextColor: AppColors.primary400,
+      // buttonColor: AppColors.primary400,
+      // onConfirm: () {
+      //   Get.back(result: true);
+      //   Get.back();
+      // },
+      // onCancel: () => Get.back(result: false),
     );
     return result ?? false;
   }
@@ -51,9 +71,12 @@ class AddProductStepperDialogs {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('حسناً', style: getRegular()),
+          AateneButton(
+            onTap: () => Get.back(),
+            buttonText: "حسناً",
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+            color: AppColors.primary400,
           ),
         ],
       ),
@@ -78,7 +101,11 @@ class AddProductStepperDialogs {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.shopping_bag_rounded, size: 60, color: Colors.green),
+            const Icon(
+              Icons.shopping_bag_rounded,
+              size: 60,
+              color: Colors.green,
+            ),
             const SizedBox(height: 20),
             Text(
               'تم إضافة المنتج بنجاح',
@@ -94,9 +121,12 @@ class AddProductStepperDialogs {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: onOk,
-            child: Text('حسناً', style: getMedium(color: Colors.blue)),
+          AateneButton(
+            onTap: () => onOk,
+            buttonText: "حسناً",
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+            color: AppColors.primary400,
           ),
         ],
       ),

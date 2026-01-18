@@ -1,6 +1,3 @@
-
-
-
 import '../../../../component/custom_stepper/stepper_step.dart';
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
@@ -91,14 +88,35 @@ class _ServiceStepperScreenState
       final result = await Get.defaultDialog<bool>(
         title: 'تأكيد',
         middleText: 'هل تريد حفظ التغييرات قبل المغادرة؟',
-        textConfirm: 'حفظ مؤقت',
-        textCancel: 'تجاهل والخروج',
-        confirmTextColor: Colors.white,
-        onConfirm: () async {
-          await _saveProgress();
-          Get.back(result: true);
-        },
-        onCancel: () => Get.back(result: true),
+        // textConfirm: 'حفظ مؤقت',
+        // textCancel: 'تجاهل والخروج',
+        // confirmTextColor: Colors.white,
+        actions: [
+          AateneButton(
+            onTap: () async {
+              await _saveProgress();
+              Get.back(result: true);
+            },
+            buttonText: 'حفظ مؤقت',
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+          SizedBox(height: 10),
+          AateneButton(
+            onTap: () => Get.back(result: true),
+            buttonText: 'تجاهل والخروج',
+            color: AppColors.light1000,
+            textColor: AppColors.primary400,
+            borderColor: AppColors.primary400,
+          ),
+        ],
+
+        // onConfirm: () async {
+        //   await _saveProgress();
+        //   Get.back(result: true);
+        // },
+        // onCancel: () => Get.back(result: true),
       );
       return result ?? false;
     }
@@ -241,16 +259,36 @@ class _ServiceStepperScreenState
     final result = await Get.defaultDialog<bool>(
       title: 'تأكيد الإلغاء',
       middleText: 'هل أنت متأكد من إلغاء عملية إضافة/تعديل الخدمة؟',
-      textConfirm: 'نعم، إلغاء',
-      textCancel: 'لا، استمر',
-      confirmTextColor: Colors.white,
-      cancelTextColor: AppColors.primary400,
-      buttonColor: AppColors.primary400,
-      onConfirm: () {
-        Get.back(result: true);
-        Get.back();
-      },
-      onCancel: () => Get.back(result: false),
+      actions: [
+        AateneButton(
+          onTap: () {
+            Get.back(result: true);
+            Get.back();
+          },
+          buttonText: "لا، استمر",
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+          color: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(result: false),
+          buttonText: "نعم، إلغاء",
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+          color: AppColors.light1000,
+        ),
+      ],
+
+      // textConfirm: 'نعم، إلغاء',
+      // textCancel: 'لا، استمر',
+      // confirmTextColor: Colors.white,
+      // cancelTextColor: AppColors.primary400,
+      // buttonColor: AppColors.primary400,
+      // onConfirm: () {
+
+      // },
+      // onCancel: () => Get.back(result: false),
     );
   }
 
@@ -280,7 +318,7 @@ class _ServiceStepperScreenState
           backgroundColor: widget.primaryColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(100),
           ),
           elevation: 3,
         ),
@@ -301,7 +339,7 @@ class _ServiceStepperScreenState
                             ? 'تحديث الخدمة'
                             : 'إنهاء ونشر الخدمة'
                       : 'التالي',
-                  style: getMedium(color: Colors.white),
+                  style: getMedium(color: Colors.white, fontSize: 14),
                 ),
               ),
       );
@@ -412,7 +450,7 @@ class _ServiceStepperScreenState
               const SizedBox(height: 5),
 
               AateneButton(
-                buttonText: 'قائمة الرغبات',
+                buttonText: 'قائمة الخدمات',
                 color: AppColors.primary400,
                 textColor: Colors.white,
                 borderColor: AppColors.primary400,
@@ -433,20 +471,28 @@ class _ServiceStepperScreenState
 
   @override
   Widget buildPreviousButton() {
-    return ElevatedButton(
-      onPressed: currentStep > 0 ? previousStep : null,
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        backgroundColor: Colors.grey[300],
-        foregroundColor: Colors.grey[700],
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 1,
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Text('السابق'),
-      ),
+    return AateneButton(
+      onTap: currentStep > 0 ? previousStep : null,
+      buttonText: "السابق",
+      textColor: AppColors.light1000,
+      borderColor: AppColors.primary400,
+      color: AppColors.primary400,
     );
+
+    //   ElevatedButton(
+    //   onPressed: currentStep > 0 ? previousStep : null,
+    //   style: ElevatedButton.styleFrom(
+    //     padding: const EdgeInsets.symmetric(vertical: 16),
+    //     backgroundColor: Colors.grey[300],
+    //     foregroundColor: Colors.grey[700],
+    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    //     elevation: 1,
+    //   ),
+    //   child: const Padding(
+    //     padding: EdgeInsets.symmetric(horizontal: 24),
+    //     child: Text('السابق'),
+    //   ),
+    // );
   }
 
   @override

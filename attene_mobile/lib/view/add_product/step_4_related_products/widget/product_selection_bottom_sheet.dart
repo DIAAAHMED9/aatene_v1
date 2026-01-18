@@ -97,7 +97,7 @@ class _ProductSelectionBottomSheetState
       child: TextField(
         controller: widget.controller.searchController,
         decoration: InputDecoration(
-          hintText: 'ابحث عن منتج...',
+          hintText: 'بحث',
           prefixIcon: const Icon(Icons.search),
           suffixIcon: GetBuilder<RelatedProductsController>(
             id: 'search',

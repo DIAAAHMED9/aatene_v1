@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class AddNewShippingCompany extends StatefulWidget {
@@ -367,8 +365,8 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                           ),
                         ),
                         SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: selectedCity != null
+                        AateneButton(
+                          onTap: selectedCity != null
                               ? () {
                                   if (!selectedCities.any(
                                     (c) => c['name'] == selectedCity,
@@ -385,21 +383,10 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                                   }
                                 }
                               : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary500,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            "إضافة المدينة",
-                            style: getMedium(color: Colors.white, fontSize: 15),
-                          ),
+                          buttonText: "إضافة المدينة",
+                          textColor: AppColors.light1000,
+                          borderColor: AppColors.primary400,
+                          color: AppColors.primary400,
                         ),
                       ],
                     ),

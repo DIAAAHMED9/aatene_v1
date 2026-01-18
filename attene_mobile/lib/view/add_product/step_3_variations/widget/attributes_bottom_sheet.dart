@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -102,7 +101,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: TextWithStar(text: 'اختر ايقونة'),
+          child: TextWithStar(text: 'اختر السمة'),
         ),
         SizedBox(height: 15),
         Padding(
@@ -176,35 +175,52 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
             border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
           ),
           child: Row(
+            spacing: 5,
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Get.back(),
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: BorderSide(color: Colors.grey[400]!),
-                  ),
-                  child: Text('إلغاء', style: getRegular(color: Colors.grey)),
+                child: AateneButton(
+                  onTap: () => Get.back(),
+                  buttonText: "إلغاء",
+                  textColor: AppColors.primary400,
+                  borderColor: AppColors.primary400,
+                  color: AppColors.light1000,
                 ),
+                // OutlinedButton(
+                //   onPressed: () => Get.back(),
+                //   style: OutlinedButton.styleFrom(
+                //     padding: EdgeInsets.symmetric(vertical: 14),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //     side: BorderSide(color: Colors.grey[400]!),
+                //   ),
+                //   child: Text('إلغاء', style: getRegular(color: Colors.grey)),
+                // ),
               ),
-              SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: _getSelectedAttributesCount() > 0
+                child: AateneButton(
+                  onTap: _getSelectedAttributesCount() > 0
                       ? _proceedToValuesStep
                       : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary400,
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text('التالي', style: getRegular(color: Colors.white)),
+                  buttonText: "التالي",
+                  textColor: AppColors.light1000,
+                  borderColor: AppColors.primary400,
+                  color: AppColors.primary400,
                 ),
+
+                // ElevatedButton(
+                //   onPressed: _getSelectedAttributesCount() > 0
+                //       ? _proceedToValuesStep
+                //       : null,
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: AppColors.primary400,
+                //     padding: EdgeInsets.symmetric(vertical: 14),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //   ),
+                //   child: Text('التالي', style: getRegular(color: Colors.white)),
+                // ),
               ),
             ],
           ),
@@ -427,51 +443,69 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
             border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
           ),
           child: Row(
+            spacing: 5,
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentStep = 0;
-                      _attributeSearchQuery = '';
-                    });
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: BorderSide(color: Colors.grey[400]!),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.arrow_back, size: 18),
-                      SizedBox(width: 6),
-                      Text(
-                        'رجوع للسمات',
-                        style: getRegular(color: Colors.grey),
-                      ),
-                    ],
-                  ),
+                child:
+                AateneButton(
+                  onTap:                   () {
+    setState(() {
+    _currentStep = 0;
+    _attributeSearchQuery = '';
+    });
+    },
+
+    buttonText: "رجوع للسمات",
+                  textColor: AppColors.primary400,
+                  borderColor: AppColors.primary400,
+                  color: AppColors.light1000,
                 ),
+                // OutlinedButton(
+                //   onPressed: () {
+                //     setState(() {
+                //       _currentStep = 0;
+                //       _attributeSearchQuery = '';
+                //     });
+                //   },
+                //   style: OutlinedButton.styleFrom(
+                //     padding: EdgeInsets.symmetric(vertical: 14),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //     side: BorderSide(color: AppColors.primary400!),
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       SizedBox(width: 6),
+                //       Text(
+                //         'رجوع للسمات',
+                //         style: getRegular(color: AppColors.primary400),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ),
-              SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: _saveAndClose,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary400,
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'حفظ الكل',
-                    style: getRegular(color: Colors.white),
-                  ),
+                child:
+                AateneButton(
+                  onTap:_saveAndClose,
+                  buttonText: "حفظ",
+                  textColor: AppColors.light1000,
+                  borderColor: AppColors.primary400,
+                  color: AppColors.primary400,
                 ),
+                // ElevatedButton(
+                //   onPressed: _saveAndClose,
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: AppColors.primary400,
+                //     padding: EdgeInsets.symmetric(vertical: 14),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //   ),
+                //   child: Text('حفظ', style: getRegular(color: Colors.white)),
+                // ),
               ),
             ],
           ),

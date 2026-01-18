@@ -1,6 +1,3 @@
-
-
-
 import '../../../general_index.dart';
 
 class AddShippingMethod extends StatelessWidget {
@@ -338,24 +335,51 @@ class AddShippingMethod extends StatelessWidget {
     Get.defaultDialog(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف شركة الشحن هذه؟',
-      textConfirm: 'نعم، احذف',
-      textCancel: 'إلغاء',
-      confirmTextColor: Colors.white,
-      cancelTextColor: AppColors.primary400,
-      buttonColor: Colors.red,
-      onConfirm: () {
-        controller.removeShippingCompany(index);
-        Get.back();
-        Get.snackbar(
-          'تم الحذف',
-          'تم حذف شركة الشحن بنجاح',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      },
-      onCancel: () {
-        Get.back();
-      },
+      // textConfirm: 'نعم، احذف',
+      // textCancel: 'إلغاء',
+      actions: [
+        AateneButton(
+          onTap: () {
+            controller.removeShippingCompany(index);
+            Get.back();
+            Get.snackbar(
+              'تم الحذف',
+              'تم حذف شركة الشحن بنجاح',
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+          },
+          buttonText: "نعم، احذف",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(),
+          buttonText: "إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // confirmTextColor: Colors.white,
+      // cancelTextColor: AppColors.primary400,
+      // buttonColor: Colors.red,
+      // onConfirm: () {
+      //   controller.removeShippingCompany(index);
+      //   Get.back();
+      //   Get.snackbar(
+      //     'تم الحذف',
+      //     'تم حذف شركة الشحن بنجاح',
+      //     backgroundColor: Colors.green,
+      //     colorText: Colors.white,
+      //   );
+      // },
+      // onCancel: () {
+      //   Get.back();
+      // },
     );
   }
 
@@ -402,22 +426,46 @@ class AddShippingMethod extends StatelessWidget {
       middleText: controller.isEditMode.value
           ? 'هل تريد تحديث المتجر بالبيانات الجديدة؟'
           : 'هل تريد إنشاء المتجر الآن؟',
-      textConfirm: 'نعم',
-      textCancel: 'لا',
-      confirmTextColor: Colors.white,
-      cancelTextColor: AppColors.primary400,
-      buttonColor: AppColors.primary400,
-      onConfirm: () async {
-        Get.back();
-
-        final success = await controller.saveCompleteStore();
-        if (success ?? false) {
-          Get.until((route) => route.isFirst);
-        }
-      },
-      onCancel: () {
-        Get.back();
-      },
+      // textConfirm: 'نعم',
+      // textCancel: 'لا',
+      // confirmTextColor: Colors.white,
+      // cancelTextColor: AppColors.primary400,
+      // buttonColor: AppColors.primary400,
+      actions: [
+        AateneButton(
+          onTap: () async {
+            Get.back();
+            final success = await controller.saveCompleteStore();
+            if (success ?? false) {
+              Get.until((route) => route.isFirst);
+            }
+          },
+          buttonText: "نعم",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(),
+          buttonText: "لا",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // onConfirm: () async {
+      //   Get.back();
+      //
+      //   final success = await controller.saveCompleteStore();
+      //   if (success ?? false) {
+      //     Get.until((route) => route.isFirst);
+      //   }
+      // },
+      // onCancel: () {
+      //   Get.back();
+      // },
     );
   }
 }

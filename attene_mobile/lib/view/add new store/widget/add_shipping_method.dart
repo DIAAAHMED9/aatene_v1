@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class ShippingPricingSettings extends StatefulWidget {
@@ -147,7 +145,12 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                 children: [
-                  Expanded(child: Text("المدن التي ترسل لها المنتجات؟", style: getBold())),
+                  Expanded(
+                    child: Text(
+                      "المدن التي ترسل لها المنتجات؟",
+                      style: getBold(),
+                    ),
+                  ),
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -264,8 +267,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                         ),
                         SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: selectedNewCity != null
+                        AateneButton(
+                          onTap: selectedNewCity != null
                               ? () {
                                   _addCity(selectedNewCity!);
                                   setState(() {
@@ -274,21 +277,10 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                                   });
                                 }
                               : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary500,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            "إضافة",
-                            style: getMedium(color: Colors.white, fontSize: 15),
-                          ),
+                          buttonText: "إضافة",
+                          color: AppColors.primary400,
+                          borderColor: AppColors.primary400,
+                          textColor: AppColors.light1000,
                         ),
                       ],
                     ),

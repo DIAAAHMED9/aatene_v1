@@ -253,8 +253,9 @@ class CategoryBottomSheet extends StatelessWidget {
             padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
+              child:
+              AateneButton(
+                onTap: () {
                   if (controller.tempSelectedCategoryId.value > 0 &&
                       controller.tempSelectedCategory.value.isNotEmpty) {
                     controller.saveSelectedCategory();
@@ -268,16 +269,10 @@ class CategoryBottomSheet extends StatelessWidget {
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary400,
-                  padding: EdgeInsets.symmetric(
-                    vertical: ResponsiveDimensions.responsiveHeight(16),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text('حفظ', style: getMedium(color: Colors.white)),
+                buttonText: "حفظ",
+                color: AppColors.primary400,
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary400,
               ),
             ),
           ),

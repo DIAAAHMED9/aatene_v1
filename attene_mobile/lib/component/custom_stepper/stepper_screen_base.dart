@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../../general_index.dart';
@@ -149,10 +147,7 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
     }
 
     return AppBar(
-      title: Text(
-        _getCurrentStepTitle(),
-        style: getBold(fontSize: 18),
-      ),
+      title: Text(_getCurrentStepTitle(), style: getBold(fontSize: 18)),
       backgroundColor: Colors.white,
       foregroundColor: Colors.white,
       elevation: 0,
@@ -272,37 +267,50 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
 
   Widget _buildDefaultBackButton() {
     return Expanded(
-      child: OutlinedButton(
-        onPressed: previousStep,
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          side: BorderSide(color: AppColors.primary400, width: 2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text('رجوع', style: getMedium(color: AppColors.primary400)),
+      child: AateneButton(
+        onTap: previousStep,
+        buttonText: "رجوع",
+        borderColor: AppColors.primary400,
+        color: AppColors.light1000,
+        textColor: AppColors.primary400,
       ),
+      // OutlinedButton(
+      //   style: OutlinedButton.styleFrom(
+      //     padding: const EdgeInsets.symmetric(vertical: 16),
+      //     side: BorderSide(color: AppColors.primary400, width: 2),
+      //     shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.circular(12),
+      //     ),
+      //   ),
+      //   child: Text('رجوع', style: getMedium(color: AppColors.primary400)),
+      // ),
     );
   }
 
   Widget _buildDefaultNextButton() {
-    return ElevatedButton(
-      onPressed: nextStep,
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        backgroundColor: widget.primaryColor,
-        foregroundColor: AppColors.primary400,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 3,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Text(
-          currentStep == steps.length - 1 ? 'إنهاء' : 'التالي',
-          style: getMedium(),
-        ),
-      ),
+    return AateneButton(
+      onTap: nextStep,
+      buttonText: currentStep == steps.length - 1 ? 'إنهاء' : 'التالي',
+      color: AppColors.primary400,
+      borderColor: AppColors.primary400,
+      textColor: AppColors.light1000,
     );
+    // ElevatedButton(
+    //   onPressed: nextStep,
+    //   style: ElevatedButton.styleFrom(
+    //     padding: const EdgeInsets.symmetric(vertical: 16),
+    //     backgroundColor: widget.primaryColor,
+    //     foregroundColor: AppColors.primary400,
+    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+    //     elevation: 3,
+    //   ),
+    //   child: Padding(
+    //     padding: const EdgeInsets.symmetric(horizontal: 24),
+    //     child: Text(
+    //       currentStep == steps.length - 1 ? 'إنهاء' : 'التالي',
+    //       style: getMedium(),
+    //     ),
+    //   ),
+    // );
   }
 }

@@ -2,6 +2,7 @@ import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../component/aatene_button/aatene_button.dart';
 import '../controller/followers_controller.dart';
 import '../models/follower_model.dart';
 
@@ -15,10 +16,8 @@ class UnfollowDialog extends StatelessWidget {
     final controller = Get.find<FollowersController>();
 
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      title:  Text(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text(
         'تأكيد إلغاء المتابعة',
         textAlign: TextAlign.right,
         style: getBold(fontSize: 18),
@@ -29,19 +28,23 @@ class UnfollowDialog extends StatelessWidget {
         style: getBold(),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Get.back(),
-          child:  Text('إلغاء',style: getMedium(color: AppColors.primary400),),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.redAccent,
-          ),
-          onPressed: () {
+        AateneButton(
+          onTap: () {
             Get.back();
             controller.unfollow(model);
           },
-          child:  Text('تأكيد',style: getMedium(color: Colors.white),),
+          buttonText: "تأكيد",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(),
+          buttonText: "إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
         ),
       ],
     );

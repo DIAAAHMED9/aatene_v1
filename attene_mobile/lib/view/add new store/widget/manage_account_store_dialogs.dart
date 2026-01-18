@@ -16,14 +16,23 @@ class StoreDeleteDialog extends StatelessWidget {
       title: const Text('حذف المتجر'),
       content: Text('هل أنت متأكد من حذف المتجر "${store.name}"؟'),
       actions: [
-        TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
-        ElevatedButton(
-          onPressed: () {
+        AateneButton(
+          onTap: () {
             Get.back();
             onConfirm();
           },
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('حذف'),
+          buttonText: "حذف",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10,),
+        AateneButton(
+          onTap:() => Get.back(),
+          buttonText: "إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
         ),
       ],
     );

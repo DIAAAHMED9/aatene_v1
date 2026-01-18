@@ -1,8 +1,4 @@
-
-
-
 import 'dart:async';
-
 
 import '../general_index.dart';
 
@@ -565,20 +561,26 @@ class BottomSheetController extends GetxController {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
-            onPressed: () {
+          child: AateneButton(
+            onTap: () {
               _selectedOptions.clear();
               _selectedOption.value = '';
               Get.back();
             },
-            child: const Text('إلغاء'),
+            buttonText: "إلغاء",
+            borderColor: AppColors.primary400,
+            textColor: AppColors.primary400,
+            color: AppColors.light1000,
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: ElevatedButton(
-            onPressed: _applySelection,
-            child: const Text('تطبيق'),
+          child: AateneButton(
+            onTap: _applySelection,
+            buttonText: "تطبيق",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
           ),
         ),
       ],
@@ -738,26 +740,22 @@ class BottomSheetController extends GetxController {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
+                  child: AateneButton(
+                    onTap: () {
                       Get.back();
                       openAddNewSection();
                     },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      side: BorderSide(color: AppColors.primary400),
-                    ),
-                    child: Text(
-                      'إضافة قسم جديد',
-                      style:getRegular(color: AppColors.primary400),
-                    ),
+                    buttonText: 'إضافة قسم جديد',
+                    borderColor: AppColors.primary400,
+                    textColor: AppColors.primary400,
+                    color: AppColors.light1000,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Obx(
-                    () => ElevatedButton(
-                      onPressed: hasSelectedSection
+                    () => AateneButton(
+                      onTap: hasSelectedSection
                           ? () {
                               final selectedSection = _selectedSection.value;
                               print("Setion Id : ${selectedSection!.id}");
@@ -772,16 +770,14 @@ class BottomSheetController extends GetxController {
                               );
                             }
                           : null,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: hasSelectedSection
-                            ? AppColors.primary400
-                            : Colors.grey[400],
-                      ),
-                      child:  Text(
-                        'التالي',
-                        style:getRegular(color: Colors.white),
-                      ),
+                      buttonText: "التالي",
+                      textColor: AppColors.light1000,
+                      borderColor: hasSelectedSection
+                          ? AppColors.primary400
+                          : Colors.grey[400],
+                      color: hasSelectedSection
+                          ? AppColors.primary400
+                          : Colors.grey[400],
                     ),
                   ),
                 ),
@@ -808,13 +804,16 @@ class BottomSheetController extends GetxController {
               const SizedBox(height: 16),
               Text(
                 _sectionsErrorMessage.value,
-                style:getRegular(color: Colors.grey),
+                style: getRegular(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: loadSections,
-                child:  Text('إعادة المحاولة', style: getRegular(color: Colors.white),),
+                child: Text(
+                  'إعادة المحاولة',
+                  style: getRegular(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -822,13 +821,14 @@ class BottomSheetController extends GetxController {
       }
 
       if (_filteredSections.isEmpty) {
-        return  Center(
+        return Center(
           child: Column(
+            spacing: 15,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.folder_open_rounded, size: 60, color: Colors.grey),
+              // Icon(Icons.folder_open_rounded, size: 60, color: Colors.grey),
               SizedBox(height: 16),
-              Text('لا توجد أقسام',style: getRegular(),),
+              Text('لا توجد أقسام', style: getRegular()),
             ],
           ),
         );
@@ -879,22 +879,24 @@ class BottomSheetController extends GetxController {
                   children: [
                     Text(
                       section.name,
-                      style:getMedium(  color: isSelected
-                          ? AppColors.primary500
-                          : Colors.black87,),
+                      style: getMedium(
+                        color: isSelected
+                            ? AppColors.primary500
+                            : Colors.black87,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: Colors.red[400],
-                  size: 20,
-                ),
-                onPressed: () => _showDeleteSectionConfirmation(section),
-              ),
+              // IconButton(
+              //   icon: Icon(
+              //     Icons.delete_outline,
+              //     color: Colors.red[400],
+              //     size: 20,
+              //   ),
+              //   onPressed: () => _showDeleteSectionConfirmation(section),
+              // ),
             ],
           ),
         ),
@@ -908,18 +910,28 @@ class BottomSheetController extends GetxController {
         title: const Text('حذف القسم'),
         content: Text('هل أنت متأكد من حذف قسم "${section.name}"؟'),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
-          ElevatedButton(
-            onPressed: () async {
+          AateneButton(
+            onTap: () async {
               Get.back();
               final success = await deleteSection(section.id);
               if (success) {
                 Get.snackbar('نجاح', 'تم حذف القسم بنجاح');
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('حذف'),
+            buttonText: "حذف",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
           ),
+          SizedBox(height: 10,),
+          AateneButton(
+            onTap:() => Get.back(),
+            buttonText: "إلغاء",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+
         ],
       ),
     );
@@ -931,16 +943,16 @@ class BottomSheetController extends GetxController {
       children: [
         Text(
           'أضف قسماً جديداً ليسهُل على عملائك تصفح منتجاتك بترتيب أوضح.',
-          style:getRegular(fontSize: 14, color: Colors.grey,),
+          style: getRegular(fontSize: 14, color: Colors.grey),
         ),
         const SizedBox(height: 20),
         TextFiledAatene(
           heightTextFiled: 50,
           onChanged: (value) => _newSectionName.value = value,
-          prefixIcon: Icon(
-            Icons.create_new_folder_rounded,
-            color: Colors.grey[600],
-          ),
+          // prefixIcon: Icon(
+          //   Icons.create_new_folder_rounded,
+          //   color: Colors.grey[600],
+          // ),
           isRTL: isRTL,
           hintText: 'أدخل اسم القسم الجديد',
           textInputAction: TextInputAction.next,
@@ -963,26 +975,36 @@ class BottomSheetController extends GetxController {
         Row(
           children: [
             Expanded(
-              child: OutlinedButton(
-                onPressed: () => Get.back(),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: const Text('إلغاء'),
+              child: AateneButton(
+                onTap: () => Get.back(),
+                buttonText: "إلغاء",
+                color: AppColors.light1000,
+                textColor: AppColors.primary400,
+                borderColor: AppColors.primary400,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Obx(
-                () => ElevatedButton(
-                  onPressed: _newSectionName.isNotEmpty && !isSectionNameExists
+                () => AateneButton(
+                  onTap: _newSectionName.isNotEmpty && !isSectionNameExists
                       ? _addNewSection
                       : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('إضافة'),
+                  buttonText: "إضافة",
+                  textColor: AppColors.light1000,
+                  borderColor: AppColors.primary400,
+                  color: AppColors.primary400,
                 ),
+
+                // ElevatedButton(
+                //   onPressed: _newSectionName.isNotEmpty && !isSectionNameExists
+                //       ? _addNewSection
+                //       : null,
+                //   style: ElevatedButton.styleFrom(
+                //     padding: const EdgeInsets.symmetric(vertical: 12),
+                //   ),
+                //   child: const Text('إضافة'),
+                // ),
               ),
             ),
           ],
@@ -996,7 +1018,15 @@ class BottomSheetController extends GetxController {
     if (success) {
       _newSectionName.value = '';
       Get.back();
-      Get.snackbar('تمت الإضافة', 'تم إضافة القسم الجديد بنجاح');
+      Get.snackbar(
+        'تمت الإضافة',
+        'تم إضافة القسم الجديد بنجاح',
+        backgroundColor: AppColors.success300,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(microseconds: 300),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      );
     }
   }
 
@@ -1237,22 +1267,35 @@ class BottomSheetController extends GetxController {
     if (hasSelectedAttributes) {
       return Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: ElevatedButton(
-          onPressed: () {
+        child:
+        AateneButton(
+          onTap: () {
             if (_currentEditingAttribute.value == null) {
               _currentEditingAttribute.value = _selectedAttributes.first;
             }
             _attributeTabIndex.value = 1;
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary400,
-            minimumSize: const Size(double.infinity, 50),
-          ),
-          child: Text(
-            'الانتقال إلى إضافة الصفات',
-            style: getMedium(color: Colors.white),
-          ),
+          buttonText: 'الانتقال إلى إضافة الصفات',
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
         ),
+        // ElevatedButton(
+        //   onPressed: () {
+        //     if (_currentEditingAttribute.value == null) {
+        //       _currentEditingAttribute.value = _selectedAttributes.first;
+        //     }
+        //     _attributeTabIndex.value = 1;
+        //   },
+        //   style: ElevatedButton.styleFrom(
+        //     backgroundColor: AppColors.primary400,
+        //     minimumSize: const Size(double.infinity, 50),
+        //   ),
+        //   child: Text(
+        //     'الانتقال إلى إضافة الصفات',
+        //     style: getMedium(color: Colors.white),
+        //   ),
+        // ),
       );
     }
     return const SizedBox();
@@ -1504,14 +1547,24 @@ class BottomSheetController extends GetxController {
   Widget _buildSaveButton() {
     return Container(
       padding: EdgeInsets.only(top: 16),
-      child: ElevatedButton(
-        onPressed: _saveAttributesAndClose,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary400,
-          minimumSize: Size(double.infinity, 50),
-        ),
-        child: Text('حفظ والتطبيق', style: getMedium(color: Colors.white)),
+      child:
+      AateneButton(
+        onTap: _saveAttributesAndClose,
+
+        buttonText: "حفظ والتطبيق",
+        color: AppColors.primary400,
+        textColor: AppColors.light1000,
+        borderColor: AppColors.primary400,
       ),
+
+      // ElevatedButton(
+      //   onPressed: _saveAttributesAndClose,
+      //   style: ElevatedButton.styleFrom(
+      //     backgroundColor: AppColors.primary400,
+      //     minimumSize: Size(double.infinity, 50),
+      //   ),
+      //   child: Text('حفظ والتطبيق', style: getMedium(color: Colors.white)),
+      // ),
     );
   }
 
@@ -1731,6 +1784,7 @@ class BottomSheetController extends GetxController {
             title: Text(option),
             value: option,
             groupValue: _selectedOption.value,
+            activeColor: AppColors.primary400,
             onChanged: (value) {
               _selectedOption.value = value!;
             },

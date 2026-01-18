@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/index.dart';
 
@@ -326,10 +324,28 @@ class PriceScreen extends StatelessWidget {
         return await Get.defaultDialog(
           title: 'تأكيد الحذف',
           content: const Text('هل أنت متأكد من حذف هذا التطوير؟'),
-          textConfirm: 'نعم',
-          textCancel: 'لا',
-          onConfirm: () => Get.back(result: true),
-          onCancel: () => Get.back(result: false),
+          // textConfirm: 'نعم',
+          // textCancel: 'لا',
+          actions: [
+            AateneButton(
+              onTap: () => Get.back(result: true),
+              buttonText: "نعم",
+              color: AppColors.primary400,
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
+            ),
+            SizedBox(height: 10),
+            AateneButton(
+              onTap: () => Get.back(result: false),
+              buttonText: "لا",
+              color: AppColors.light1000,
+              textColor: AppColors.primary400,
+              borderColor: AppColors.primary400,
+            ),
+          ],
+
+          // onConfirm:
+          // onCancel: () =>
         );
       },
       onDismissed: (direction) {
@@ -389,7 +405,7 @@ class PriceScreen extends StatelessWidget {
                               '${development.price} ₪',
                               style: TextStyle(
                                 fontSize:
-                                    ResponsiveDimensions.responsiveFontSize(12),
+                                    ResponsiveDimensions.responsiveFontSize(14),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -402,7 +418,7 @@ class PriceScreen extends StatelessWidget {
                               '${development.executionTime} ${development.timeUnit}',
                               style: getRegular(
                                 fontSize:
-                                    ResponsiveDimensions.responsiveFontSize(12),
+                                    ResponsiveDimensions.responsiveFontSize(14),
                               ),
                             ),
                           ],
@@ -426,8 +442,8 @@ class PriceScreen extends StatelessWidget {
           children: [
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
+              child: AateneButton(
+                onTap: () {
                   if (controller.validatePriceForm()) {
                     controller.goToNextStep();
                   } else {
@@ -439,31 +455,10 @@ class PriceScreen extends StatelessWidget {
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary400,
-                  padding: EdgeInsets.symmetric(
-                    vertical: ResponsiveDimensions.responsiveHeight(16),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'التالي: الوصف والأسئلة الشائعة',
-                      style: getMedium(color: Colors.white),
-                    ),
-                    SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-                    Icon(
-                      Icons.arrow_forward,
-                      size: ResponsiveDimensions.responsiveFontSize(20),
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
+                buttonText: 'التالي: الوصف والأسئلة الشائعة',
+                color: AppColors.primary400,
+                borderColor: AppColors.primary400,
+                textColor: AppColors.light1000,
               ),
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
@@ -479,7 +474,7 @@ class PriceScreen extends StatelessWidget {
                         vertical: ResponsiveDimensions.responsiveHeight(16),
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                       side: BorderSide(color: Colors.grey[300]!),
                     ),
@@ -512,17 +507,33 @@ class PriceScreen extends StatelessWidget {
                         Get.defaultDialog(
                           title: 'حفظ مؤقت',
                           content: const Text('هل تريد حفظ البيانات الحالية؟'),
-                          textConfirm: 'نعم',
-                          textCancel: 'لا',
-                          onConfirm: () {
-                            Get.back();
-                            Get.snackbar(
-                              'تم الحفظ',
-                              'تم حفظ البيانات بنجاح',
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                            );
-                          },
+                          // textConfirm: 'نعم',
+                          // textCancel: 'لا',
+                          actions: [
+                            AateneButton(
+                              onTap: () {
+                                Get.back();
+                                Get.snackbar(
+                                  'تم الحفظ',
+                                  'تم حفظ البيانات بنجاح',
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                );
+                              },
+                              buttonText: 'نعم',
+                              color: AppColors.primary400,
+                              textColor: AppColors.light1000,
+                              borderColor: AppColors.primary400,
+                            ),
+                            SizedBox(height: 10),
+                            AateneButton(
+                              onTap: () => Get.back(),
+                              buttonText: 'لا',
+                              color: AppColors.light1000,
+                              textColor: AppColors.primary400,
+                              borderColor: AppColors.primary400,
+                            ),
+                          ],
                         );
                       }
                     },
@@ -531,7 +542,7 @@ class PriceScreen extends StatelessWidget {
                         vertical: ResponsiveDimensions.responsiveHeight(16),
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                       side: BorderSide(color: Colors.grey[300]!),
                     ),

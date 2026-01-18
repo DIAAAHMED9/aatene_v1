@@ -463,6 +463,7 @@ class NewChatSheetState extends State<NewChatSheet> {
                     ),
                   ),
                   FilledButton(
+
                     onPressed: canCreateGroup
                         ? () async {
                             final parts = _selected.map((k) {
@@ -593,7 +594,7 @@ class ModeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? cs.primary : Colors.transparent,
+      color: selected ? AppColors.primary400 : Colors.transparent,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         borderRadius: BorderRadius.circular(999),

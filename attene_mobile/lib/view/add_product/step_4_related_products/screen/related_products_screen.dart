@@ -121,26 +121,29 @@ class RelatedProductsScreen extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.w(24)),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.shopping_basket_outlined,
-            size: ResponsiveDimensions.w(60),
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: ResponsiveDimensions.h(16)),
-          Text(
-            'لم يتم اختيار أي منتجات بعد',
-            style: getRegular(color: Colors.grey),
-          ),
-        ],
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(ResponsiveDimensions.w(24)),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.shopping_basket_outlined,
+              size: ResponsiveDimensions.w(60),
+              color: Colors.grey[400],
+            ),
+            SizedBox(height: ResponsiveDimensions.h(16)),
+            Text(
+              'لم يتم اختيار أي منتجات بعد',
+              style: getRegular(color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }

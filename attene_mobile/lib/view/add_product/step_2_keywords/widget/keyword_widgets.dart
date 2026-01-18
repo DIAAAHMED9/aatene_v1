@@ -540,7 +540,7 @@ class SelectedKeywordsWidget extends StatelessWidget {
             children: controller.selectedKeywords.map((keyword) {
               return Chip(
                 label: Text(keyword),
-                backgroundColor: AppColors.primary100,
+                backgroundColor: AppColors.primary50,
                 deleteIconColor: AppColors.primary400,
                 onDeleted: () => controller.removeKeyword(keyword),
                 labelStyle: getRegular(color: AppColors.primary500),

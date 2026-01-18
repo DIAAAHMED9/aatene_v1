@@ -96,9 +96,8 @@ class ImagesScreenBody extends StatelessWidget {
                     ResponsiveDimensions.responsiveWidth(12),
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary100,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: AppColors.primary100),
+                    color: AppColors.primary50,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     children: [
@@ -260,7 +259,7 @@ class ImagesScreenBody extends StatelessWidget {
                     vertical: ResponsiveDimensions.responsiveHeight(16),
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                   elevation: 2,
                 ),

@@ -53,7 +53,9 @@ class StoreSelectionScreen extends StatelessWidget {
 
                     final list = c.filteredStores;
                     if (list.isEmpty) {
-                      return _EmptyState(onRefresh: () => c.loadStores(force: true));
+                      return _EmptyState(
+                        onRefresh: () => c.loadStores(force: true),
+                      );
                     }
 
                     return RefreshIndicator(
@@ -65,9 +67,11 @@ class StoreSelectionScreen extends StatelessWidget {
                         itemBuilder: (_, i) {
                           final store = list[i];
                           return Obx(() {
-                            final selectedId = c.selectedStore.value?['id']?.toString();
+                            final selectedId = c.selectedStore.value?['id']
+                                ?.toString();
                             final id = store['id']?.toString();
-                            final isSelected = selectedId != null && selectedId == id;
+                            final isSelected =
+                                selectedId != null && selectedId == id;
 
                             return _StoreCard(
                               store: store,
@@ -88,9 +92,12 @@ class StoreSelectionScreen extends StatelessWidget {
                     child: SizedBox(
                       width: double.infinity,
                       height: 52,
-                      child: ElevatedButton(
-                        onPressed: enabled ? () => c.confirmSelection() : null,
-                        child: const Text('متابعة'),
+                      child: AateneButton(
+                        onTap: enabled ? () => c.confirmSelection() : null,
+                        buttonText: "متابعة",
+                        color: AppColors.primary400,
+                        borderColor: AppColors.primary400,
+                        textColor: AppColors.light1000,
                       ),
                     ),
                   );
@@ -187,9 +194,7 @@ class _SearchBarState extends State<_SearchBar> {
                   setState(() {});
                 },
               ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );
   }
@@ -200,7 +205,11 @@ class _StoreCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _StoreCard({required this.store, required this.isSelected, required this.onTap});
+  const _StoreCard({
+    required this.store,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +223,10 @@ class _StoreCard extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: isSelected ? Colors.black87 : Colors.black12, width: isSelected ? 1.5 : 1),
+          border: Border.all(
+            color: isSelected ? Colors.black87 : Colors.black12,
+            width: isSelected ? 1.5 : 1,
+          ),
         ),
         child: Row(
           children: [
@@ -236,7 +248,10 @@ class _StoreCard extends StatelessWidget {
                     name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   if (address.isNotEmpty) ...[
                     const SizedBox(height: 4),
@@ -244,14 +259,22 @@ class _StoreCard extends StatelessWidget {
                       address,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12.5, color: Colors.black54),
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        color: Colors.black54,
+                      ),
                     ),
                   ],
                 ],
               ),
             ),
             const SizedBox(width: 10),
-            Icon(isSelected ? Icons.check_circle_rounded : Icons.radio_button_off_rounded, size: 22),
+            Icon(
+              isSelected
+                  ? Icons.check_circle_rounded
+                  : Icons.radio_button_off_rounded,
+              size: 22,
+            ),
           ],
         ),
       ),
@@ -290,14 +313,24 @@ class _EmptyState extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
         const SizedBox(height: 40),
-        const Icon(Icons.store_mall_directory_outlined, size: 56, color: Colors.black45),
+        const Icon(
+          Icons.store_mall_directory_outlined,
+          size: 56,
+          color: Colors.black45,
+        ),
         const SizedBox(height: 12),
         const Center(
-          child: Text('لا توجد متاجر متاحة', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+          child: Text(
+            'لا توجد متاجر متاحة',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+          ),
         ),
         const SizedBox(height: 6),
         const Center(
-          child: Text('اسحب للأسفل للتحديث أو تحقق من الاتصال.', style: TextStyle(fontSize: 12.5, color: Colors.black54)),
+          child: Text(
+            'اسحب للأسفل للتحديث أو تحقق من الاتصال.',
+            style: TextStyle(fontSize: 12.5, color: Colors.black54),
+          ),
         ),
         const SizedBox(height: 16),
         Padding(

@@ -752,7 +752,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(100),
               ),
             ),
             child: Text(

@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 import '../index.dart';
@@ -153,7 +152,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                   horizontal: ResponsiveDimensions.f(15),
                 ),
                 decoration: BoxDecoration(
-                  color:  AppColors.customAddProductWidgets,
+                  color: AppColors.customAddProductWidgets,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: controller.fieldErrors.containsKey('media')
@@ -431,7 +430,7 @@ class PriceSectionWidget extends StatelessWidget {
                     }
                   },
                   suffixIcon: Padding(
-                    padding: EdgeInsets.only(top: ResponsiveDimensions.f(12)),
+                    padding: const EdgeInsets.only(top: 12),
                     child: Text(
                       '₪',
                       style: TextStyle(
@@ -821,50 +820,36 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
           children: [
             TextWithStar(text: 'وصف المنتج'),
             SizedBox(height: ResponsiveDimensions.f(8)),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color:
-                      controller.fieldErrors.containsKey('productDescription')
-                      ? Colors.red
-                      : Colors.grey[300]!,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextField(
-                controller: controller.productDescriptionController,
-                maxLines: 4,
-                maxLength: AddProductController.maxDescriptionLength,
-                onChanged: (value) {
-                  if (controller.fieldErrors.containsKey(
+            TextField(
+              controller: controller.productDescriptionController,
+              maxLines: 4,
+              maxLength: AddProductController.maxDescriptionLength,
+              onChanged: (value) {
+                if (controller.fieldErrors.containsKey('productDescription')) {
+                  controller.fieldErrors.remove('productDescription');
+                  controller.productCentralController.validationErrors.remove(
                     'productDescription',
-                  )) {
-                    controller.fieldErrors.remove('productDescription');
-                    controller.productCentralController.validationErrors.remove(
-                      'productDescription',
-                    );
-                    controller.update();
-                  }
-                },
-                decoration: InputDecoration(
-                  hintText: 'وصف المنتج',
-                  hintStyle: getRegular(
-                    fontSize: ResponsiveDimensions.f(14),
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(ResponsiveDimensions.f(12)),
-                  counterText:
-                      '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
-                  counterStyle: TextStyle(
-                    fontFamily: "PingAR",
-                    color:
-                        controller.characterCount >
-                            AddProductController.maxDescriptionLength
-                        ? Colors.red
-                        : Colors.grey,
-                  ),
+                  );
+                  controller.update();
+                }
+              },
+              decoration: InputDecoration(
+                hintText: 'وصف المنتج',
+                hintStyle: getRegular(
+                  fontSize: ResponsiveDimensions.f(14),
+                  color: Colors.grey,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(ResponsiveDimensions.f(12)),
+                counterText:
+                    '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
+                counterStyle: TextStyle(
+                  fontFamily: "PingAR",
+                  color:
+                      controller.characterCount >
+                          AddProductController.maxDescriptionLength
+                      ? Colors.red
+                      : Colors.grey,
                 ),
               ),
             ),

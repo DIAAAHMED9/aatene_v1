@@ -1714,17 +1714,41 @@ class ServiceController extends GetxController {
     final confirm = await Get.defaultDialog<bool>(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف هذه الخدمة؟',
-      textConfirm: 'نعم، احذف',
-      textCancel: 'إلغاء',
-      confirmTextColor: Colors.white,
-      onConfirm: () async {
-        final result = await deleteService(serviceId.value);
-        if (result?['success'] == true) {
-          resetAll();
-          Get.back(result: true);
-        }
-      },
-      onCancel: () => Get.back(result: false),
+      // textConfirm: 'نعم، احذف',
+      // textCancel: ,
+      actions: [
+        AateneButton(
+          onTap: () async {
+            final result = await deleteService(serviceId.value);
+            if (result?['success'] == true) {
+              resetAll();
+              Get.back(result: true);
+            }
+          },
+          buttonText: 'نعم، احذف',
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(result: false),
+          buttonText: 'إلغاء',
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // confirmTextColor: Colors.white,
+      // onConfirm: () async {
+      //   final result = await deleteService(serviceId.value);
+      //   if (result?['success'] == true) {
+      //     resetAll();
+      //     Get.back(result: true);
+      //   }
+      // },
+      // onCancel: () => Get.back(result: false),
     );
 
     if (confirm == true) {
@@ -1746,12 +1770,12 @@ class ServiceController extends GetxController {
   void setCreateMode() {
     serviceId.value = '';
     resetAll();
-    Get.snackbar(
-      'وضع الإنشاء',
-      'أنت الآن تقوم بإنشاء خدمة جديدة',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+    // Get.snackbar(
+    //   'وضع الإنشاء',
+    //   'أنت الآن تقوم بإنشاء خدمة جديدة',
+    //   backgroundColor: Colors.green,
+    //   colorText: Colors.white,
+    // );
   }
 
   bool get isInEditMode => serviceId.value.isNotEmpty;

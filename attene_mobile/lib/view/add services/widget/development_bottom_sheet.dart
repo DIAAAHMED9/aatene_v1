@@ -213,7 +213,8 @@ class DevelopmentBottomSheet extends StatelessWidget {
             child: Obx(
               () => SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child:
+                ElevatedButton(
                   onPressed: controller.canAddDevelopment
                       ? () {
                           controller.addDevelopment();

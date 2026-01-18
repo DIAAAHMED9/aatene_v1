@@ -82,29 +82,65 @@ class FollowersController extends GetxController {
     Get.defaultDialog(
       title: 'تأكيد',
       middleText: 'هل تريد إلغاء متابعة ${model.name}؟',
-      textConfirm: 'نعم',
-
-      textCancel: 'إلغاء',
-      onConfirm: () {
-        _lastRemovedIndex = followingList.indexOf(model);
-        _lastRemoved = model;
-
-        followingList.remove(model);
-        onSearch(searchController.text);
-
-        Get.back();
-
-        Get.snackbar(
-          'تم إلغاء المتابعة',
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 4),
-          model.name,
-          mainButton: TextButton(
-            onPressed: undoUnfollow,
-            child: Text('تراجع', style: getBold(color: AppColors.primary500)),
-          ),
-        );
-      },
+      // textConfirm: 'نعم',
+      actions: [
+        AateneButton(
+          onTap: () {
+            _lastRemovedIndex = followingList.indexOf(model);
+            _lastRemoved = model;
+            followingList.remove(model);
+            onSearch(searchController.text);
+            Get.back();
+            Get.snackbar(
+              'تم إلغاء المتابعة',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 4),
+              model.name,
+              mainButton: TextButton(
+                onPressed: undoUnfollow,
+                child: Text(
+                  'تراجع',
+                  style: getBold(color: AppColors.primary500),
+                ),
+              ),
+            );
+          },
+          buttonText: "نعم",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(result: false),
+          buttonText: "إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // textCancel: 'إلغاء',
+      // onConfirm: () {
+      //   _lastRemovedIndex = followingList.indexOf(model);
+      //   _lastRemoved = model;
+      //
+      //   followingList.remove(model);
+      //   onSearch(searchController.text);
+      //
+      //   Get.back();
+      //
+      //   Get.snackbar(
+      //     'تم إلغاء المتابعة',
+      //     snackPosition: SnackPosition.BOTTOM,
+      //     duration: const Duration(seconds: 4),
+      //     model.name,
+      //     mainButton: TextButton(
+      //       onPressed: undoUnfollow,
+      //       child: Text('تراجع', style: getBold(color: AppColors.primary500)),
+      //     ),
+      //   );
+      // },
     );
   }
 

@@ -1,26 +1,23 @@
 import '../../general_index.dart';
 
-
-
-
-
 class AateneButtonWithIcon extends StatelessWidget {
   const AateneButtonWithIcon({
     super.key,
     required this.buttonText,
-    this.color,
     this.icon,
+    this.onTap,
   });
 
   final String buttonText;
-  final Color? color;
   final Icon? icon;
+  final Function()? onTap;
+
   final double borderRadius = 100;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: () {},
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         width: double.infinity,
         height: 45,
