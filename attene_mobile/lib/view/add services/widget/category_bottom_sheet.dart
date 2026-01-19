@@ -59,11 +59,11 @@ class CategoryBottomSheet extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.category,
-                      color: AppColors.primary500,
-                      size: ResponsiveDimensions.responsiveFontSize(20),
-                    ),
+                    // Icon(
+                    //   Icons.,
+                    //   color: AppColors.primary500,
+                    //   size: ResponsiveDimensions.responsiveFontSize(20),
+                    // ),
                     SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                     Expanded(
                       child: Text(

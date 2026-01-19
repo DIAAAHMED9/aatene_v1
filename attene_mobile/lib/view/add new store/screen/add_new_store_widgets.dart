@@ -62,7 +62,7 @@ class AddNewStoreForm extends StatelessWidget {
             _CitySelector(controller: controller),
             _DistrictSelector(controller: controller),
             _CurrencySelector(controller: controller),
-            const TextWithStar(text: "الهاتف المحمول "),
+            const TextWithStar(text: "الهاتف المحمول"),
             TextFiledAatene(
               heightTextFiled: 50,
               isRTL: isRTL,
@@ -72,7 +72,7 @@ class AddNewStoreForm extends StatelessWidget {
             ),
             _HidePhoneTile(controller: controller),
             const SizedBox(height: 10),
-            const _LibraryHintBox(),
+            // const _LibraryHintBox(),
             const SizedBox(height: 10),
             _CreateButton(controller: controller),
             const SizedBox(height: 20),
@@ -85,6 +85,7 @@ class AddNewStoreForm extends StatelessWidget {
 
 class _StoreTypeBanner extends StatelessWidget {
   final CreateStoreController controller;
+
   const _StoreTypeBanner({required this.controller});
 
   @override
@@ -113,6 +114,7 @@ class _StoreTypeBanner extends StatelessWidget {
 
 class _LogoImagesList extends StatelessWidget {
   final CreateStoreController controller;
+
   const _LogoImagesList({required this.controller});
 
   @override
@@ -173,6 +175,7 @@ class _LogoImagesList extends StatelessWidget {
 
 class _CoverImagesList extends StatelessWidget {
   final CreateStoreController controller;
+
   const _CoverImagesList({required this.controller});
 
   @override
@@ -395,6 +398,7 @@ class _MediaTile extends StatelessWidget {
 
 class _AddMoreTile extends StatelessWidget {
   final VoidCallback onTap;
+
   const _AddMoreTile({required this.onTap});
 
   @override
@@ -435,6 +439,7 @@ ImageProvider _getImageProvider(
 
 class _CitySelector extends StatelessWidget {
   final CreateStoreController controller;
+
   const _CitySelector({required this.controller});
 
   @override
@@ -452,7 +457,7 @@ class _CitySelector extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(100),
                 color: Colors.white,
               ),
               child: Row(
@@ -464,7 +469,7 @@ class _CitySelector extends StatelessWidget {
                         cityName,
                         style: getRegular(
                           color: cityName != 'اختر المدينة'
-                              ? AppColors.neutral900
+                              ? AppColors.neutral100
                               : Colors.grey,
                         ),
                       );
@@ -483,6 +488,7 @@ class _CitySelector extends StatelessWidget {
 
 class _DistrictSelector extends StatelessWidget {
   final CreateStoreController controller;
+
   const _DistrictSelector({required this.controller});
 
   @override
@@ -500,7 +506,7 @@ class _DistrictSelector extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(100),
                 color: Colors.white,
               ),
               child: Row(
@@ -513,7 +519,7 @@ class _DistrictSelector extends StatelessWidget {
                         districtName,
                         style: getRegular(
                           color: districtName != 'اختر الحي'
-                              ? AppColors.neutral900
+                              ? AppColors.neutral100
                               : Colors.grey,
                         ),
                       );
@@ -532,6 +538,7 @@ class _DistrictSelector extends StatelessWidget {
 
 class _CurrencySelector extends StatelessWidget {
   final CreateStoreController controller;
+
   const _CurrencySelector({required this.controller});
 
   @override
@@ -549,7 +556,7 @@ class _CurrencySelector extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(100),
                 color: Colors.white,
               ),
               child: Row(
@@ -562,7 +569,7 @@ class _CurrencySelector extends StatelessWidget {
                         currencyName,
                         style: getRegular(
                           color: currencyName != 'اختر العملة'
-                              ? AppColors.neutral900
+                              ? AppColors.neutral100
                               : Colors.grey,
                         ),
                       );
@@ -581,6 +588,7 @@ class _CurrencySelector extends StatelessWidget {
 
 class _HidePhoneTile extends StatelessWidget {
   final CreateStoreController controller;
+
   const _HidePhoneTile({required this.controller});
 
   @override
@@ -621,36 +629,37 @@ class _HidePhoneTile extends StatelessWidget {
   }
 }
 
-class _LibraryHintBox extends StatelessWidget {
-  const _LibraryHintBox();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue[200]!),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.info_outline, color: Colors.blue),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              "💡 تأكد من اختيار الصور من 'المكتبة' وليس 'رفع صورة جديدة' لتجنب مشاكل الرفع أثناء إنشاء المتجر",
-              style: getRegular(color: Colors.blueAccent, fontSize: 12),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class _LibraryHintBox extends StatelessWidget {
+//   const _LibraryHintBox();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.all(12),
+//       decoration: BoxDecoration(
+//         color: Colors.blue[50],
+//         borderRadius: BorderRadius.circular(8),
+//         border: Border.all(color: Colors.blue[200]!),
+//       ),
+//       child: Row(
+//         children: [
+//           const Icon(Icons.info_outline, color: Colors.blue),
+//           const SizedBox(width: 10),
+//           Expanded(
+//             child: Text(
+//               "💡 تأكد من اختيار الصور من 'المكتبة' وليس 'رفع صورة جديدة' لتجنب مشاكل الرفع أثناء إنشاء المتجر",
+//               style: getRegular(color: Colors.blueAccent, fontSize: 12),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class _CreateButton extends StatelessWidget {
   final CreateStoreController controller;
+
   const _CreateButton({required this.controller});
 
   @override
@@ -660,7 +669,6 @@ class _CreateButton extends StatelessWidget {
       textColor: Colors.white,
       color: AppColors.primary400,
       borderColor: AppColors.primary400,
-      raduis: 10,
       onTap: () => Get.to(AddShippingMethod()),
     );
   }

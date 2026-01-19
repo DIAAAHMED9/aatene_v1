@@ -121,17 +121,13 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              color: AppColors.neutral700,
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey[100],
             ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 18,
-              color: Colors.black,
-            ),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
@@ -216,7 +212,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             child: Icon(
                               Icons.arrow_drop_down,
                               color: AppColors.primary500,
-                              size: 24,
+                              size: 15,
                             ),
                           ),
                           style: getRegular(fontSize: 15),
@@ -411,8 +407,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         Get.snackbar(
           'خطأ',
           'يرجى إدخال موعد التسليم لـ ${workingCities[i]['name']}',
-          backgroundColor: Colors.red.shade50,
-          colorText: Colors.red.shade500,
+          backgroundColor: Colors.red.shade500,
+          colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
         );
         return;

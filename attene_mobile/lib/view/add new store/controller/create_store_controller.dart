@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
@@ -79,8 +77,7 @@ class CreateStoreController extends GetxController {
     if (cityIdController.text.isEmpty) cityIdController.text = "1";
     if (districtIdController.text.isEmpty) districtIdController.text = "1";
     if (currencyIdController.text.isEmpty) currencyIdController.text = "2";
-        update();
-
+    update();
   }
 
   Future<void> loadInitialData() async {
@@ -103,8 +100,7 @@ class CreateStoreController extends GetxController {
 
       _updateSelectedValues();
       print('✅ [STORE] تم تحميل البيانات الأولية بنجاح');
-          update();
-
+      update();
     } catch (e) {
       print('❌ [STORE] خطأ في تحميل البيانات الأولية: $e');
       errorMessage.value = 'فشل في تحميل البيانات: ${e.toString()}';
@@ -189,8 +185,7 @@ class CreateStoreController extends GetxController {
     if (currencyIdController.text.isNotEmpty) {
       selectedCurrencyName.value = getCurrencyName(currencyIdController.text);
     }
-        update();
-
+    update();
   }
 
   Future<bool?> updateStoreBasicInfo() async {
@@ -228,14 +223,13 @@ class CreateStoreController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-            update();
+        update();
 
         return true;
       } else {
         final errorMsg = response?['message'] ?? 'فشل التحديث';
         throw Exception(errorMsg);
       }
-      
     } catch (e) {
       print('❌ [STORE] خطأ في تحديث البيانات الأساسية: $e');
 
@@ -499,7 +493,7 @@ class CreateStoreController extends GetxController {
         }
 
         Get.snackbar(
-          '🎉 نجاح',
+          'نجاح',
           isEditMode.value ? 'تم تحديث المتجر بنجاح' : 'تم إنشاء المتجر بنجاح',
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -695,7 +689,7 @@ class CreateStoreController extends GetxController {
                   children: [
                     Text(
                       'اختر المدينة',
-                      style: getBold(fontSize: 18, color: AppColors.neutral900),
+                      style: getBold(fontSize: 18, color: AppColors.neutral100),
                     ),
                     IconButton(
                       onPressed: () => Get.back(),
@@ -719,7 +713,7 @@ class CreateStoreController extends GetxController {
                         style: getRegular(
                           color: isSelected
                               ? AppColors.primary400
-                              : AppColors.neutral800,
+                              : AppColors.neutral100,
                         ),
                       ),
                       trailing: isSelected
@@ -785,7 +779,7 @@ class CreateStoreController extends GetxController {
                   children: [
                     Text(
                       'اختر الحي',
-                      style: getBold(fontSize: 18, color: AppColors.neutral900),
+                      style: getBold(fontSize: 18, color: AppColors.neutral100),
                     ),
                     IconButton(
                       onPressed: () => Get.back(),
@@ -809,7 +803,7 @@ class CreateStoreController extends GetxController {
                         style: getRegular(
                           color: isSelected
                               ? AppColors.primary400
-                              : AppColors.neutral800,
+                              : AppColors.neutral100,
                         ),
                       ),
                       subtitle: district['city_name'] != null
@@ -1520,10 +1514,12 @@ class CreateStoreController extends GetxController {
   Future<void> createOrUpdateStore() async {
     await saveCompleteStore();
   }
-Future<void> submitStore() async {
-  if (createStoreLoading.value) return;
-  await createOrUpdateStore();
-}
+
+  Future<void> submitStore() async {
+    if (createStoreLoading.value) return;
+    await createOrUpdateStore();
+  }
+
   void resetData() {
     storeType.value = 'products';
     deliveryType.value = 'free';

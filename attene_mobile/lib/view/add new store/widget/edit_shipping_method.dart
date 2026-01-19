@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class EditShippingMethod extends StatelessWidget {
@@ -16,15 +14,15 @@ class EditShippingMethod extends StatelessWidget {
           style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () => Get.back(),
           icon: Container(
             width: 50,
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[300],
+              color: Colors.grey[100],
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary500),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
@@ -41,12 +39,12 @@ class EditShippingMethod extends StatelessWidget {
                 hintText: "اكتب اسم الشركة هنا",
                 textInputAction: TextInputAction.next,
               ),
-              Text("شركة الشحن"),
-              TextFiledAatene(
-                isRTL: isRTL,
-                hintText: "اسم شركة الشحن",
-                textInputAction: TextInputAction.next,
-              ),
+              // Text("شركة الشحن"),
+              // TextFiledAatene(
+              //   isRTL: isRTL,
+              //   hintText: "اسم شركة الشحن",
+              //   textInputAction: TextInputAction.next,
+              // ),
               Text("رقم الهاتف"),
               TextFiledAatene(
                 isRTL: isRTL,

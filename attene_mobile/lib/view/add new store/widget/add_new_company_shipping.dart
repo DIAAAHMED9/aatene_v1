@@ -79,17 +79,13 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: AppColors.neutral100,
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey[100],
             ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 18,
-              color: AppColors.neutral700,
-            ),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
@@ -111,87 +107,68 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
 
               Text("رقم الهاتف", style: getMedium(fontSize: 15)),
               SizedBox(height: 8),
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.neutral300, width: 1.5),
-                  borderRadius: BorderRadius.circular(25),
+
+              TextFiledAatene(
+                isRTL: isRTL,
+                hintText: "00000000",
+                controller: phoneController,
+                textInputAction: TextInputAction.done,
+                textInputType: TextInputType.phone,
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Icon(
+                    Icons.phone_outlined,
+                    size: 20,
+                    color: AppColors.neutral500,
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Icon(
-                        Icons.phone_outlined,
-                        size: 20,
-                        color: AppColors.neutral500,
+                suffixIcon: Container(
+                  width: 110,
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  margin: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary50,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedCountryCode,
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: AppColors.primary500,
+                        size: 15,
                       ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: phoneController,
-                        keyboardType: TextInputType.phone,
-                        style: getRegular(fontSize: 15),
-                        decoration: InputDecoration(
-                          hintText: "0999988888",
-                          hintStyle: getRegular(
-                            color: AppColors.neutral400,
-                            fontSize: 15,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.only(right: 12),
-                        ),
+                      isExpanded: true,
+                      style: getRegular(
+                        color: AppColors.primary400,
+                        fontSize: 15,
                       ),
-                    ),
-                    Container(
-                      width: 110,
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      margin: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary100,
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedCountryCode,
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: AppColors.primary500,
-                            size: 24,
-                          ),
-                          isExpanded: true,
-                          style: getRegular(
-                            color: AppColors.primary400,
-                            fontSize: 15,
-                          ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedCountryCode = newValue!;
-                            });
-                          },
-                          items: countryCodes.map<DropdownMenuItem<String>>((
-                            Map<String, String> code,
-                          ) {
-                            return DropdownMenuItem<String>(
-                              value: code['code'],
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(code['code']!),
-                                  SizedBox(width: 4),
-                                  Icon(
-                                    Icons.flag,
-                                    size: 16,
-                                    color: AppColors.primary400,
-                                  ),
-                                ],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCountryCode = newValue!;
+                        });
+                      },
+                      items: countryCodes.map<DropdownMenuItem<String>>((
+                        Map<String, String> code,
+                      ) {
+                        return DropdownMenuItem<String>(
+                          value: code['code'],
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(code['code']!),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.flag,
+                                size: 16,
+                                color: AppColors.primary400,
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  ],
+                  ),
                 ),
               ),
 
@@ -253,146 +230,146 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
               ),
 
               SizedBox(height: 16),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    showAddCityField = !showAddCityField;
-                    if (!showAddCityField) {
-                      selectedCity = null;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      showAddCityField ? Icons.remove : Icons.add,
-                      color: AppColors.primary500,
-                      size: 20,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      "إضافة منطقة جديدة غير موجودة",
-                      style: getMedium(
-                        color: AppColors.primary500,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     setState(() {
+              //       showAddCityField = !showAddCityField;
+              //       if (!showAddCityField) {
+              //         selectedCity = null;
+              //       }
+              //     });
+              //   },
+              //   child: Row(
+              //     children: [
+              //       Icon(
+              //         showAddCityField ? Icons.remove : Icons.add,
+              //         color: AppColors.primary500,
+              //         size: 20,
+              //       ),
+              //       SizedBox(width: 8),
+              //       Text(
+              //         "إضافة منطقة جديدة غير موجودة",
+              //         style: getMedium(
+              //           color: AppColors.primary500,
+              //           fontSize: 15,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
-              if (showAddCityField) ...[
-                SizedBox(height: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("المدينة", style: getMedium(fontSize: 14)),
-                    SizedBox(height: 12),
-                    Container(
-                      height: 56,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.neutral300),
-                        borderRadius: BorderRadius.circular(25),
-                        color: Colors.white,
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedCity,
-                          isExpanded: true,
-                          hint: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "اختر المدينة",
-                              style: getRegular(
-                                color: AppColors.neutral400,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                          icon: Padding(
-                            padding: const EdgeInsets.only(right: 16),
-                            child: Icon(
-                              Icons.arrow_drop_down,
-                              color: AppColors.primary500,
-                              size: 24,
-                            ),
-                          ),
-                          style: getRegular(fontSize: 15),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedCity = newValue;
-                            });
-                          },
-                          items: citiesList.map<DropdownMenuItem<String>>((
-                            String city,
-                          ) {
-                            return DropdownMenuItem<String>(
-                              value: city,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Text(city),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              showAddCityField = false;
-                              selectedCity = null;
-                            });
-                          },
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                          ),
-                          child: Text(
-                            "إلغاء",
-                            style: getRegular(
-                              color: AppColors.neutral600,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        AateneButton(
-                          onTap: selectedCity != null
-                              ? () {
-                                  if (!selectedCities.any(
-                                    (c) => c['name'] == selectedCity,
-                                  )) {
-                                    setState(() {
-                                      selectedCities.add({
-                                        'city_id': selectedCities.length + 10,
-                                        'name': selectedCity!,
-                                        'type': 'custom',
-                                      });
-                                      showAddCityField = false;
-                                      selectedCity = null;
-                                    });
-                                  }
-                                }
-                              : null,
-                          buttonText: "إضافة المدينة",
-                          textColor: AppColors.light1000,
-                          borderColor: AppColors.primary400,
-                          color: AppColors.primary400,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+              // if (showAddCityField) ...[
+              //   SizedBox(height: 16),
+              //   Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text("المدينة", style: getMedium(fontSize: 14)),
+              //       SizedBox(height: 12),
+              //       Container(
+              //         height: 50,
+              //         decoration: BoxDecoration(
+              //           border: Border.all(color: AppColors.neutral300),
+              //           borderRadius: BorderRadius.circular(25),
+              //           color: Colors.white,
+              //         ),
+              //         child: DropdownButtonHideUnderline(
+              //           child: DropdownButton<String>(
+              //             value: selectedCity,
+              //             isExpanded: true,
+              //             hint: Padding(
+              //               padding: const EdgeInsets.symmetric(horizontal: 16),
+              //               child: Text(
+              //                 "اختر المدينة",
+              //                 style: getRegular(
+              //                   color: AppColors.neutral400,
+              //                   fontSize: 15,
+              //                 ),
+              //               ),
+              //             ),
+              //             icon: Padding(
+              //               padding: const EdgeInsets.only(right: 16),
+              //               child: Icon(
+              //                 Icons.arrow_drop_down,
+              //                 color: AppColors.primary500,
+              //                 size: 15,
+              //               ),
+              //             ),
+              //             style: getRegular(fontSize: 15),
+              //             onChanged: (String? newValue) {
+              //               setState(() {
+              //                 selectedCity = newValue;
+              //               });
+              //             },
+              //             items: citiesList.map<DropdownMenuItem<String>>((
+              //               String city,
+              //             ) {
+              //               return DropdownMenuItem<String>(
+              //                 value: city,
+              //                 child: Padding(
+              //                   padding: const EdgeInsets.symmetric(
+              //                     horizontal: 16,
+              //                   ),
+              //                   child: Text(city),
+              //                 ),
+              //               );
+              //             }).toList(),
+              //           ),
+              //         ),
+              //       ),
+              //       SizedBox(height: 16),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.end,
+              //         children: [
+              //           TextButton(
+              //             onPressed: () {
+              //               setState(() {
+              //                 showAddCityField = false;
+              //                 selectedCity = null;
+              //               });
+              //             },
+              //             style: TextButton.styleFrom(
+              //               padding: EdgeInsets.symmetric(
+              //                 horizontal: 20,
+              //                 vertical: 10,
+              //               ),
+              //             ),
+              //             child: Text(
+              //               "إلغاء",
+              //               style: getRegular(
+              //                 color: AppColors.neutral600,
+              //                 fontSize: 15,
+              //               ),
+              //             ),
+              //           ),
+              //           SizedBox(width: 12),
+              //           AateneButton(
+              //             onTap: selectedCity != null
+              //                 ? () {
+              //                     if (!selectedCities.any(
+              //                       (c) => c['name'] == selectedCity,
+              //                     )) {
+              //                       setState(() {
+              //                         selectedCities.add({
+              //                           'city_id': selectedCities.length + 10,
+              //                           'name': selectedCity!,
+              //                           'type': 'custom',
+              //                         });
+              //                         showAddCityField = false;
+              //                         selectedCity = null;
+              //                       });
+              //                     }
+              //                   }
+              //                 : null,
+              //             buttonText: "إضافة المدينة",
+              //             textColor: AppColors.light1000,
+              //             borderColor: AppColors.primary400,
+              //             color: AppColors.primary400,
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ],
 
               if (selectedCities.isNotEmpty) ...[
                 SizedBox(height: 24),
@@ -460,7 +437,6 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 textColor: Colors.white,
                 color: AppColors.primary500,
                 borderColor: AppColors.primary500,
-                raduis: 12,
                 onTap: () {
                   _validateAndGoToPricing();
                 },

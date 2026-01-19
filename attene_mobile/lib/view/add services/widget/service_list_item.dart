@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/index.dart';
 
@@ -42,80 +40,83 @@ class ServiceListItem extends StatelessWidget {
           onTap?.call();
         }
       },
-      child: Row(
+      child: Column(
         children: [
-          if (isSelectionMode)
-            Padding(
-              padding: EdgeInsets.only(left: ResponsiveDimensions.f(12)),
-              child: Checkbox(
-                value: isSelected,
-                onChanged: (value) {
-                  onSelectionChanged?.call(value ?? false);
-                },
-                activeColor: AppColors.primary400,
-              ),
-            ),
-
-          _buildServiceImage(context),
-
-          SizedBox(width: ResponsiveDimensions.f(16)),
-
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: ResponsiveDimensions.f(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    service.title,
-                    style: getMedium(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+          Row(
+            children: [
+              if (isSelectionMode)
+                Padding(
+                  padding: EdgeInsets.only(left: ResponsiveDimensions.f(5)),
+                  child: Checkbox(
+                    value: isSelected,
+                    onChanged: (value) {
+                      onSelectionChanged?.call(value ?? false);
+                    },
+                    activeColor: AppColors.primary400,
                   ),
+                ),
 
-                  SizedBox(height: ResponsiveDimensions.f(6)),
+              _buildServiceImage(context),
 
-                  // if (service.sectionId != null && service.sectionId != 0)
-                  //   Row(
-                  //     children: [
-                  //       Icon(
-                  //         Icons.category_outlined,
-                  //         color: Colors.grey[600],
-                  //         size: ResponsiveDimensions.f(14),
-                  //       ),
-                  //       SizedBox(width: ResponsiveDimensions.f(4)),
-                  //       Text(
-                  //         _getSectionName(service.sectionId!),
-                  //         style: getRegular(
-                  //           fontSize: ResponsiveDimensions.f(12),
-                  //           color: Color(0xFF757575),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
+              SizedBox(width: ResponsiveDimensions.f(10)),
 
-                  SizedBox(height: ResponsiveDimensions.f(8)),
-         _buildStatusChip(service.status),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveDimensions.f(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        service.title,
+                        style: getMedium(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
 
-                ],
+                      SizedBox(height: ResponsiveDimensions.f(4)),
+
+                      // if (service.sectionId != null && service.sectionId != 0)
+                      //   Row(
+                      //     children: [
+                      //       Icon(
+                      //         Icons.category_outlined,
+                      //         color: Colors.grey[600],
+                      //         size: ResponsiveDimensions.f(14),
+                      //       ),
+                      //       SizedBox(width: ResponsiveDimensions.f(4)),
+                      //       Text(
+                      //         _getSectionName(service.sectionId!),
+                      //         style: getRegular(
+                      //           fontSize: ResponsiveDimensions.f(12),
+                      //           color: Color(0xFF757575),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      SizedBox(height: ResponsiveDimensions.f(4)),
+                      _buildStatusChip(service.status),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Text('${service.price} ₪', style: getBold(fontSize: 12)),
+              SizedBox(width: ResponsiveDimensions.f(15)),
+              if (!isSelectionMode)
+                IconButton(
+                  onPressed: _showServiceOptions,
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: Colors.grey,
+                    size: ResponsiveDimensions.f(24),
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+            ],
           ),
-                      Text('${service.price} ₪', style: getBold(fontSize: 12)),
-                      SizedBox(width: ResponsiveDimensions.f(12),),
-          if (!isSelectionMode)
-            IconButton(
-              onPressed: _showServiceOptions,
-              icon: Icon(
-                Icons.more_horiz,
-                color: Colors.grey,
-                size: ResponsiveDimensions.f(24),
-              ),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
+          Divider(height: 3),
         ],
       ),
     );
@@ -205,7 +206,6 @@ class ServiceListItem extends StatelessWidget {
     }
 
     return Container(
-      height: 23,
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveDimensions.f(8),
         vertical: ResponsiveDimensions.f(4),
@@ -217,7 +217,7 @@ class ServiceListItem extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: getMedium(fontSize: ResponsiveDimensions.f(11), color: color),
+        style: getMedium(fontSize: ResponsiveDimensions.f(10), color: color),
       ),
     );
   }
@@ -306,13 +306,10 @@ class ServiceListItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         spacing: 10,
                         children: [
-                          SizedBox(height: 15,),
+                          SizedBox(height: 15),
                           Icon(
                             Icons.edit,
-                            size:
-                            ResponsiveDimensions.responsiveFontSize(
-                              32,
-                            ),
+                            size: ResponsiveDimensions.responsiveFontSize(32),
                             color: AppColors.primary500,
                           ),
                           Text(
@@ -328,7 +325,8 @@ class ServiceListItem extends StatelessWidget {
                     onTap: () {
                       Get.back();
                       _editService();
-                    },                  ),
+                    },
+                  ),
                 ),
                 Expanded(
                   child: GestureDetector(
@@ -343,13 +341,10 @@ class ServiceListItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         spacing: 10,
                         children: [
-                          SizedBox(height: 15,),
+                          SizedBox(height: 15),
                           Icon(
                             Icons.delete_outline,
-                            size:
-                            ResponsiveDimensions.responsiveFontSize(
-                              32,
-                            ),
+                            size: ResponsiveDimensions.responsiveFontSize(32),
                             color: AppColors.error300,
                           ),
                           Text(
@@ -365,7 +360,8 @@ class ServiceListItem extends StatelessWidget {
                     onTap: () {
                       Get.back();
                       _confirmDeleteService();
-                    },                  ),
+                    },
+                  ),
                 ),
               ],
             ),
@@ -394,7 +390,7 @@ class ServiceListItem extends StatelessWidget {
         content: Text('هل أنت متأكد من حذف الخدمة "${service.title}"؟'),
         actions: [
           AateneButton(
-            onTap:  () {
+            onTap: () {
               Get.back();
               _deleteService();
             },
@@ -403,14 +399,15 @@ class ServiceListItem extends StatelessWidget {
             textColor: AppColors.light1000,
             borderColor: AppColors.primary400,
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           AateneButton(
             onTap: () => Get.back(),
             buttonText: "إلغاء",
             color: AppColors.light1000,
             textColor: AppColors.primary400,
             borderColor: AppColors.primary400,
-          ),],
+          ),
+        ],
       ),
     );
   }

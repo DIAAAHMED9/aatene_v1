@@ -322,7 +322,7 @@ class _VariationCardState extends State<VariationCard> {
           icon: Icon(
             Icons.arrow_drop_down,
             color: Colors.grey[600],
-            size: ResponsiveDimensions.f(20),
+            size: ResponsiveDimensions.f(15),
           ),
           isExpanded: true,
           style: getRegular(fontSize: ResponsiveDimensions.f(13)),

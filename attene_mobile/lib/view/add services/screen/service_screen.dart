@@ -169,7 +169,7 @@ class ServiceScreen extends StatelessWidget {
                       ),
                       Icon(
                         Icons.arrow_drop_down,
-                        size: ResponsiveDimensions.responsiveFontSize(24),
+                        size: ResponsiveDimensions.responsiveFontSize(15),
                       ),
                     ],
                   ),
@@ -268,9 +268,12 @@ class ServiceScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Icon(
-                        Icons.arrow_drop_down,
-                        size: ResponsiveDimensions.responsiveFontSize(24),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          size: ResponsiveDimensions.responsiveFontSize(15),
+                        ),
                       ),
                     ],
                   ),
@@ -331,8 +334,8 @@ class ServiceScreen extends StatelessWidget {
                         AateneButton(
                           onTap: () => Get.back(),
                           buttonText: "إلغاء",
-                          color: AppColors.light1000,
-                          textColor: AppColors.primary400,
+                          color: AppColors.primary400,
+                          textColor: AppColors.light1000,
                           borderColor: AppColors.primary400,
                         ),
 
@@ -395,6 +398,7 @@ class ServiceScreen extends StatelessWidget {
                         margin: EdgeInsets.symmetric(
                           horizontal: ResponsiveDimensions.responsiveWidth(2),
                         ),
+                        padding: EdgeInsets.only(bottom: 2,top: 2),
                         width: ResponsiveDimensions.responsiveWidth(45),
                         height: ResponsiveDimensions.responsiveWidth(45),
                         decoration: BoxDecoration(
@@ -540,6 +544,7 @@ class ServiceScreen extends StatelessWidget {
                   suffixIcon: Tooltip(
                     message: controller.keywordTooltip,
                     child: Container(
+                      padding: EdgeInsets.only(bottom: 2,top: 2),
                       child: InkWell(
                         onTap: controller.canAddKeyword
                             ? () {
@@ -972,17 +977,17 @@ class ServiceScreen extends StatelessWidget {
                         fontSize: ResponsiveDimensions.responsiveFontSize(14),
                       ),
                     ),
-                    subtitle: section['status'] != null
-                        ? Text(
-                            'الحالة: ${section['status']}',
-                            style: getRegular(
-                              fontSize: ResponsiveDimensions.responsiveFontSize(
-                                12,
-                              ),
-                              color: Color(0xFF757575),
-                            ),
-                          )
-                        : null,
+                    // subtitle: section['status'] != null
+                    //     ? Text(
+                    //         'الحالة: ${section['status']}',
+                    //         style: getRegular(
+                    //           fontSize: ResponsiveDimensions.responsiveFontSize(
+                    //             12,
+                    //           ),
+                    //           color: Color(0xFF757575),
+                    //         ),
+                    //       )
+                    //     : null,
                     trailing: controller.selectedSectionId.value == sectionId
                         ? Icon(Icons.check, color: AppColors.primary400)
                         : null,
@@ -1005,7 +1010,15 @@ class ServiceScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
+          AateneButton(
+            onTap: () => Get.back(),
+            buttonText: "إلغاء",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+
+          // TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
         ],
       ),
     );

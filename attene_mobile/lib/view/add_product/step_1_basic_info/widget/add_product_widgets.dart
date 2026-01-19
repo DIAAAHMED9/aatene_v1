@@ -430,7 +430,7 @@ class PriceSectionWidget extends StatelessWidget {
                     }
                   },
                   suffixIcon: Padding(
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 7),
                     child: Text(
                       '₪',
                       style: TextStyle(
@@ -504,7 +504,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                             : Colors.grey[300]!,
                         width: 1.5,
                       ),
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(100),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButtonFormField<String>(
@@ -735,7 +735,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                       : Colors.grey[300]!,
                   width: 1.5,
                 ),
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(100),
               ),
               child: DropdownButtonFormField<String>(
                 value: controller.selectedCondition.isEmpty
@@ -836,7 +836,7 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'وصف المنتج',
                 hintStyle: getRegular(
-                  fontSize: ResponsiveDimensions.f(14),
+                  fontSize: ResponsiveDimensions.f(12),
                   color: Colors.grey,
                 ),
                 border: InputBorder.none,

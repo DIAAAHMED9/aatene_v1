@@ -146,7 +146,7 @@ class _ServiceStepperScreenState
           if (!controller.validatePriceForm()) {
             Get.snackbar(
               'تنبيه',
-              'يرجى إكمال السعر ومدة التنفيذ أولاً',
+              'يرجى إكمال السعر و أولاً',
               backgroundColor: Colors.orange,
               colorText: Colors.white,
             );
@@ -206,7 +206,7 @@ class _ServiceStepperScreenState
         if (!controller.validatePriceForm()) {
           Get.snackbar(
             'خطأ',
-            'يرجى إكمال السعر ومدة التنفيذ أولاً',
+            'يرجى إكمال السعر و أولاً',
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );

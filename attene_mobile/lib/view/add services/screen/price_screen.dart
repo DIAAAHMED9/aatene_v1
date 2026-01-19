@@ -159,8 +159,10 @@ class PriceScreen extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Container(
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!, width: 1),
+                      border: Border.all(color: Colors.grey[300]!, width: 2),
                       borderRadius: BorderRadius.circular(25),
                     ),
                     child: InkWell(
@@ -172,8 +174,8 @@ class PriceScreen extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(
-                          ResponsiveDimensions.responsiveWidth(12),
+                        padding: EdgeInsets.only(
+                          left: 5,right: 5
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,7 +186,7 @@ class PriceScreen extends StatelessWidget {
                                 style: getRegular(
                                   fontSize:
                                       ResponsiveDimensions.responsiveFontSize(
-                                        14,
+                                        12,
                                       ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -192,7 +194,7 @@ class PriceScreen extends StatelessWidget {
                             ),
                             Icon(
                               Icons.arrow_drop_down,
-                              size: ResponsiveDimensions.responsiveFontSize(24),
+                              size: ResponsiveDimensions.responsiveFontSize(15),
                             ),
                           ],
                         ),
@@ -507,8 +509,7 @@ class PriceScreen extends StatelessWidget {
                         Get.defaultDialog(
                           title: 'حفظ مؤقت',
                           content: const Text('هل تريد حفظ البيانات الحالية؟'),
-                          // textConfirm: 'نعم',
-                          // textCancel: 'لا',
+
                           actions: [
                             AateneButton(
                               onTap: () {

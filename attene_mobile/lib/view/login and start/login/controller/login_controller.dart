@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import '../../../../general_index.dart';
-
 
 class LoginController extends GetxController {
   final RxString email = ''.obs;
@@ -257,7 +254,10 @@ class LoginController extends GetxController {
       final sid = int.tryParse(storeIdStr);
       if (sid != null) {
         try {
-          await DataInitializerService.to.initializeStoreData(storeId: sid, silent: true);
+          await DataInitializerService.to.initializeStoreData(
+            storeId: sid,
+            silent: true,
+          );
         } catch (_) {}
       }
     }
@@ -397,7 +397,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         title,
         message,
-        backgroundColor: AppColors.error300,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         duration: snackbarDuration,

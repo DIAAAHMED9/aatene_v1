@@ -24,9 +24,9 @@ class AddShippingMethod extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[300],
+              color: Colors.grey[100],
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary500),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
@@ -57,20 +57,19 @@ class AddShippingMethod extends StatelessWidget {
         children: [
           Text(
             "كيف توجد شحن المنتجات؟",
-            style: getBold(fontSize: 18, color: AppColors.neutral900),
+            style: getBold(fontSize: 18, color: AppColors.neutral100),
           ),
           SizedBox(height: 15),
 
           Obx(
             () => Column(
               children: [
-                _buildShippingOption(
-                  value: 'free',
-                  title: 'مجاني',
-                  subtitle: 'توصيل مجاني للمنتجات',
-                  icon: Icons.local_shipping,
-                ),
-
+                // _buildShippingOption(
+                //   value: 'free',
+                //   title: 'مجاني',
+                //   subtitle: 'توصيل مجاني للمنتجات',
+                //   icon: Icons.local_shipping,
+                // ),
                 SizedBox(height: 12),
 
                 _buildShippingOption(
@@ -267,7 +266,7 @@ class AddShippingMethod extends StatelessWidget {
               children: [
                 Text(
                   company['name']?.toString() ?? 'شركة شحن',
-                  style: getMedium(color: AppColors.neutral900),
+                  style: getMedium(color: AppColors.neutral100),
                 ),
 
                 SizedBox(height: 4),
@@ -275,13 +274,19 @@ class AddShippingMethod extends StatelessWidget {
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
-                    style: getRegular(fontSize: 12, color: Colors.grey),
+                    style: getRegular(
+                      fontSize: 12,
+                      color: AppColors.neutral100,
+                    ),
                   ),
 
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
-                    style: getRegular(fontSize: 10, color: Colors.grey),
+                    style: getRegular(
+                      fontSize: 10,
+                      color: AppColors.neutral100,
+                    ),
                   ),
               ],
             ),
@@ -391,7 +396,6 @@ class AddShippingMethod extends StatelessWidget {
         textColor: Colors.white,
         color: AppColors.primary400,
         borderColor: AppColors.primary400,
-        raduis: 10,
         onTap: () {
           _validateAndProceed();
         },

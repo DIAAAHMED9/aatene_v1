@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -107,6 +106,7 @@ class _ChatMassegeState extends State<ChatMassege> {
 
       return Scaffold(
         appBar: AppBar(
+          elevation: 3,
           title: Text(title),
           actions: [
             IconButton(
@@ -114,6 +114,18 @@ class _ChatMassegeState extends State<ChatMassege> {
               onPressed: _openConversationActions,
             ),
           ],
+          leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Colors.grey[100],
+              ),
+              child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+            ),
+          ),
         ),
         body: Column(
           children: [
@@ -127,7 +139,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 color: Colors.red.withOpacity(0.07),
                 child: Row(
                   children: const [
-                    Icon(Icons.block, size: 18),
+                    Icon(Icons.block, size: 18, color: AppColors.primary400),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -209,7 +221,10 @@ class _ChatMassegeState extends State<ChatMassege> {
           children: [
             if (isDirect && other != null)
               ListTile(
-                leading: Icon(blocked ? Icons.lock_open : Icons.block),
+                leading: Icon(
+                  blocked ? Icons.lock_open : Icons.block,
+                  color: AppColors.primary400,
+                ),
                 title: Text(blocked ? 'إلغاء الحظر' : 'حظر المستخدم'),
                 onTap: () async {
                   Navigator.pop(context);
@@ -233,7 +248,10 @@ class _ChatMassegeState extends State<ChatMassege> {
               ),
             if (isDirect && other != null)
               ListTile(
-                leading: const Icon(Icons.report_gmailerrorred_outlined),
+                leading: Icon(
+                  Icons.report_gmailerrorred_outlined,
+                  color: AppColors.primary400,
+                ),
                 title: const Text('إبلاغ'),
                 onTap: () async {
                   Navigator.pop(context);
@@ -246,7 +264,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 },
               ),
             ListTile(
-              leading: const Icon(Icons.person_add_alt),
+              leading: Icon(Icons.person_add_alt, color: AppColors.primary400),
               title: const Text('إضافة مستخدم للمحادثة'),
               onTap: () {
                 Navigator.pop(context);
@@ -255,7 +273,7 @@ class _ChatMassegeState extends State<ChatMassege> {
             ),
             if ((widget.conversation.type ?? '').toLowerCase() == 'group')
               ListTile(
-                leading: const Icon(Icons.edit),
+                leading: const Icon(Icons.edit, color: AppColors.primary400),
                 title: const Text('تعديل اسم المجموعة'),
                 onTap: () {
                   Navigator.pop(context);
@@ -263,7 +281,10 @@ class _ChatMassegeState extends State<ChatMassege> {
                 },
               ),
             ListTile(
-              leading: const Icon(Icons.delete_outline),
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.primary400,
+              ),
               title: const Text('حذف المحادثة'),
               onTap: () async {
                 Navigator.pop(context);

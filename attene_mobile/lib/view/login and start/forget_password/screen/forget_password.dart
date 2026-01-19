@@ -1,5 +1,3 @@
-
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -15,6 +13,22 @@ class ForgetPassword extends StatelessWidget {
     final isRTL = LanguageUtils.isRTL;
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey[100],
+            ),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+          ),
+        ),
+      ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -25,21 +39,21 @@ class ForgetPassword extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Align(
-                  alignment: isRTL ? Alignment.topRight : Alignment.topLeft,
-                  child:  IconButton(
-                    onPressed: () => Get.back(),
-                    icon: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.grey[100],
-                      ),
-                      child: Icon(Icons.arrow_back, color: AppColors.neutral100),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: isRTL ? Alignment.topRight : Alignment.topLeft,
+                //   child:  IconButton(
+                //     onPressed: () => Get.back(),
+                //     icon: Container(
+                //       width: 50,
+                //       height: 50,
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(100),
+                //         color: Colors.grey[100],
+                //       ),
+                //       child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
                   isRTL ? 'إعادة تعيين كلمة المرور' : 'Reset Password',

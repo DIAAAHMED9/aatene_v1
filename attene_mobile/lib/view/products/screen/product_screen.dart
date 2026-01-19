@@ -1,4 +1,3 @@
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 
@@ -359,7 +358,7 @@ class ProductScreen extends GetView<ProductController> {
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(18)
                   : ResponsiveDimensions.f(22),
-              color:  AppColors.neutral400,
+              color: AppColors.neutral400,
             ),
             textAlign: TextAlign.center,
           ),

@@ -16,14 +16,16 @@ class TypeStore extends GetView<CreateStoreController> {
             elevation: 0,
             title: Text('نوع المتجر', style: getRegular()),
             centerTitle: false,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => Get.back(),
-                child: const CircleAvatar(
-                  backgroundColor: Color(0XFF1F29370D),
-                  child: Icon(Icons.arrow_back, color: Colors.black),
+            leading: IconButton(
+              onPressed: () => Get.back(),
+              icon: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.grey[100],
                 ),
+                child: Icon(Icons.arrow_back, color: AppColors.neutral100),
               ),
             ),
           ),

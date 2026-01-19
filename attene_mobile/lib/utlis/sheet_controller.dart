@@ -923,15 +923,14 @@ class BottomSheetController extends GetxController {
             textColor: AppColors.light1000,
             borderColor: AppColors.primary400,
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           AateneButton(
-            onTap:() => Get.back(),
+            onTap: () => Get.back(),
             buttonText: "إلغاء",
             color: AppColors.primary400,
             textColor: AppColors.light1000,
             borderColor: AppColors.primary400,
           ),
-
         ],
       ),
     );
@@ -1267,8 +1266,7 @@ class BottomSheetController extends GetxController {
     if (hasSelectedAttributes) {
       return Padding(
         padding: const EdgeInsets.only(top: 16),
-        child:
-        AateneButton(
+        child: AateneButton(
           onTap: () {
             if (_currentEditingAttribute.value == null) {
               _currentEditingAttribute.value = _selectedAttributes.first;
@@ -1547,8 +1545,7 @@ class BottomSheetController extends GetxController {
   Widget _buildSaveButton() {
     return Container(
       padding: EdgeInsets.only(top: 16),
-      child:
-      AateneButton(
+      child: AateneButton(
         onTap: _saveAttributesAndClose,
 
         buttonText: "حفظ والتطبيق",

@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -104,7 +102,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         children: [
           CircularProgressIndicator(color: AppColors.primary400),
           SizedBox(height: 16),
-          Text('جاري تحميل الملفات...', style: getRegular(color: Colors.grey)),
+          Text('جاري تحميل الصور...', style: getRegular(color: Colors.grey)),
         ],
       ),
     );
@@ -134,7 +132,10 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
           SizedBox(height: 8),
           Text(
             'انقر على زر "+" لرفع الملفات',
-            style: getRegular(fontSize: 14, color: AppColors.colorMediaLibraryScreen),
+            style: getRegular(
+              fontSize: 14,
+              color: AppColors.colorMediaLibraryScreen,
+            ),
           ),
         ],
       ),
@@ -612,7 +613,10 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
             controller.currentTabIndex.value == 0
                 ? 'انقر على زر "+" لإضافة الملفات الأولى'
                 : 'انقر على زر "تحميل" لإضافة الملفات الأولى',
-            style: getRegular(fontSize: 14, color: AppColors.colorMediaLibraryScreen),
+            style: getRegular(
+              fontSize: 14,
+              color: AppColors.colorMediaLibraryScreen,
+            ),
           ),
         ],
       ),

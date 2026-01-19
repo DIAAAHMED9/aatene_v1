@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../add_product/stepper/screen/edit_product_stepper_screen.dart';
 
@@ -34,101 +32,89 @@ class ProductListItem extends StatelessWidget {
           _showProductOptions();
         }
       },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary400.withOpacity(0.1)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: isSelected
-              ? Border.all(color: AppColors.primary400, width: 2)
-              : Border.all(color: Colors.grey[200]!),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            if (isSelectionMode)
-              Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: Checkbox(
-                  value: isSelected,
-                  onChanged: (value) {
-                    onSelectionChanged?.call(value ?? false);
-                  },
-                  activeColor: AppColors.primary400,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              if (isSelectionMode)
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Checkbox(
+                    value: isSelected,
+                    onChanged: (value) {
+                      onSelectionChanged?.call(value ?? false);
+                    },
+                    activeColor: AppColors.primary400,
+                  ),
                 ),
-              ),
 
-            _buildProductImage(context),
+              _buildProductImage(context),
 
-            const SizedBox(width: 16),
+              const SizedBox(width: 16),
 
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      style: getMedium(
-                        fontSize: ResponsiveWidgets.getFontSize(
-                          context,
-                          baseSize: 16,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        style: getMedium(
+                          fontSize: ResponsiveWidgets.getFontSize(
+                            context,
+                            baseSize: 16,
+                          ),
+                          color: Colors.black87,
                         ),
-                        color: Colors.black87,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
 
-                    const SizedBox(height: 6),
+                      const SizedBox(height: 6),
 
-                    if (product.sectionId != null && product.sectionId != '0')
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.local_offer_outlined,
-                            color: Colors.grey[600],
-                            size: 14,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            controller.getSectionName(product.sectionId!),
-                            style: getRegular(fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                  ],
+                      if (product.sectionId != null && product.sectionId != '0')
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.local_offer_outlined,
+                              color: Colors.grey[600],
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              controller.getSectionName(product.sectionId!),
+                              style: getRegular(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            Text('${product.price ?? '0.0'} ₪', style: getBold()),
-            if (!isSelectionMode)
-              IconButton(
-                onPressed: _showProductOptions,
-                icon: const Icon(Icons.more_horiz, color: Colors.grey),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-          ],
-        ),
+              Text('${product.price ?? '0.0'} ₪', style: getBold()),
+              if (!isSelectionMode)
+                IconButton(
+                  onPressed: _showProductOptions,
+                  icon: const Icon(Icons.more_horiz, color: Colors.grey),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+            ],
+          ),
+          Divider(height: 3),
+        ],
       ),
     );
   }
 
   Widget _buildProductImage(BuildContext context) {
     final imageSize = ResponsiveWidgets.getProductImageSize(context);
-
     return Container(
       width: imageSize,
       height: imageSize,
