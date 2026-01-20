@@ -91,22 +91,24 @@ class AddProductStepperDialogs {
       AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: const [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 12),
-            Text('تمت العملية بنجاح!'),
-          ],
-        ),
+        // title: Row(
+        //   children: const [
+        //     Icon(Icons.check_circle, color: Colors.green, size: 28),
+        //     SizedBox(width: 12),
+        //     Text('تمت العملية بنجاح!'),
+        //   ],
+        // ),
         content: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 5,
           children: [
-            const Icon(
-              Icons.shopping_bag_rounded,
-              size: 60,
-              color: Colors.green,
+            SvgPicture.asset(
+              'assets/images/svg_images/done.svg',
+              semanticsLabel: 'My SVG Image',
+              height: 80,
+              width: 80,
             ),
-            const SizedBox(height: 20),
+
             Text(
               'تم إضافة المنتج بنجاح',
               style: getMedium(color: Colors.black87, fontSize: 18),

@@ -51,6 +51,7 @@ class PriceScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
+                      textInputAction: TextInputAction.next,
                       onChanged: controller.validatePrice,
                       keyboardType: TextInputType.numberWithOptions(
                         decimal: true,
@@ -136,6 +137,8 @@ class PriceScreen extends StatelessWidget {
                     child: TextField(
                       onChanged: controller.updateExecutionTimeValue,
                       keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+
                       decoration: InputDecoration(
                         hintText: 'مثال: 3',
                         border: InputBorder.none,

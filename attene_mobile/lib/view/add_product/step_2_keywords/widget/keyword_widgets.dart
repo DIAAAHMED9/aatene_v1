@@ -144,10 +144,7 @@ class StoreSelectorWidget extends StatelessWidget {
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
         ElevatedButton.icon(
-          onPressed: () =>
-          Get
-              .find<KeywordController>()
-              .reloadStores,
+          onPressed: () => Get.find<KeywordController>().reloadStores,
           icon: Icon(Icons.refresh),
           label: Text('إعادة المحاولة'),
           style: ElevatedButton.styleFrom(
@@ -219,9 +216,7 @@ class StoreSelectorWidget extends StatelessWidget {
                     Container(
                       width: ResponsiveDimensions.f(30),
                       height: ResponsiveDimensions.f(30),
-                      margin: EdgeInsets.only(
-                        left: ResponsiveDimensions.f(8),
-                      ),
+                      margin: EdgeInsets.only(left: ResponsiveDimensions.f(8)),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                         image: DecorationImage(
@@ -261,13 +256,14 @@ class KeywordSearchBoxWidget extends StatelessWidget {
 
     final controller = Get.find<KeywordController>();
 
-    return TextFiledAatene(isRTL: isRTL,
+    return TextFiledAatene(
+      isRTL: isRTL,
       hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
       textInputAction: TextInputAction.done,
       controller: controller.searchController,
       onSubmitted: (value) => controller.addCustomKeyword(),
       suffixIcon: Padding(
-        padding: const EdgeInsets.only(top: 3,bottom: 3),
+        padding: const EdgeInsets.only(top: 3, bottom: 3),
         child: GetBuilder<KeywordController>(
           builder: (_) => _buildAddButton(controller),
         ),
@@ -280,8 +276,8 @@ class KeywordSearchBoxWidget extends StatelessWidget {
     final canAddMore = controller.canAddMoreKeywords;
     final isDuplicate = hasText
         ? controller.selectedKeywords.contains(
-      controller.searchController.text.trim(),
-    )
+            controller.searchController.text.trim(),
+          )
         : false;
 
     String tooltipMessage = '';
@@ -294,7 +290,7 @@ class KeywordSearchBoxWidget extends StatelessWidget {
       buttonColor = Colors.orange[300]!;
     } else if (!canAddMore) {
       tooltipMessage =
-      'تم الوصول للحد الأقصى (${KeywordController.maxKeywords} كلمة)';
+          'تم الوصول للحد الأقصى (${KeywordController.maxKeywords} كلمة)';
       buttonColor = Colors.red[300]!;
     } else {
       tooltipMessage = 'إضافة الكلمة المفتاحية';
@@ -343,78 +339,78 @@ class AvailableKeywordsWidget extends StatelessWidget {
       builder: (_) {
         final keywords = controller.filteredKeywords;
 
-        if (keywords.isEmpty) {
-          return _buildEmptyAvailableKeywords();
-        }
+        // if (keywords.isEmpty) {
+        //   return _buildEmptyAvailableKeywords();
+        // }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('الكلمات المفتاحية المتاحة', style: getMedium()),
-            SizedBox(height: ResponsiveDimensions.f(12)),
-            Wrap(
-              spacing: ResponsiveDimensions.f(8),
-              runSpacing: ResponsiveDimensions.f(8),
-              children: keywords.map((keyword) {
-                return InkWell(
-                  onTap: () => controller.addKeyword(keyword),
-                  child: Container(
-                    child: Text(
-                      keyword,
-                      style: getRegular(color: AppColors.primary400),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveDimensions.f(15),
-                      vertical: ResponsiveDimensions.f(10),
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.primary400),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+            // Text('الكلمات المفتاحية المتاحة', style: getMedium()),
+            // SizedBox(height: ResponsiveDimensions.f(12)),
+            // Wrap(
+            //   spacing: ResponsiveDimensions.f(8),
+            //   runSpacing: ResponsiveDimensions.f(8),
+            //   children: keywords.map((keyword) {
+            //     return InkWell(
+            //       onTap: () => controller.addKeyword(keyword),
+            //       child: Container(
+            //         child: Text(
+            //           keyword,
+            //           style: getRegular(color: AppColors.primary400),
+            //         ),
+            //         padding: EdgeInsets.symmetric(
+            //           horizontal: ResponsiveDimensions.f(15),
+            //           vertical: ResponsiveDimensions.f(10),
+            //         ),
+            //         decoration: BoxDecoration(
+            //           border: Border.all(color: AppColors.primary400),
+            //           borderRadius: BorderRadius.circular(25),
+            //         ),
+            //       ),
+            //     );
+            //   }).toList(),
+            // ),
           ],
         );
       },
     );
   }
 
-  Widget _buildEmptyAvailableKeywords() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.search_off,
-            size: ResponsiveDimensions.f(40),
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: ResponsiveDimensions.f(8)),
-          Text(
-            'لا توجد كلمات مفتاحية متاحة',
-            style: getRegular(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: ResponsiveDimensions.f(4)),
-          Text(
-            'جرب البحث بكلمات مختلفة',
-            style: getRegular(fontSize: ResponsiveDimensions.f(12)),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildEmptyAvailableKeywords() {
+  //   return Container(
+  //     padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey[50],
+  //       borderRadius: BorderRadius.circular(12),
+  //       border: Border.all(color: Colors.grey[300]!),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Icon(
+  //           Icons.search_off,
+  //           size: ResponsiveDimensions.f(40),
+  //           color: Colors.grey[400],
+  //         ),
+  //         SizedBox(height: ResponsiveDimensions.f(8)),
+  //         Text(
+  //           'لا توجد كلمات مفتاحية متاحة',
+  //           style: getRegular(
+  //             fontSize: ResponsiveDimensions.f(14),
+  //             color: Colors.grey,
+  //           ),
+  //         ),
+  //         SizedBox(height: ResponsiveDimensions.f(4)),
+  //         Text(
+  //           'جرب البحث بكلمات مختلفة',
+  //           style: getRegular(fontSize: ResponsiveDimensions.f(12)),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class SelectedKeywordsWidget extends StatelessWidget {
@@ -433,19 +429,17 @@ class SelectedKeywordsWidget extends StatelessWidget {
             Text('الكلمات المفتاحية المختارة', style: getMedium()),
             const Spacer(),
             GetBuilder<KeywordController>(
-              builder: (_) =>
-                  Text(
-                    '${controller.selectedKeywords.length}/${KeywordController
-                        .maxKeywords}',
-                    style: getRegular(
-                      fontSize: ResponsiveDimensions.f(14),
-                      color:
+              builder: (_) => Text(
+                '${controller.selectedKeywords.length}/${KeywordController.maxKeywords}',
+                style: getRegular(
+                  fontSize: ResponsiveDimensions.f(14),
+                  color:
                       controller.selectedKeywords.length >=
                           KeywordController.maxKeywords
-                          ? Colors.red
-                          : Colors.grey,
-                    ),
-                  ),
+                      ? Colors.red
+                      : Colors.grey,
+                ),
+              ),
             ),
           ],
         ),
@@ -466,25 +460,25 @@ class SelectedKeywordsWidget extends StatelessWidget {
     return Container(
       height: ResponsiveDimensions.f(120),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppColors.primary50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.primary400),
       ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.tag,
-              size: ResponsiveDimensions.f(40),
-              color: Colors.grey[300],
-            ),
-            SizedBox(height: ResponsiveDimensions.f(8)),
+            // Icon(
+            //   Icons.tag,
+            //   size: ResponsiveDimensions.f(40),
+            //   color: Colors.grey[300],
+            // ),
+            // SizedBox(height: ResponsiveDimensions.f(8)),
             Text(
               'لا توجد كلمات مفتاحية مختارة',
               style: getRegular(
                 fontSize: ResponsiveDimensions.f(14),
-                color: Colors.grey,
+                color: AppColors.primary400,
               ),
             ),
             SizedBox(height: ResponsiveDimensions.f(4)),
@@ -492,7 +486,7 @@ class SelectedKeywordsWidget extends StatelessWidget {
               'اختر من الكلمات المفتاحية المتاحة',
               style: getRegular(
                 fontSize: ResponsiveDimensions.f(12),
-                color: Colors.grey,
+                color: AppColors.primary400,
               ),
             ),
           ],
@@ -581,25 +575,24 @@ class KeywordBottomActionsWidget extends StatelessWidget {
           SizedBox(width: ResponsiveDimensions.f(12)),
           Expanded(
             child: GetBuilder<KeywordController>(
-              builder: (_) =>
-                  ElevatedButton(
-                    onPressed: controller.isFormValid
-                        ? () => controller.confirmSelection()
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary400,
-                      padding: EdgeInsets.symmetric(
-                        vertical: ResponsiveDimensions.f(14),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'تأكيد الاختيار',
-                      style: getMedium(color: Colors.white),
-                    ),
+              builder: (_) => ElevatedButton(
+                onPressed: controller.isFormValid
+                    ? () => controller.confirmSelection()
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary400,
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveDimensions.f(14),
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'تأكيد الاختيار',
+                  style: getMedium(color: Colors.white),
+                ),
+              ),
             ),
           ),
         ],

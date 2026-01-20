@@ -133,6 +133,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                padding: EdgeInsets.all(5),
                 width: ResponsiveDimensions.responsiveWidth(40),
                 height: ResponsiveDimensions.responsiveWidth(40),
                 decoration: BoxDecoration(
@@ -154,6 +155,7 @@ class _DraggableImageGridState extends State<DraggableImageGrid> {
               ),
               SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
               Text(
+                textAlign: TextAlign.center,
                 'اضف او اسحب صورة او فيديو ',
                 style: TextStyle(
                   fontSize: ResponsiveDimensions.responsiveFontSize(12),

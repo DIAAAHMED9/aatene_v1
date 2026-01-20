@@ -93,7 +93,7 @@ class _VariationCardState extends State<VariationCard> {
                 Row(
                   children: [
                     Text(
-                      widget.variation.isActive.value ? 'مفعل' : 'غير مفعل',
+                      widget.variation.isActive.value ? 'تفعيل السمة' : 'غير مفعل',
                       style: getRegular(
                         fontSize: ResponsiveDimensions.f(14),
                         fontWeight: FontWeight.w300,
@@ -117,7 +117,7 @@ class _VariationCardState extends State<VariationCard> {
                 Container(
                   width: 40,
                   height: 40,
-                  padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
+                  // padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
                   decoration: BoxDecoration(
                     color: Colors.red[50],
                     borderRadius: BorderRadius.circular(8),
@@ -343,27 +343,32 @@ class _VariationCardState extends State<VariationCard> {
           ),
         ),
         SizedBox(height: ResponsiveDimensions.f(3)),
-        TextField(
-          controller: _priceController,
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
-            hintText: '0.0',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(100)),
-              borderSide: BorderSide(color: AppColors.primary300, width: 1.0),
-            ),
-            suffixText: '₪',
-          ),
+        SizedBox(
+          height: 50,
+          child: TextField(
 
-          onChanged: (value) {
-            final price = double.tryParse(value) ?? 0.0;
-            widget.variation.price.value = price;
-            widget.controller.saveCurrentState();
-          },
+            controller: _priceController,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              hintText: '0.0',
+              hintStyle: getMedium(fontSize: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(100),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(100)),
+                borderSide: BorderSide(color: AppColors.primary300, width: 1.0),
+              ),
+              suffixText: '₪',
+            ),
+
+            onChanged: (value) {
+              final price = double.tryParse(value) ?? 0.0;
+              widget.variation.price.value = price;
+              widget.controller.saveCurrentState();
+            },
+          ),
         ),
       ],
     );

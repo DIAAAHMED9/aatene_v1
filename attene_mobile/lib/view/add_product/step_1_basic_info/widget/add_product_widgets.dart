@@ -313,7 +313,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                     : media.name,
                 style: getRegular(
                   color: Colors.white,
-                  fontSize: ResponsiveDimensions.f(8),
+                  fontSize: ResponsiveDimensions.f(10),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -416,6 +416,7 @@ class PriceSectionWidget extends StatelessWidget {
                 TextFiledAatene(
                   heightTextFiled: ResponsiveDimensions.f(50),
                   controller: controller.priceController,
+                  textInputType: TextInputType.number,
                   isRTL: isRTL,
                   hintText: 'السعر',
                   errorText: controller.fieldErrors.containsKey('price')
@@ -497,6 +498,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
+                    height: 50,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: controller.fieldErrors.containsKey('category')
@@ -515,7 +517,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                         decoration: InputDecoration(
                           hintText: 'اختر فئة المنتج',
                           hintStyle: getRegular(
-                            fontSize: ResponsiveDimensions.f(14),
+                            fontSize: ResponsiveDimensions.f(12),
                             color: Colors.grey,
                           ),
                           border: InputBorder.none,
@@ -537,7 +539,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                               maxLines: 1,
                               style: TextStyle(
                                 fontFamily: "PingAR",
-                                fontSize: ResponsiveDimensions.f(14),
+                                fontSize: ResponsiveDimensions.f(12),
                                 color:
                                     categoryId ==
                                         controller
@@ -661,7 +663,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                   error,
                   style: getRegular(
                     color: Colors.red,
-                    fontSize: ResponsiveDimensions.f(14),
+                    fontSize: ResponsiveDimensions.f(12),
                   ),
                 ),
               ),
@@ -704,7 +706,7 @@ class CategoriesSectionWidget extends StatelessWidget {
             text,
             style: getRegular(
               color: Colors.grey,
-              fontSize: ResponsiveDimensions.f(14),
+              fontSize: ResponsiveDimensions.f(12),
             ),
           ),
         ],
@@ -728,6 +730,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
             TextWithStar(text: "حالة المنتج"),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
+              height: 50,
               decoration: BoxDecoration(
                 border: Border.all(
                   color: controller.fieldErrors.containsKey('condition')
@@ -744,7 +747,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'اختر حالة المنتج',
                   hintStyle: getRegular(
-                    fontSize: ResponsiveDimensions.f(14),
+                    fontSize: ResponsiveDimensions.f(12),
                     color: Colors.grey,
                   ),
                   border: InputBorder.none,
@@ -761,7 +764,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                       condition,
                       style: TextStyle(
                         fontFamily: "PingAR",
-                        fontSize: ResponsiveDimensions.f(14),
+                        fontSize: ResponsiveDimensions.f(12),
                         color: condition == controller.selectedCondition
                             ? AppColors.primary400
                             : Colors.black,

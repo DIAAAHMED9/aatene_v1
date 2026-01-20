@@ -75,7 +75,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 onPressed: () {
                   controller.debugDescription();
                 },
-                icon: Icon(Icons.bug_report),
+                icon: Icon(Icons.edit_note_rounded),
                 tooltip: 'تصحيح الوصف',
               ),
             ],

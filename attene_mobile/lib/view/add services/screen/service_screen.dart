@@ -63,6 +63,8 @@ class ServiceScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25),
               ),
               child: TextField(
+                textInputAction: TextInputAction.next,
+
                 onChanged: (value) {
                   controller.serviceTitle.value = value.trim();
                   controller.isServiceTitleError.value =
@@ -368,6 +370,7 @@ class ServiceScreen extends StatelessWidget {
             return SizedBox(
               height: ResponsiveDimensions.responsiveHeight(50),
               child: TextField(
+                textInputAction: TextInputAction.next,
                 controller: controller.specializationTextController,
                 onSubmitted: (value) {
                   if (controller.canAddSpecialization) {
@@ -524,6 +527,7 @@ class ServiceScreen extends StatelessWidget {
             return SizedBox(
               height: ResponsiveDimensions.responsiveHeight(50),
               child: TextField(
+                textInputAction: TextInputAction.done,
                 controller: controller.keywordTextController,
                 onSubmitted: (value) {
                   if (controller.canAddKeyword) {

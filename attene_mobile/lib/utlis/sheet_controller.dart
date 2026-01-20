@@ -867,7 +867,7 @@ class BottomSheetController extends GetxController {
                       selectSection(value);
                     }
                   },
-                  activeColor: AppColors.primary300,
+                  activeColor: AppColors.primary400,
                 ),
               ),
 
