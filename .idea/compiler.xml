@@ -2,16 +2,18 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="android.file_picker" target="21" />
-      <module name="android.flutter_secure_storage" target="21" />
-      <module name="android.fluttertoast" target="21" />
+      <module name="android.firebase_core" target="21" />
+      <module name="android.firebase_messaging" target="21" />
+      <module name="android.flutter_plugin_android_lifecycle" target="21" />
+      <module name="android.image_picker_android" target="21" />
       <module name="android.package_info_plus" target="21" />
-      <module name="android.share_plus" target="21" />
+      <module name="android.path_provider_android" target="21" />
+      <module name="android.shared_preferences_android" target="21" />
+      <module name="android.sqflite_android" target="21" />
+      <module name="android.url_launcher_android" target="21" />
+      <module name="android.video_player_android" target="21" />
       <module name="android.wakelock_plus" target="21" />
       <module name="com.baseflow.permissionhandler.android.permission_handler_android" target="21" />
-      <module name="gradle" target="21" />
-      <module name="gradle.main" target="11" />
-      <module name="gradle.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

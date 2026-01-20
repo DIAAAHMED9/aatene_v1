@@ -282,8 +282,8 @@ class _InfoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-      padding: const EdgeInsets.all(16.0),
+      // margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+      padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: const Color(0XFFF0F7FF),
         borderRadius: BorderRadius.circular(12),
@@ -319,8 +319,8 @@ class _StoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      // margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(10),
 
       child: Row(
         children: [

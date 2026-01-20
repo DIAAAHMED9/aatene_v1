@@ -15,21 +15,60 @@ class VariationToggleWidget extends StatelessWidget {
           children: [
             Text('هل يوجد اختلافات للمنتج؟', style: getMedium()),
             SizedBox(width: ResponsiveDimensions.w(8)),
-            Icon(
-              Icons.help_outline,
-              color: AppColors.primary400,
-              size: ResponsiveDimensions.w(20),
-            ),
+           GestureDetector(
+
+             onTap: () {
+               showDialog(
+                 context: context,
+                 builder: (context) => AlertDialog(
+                   title: Text(
+                     'ما هي الاختلافات',
+                     textAlign: TextAlign.center,
+                     style: getBold(fontSize: ResponsiveDimensions.f(18)),
+                   ),
+                   actions: [
+                     AateneButton(
+                       onTap: () => Get.back(),
+                       buttonText: 'الغاء',
+                       color: AppColors.primary400,
+                       textColor: AppColors.light1000,
+                       borderColor: AppColors.primary400,
+                     ),
+
+                   ],
+                   content: Text(
+                     textAlign: TextAlign.center,
+
+                     'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
+                     style: getMedium(),
+                   ),
+                 ),
+               );
+             },
+
+             child: Row(
+               spacing: 5,
+               children: [
+                 Icon(
+                      Icons.help_outline,
+                      color: AppColors.primary300,
+                      size: ResponsiveDimensions.w(20),
+                    ),
+                 Text("ما هي اختلافات المنتج",style: getMedium(fontSize: 12,color: AppColors.primary300),),
+               ],
+             ),
+           ),
+
           ],
         ),
         SizedBox(height: ResponsiveDimensions.h(4)),
-        Text(
-          'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
-          style: getRegular(
-            fontSize: ResponsiveDimensions.f(14),
-            color: Colors.grey,
-          ),
-        ),
+        // Text(
+        //   'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
+        //   style: getRegular(
+        //     fontSize: ResponsiveDimensions.f(14),
+        //     color: Colors.grey,
+        //   ),
+        // ),
         SizedBox(height: ResponsiveDimensions.h(16)),
         GetBuilder<ProductVariationController>(
           id: 'variations',

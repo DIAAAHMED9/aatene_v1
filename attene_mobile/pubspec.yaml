@@ -72,17 +72,18 @@ dependencies:
   audioplayers: ^6.5.1
   just_audio: ^0.10.5
   internet_connection_checker: ^3.0.1
-  firebase_core: ^4.3.0
-  firebase_messaging: ^16.1.0
+  firebase_core: ^4.4.0
+  firebase_messaging: ^16.1.1
   intl: null
   intl_phone_number_input: ^0.7.5
   json_annotation: ^4.9.0
-  package_info_plus: ^9.0.0
+  package_info_plus: ^8.0.0
   permission_handler: ^12.0.1
   rating_summary: ^1.0.4
-  share_plus: ^12.0.1
+#  share_plus: ^11.3.0
   shared_preferences: ^2.5.4
   shimmer: ^3.0.0
+#  wakelock_plus: ^2.0.0
   sliding_up_panel: ^2.0.0+1
   smooth_page_indicator: ^2.0.1
   timeago: ^3.7.1
@@ -92,6 +93,7 @@ dependencies:
   path_provider: ^2.1.5
   uuid: ^4.5.2
   flutter_keyboard_visibility: ^6.0.0
+  share_plus: ^12.0.1
 flutter_native_splash:
   color: "#42a5f5"
   image: assets/images/splash_screen/splash_screen.png
@@ -104,8 +106,8 @@ flutter_native_splash:
     image: assets/images/splash_screen/splash_screen.png
     icon_background_color: "#111111"
 dev_dependencies:
-  auto_mappr: ^2.5.0
-  build_runner: ^2.4.10
+#  auto_mappr: ^2.5.0
+#  build_runner: ^2.4.10
   #  flutter_launcher_icons: "^0.14.4"
   #
   #flutter_launcher_icons:
@@ -134,8 +136,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.8.0
-  flutter_riverpod: ^2.5.1
+#  json_serializable: ^6.11.4
+#  flutter_riverpod: ^3.2.0
   flutter_launcher_icons: ^0.14.4
 flutter_launcher_icons:
   android: true

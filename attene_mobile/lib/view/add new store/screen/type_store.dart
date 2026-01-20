@@ -28,6 +28,7 @@ class TypeStore extends GetView<CreateStoreController> {
                 child: Icon(Icons.arrow_back, color: AppColors.neutral100),
               ),
             ),
+
           ),
           body: TypeStoreBody(
             controller: controller,

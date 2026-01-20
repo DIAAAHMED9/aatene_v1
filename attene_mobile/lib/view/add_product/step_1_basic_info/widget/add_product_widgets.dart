@@ -213,7 +213,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
     final controller = Get.find<AddProductController>();
 
     return Container(
-      height: ResponsiveDimensions.f(100),
+      height: ResponsiveDimensions.f(150),
       margin: EdgeInsets.only(bottom: ResponsiveDimensions.f(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,8 +246,8 @@ class ImageUploadSectionWidget extends StatelessWidget {
     final controller = Get.find<AddProductController>();
 
     return Container(
-      width: ResponsiveDimensions.f(80),
-      height: ResponsiveDimensions.f(80),
+      width: ResponsiveDimensions.f(150),
+      height: ResponsiveDimensions.f(150),
       margin: EdgeInsets.only(left: ResponsiveDimensions.f(8)),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),

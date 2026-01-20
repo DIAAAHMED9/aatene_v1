@@ -442,72 +442,25 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
             color: Colors.white,
             border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
           ),
-          child: Row(
-            spacing: 5,
-            children: [
-              Expanded(
-                child:
-                AateneButton(
-                  onTap:                   () {
-    setState(() {
-    _currentStep = 0;
-    _attributeSearchQuery = '';
-    });
-    },
-
-    buttonText: "رجوع للسمات",
-                  textColor: AppColors.primary400,
-                  borderColor: AppColors.primary400,
-                  color: AppColors.light1000,
-                ),
-                // OutlinedButton(
-                //   onPressed: () {
-                //     setState(() {
-                //       _currentStep = 0;
-                //       _attributeSearchQuery = '';
-                //     });
-                //   },
-                //   style: OutlinedButton.styleFrom(
-                //     padding: EdgeInsets.symmetric(vertical: 14),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //     side: BorderSide(color: AppColors.primary400!),
-                //   ),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       SizedBox(width: 6),
-                //       Text(
-                //         'رجوع للسمات',
-                //         style: getRegular(color: AppColors.primary400),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ),
-              Expanded(
-                child:
-                AateneButton(
-                  onTap:_saveAndClose,
-                  buttonText: "حفظ",
-                  textColor: AppColors.light1000,
-                  borderColor: AppColors.primary400,
-                  color: AppColors.primary400,
-                ),
-                // ElevatedButton(
-                //   onPressed: _saveAndClose,
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: AppColors.primary400,
-                //     padding: EdgeInsets.symmetric(vertical: 14),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //   ),
-                //   child: Text('حفظ', style: getRegular(color: Colors.white)),
-                // ),
-              ),
-            ],
+          child: Expanded(
+            child: AateneButton(
+              onTap: _saveAndClose,
+              buttonText: "حفظ",
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
+              color: AppColors.primary400,
+            ),
+            // ElevatedButton(
+            //   onPressed: _saveAndClose,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: AppColors.primary400,
+            //     padding: EdgeInsets.symmetric(vertical: 14),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(8),
+            //     ),
+            //   ),
+            //   child: Text('حفظ', style: getRegular(color: Colors.white)),
+            // ),
           ),
         ),
       ],

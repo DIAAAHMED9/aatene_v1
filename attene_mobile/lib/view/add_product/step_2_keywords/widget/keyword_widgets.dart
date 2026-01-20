@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -145,7 +144,10 @@ class StoreSelectorWidget extends StatelessWidget {
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
         ElevatedButton.icon(
-          onPressed: () => Get.find<KeywordController>().reloadStores,
+          onPressed: () =>
+          Get
+              .find<KeywordController>()
+              .reloadStores,
           icon: Icon(Icons.refresh),
           label: Text('إعادة المحاولة'),
           style: ElevatedButton.styleFrom(
@@ -190,67 +192,61 @@ class StoreSelectorWidget extends StatelessWidget {
   }
 
   Widget _buildStoreDropdown(KeywordController controller) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<Store>(
-          isExpanded: true,
-          value: controller.selectedStore.value,
-          decoration: InputDecoration(
-            hintText: controller.hasStores
-                ? 'اختر المتجر'
-                : 'لا توجد متاجر متاحة',
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: ResponsiveDimensions.f(16),
-              vertical: ResponsiveDimensions.f(16),
-            ),
+    return DropdownButtonHideUnderline(
+      child: DropdownButtonFormField<Store>(
+        isExpanded: true,
+        value: controller.selectedStore.value,
+        decoration: InputDecoration(
+          hintText: controller.hasStores
+              ? 'اختر المتجر'
+              : 'لا توجد متاجر متاحة',
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: ResponsiveDimensions.f(16),
+            vertical: ResponsiveDimensions.f(16),
           ),
-          items: controller.stores.map((store) {
-            return DropdownMenuItem(
-              value: store,
-              child: Container(
-                constraints: BoxConstraints(
-                  minHeight: ResponsiveDimensions.f(60),
-                ),
-                child: Row(
-                  children: [
-                    if (store.logoUrl != null && store.logoUrl!.isNotEmpty)
-                      Container(
-                        width: ResponsiveDimensions.f(30),
-                        height: ResponsiveDimensions.f(30),
-                        margin: EdgeInsets.only(
-                          left: ResponsiveDimensions.f(8),
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: NetworkImage(store.logoUrl!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+        ),
+        items: controller.stores.map((store) {
+          return DropdownMenuItem(
+            value: store,
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: ResponsiveDimensions.f(50),
+              ),
+              child: Row(
+                children: [
+                  if (store.logoUrl != null && store.logoUrl!.isNotEmpty)
+                    Container(
+                      width: ResponsiveDimensions.f(30),
+                      height: ResponsiveDimensions.f(30),
+                      margin: EdgeInsets.only(
+                        left: ResponsiveDimensions.f(8),
                       ),
-                    Expanded(
-                      child: Text(
-                        store.name,
-                        style: getRegular(fontSize: ResponsiveDimensions.f(14)),
-                        overflow: TextOverflow.ellipsis,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        image: DecorationImage(
+                          image: NetworkImage(store.logoUrl!),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  Expanded(
+                    child: Text(
+                      store.name,
+                      style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-            );
-          }).toList(),
-          onChanged: (Store? value) {
-            if (value != null) {
-              controller.setSelectedStore(value);
-            }
-          },
-        ),
+            ),
+          );
+        }).toList(),
+        onChanged: (Store? value) {
+          if (value != null) {
+            controller.setSelectedStore(value);
+          }
+        },
       ),
     );
   }
@@ -261,37 +257,20 @@ class KeywordSearchBoxWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRTL = LanguageUtils.isRTL;
+
     final controller = Get.find<KeywordController>();
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller.searchController,
-              onSubmitted: (value) => controller.addCustomKeyword(),
-              decoration: InputDecoration(
-                hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveDimensions.f(16),
-                  vertical: ResponsiveDimensions.f(14),
-                ),
-                hintStyle: getRegular(
-                  color: Colors.grey,
-                  fontSize: ResponsiveDimensions.f(14),
-                ),
-              ),
-            ),
-          ),
-          GetBuilder<KeywordController>(
-            builder: (_) => _buildAddButton(controller),
-          ),
-        ],
+    return TextFiledAatene(isRTL: isRTL,
+      hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
+      textInputAction: TextInputAction.done,
+      controller: controller.searchController,
+      onSubmitted: (value) => controller.addCustomKeyword(),
+      suffixIcon: Padding(
+        padding: const EdgeInsets.only(top: 3,bottom: 3),
+        child: GetBuilder<KeywordController>(
+          builder: (_) => _buildAddButton(controller),
+        ),
       ),
     );
   }
@@ -301,8 +280,8 @@ class KeywordSearchBoxWidget extends StatelessWidget {
     final canAddMore = controller.canAddMoreKeywords;
     final isDuplicate = hasText
         ? controller.selectedKeywords.contains(
-            controller.searchController.text.trim(),
-          )
+      controller.searchController.text.trim(),
+    )
         : false;
 
     String tooltipMessage = '';
@@ -315,7 +294,7 @@ class KeywordSearchBoxWidget extends StatelessWidget {
       buttonColor = Colors.orange[300]!;
     } else if (!canAddMore) {
       tooltipMessage =
-          'تم الوصول للحد الأقصى (${KeywordController.maxKeywords} كلمة)';
+      'تم الوصول للحد الأقصى (${KeywordController.maxKeywords} كلمة)';
       buttonColor = Colors.red[300]!;
     } else {
       tooltipMessage = 'إضافة الكلمة المفتاحية';
@@ -454,17 +433,19 @@ class SelectedKeywordsWidget extends StatelessWidget {
             Text('الكلمات المفتاحية المختارة', style: getMedium()),
             const Spacer(),
             GetBuilder<KeywordController>(
-              builder: (_) => Text(
-                '${controller.selectedKeywords.length}/${KeywordController.maxKeywords}',
-                style: getRegular(
-                  fontSize: ResponsiveDimensions.f(14),
-                  color:
+              builder: (_) =>
+                  Text(
+                    '${controller.selectedKeywords.length}/${KeywordController
+                        .maxKeywords}',
+                    style: getRegular(
+                      fontSize: ResponsiveDimensions.f(14),
+                      color:
                       controller.selectedKeywords.length >=
                           KeywordController.maxKeywords
-                      ? Colors.red
-                      : Colors.grey,
-                ),
-              ),
+                          ? Colors.red
+                          : Colors.grey,
+                    ),
+                  ),
             ),
           ],
         ),
@@ -600,24 +581,25 @@ class KeywordBottomActionsWidget extends StatelessWidget {
           SizedBox(width: ResponsiveDimensions.f(12)),
           Expanded(
             child: GetBuilder<KeywordController>(
-              builder: (_) => ElevatedButton(
-                onPressed: controller.isFormValid
-                    ? () => controller.confirmSelection()
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary400,
-                  padding: EdgeInsets.symmetric(
-                    vertical: ResponsiveDimensions.f(14),
+              builder: (_) =>
+                  ElevatedButton(
+                    onPressed: controller.isFormValid
+                        ? () => controller.confirmSelection()
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary400,
+                      padding: EdgeInsets.symmetric(
+                        vertical: ResponsiveDimensions.f(14),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'تأكيد الاختيار',
+                      style: getMedium(color: Colors.white),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'تأكيد الاختيار',
-                  style: getMedium(color: Colors.white),
-                ),
-              ),
             ),
           ),
         ],
