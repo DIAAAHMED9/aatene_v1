@@ -18,7 +18,6 @@ import flutter_local_notifications
 import flutter_secure_storage_darwin
 import just_audio
 import package_info_plus
-import path_provider_foundation
 import quill_native_bridge_macos
 import record_macos
 import share_plus
