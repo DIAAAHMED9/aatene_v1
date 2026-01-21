@@ -166,7 +166,7 @@ class RegisterController extends GetxController {
         await Future.delayed(const Duration(milliseconds: 1500));
 
         print('Navigating to login screen...');
-        Get.offAllNamed('/login');
+        Get.toNamed('/login');
       } else {
         print('Registration failed with response: $response');
         _handleApiError(response);

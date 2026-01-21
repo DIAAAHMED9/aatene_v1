@@ -63,7 +63,7 @@ dependencies:
   flutter_svg: ^2.2.3
   fluttertoast: ^9.0.0
   get_it: ^9.2.0
-  go_router: ^17.0.1
+  # go_router: ^17.0.1
   device_info_plus: ^12.3.0
   flutter_local_notifications: ^19.5.0
   readmore: ^3.0.0
@@ -81,7 +81,7 @@ dependencies:
   permission_handler: ^12.0.1
   rating_summary: ^1.0.4
 #  share_plus: ^11.3.0
-  shared_preferences: ^2.5.4
+  shared_preferences: 2.5.3
   shimmer: ^3.0.0
 #  wakelock_plus: ^2.0.0
   sliding_up_panel: ^2.0.0+1

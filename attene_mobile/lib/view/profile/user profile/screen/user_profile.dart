@@ -3,7 +3,7 @@ import 'package:attene_mobile/view/profile/user%20profile/widget/rating_profile_
 import 'package:attene_mobile/view/profile/user%20profile/widget/sellect_report.dart';
 import 'package:attene_mobile/view/profile/user%20profile/widget/story_items.dart';
 import 'package:attene_mobile/view/profile/user%20profile/widget/silver_tabs.dart';
-import 'package:readmore/readmore.dart';
+// import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 import '../controller/user_controller.dart';
 import '../widget/vendor_card.dart';
@@ -655,19 +655,19 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text('Bio', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              ReadMoreText(
-                'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',
-                trimMode: TrimMode.Line,
-                trimLines: 3,
-                colorClickableText: AppColors.neutral500,
-                trimCollapsedText: 'عرض المزيد',
-                trimExpandedText: 'عرض أقل',
-                moreStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary400,
-                ),
-              ),
+              // ReadMoreText(
+              //   'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',
+              //   trimMode: TrimMode.Line,
+              //   trimLines: 3,
+              //   colorClickableText: AppColors.neutral500,
+              //   trimCollapsedText: 'عرض المزيد',
+              //   trimExpandedText: 'عرض أقل',
+              //   moreStyle: TextStyle(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.bold,
+              //     color: AppColors.primary400,
+              //   ),
+              // ),
             ],
           ),
         ),
