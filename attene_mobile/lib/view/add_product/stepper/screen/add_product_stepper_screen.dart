@@ -1,5 +1,3 @@
-
-
 import '../../../../component/custom_stepper/stepper_step.dart';
 import '../../../../general_index.dart';
 
@@ -120,14 +118,35 @@ class _DemoStepperScreenState
       final result = await Get.defaultDialog<bool>(
         title: 'تأكيد',
         middleText: 'هل تريد حفظ التغييرات قبل المغادرة؟',
-        textConfirm: 'حفظ والخروج',
-        textCancel: 'الخروج بدون حفظ',
-        confirmTextColor: Colors.white,
-        onConfirm: () async {
-          await _saveProgress();
-          Get.back(result: true);
-        },
-        onCancel: () => Get.back(result: true),
+        // textConfirm: 'حفظ والخروج',
+        // textCancel:,
+        actions: [
+          AateneButton(
+            onTap: () async {
+              await _saveProgress();
+              Get.back(result: true);
+            },
+            buttonText: 'حفظ والخروج',
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+          SizedBox(height: 10),
+          AateneButton(
+            onTap: () => Get.back(result: true),
+            buttonText: 'الخروج بدون حفظ',
+            color: AppColors.light1000,
+            textColor: AppColors.primary400,
+            borderColor: AppColors.primary400,
+          ),
+        ],
+
+        // confirmTextColor: Colors.white,
+        // onConfirm: () async {
+        //   await _saveProgress();
+        //   Get.back(result: true);
+        // },
+        // onCancel: () => Get.back(result: true),
       );
       return result ?? false;
     }
@@ -173,7 +192,11 @@ class _DemoStepperScreenState
         final validation = addProductController.validateStep();
 
         if (!validation['isValid']) {
-          AddProductStepperDialogs.showStepErrors(errors: validation['errors'] ?? {}, stepName: 'المعلومات الأساسية', fieldNameResolver: _getFieldDisplayName);
+          AddProductStepperDialogs.showStepErrors(
+            errors: validation['errors'] ?? {},
+            stepName: 'المعلومات الأساسية',
+            fieldNameResolver: _getFieldDisplayName,
+          );
           return false;
         }
         return true;
@@ -184,7 +207,11 @@ class _DemoStepperScreenState
         final validation = productController.validateStep(0);
 
         if (!validation['isValid']) {
-          AddProductStepperDialogs.showStepErrors(errors: validation['errors'] ?? {}, stepName: 'المعلومات الأساسية', fieldNameResolver: _getFieldDisplayName);
+          AddProductStepperDialogs.showStepErrors(
+            errors: validation['errors'] ?? {},
+            stepName: 'المعلومات الأساسية',
+            fieldNameResolver: _getFieldDisplayName,
+          );
           return false;
         }
         return true;
@@ -223,6 +250,7 @@ class _DemoStepperScreenState
       return false;
     }
   }
+
   String _getFieldDisplayName(String fieldKey) {
     switch (fieldKey) {
       case 'productName':
@@ -312,7 +340,13 @@ class _DemoStepperScreenState
       }
 
       if (result['success'] == true) {
-        AddProductStepperDialogs.showSuccessDialog(result: result, onOk: () { Get.offAllNamed('/mainScreen'); _resetControllers(); });
+        AddProductStepperDialogs.showSuccessDialog(
+          result: result,
+          onOk: () {
+            Get.offAllNamed('/mainScreen');
+            _resetControllers();
+          },
+        );
       } else {
         final errorMessage =
             result['message']?.toString() ?? 'فشل في إضافة المنتج';

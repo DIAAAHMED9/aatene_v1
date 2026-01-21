@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -66,6 +65,9 @@ class RelatedProductsScreen extends StatelessWidget {
   Widget _buildChooseProductsButton() {
     return Center(
       child: AateneButton(
+        borderColor: AppColors.primary400,
+        textColor: AppColors.primary400,
+        color: AppColors.primary50,
         buttonText: 'اختر المنتجات',
         onTap: () => Get.bottomSheet(
           ProductSelectionBottomSheet(
@@ -121,21 +123,18 @@ class RelatedProductsScreen extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.w(24)),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
+    return Center(
       child: Column(
+        spacing: 15,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            Icons.shopping_basket_outlined,
-            size: ResponsiveDimensions.w(60),
-            color: Colors.grey[400],
+          SvgPicture.asset(
+            'assets/images/svg_images/background_change.svg',
+            semanticsLabel: 'My SVG Image',
+            height: 160,
+            width: 160,
           ),
-          SizedBox(height: ResponsiveDimensions.h(16)),
+
           Text(
             'لم يتم اختيار أي منتجات بعد',
             style: getRegular(color: Colors.grey),
@@ -202,7 +201,7 @@ class RelatedProductsScreen extends StatelessWidget {
                     Row(
                       children: [
                         Icon(
-                          Icons.category_outlined,
+                          Icons.local_offer_outlined,
                           size: 12,
                           color: Colors.grey[600],
                         ),
@@ -220,13 +219,36 @@ class RelatedProductsScreen extends StatelessWidget {
               ),
             ),
           ),
-          Text(_formatPrice(product.price ?? '0'), style: getBold()),
-          IconButton(
-            onPressed: () => Get.find<RelatedProductsController>()
-                .removeSelectedProduct(product),
-            icon: const Icon(Icons.close, color: Colors.red),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+          Padding(
+            padding: const EdgeInsets.only(left: 5),
+            child: Column(
+              spacing: 4,
+              children: [
+                Text(
+                  _formatPrice(product.price ?? '0'),
+                  style: getBold(fontSize: 14),
+                ),
+                IconButton(
+                  onPressed: () => Get.find<RelatedProductsController>()
+                      .removeSelectedProduct(product),
+                  icon: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -372,10 +394,10 @@ class RelatedProductsScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('السعر الإجمالي:'),
+                  Text('السعر الإجمالي:', style: getMedium()),
                   Text(
                     '${controller.originalPrice.toStringAsFixed(2)} ₪',
-                    style: getBold(color: Colors.green),
+                    style: getBold(color: AppColors.primary400),
                   ),
                 ],
               ),
@@ -395,6 +417,9 @@ class RelatedProductsScreen extends StatelessWidget {
                   ] else ...[
                     Expanded(
                       child: AateneButton(
+                        borderColor: AppColors.primary400,
+                        textColor: AppColors.primary400,
+                        color: AppColors.light1000,
                         buttonText: 'تخفيض',
                         onTap: () => Get.bottomSheet(
                           AddDiscountBottomSheet(
@@ -406,6 +431,9 @@ class RelatedProductsScreen extends StatelessWidget {
                     SizedBox(width: ResponsiveDimensions.w(12)),
                     Expanded(
                       child: AateneButton(
+                        borderColor: AppColors.primary400,
+                        textColor: AppColors.light1000,
+                        color: AppColors.primary400,
                         buttonText: 'حفظ',
                         onTap: () => _showSuccessMessage(),
                       ),

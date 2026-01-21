@@ -1,4 +1,3 @@
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 
@@ -10,7 +9,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
     final controller = Get.find<ServiceController>();
 
     return Container(
-      height: ResponsiveDimensions.responsiveHeight(500),
+      height: ResponsiveDimensions.responsiveHeight(620),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -148,17 +147,18 @@ class DevelopmentBottomSheet extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-
                       Expanded(
                         flex: 1,
                         child: Obx(
                           () => Container(
+                            width: 50,
+                            height: 50,
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.grey[300]!,
                                 width: 1,
                               ),
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(100),
                             ),
                             child: InkWell(
                               onTap: () {
@@ -170,9 +170,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.all(
-                                  ResponsiveDimensions.responsiveWidth(12),
-                                ),
+                                padding: EdgeInsets.only(right: 5, left: 5),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -182,7 +180,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                                       style: getRegular(
                                         fontSize:
                                             ResponsiveDimensions.responsiveFontSize(
-                                              14,
+                                              12,
                                             ),
                                       ),
                                     ),
@@ -190,7 +188,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                                       Icons.arrow_drop_down,
                                       size:
                                           ResponsiveDimensions.responsiveFontSize(
-                                            24,
+                                            15,
                                           ),
                                     ),
                                   ],
@@ -202,7 +200,6 @@ class DevelopmentBottomSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
@@ -213,33 +210,23 @@ class DevelopmentBottomSheet extends StatelessWidget {
             child: Obx(
               () => SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: controller.canAddDevelopment
+                child: AateneButton(
+                  onTap: controller.canAddDevelopment
                       ? () {
                           controller.addDevelopment();
                           Get.back();
                         }
                       : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: controller.developmentButtonColor,
-                    padding: EdgeInsets.symmetric(
-                      vertical: ResponsiveDimensions.responsiveHeight(16),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                  child: Text(
-                    'إضافة التطوير',
-                    style: TextStyle(
-                      fontFamily: "PingAR",
-                      fontSize: ResponsiveDimensions.responsiveFontSize(16),
-                      fontWeight: FontWeight.w600,
-                      color: controller.canAddDevelopment
-                          ? Colors.white
-                          : Colors.grey[600],
-                    ),
-                  ),
+                  buttonText: 'إضافة التطوير',
+                  color: controller.canAddDevelopment
+                      ? AppColors.primary400
+                      : Colors.grey[300],
+                  textColor: controller.canAddDevelopment
+                      ? Colors.white
+                      : Colors.grey[600],
+                  borderColor: controller.canAddDevelopment
+                      ? AppColors.primary400
+                      : Colors.grey[300],
                 ),
               ),
             ),

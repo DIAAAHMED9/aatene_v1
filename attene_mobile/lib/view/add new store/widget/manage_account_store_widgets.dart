@@ -221,6 +221,7 @@ class _AccountsListView extends StatelessWidget {
     );
   }
 }
+
 class _AddNewStoreButton extends StatelessWidget {
   final ManageAccountStoreController controller;
 
@@ -284,21 +285,22 @@ class _InfoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-      padding: const EdgeInsets.all(16.0),
+      // margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+      padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: const Color(0XFFF0F7FF),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, color: Colors.blue),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'يمكنك إدارة متاجرك من هنا (تعديل / حذف / إضافة متجر جديد).',
-              style: getRegular(fontSize: 13, color: Colors.blueGrey),
-            ),
+          Text(
+            "الحساب/المتجر",
+            style: getBold(fontSize: 14, color: AppColors.primary400),
+          ),
+          Spacer(),
+          Text(
+            "الاجراءات",
+            style: getMedium(fontSize: 14, color: AppColors.primary400),
           ),
         ],
       ),
@@ -320,8 +322,8 @@ class _StoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      // margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(10),
 
       child: Row(
         children: [
@@ -383,9 +385,14 @@ class _StoreCard extends StatelessWidget {
 
               decoration: BoxDecoration(
                 color: AppColors.primary100,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(Icons.edit_outlined, color: AppColors.primary400),
+              child: SvgPicture.asset(
+                'assets/images/svg_images/edit_1.svg',
+                semanticsLabel: 'My SVG Image',
+                height: 16,
+                width: 16,
+              ),
             ),
           ),
           SizedBox(width: 15),
@@ -395,14 +402,15 @@ class _StoreCard extends StatelessWidget {
             ),
             child: Container(
               padding: EdgeInsets.all(7),
-
               decoration: BoxDecoration(
                 color: AppColors.error100,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                Icons.delete_outline_outlined,
-                color: AppColors.error300,
+              child: SvgPicture.asset(
+                'assets/images/svg_images/delete_2.svg',
+                semanticsLabel: 'My SVG Image',
+                height: 16,
+                width: 16,
               ),
             ),
           ),

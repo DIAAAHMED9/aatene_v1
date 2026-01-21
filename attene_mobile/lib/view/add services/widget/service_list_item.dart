@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/index.dart';
 
@@ -42,109 +40,90 @@ class ServiceListItem extends StatelessWidget {
           onTap?.call();
         }
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          vertical: ResponsiveDimensions.f(8),
-          horizontal: ResponsiveDimensions.f(16),
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary400.withOpacity(0.1)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: isSelected
-              ? Border.all(color: AppColors.primary400, width: 2)
-              : Border.all(color: Colors.grey[200]!),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            if (isSelectionMode)
-              Padding(
-                padding: EdgeInsets.only(left: ResponsiveDimensions.f(12)),
-                child: Checkbox(
-                  value: isSelected,
-                  onChanged: (value) {
-                    onSelectionChanged?.call(value ?? false);
-                  },
-                  activeColor: AppColors.primary400,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              if (isSelectionMode)
+                Padding(
+                  padding: EdgeInsets.only(left: ResponsiveDimensions.f(5)),
+                  child: Checkbox(
+                    value: isSelected,
+                    onChanged: (value) {
+                      onSelectionChanged?.call(value ?? false);
+                    },
+                    activeColor: AppColors.primary400,
+                  ),
+                ),
+
+              _buildServiceImage(context),
+
+              SizedBox(width: ResponsiveDimensions.f(10)),
+
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveDimensions.f(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        service.title,
+                        style: getMedium(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      SizedBox(height: ResponsiveDimensions.f(4)),
+
+                      // if (service.sectionId != null && service.sectionId != 0)
+                      //   Row(
+                      //     children: [
+                      //       Icon(
+                      //         Icons.category_outlined,
+                      //         color: Colors.grey[600],
+                      //         size: ResponsiveDimensions.f(14),
+                      //       ),
+                      //       SizedBox(width: ResponsiveDimensions.f(4)),
+                      //       Text(
+                      //         _getSectionName(service.sectionId!),
+                      //         style: getRegular(
+                      //           fontSize: ResponsiveDimensions.f(12),
+                      //           color: Color(0xFF757575),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      SizedBox(height: ResponsiveDimensions.f(4)),
+                      _buildStatusChip(service.status),
+                    ],
+                  ),
                 ),
               ),
-
-            _buildServiceImage(context),
-
-            SizedBox(width: ResponsiveDimensions.f(16)),
-
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: ResponsiveDimensions.f(12),
+              Text('${service.price} ₪', style: getBold(fontSize: 12)),
+              SizedBox(width: ResponsiveDimensions.f(15)),
+              if (!isSelectionMode)
+                IconButton(
+                  onPressed: _showServiceOptions,
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: Colors.grey,
+                    size: ResponsiveDimensions.f(24),
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      service.title,
-                      style: getMedium(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    SizedBox(height: ResponsiveDimensions.f(6)),
-
-                    // if (service.sectionId != null && service.sectionId != 0)
-                    //   Row(
-                    //     children: [
-                    //       Icon(
-                    //         Icons.category_outlined,
-                    //         color: Colors.grey[600],
-                    //         size: ResponsiveDimensions.f(14),
-                    //       ),
-                    //       SizedBox(width: ResponsiveDimensions.f(4)),
-                    //       Text(
-                    //         _getSectionName(service.sectionId!),
-                    //         style: getRegular(
-                    //           fontSize: ResponsiveDimensions.f(12),
-                    //           color: Color(0xFF757575),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-
-                    SizedBox(height: ResponsiveDimensions.f(8)),
-   _buildStatusChip(service.status),
-                 
-                  ],
-                ),
-              ),
-            ),
-                        Text('${service.price} ₪', style: getBold()),
-                        SizedBox(width: ResponsiveDimensions.f(12),),
-            if (!isSelectionMode)
-              IconButton(
-                onPressed: _showServiceOptions,
-                icon: Icon(
-                  Icons.more_horiz,
-                  color: Colors.grey,
-                  size: ResponsiveDimensions.f(24),
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-          ],
-        ),
+            ],
+          ),
+          Divider(height: 3),
+        ],
       ),
     );
   }
 
   Widget _buildServiceImage(BuildContext context) {
-    final imageSize = ResponsiveDimensions.f(80);
+    final imageSize = ResponsiveDimensions.f(70);
     print(' image${service.images}');
     return Container(
       width: imageSize,
@@ -226,19 +205,19 @@ class ServiceListItem extends StatelessWidget {
         text = status;
     }
 
-    return Container( 
+    return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveDimensions.f(8),
         vertical: ResponsiveDimensions.f(4),
       ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(100),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
         text,
-        style: getMedium(fontSize: ResponsiveDimensions.f(11), color: color),
+        style: getMedium(fontSize: ResponsiveDimensions.f(10), color: color),
       ),
     );
   }
@@ -254,6 +233,7 @@ class ServiceListItem extends StatelessWidget {
   void _showServiceOptions() {
     Get.bottomSheet(
       Container(
+        padding: EdgeInsets.all(15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -309,6 +289,82 @@ class ServiceListItem extends StatelessWidget {
                 _copyService();
               },
             ),
+            Row(
+              spacing: 10,
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    child: Container(
+                      width: double.infinity,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary500.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 10,
+                        children: [
+                          SizedBox(height: 15),
+                          Icon(
+                            Icons.edit,
+                            size: ResponsiveDimensions.responsiveFontSize(32),
+                            color: AppColors.primary500,
+                          ),
+                          Text(
+                            'تعديل السؤال',
+                            style: getMedium(
+                              fontSize: 14,
+                              color: AppColors.primary500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      Get.back();
+                      _editService();
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    child: Container(
+                      width: double.infinity,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: AppColors.error300.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 10,
+                        children: [
+                          SizedBox(height: 15),
+                          Icon(
+                            Icons.delete_outline,
+                            size: ResponsiveDimensions.responsiveFontSize(32),
+                            color: AppColors.error300,
+                          ),
+                          Text(
+                            'حذف السؤال',
+                            style: getMedium(
+                              fontSize: 14,
+                              color: AppColors.error300,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      Get.back();
+                      _confirmDeleteService();
+                    },
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: ResponsiveDimensions.f(20)),
           ],
         ),
@@ -333,14 +389,23 @@ class ServiceListItem extends StatelessWidget {
         title: Text('حذف الخدمة'),
         content: Text('هل أنت متأكد من حذف الخدمة "${service.title}"؟'),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: Text('إلغاء')),
-          ElevatedButton(
-            onPressed: () {
+          AateneButton(
+            onTap: () {
               Get.back();
               _deleteService();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('حذف'),
+            buttonText: "حذف",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+          SizedBox(height: 10),
+          AateneButton(
+            onTap: () => Get.back(),
+            buttonText: "إلغاء",
+            color: AppColors.light1000,
+            textColor: AppColors.primary400,
+            borderColor: AppColors.primary400,
           ),
         ],
       ),

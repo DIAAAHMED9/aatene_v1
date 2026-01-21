@@ -179,13 +179,13 @@ class ProductVariationController extends GetxController {
 
     update([attributesUpdateId, variationsUpdateId]);
 
-    Get.snackbar(
-      value ? 'تم التفعيل' : 'تم التعطيل',
-      value ? 'تم تفعيل نظام الاختلافات' : 'تم تعطيل نظام الاختلافات',
-      backgroundColor: value ? Colors.green : Colors.orange,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
+    // Get.snackbar(
+    //   value ? 'تم التفعيل' : 'تم التعطيل',
+    //   value ? 'تم تفعيل نظام الاختلافات' : 'تم تعطيل نظام الاختلافات',
+    //   backgroundColor: value ? Colors.green : Colors.orange,
+    //   colorText: Colors.white,
+    //   duration: const Duration(seconds: 3),
+    // );
   }
 
   Future<void> openAttributesManagement() async {

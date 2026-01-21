@@ -1,7 +1,14 @@
 import '../../../general_index.dart';
 
-class PersonalInfo extends StatelessWidget {
-  const PersonalInfo({super.key});
+class PersonalInfo extends StatefulWidget {
+  PersonalInfo({super.key});
+
+  @override
+  State<PersonalInfo> createState() => _PersonalInfoState();
+}
+
+class _PersonalInfoState extends State<PersonalInfo> {
+  TextEditingController dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +53,7 @@ class PersonalInfo extends StatelessWidget {
               TextWithStar(text: "الجنس"),
               DropdownButtonFormField(
                 decoration: InputDecoration(
+                  fillColor: Colors.grey[50],
                   isDense: true,
                   border: OutlineInputBorder(
                     borderSide: BorderSide(),
@@ -74,14 +82,24 @@ class PersonalInfo extends StatelessWidget {
               ),
               TextWithStar(text: "تاريخ الميلاد"),
               TextFiledAatene(
+                controller: dateController,
+                readOnly: true,
+                onTap: () {
+                  _selectDate(context);
+                },
                 isRTL: isRTL,
                 hintText: "4/11/1998",
-                suffixIcon: Image.asset('assets/images/png/Calendar.png',width: 24,height: 24,),
+                suffixIcon: Image.asset(
+                  'assets/images/png/Calendar.png',
+                  width: 24,
+                  height: 24,
+                ),
                 textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "المدينة"),
               DropdownButtonFormField(
                 decoration: InputDecoration(
+                  fillColor: Colors.grey[50],
                   isDense: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular((50)),
@@ -110,6 +128,7 @@ class PersonalInfo extends StatelessWidget {
               TextWithStar(text: "الحي"),
               DropdownButtonFormField(
                 decoration: InputDecoration(
+                  fillColor: Colors.grey[50],
                   isDense: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular((50)),
@@ -139,6 +158,7 @@ class PersonalInfo extends StatelessWidget {
               TextField(
                 maxLines: 5,
                 decoration: InputDecoration(
+                  fillColor: Colors.grey[50],
                   hintText: "اكتب نبذة عن نفسك....",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -224,5 +244,19 @@ class PersonalInfo extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        dateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
+    }
   }
 }

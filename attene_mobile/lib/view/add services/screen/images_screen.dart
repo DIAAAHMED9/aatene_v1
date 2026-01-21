@@ -65,13 +65,13 @@ class ImagesScreenBody extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.primary100,
                     borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: AppColors.primary100),
+                    border: Border.all(color: AppColors.primary50),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.swap_horiz_sharp,
-                        color: AppColors.primary300,
+                        color: AppColors.primary400,
                         size: ResponsiveDimensions.responsiveFontSize(20),
                       ),
                       SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
@@ -82,7 +82,7 @@ class ImagesScreenBody extends StatelessWidget {
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               13,
                             ),
-                            color: AppColors.primary500,
+                            color: AppColors.primary400,
                           ),
                         ),
                       ),
@@ -96,9 +96,8 @@ class ImagesScreenBody extends StatelessWidget {
                     ResponsiveDimensions.responsiveWidth(12),
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary100,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: AppColors.primary100),
+                    color: AppColors.primary50,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     children: [
@@ -260,7 +259,7 @@ class ImagesScreenBody extends StatelessWidget {
                     vertical: ResponsiveDimensions.responsiveHeight(16),
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                   elevation: 2,
                 ),

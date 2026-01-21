@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class KeyboardDismissOnScroll extends StatelessWidget {
   final Widget child;
 
-  const KeyboardDismissOnScroll({
-    super.key,
-    required this.child,
-  });
+  const KeyboardDismissOnScroll({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

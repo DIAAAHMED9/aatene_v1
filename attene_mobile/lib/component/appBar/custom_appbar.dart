@@ -267,7 +267,7 @@ class CustomAppBarWithTabs extends StatelessWidget
                       ),
                       border: InputBorder.none,
                       hintText: isRTL
-                          ? 'ابحث عن منتج...'
+                          ? 'بحث'
                           : 'Search products...',
                       hintStyle: TextStyle(
                         color: Colors.grey[500],

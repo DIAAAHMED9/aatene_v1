@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -190,67 +189,59 @@ class StoreSelectorWidget extends StatelessWidget {
   }
 
   Widget _buildStoreDropdown(KeywordController controller) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<Store>(
-          isExpanded: true,
-          value: controller.selectedStore.value,
-          decoration: InputDecoration(
-            hintText: controller.hasStores
-                ? 'اختر المتجر'
-                : 'لا توجد متاجر متاحة',
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: ResponsiveDimensions.f(16),
-              vertical: ResponsiveDimensions.f(16),
-            ),
+    return DropdownButtonHideUnderline(
+      child: DropdownButtonFormField<Store>(
+        isExpanded: true,
+        value: controller.selectedStore.value,
+        decoration: InputDecoration(
+          hintText: controller.hasStores
+              ? 'اختر المتجر'
+              : 'لا توجد متاجر متاحة',
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: ResponsiveDimensions.f(16),
+            vertical: ResponsiveDimensions.f(16),
           ),
-          items: controller.stores.map((store) {
-            return DropdownMenuItem(
-              value: store,
-              child: Container(
-                constraints: BoxConstraints(
-                  minHeight: ResponsiveDimensions.f(60),
-                ),
-                child: Row(
-                  children: [
-                    if (store.logoUrl != null && store.logoUrl!.isNotEmpty)
-                      Container(
-                        width: ResponsiveDimensions.f(30),
-                        height: ResponsiveDimensions.f(30),
-                        margin: EdgeInsets.only(
-                          left: ResponsiveDimensions.f(8),
+        ),
+        items: controller.stores.map((store) {
+          return DropdownMenuItem(
+            value: store,
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: ResponsiveDimensions.f(50),
+              ),
+              child: Row(
+                children: [
+                  if (store.logoUrl != null && store.logoUrl!.isNotEmpty)
+                    Container(
+                      width: ResponsiveDimensions.f(30),
+                      height: ResponsiveDimensions.f(30),
+                      margin: EdgeInsets.only(left: ResponsiveDimensions.f(8)),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        image: DecorationImage(
+                          image: NetworkImage(store.logoUrl!),
+                          fit: BoxFit.cover,
                         ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: NetworkImage(store.logoUrl!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    Expanded(
-                      child: Text(
-                        store.name,
-                        style: getRegular(fontSize: ResponsiveDimensions.f(14)),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ],
-                ),
+                  Expanded(
+                    child: Text(
+                      store.name,
+                      style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-            );
-          }).toList(),
-          onChanged: (Store? value) {
-            if (value != null) {
-              controller.setSelectedStore(value);
-            }
-          },
-        ),
+            ),
+          );
+        }).toList(),
+        onChanged: (Store? value) {
+          if (value != null) {
+            controller.setSelectedStore(value);
+          }
+        },
       ),
     );
   }
@@ -261,37 +252,21 @@ class KeywordSearchBoxWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRTL = LanguageUtils.isRTL;
+
     final controller = Get.find<KeywordController>();
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller.searchController,
-              onSubmitted: (value) => controller.addCustomKeyword(),
-              decoration: InputDecoration(
-                hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveDimensions.f(16),
-                  vertical: ResponsiveDimensions.f(14),
-                ),
-                hintStyle: getRegular(
-                  color: Colors.grey,
-                  fontSize: ResponsiveDimensions.f(14),
-                ),
-              ),
-            ),
-          ),
-          GetBuilder<KeywordController>(
-            builder: (_) => _buildAddButton(controller),
-          ),
-        ],
+    return TextFiledAatene(
+      isRTL: isRTL,
+      hintText: 'اكتب الكلمة المفتاحية ثم اضغط على إضافة...',
+      textInputAction: TextInputAction.done,
+      controller: controller.searchController,
+      onSubmitted: (value) => controller.addCustomKeyword(),
+      suffixIcon: Padding(
+        padding: const EdgeInsets.only(top: 3, bottom: 3),
+        child: GetBuilder<KeywordController>(
+          builder: (_) => _buildAddButton(controller),
+        ),
       ),
     );
   }
@@ -364,78 +339,78 @@ class AvailableKeywordsWidget extends StatelessWidget {
       builder: (_) {
         final keywords = controller.filteredKeywords;
 
-        if (keywords.isEmpty) {
-          return _buildEmptyAvailableKeywords();
-        }
+        // if (keywords.isEmpty) {
+        //   return _buildEmptyAvailableKeywords();
+        // }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('الكلمات المفتاحية المتاحة', style: getMedium()),
-            SizedBox(height: ResponsiveDimensions.f(12)),
-            Wrap(
-              spacing: ResponsiveDimensions.f(8),
-              runSpacing: ResponsiveDimensions.f(8),
-              children: keywords.map((keyword) {
-                return InkWell(
-                  onTap: () => controller.addKeyword(keyword),
-                  child: Container(
-                    child: Text(
-                      keyword,
-                      style: getRegular(color: AppColors.primary400),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveDimensions.f(15),
-                      vertical: ResponsiveDimensions.f(10),
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.primary400),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+            // Text('الكلمات المفتاحية المتاحة', style: getMedium()),
+            // SizedBox(height: ResponsiveDimensions.f(12)),
+            // Wrap(
+            //   spacing: ResponsiveDimensions.f(8),
+            //   runSpacing: ResponsiveDimensions.f(8),
+            //   children: keywords.map((keyword) {
+            //     return InkWell(
+            //       onTap: () => controller.addKeyword(keyword),
+            //       child: Container(
+            //         child: Text(
+            //           keyword,
+            //           style: getRegular(color: AppColors.primary400),
+            //         ),
+            //         padding: EdgeInsets.symmetric(
+            //           horizontal: ResponsiveDimensions.f(15),
+            //           vertical: ResponsiveDimensions.f(10),
+            //         ),
+            //         decoration: BoxDecoration(
+            //           border: Border.all(color: AppColors.primary400),
+            //           borderRadius: BorderRadius.circular(25),
+            //         ),
+            //       ),
+            //     );
+            //   }).toList(),
+            // ),
           ],
         );
       },
     );
   }
 
-  Widget _buildEmptyAvailableKeywords() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.search_off,
-            size: ResponsiveDimensions.f(40),
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: ResponsiveDimensions.f(8)),
-          Text(
-            'لا توجد كلمات مفتاحية متاحة',
-            style: getRegular(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: ResponsiveDimensions.f(4)),
-          Text(
-            'جرب البحث بكلمات مختلفة',
-            style: getRegular(fontSize: ResponsiveDimensions.f(12)),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildEmptyAvailableKeywords() {
+  //   return Container(
+  //     padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey[50],
+  //       borderRadius: BorderRadius.circular(12),
+  //       border: Border.all(color: Colors.grey[300]!),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Icon(
+  //           Icons.search_off,
+  //           size: ResponsiveDimensions.f(40),
+  //           color: Colors.grey[400],
+  //         ),
+  //         SizedBox(height: ResponsiveDimensions.f(8)),
+  //         Text(
+  //           'لا توجد كلمات مفتاحية متاحة',
+  //           style: getRegular(
+  //             fontSize: ResponsiveDimensions.f(14),
+  //             color: Colors.grey,
+  //           ),
+  //         ),
+  //         SizedBox(height: ResponsiveDimensions.f(4)),
+  //         Text(
+  //           'جرب البحث بكلمات مختلفة',
+  //           style: getRegular(fontSize: ResponsiveDimensions.f(12)),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class SelectedKeywordsWidget extends StatelessWidget {
@@ -485,25 +460,25 @@ class SelectedKeywordsWidget extends StatelessWidget {
     return Container(
       height: ResponsiveDimensions.f(120),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppColors.primary50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.primary400),
       ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.tag,
-              size: ResponsiveDimensions.f(40),
-              color: Colors.grey[300],
-            ),
-            SizedBox(height: ResponsiveDimensions.f(8)),
+            // Icon(
+            //   Icons.tag,
+            //   size: ResponsiveDimensions.f(40),
+            //   color: Colors.grey[300],
+            // ),
+            // SizedBox(height: ResponsiveDimensions.f(8)),
             Text(
               'لا توجد كلمات مفتاحية مختارة',
               style: getRegular(
                 fontSize: ResponsiveDimensions.f(14),
-                color: Colors.grey,
+                color: AppColors.primary400,
               ),
             ),
             SizedBox(height: ResponsiveDimensions.f(4)),
@@ -511,7 +486,7 @@ class SelectedKeywordsWidget extends StatelessWidget {
               'اختر من الكلمات المفتاحية المتاحة',
               style: getRegular(
                 fontSize: ResponsiveDimensions.f(12),
-                color: Colors.grey,
+                color: AppColors.primary400,
               ),
             ),
           ],
@@ -540,7 +515,7 @@ class SelectedKeywordsWidget extends StatelessWidget {
             children: controller.selectedKeywords.map((keyword) {
               return Chip(
                 label: Text(keyword),
-                backgroundColor: AppColors.primary100,
+                backgroundColor: AppColors.primary50,
                 deleteIconColor: AppColors.primary400,
                 onDeleted: () => controller.removeKeyword(keyword),
                 labelStyle: getRegular(color: AppColors.primary500),

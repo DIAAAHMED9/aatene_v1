@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/responsive_dimensions.dart';
 
@@ -10,28 +9,65 @@ class VariationToggleWidget extends StatelessWidget {
     final controller = Get.find<ProductVariationController>();
 
     return Column(
+      spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text('هل يوجد اختلافات للمنتج؟', style: getMedium()),
+            Text('هل يوجد اختلافات للمنتج؟', style: getMedium(fontSize: 14)),
             SizedBox(width: ResponsiveDimensions.w(8)),
-            Icon(
-              Icons.help_outline,
-              color: AppColors.primary400,
-              size: ResponsiveDimensions.w(20),
-            ),
+           GestureDetector(
+             onTap: () {
+               showDialog(
+                 context: context,
+                 builder: (context) => AlertDialog(
+                   title: Text(
+                     'ما هي الاختلافات',
+                     textAlign: TextAlign.center,
+                     style: getBold(fontSize: ResponsiveDimensions.f(18)),
+                   ),
+                   actions: [
+                     AateneButton(
+                       onTap: () => Get.back(),
+                       buttonText: 'الغاء',
+                       color: AppColors.primary400,
+                       textColor: AppColors.light1000,
+                       borderColor: AppColors.primary400,
+                     ),
+
+                   ],
+                   content: Text(
+                     textAlign: TextAlign.center,
+
+                     'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
+                     style: getMedium(),
+                   ),
+                 ),
+               );
+             },
+
+             child: Row(
+               spacing: 5,
+               children: [
+                 Icon(
+                      Icons.help_outline,
+                      color: AppColors.primary300,
+                      size: ResponsiveDimensions.w(20),
+                    ),
+                 Text("ما هي اختلافات المنتج",style: getMedium(fontSize: 12,color: AppColors.primary300),),
+               ],
+             ),
+           ),
+
           ],
         ),
-        SizedBox(height: ResponsiveDimensions.h(4)),
-        Text(
-          'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
-          style: getRegular(
-            fontSize: ResponsiveDimensions.f(14),
-            color: Colors.grey,
-          ),
-        ),
-        SizedBox(height: ResponsiveDimensions.h(16)),
+        // Text(
+        //   'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
+        //   style: getRegular(
+        //     fontSize: ResponsiveDimensions.f(14),
+        //     color: Colors.grey,
+        //   ),
+        // ),
         GetBuilder<ProductVariationController>(
           id: 'variations',
           builder: (_) {
@@ -53,6 +89,7 @@ class VariationToggleWidget extends StatelessWidget {
             );
           },
         ),
+        AttributesManagementWidget(),
       ],
     );
   }
@@ -71,7 +108,7 @@ class VariationToggleWidget extends StatelessWidget {
           children: [
             Container(
               width: ResponsiveDimensions.w(24),
-              height: ResponsiveDimensions.w(24),
+              height: ResponsiveDimensions.h(24),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -104,7 +141,7 @@ class AttributesManagementWidget extends StatelessWidget {
 
     return AateneButton(
       buttonText: '+  إدارة السمات والصفات',
-      color: AppColors.primary100,
+      color: AppColors.primary50,
       textColor: AppColors.primary500,
       borderColor: AppColors.primary300,
       onTap: controller.openAttributesManagement,
@@ -122,9 +159,9 @@ class SelectedAttributesWidget extends StatelessWidget {
     return GetBuilder<ProductVariationController>(
       id: 'attributes',
       builder: (_) {
-        if (controller.selectedAttributes.isEmpty) {
-          return _buildNoAttributesSelected();
-        }
+        // if (controller.selectedAttributes.isEmpty) {
+        //   return _buildNoAttributesSelected();
+        // }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +176,7 @@ class SelectedAttributesWidget extends StatelessWidget {
                     vertical: ResponsiveDimensions.h(4),
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary100,
+                    color: AppColors.primary50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -164,7 +201,7 @@ class SelectedAttributesWidget extends StatelessWidget {
 
                 return Chip(
                   label: Text(attribute.name),
-                  backgroundColor: AppColors.primary100,
+                  backgroundColor: AppColors.primary50,
                   deleteIconColor: AppColors.primary400,
                   onDeleted: () =>
                       controller.removeSelectedAttribute(attribute),
@@ -182,49 +219,49 @@ class SelectedAttributesWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildNoAttributesSelected() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.w(20)),
-      margin: EdgeInsets.only(top: ResponsiveDimensions.h(16)),
-      decoration: BoxDecoration(
-        color: Colors.orange[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.orange[200]!),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.info_outline,
-            color: Colors.orange[600],
-            size: ResponsiveDimensions.w(24),
-          ),
-          SizedBox(width: ResponsiveDimensions.w(12)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'لم يتم اختيار أي سمات بعد',
-                  style: getMedium(
-                    fontSize: ResponsiveDimensions.f(14),
-                    color: Colors.orange,
-                  ),
-                ),
-                SizedBox(height: ResponsiveDimensions.h(4)),
-                Text(
-                  'انقر على "إدارة السمات والصفات" لبدء إضافة السمات',
-                  style: getRegular(
-                    fontSize: ResponsiveDimensions.f(12),
-                    color: Colors.orange,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildNoAttributesSelected() {
+  //   return Container(
+  //     padding: EdgeInsets.all(ResponsiveDimensions.w(20)),
+  //     margin: EdgeInsets.only(top: ResponsiveDimensions.h(16)),
+  //     decoration: BoxDecoration(
+  //       color: Colors.orange[50],
+  //       borderRadius: BorderRadius.circular(8),
+  //       border: Border.all(color: Colors.orange[200]!),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Icon(
+  //           Icons.info_outline,
+  //           color: Colors.orange[600],
+  //           size: ResponsiveDimensions.w(24),
+  //         ),
+  //         SizedBox(width: ResponsiveDimensions.w(12)),
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 'لم يتم اختيار أي سمات بعد',
+  //                 style: getMedium(
+  //                   fontSize: ResponsiveDimensions.f(14),
+  //                   color: Colors.orange,
+  //                 ),
+  //               ),
+  //               SizedBox(height: ResponsiveDimensions.h(4)),
+  //               Text(
+  //                 'انقر على "إدارة السمات والصفات" لبدء إضافة السمات',
+  //                 style: getRegular(
+  //                   fontSize: ResponsiveDimensions.f(12),
+  //                   color: Colors.orange,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class VariationsListWidget extends StatelessWidget {
@@ -266,17 +303,16 @@ class VariationsListWidget extends StatelessWidget {
                 ],
               )
             : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextWithStar(text: "قيم الاختلافات"),
                   Spacer(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary100,
+                      backgroundColor: AppColors.primary50,
                       elevation: 0,
                     ),
-                    onPressed: () {},
-
+                    onPressed: controller.openAttributesManagement,
                     child: Text(
                       '+ قيمة جديدة',
                       style: getRegular(color: AppColors.primary400),
@@ -309,37 +345,17 @@ class VariationsListWidget extends StatelessWidget {
   }
 
   Widget _buildNoVariations() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.w(24)),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue[200]!),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.grid_view_outlined,
-            size: ResponsiveDimensions.w(60),
-            color: Colors.blue[400],
-          ),
-          SizedBox(height: ResponsiveDimensions.h(16)),
-          Text(
-            'لم يتم إنشاء قيم الاختلافات بعد',
-            style: getRegular(color: Colors.blueAccent),
-          ),
-          SizedBox(height: ResponsiveDimensions.h(8)),
-          Text(
-            'انقر على "إنشاء قيمة جديدة" لبدء إضافة الاختلافات',
-            textAlign: TextAlign.center,
-            style: getRegular(
-              color: Colors.blueAccent,
-              fontSize: ResponsiveDimensions.f(14),
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 15,
+      children: [
+        Image.asset("assets/images/png/backgound_full.png",height: 160,width: 160,fit: BoxFit.cover,),
+        Text(
+          'لم يتم اضافة اي قيم بعد!',
+          style: getRegular(),
+        ),
+      
+      ],
     );
   }
 }

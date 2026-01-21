@@ -1,6 +1,3 @@
-
-
-
 import '../../../general_index.dart';
 
 class AddShippingMethod extends StatelessWidget {
@@ -27,9 +24,9 @@ class AddShippingMethod extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[300],
+              color: Colors.grey[100],
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary500),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
@@ -60,20 +57,19 @@ class AddShippingMethod extends StatelessWidget {
         children: [
           Text(
             "كيف توجد شحن المنتجات؟",
-            style: getBold(fontSize: 18, color: AppColors.neutral900),
+            style: getBold(fontSize: 18, color: AppColors.neutral100),
           ),
           SizedBox(height: 15),
 
           Obx(
             () => Column(
               children: [
-                _buildShippingOption(
-                  value: 'free',
-                  title: 'مجاني',
-                  subtitle: 'توصيل مجاني للمنتجات',
-                  icon: Icons.local_shipping,
-                ),
-
+                // _buildShippingOption(
+                //   value: 'free',
+                //   title: 'مجاني',
+                //   subtitle: 'توصيل مجاني للمنتجات',
+                //   icon: Icons.local_shipping,
+                // ),
                 SizedBox(height: 12),
 
                 _buildShippingOption(
@@ -270,7 +266,7 @@ class AddShippingMethod extends StatelessWidget {
               children: [
                 Text(
                   company['name']?.toString() ?? 'شركة شحن',
-                  style: getMedium(color: AppColors.neutral900),
+                  style: getMedium(color: AppColors.neutral100),
                 ),
 
                 SizedBox(height: 4),
@@ -278,13 +274,19 @@ class AddShippingMethod extends StatelessWidget {
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
-                    style: getRegular(fontSize: 12, color: Colors.grey),
+                    style: getRegular(
+                      fontSize: 12,
+                      color: AppColors.neutral100,
+                    ),
                   ),
 
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
-                    style: getRegular(fontSize: 10, color: Colors.grey),
+                    style: getRegular(
+                      fontSize: 10,
+                      color: AppColors.neutral100,
+                    ),
                   ),
               ],
             ),
@@ -338,24 +340,51 @@ class AddShippingMethod extends StatelessWidget {
     Get.defaultDialog(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف شركة الشحن هذه؟',
-      textConfirm: 'نعم، احذف',
-      textCancel: 'إلغاء',
-      confirmTextColor: Colors.white,
-      cancelTextColor: AppColors.primary400,
-      buttonColor: Colors.red,
-      onConfirm: () {
-        controller.removeShippingCompany(index);
-        Get.back();
-        Get.snackbar(
-          'تم الحذف',
-          'تم حذف شركة الشحن بنجاح',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      },
-      onCancel: () {
-        Get.back();
-      },
+      // textConfirm: 'نعم، احذف',
+      // textCancel: 'إلغاء',
+      actions: [
+        AateneButton(
+          onTap: () {
+            controller.removeShippingCompany(index);
+            Get.back();
+            Get.snackbar(
+              'تم الحذف',
+              'تم حذف شركة الشحن بنجاح',
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+          },
+          buttonText: "نعم، احذف",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(),
+          buttonText: "إلغاء",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // confirmTextColor: Colors.white,
+      // cancelTextColor: AppColors.primary400,
+      // buttonColor: Colors.red,
+      // onConfirm: () {
+      //   controller.removeShippingCompany(index);
+      //   Get.back();
+      //   Get.snackbar(
+      //     'تم الحذف',
+      //     'تم حذف شركة الشحن بنجاح',
+      //     backgroundColor: Colors.green,
+      //     colorText: Colors.white,
+      //   );
+      // },
+      // onCancel: () {
+      //   Get.back();
+      // },
     );
   }
 
@@ -367,7 +396,6 @@ class AddShippingMethod extends StatelessWidget {
         textColor: Colors.white,
         color: AppColors.primary400,
         borderColor: AppColors.primary400,
-        raduis: 10,
         onTap: () {
           _validateAndProceed();
         },
@@ -402,22 +430,46 @@ class AddShippingMethod extends StatelessWidget {
       middleText: controller.isEditMode.value
           ? 'هل تريد تحديث المتجر بالبيانات الجديدة؟'
           : 'هل تريد إنشاء المتجر الآن؟',
-      textConfirm: 'نعم',
-      textCancel: 'لا',
-      confirmTextColor: Colors.white,
-      cancelTextColor: AppColors.primary400,
-      buttonColor: AppColors.primary400,
-      onConfirm: () async {
-        Get.back();
-
-        final success = await controller.saveCompleteStore();
-        if (success ?? false) {
-          Get.until((route) => route.isFirst);
-        }
-      },
-      onCancel: () {
-        Get.back();
-      },
+      // textConfirm: 'نعم',
+      // textCancel: 'لا',
+      // confirmTextColor: Colors.white,
+      // cancelTextColor: AppColors.primary400,
+      // buttonColor: AppColors.primary400,
+      actions: [
+        AateneButton(
+          onTap: () async {
+            Get.back();
+            final success = await controller.saveCompleteStore();
+            if (success ?? false) {
+              Get.until((route) => route.isFirst);
+            }
+          },
+          buttonText: "نعم",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(),
+          buttonText: "لا",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+      //
+      // onConfirm: () async {
+      //   Get.back();
+      //
+      //   final success = await controller.saveCompleteStore();
+      //   if (success ?? false) {
+      //     Get.until((route) => route.isFirst);
+      //   }
+      // },
+      // onCancel: () {
+      //   Get.back();
+      // },
     );
   }
 }

@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -24,7 +23,7 @@ class ProductVariationsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildHeader(),
+                        // _buildHeader(),
                         SizedBox(height: ResponsiveDimensions.h(24)),
 
                         VariationToggleWidget(),
@@ -92,66 +91,46 @@ class ProductVariationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'الاختلافات والكميات',
-          style: getBold(
-            fontSize: ResponsiveDimensions.f(20),
-            color: Colors.black87,
-          ),
-        ),
-        SizedBox(height: ResponsiveDimensions.h(8)),
-        Text(
-          'إدارة اختلافات المنتج والكميات المتاحة لكل اختلاف',
-          style: getRegular(
-            fontSize: ResponsiveDimensions.f(14),
-            color: Colors.grey,
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildHeader() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         'الاختلافات والكميات',
+  //         style: getBold(
+  //           fontSize: ResponsiveDimensions.f(20),
+  //           color: Colors.black87,
+  //         ),
+  //       ),
+  //       SizedBox(height: ResponsiveDimensions.h(8)),
+  //       Text(
+  //         'إدارة اختلافات المنتج والكميات المتاحة لكل اختلاف',
+  //         style: getRegular(
+  //           fontSize: ResponsiveDimensions.f(14),
+  //           color: Colors.grey,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildNoVariationsContent() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveDimensions.w(24)),
-      margin: EdgeInsets.only(top: ResponsiveDimensions.h(40)),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.inventory_2_outlined,
-            size: ResponsiveDimensions.w(60),
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: ResponsiveDimensions.h(16)),
-          Text(
-            'المنتج بدون اختلافات',
-            style: getRegular(
-              fontSize: ResponsiveDimensions.f(16),
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: ResponsiveDimensions.h(8)),
-          Text(
-            'سيتم إضافة المنتج كصنف واحد بدون اختلافات',
-            textAlign: TextAlign.center,
-            style: getRegular(
-              fontSize: ResponsiveDimensions.f(14),
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      spacing: 15,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SvgPicture.asset(
+          'assets/images/svg_images/background_change.svg',
+          semanticsLabel: 'My SVG Image',
+          height: 160,
+          width: 160,
+        ),
+        Text(
+          'لم يتم اضافة اي اختلافات بعد!',
+          style: getRegular(),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
@@ -159,7 +138,7 @@ class ProductVariationsScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AttributesManagementWidget(),
+        // AttributesManagementWidget(),
         SizedBox(height: ResponsiveDimensions.h(20)),
 
         SelectedAttributesWidget(),

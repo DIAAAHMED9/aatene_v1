@@ -1,9 +1,6 @@
-
-
 import '../../../general_index.dart';
 import 'complaints_card.dart';
 import 'show_report.dart';
-
 
 class InquiryAboutComplaints extends StatelessWidget {
   const InquiryAboutComplaints({super.key});
@@ -50,7 +47,8 @@ class InquiryAboutComplaints extends StatelessWidget {
                   ComplaintsCard(
                     number: '8',
                     title: 'الاجمالي',
-                    backgroundColor: AppColors.backgroundColorInquiryAboutComplaints,
+                    backgroundColor:
+                        AppColors.backgroundColorInquiryAboutComplaints,
                     textColor: AppColors.primary400,
                   ),
                   ComplaintsCard(
@@ -82,6 +80,13 @@ class InquiryAboutComplaints extends StatelessWidget {
                       isRTL: isRTL,
                       hintText: "اكتب هنا",
                       textInputAction: TextInputAction.done,
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.primary400,
+                          child: const Icon(Icons.search, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
                   CircleAvatar(
@@ -102,7 +107,9 @@ class InquiryAboutComplaints extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(7),
-                  border: Border.all(color: AppColors.colorInquiryAboutComplaints),
+                  border: Border.all(
+                    color: AppColors.colorInquiryAboutComplaints,
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -121,7 +128,9 @@ class InquiryAboutComplaints extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: AppColors.colorShowReport,
-                              border: Border.all(color: AppColors.customColor02),
+                              border: Border.all(
+                                color: AppColors.customColor02,
+                              ),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(left: 5, right: 5),
@@ -163,25 +172,25 @@ class InquiryAboutComplaints extends StatelessWidget {
                               color: AppColors.primary400,
                             ),
                           ),
-
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         spacing: 5,
                         children: [
-                        Text(
-                          "التاريخ :",
-                          style: getRegular(fontSize: 10, color: Colors.grey),
-                        ),
-                        Text(
-                          "C-2020-001",
-                          style: getRegular(
-                            fontSize: 10,
-                            color: AppColors.primary400,
+                          Text(
+                            "التاريخ :",
+                            style: getRegular(fontSize: 10, color: Colors.grey),
                           ),
-                        ),
-                      ],),
+                          Text(
+                            "C-2020-001",
+                            style: getRegular(
+                              fontSize: 10,
+                              color: AppColors.primary400,
+                            ),
+                          ),
+                        ],
+                      ),
 
                       GestureDetector(
                         onTap: () {
@@ -202,7 +211,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
-                              spacing:10,
+                              spacing: 10,
                               children: [
                                 Icon(
                                   Icons.remove_red_eye_outlined,

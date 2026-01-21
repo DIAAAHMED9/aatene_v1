@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class ShippingPricingSettings extends StatefulWidget {
@@ -123,17 +121,13 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              color: AppColors.neutral700,
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey[100],
             ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 18,
-              color: Colors.black,
-            ),
+            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
       ),
@@ -147,7 +141,12 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                 children: [
-                  Expanded(child: Text("المدن التي ترسل لها المنتجات؟", style: getBold())),
+                  Expanded(
+                    child: Text(
+                      "المدن التي ترسل لها المنتجات؟",
+                      style: getBold(),
+                    ),
+                  ),
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -213,7 +212,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             child: Icon(
                               Icons.arrow_drop_down,
                               color: AppColors.primary500,
-                              size: 24,
+                              size: 15,
                             ),
                           ),
                           style: getRegular(fontSize: 15),
@@ -264,8 +263,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                         ),
                         SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: selectedNewCity != null
+                        AateneButton(
+                          onTap: selectedNewCity != null
                               ? () {
                                   _addCity(selectedNewCity!);
                                   setState(() {
@@ -274,21 +273,10 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                                   });
                                 }
                               : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary500,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            "إضافة",
-                            style: getMedium(color: Colors.white, fontSize: 15),
-                          ),
+                          buttonText: "إضافة",
+                          color: AppColors.primary400,
+                          borderColor: AppColors.primary400,
+                          textColor: AppColors.light1000,
                         ),
                       ],
                     ),
@@ -419,8 +407,8 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
         Get.snackbar(
           'خطأ',
           'يرجى إدخال موعد التسليم لـ ${workingCities[i]['name']}',
-          backgroundColor: Colors.red.shade50,
-          colorText: Colors.red.shade500,
+          backgroundColor: Colors.red.shade500,
+          colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
         );
         return;

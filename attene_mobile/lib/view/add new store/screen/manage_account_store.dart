@@ -5,7 +5,6 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
 
   @override
   Widget build(BuildContext context) {
-
     final MyAppController myAppController = Get.find<MyAppController>();
 
     return GetBuilder<ManageAccountStoreController>(
@@ -20,17 +19,16 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
                 Expanded(
                   child: KeyboardDismissOnScroll(
                     child: ManageAccountStoreBody(
-                        controller: controller,
-                        myAppController: myAppController,
-                      ),
-                    
+                      controller: controller,
+                      myAppController: myAppController,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         );
-      }
+      },
     );
   }
 }

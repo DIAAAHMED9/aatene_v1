@@ -1,5 +1,3 @@
-
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -95,7 +93,7 @@ class _VariationCardState extends State<VariationCard> {
                 Row(
                   children: [
                     Text(
-                      widget.variation.isActive.value ? 'مفعل' : 'غير مفعل',
+                      widget.variation.isActive.value ? 'تفعيل السمة' : 'غير مفعل',
                       style: getRegular(
                         fontSize: ResponsiveDimensions.f(14),
                         fontWeight: FontWeight.w300,
@@ -116,20 +114,24 @@ class _VariationCardState extends State<VariationCard> {
                   ],
                 ),
 
-                IconButton(
-                  icon: Container(
-                    padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
-                    decoration: BoxDecoration(
-                      color: Colors.red[50],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                      size: ResponsiveDimensions.f(24),
+                Container(
+                  width: 40,
+                  height: 40,
+                  // padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                        size: ResponsiveDimensions.f(20),
+                      ),
+                      onPressed: () => _showDeleteConfirmation(),
                     ),
                   ),
-                  onPressed: () => _showDeleteConfirmation(),
                 ),
               ],
             ),
@@ -271,65 +273,59 @@ class _VariationCardState extends State<VariationCard> {
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: ResponsiveDimensions.f(8)),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: selectedValue,
-            items: attribute.values.map((value) {
-              return DropdownMenuItem<String>(
-                value: value.value,
-                child: Row(
-                  children: [
-                    if (value.colorCode != null)
-                      Container(
-                        width: 16,
-                        height: 16,
-                        margin: EdgeInsets.only(right: 6),
-                        decoration: BoxDecoration(
-                          color: _parseColor(value.colorCode!),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                      ),
-                    Expanded(
-                      child: Text(
-                        value.value,
-                        style: getRegular(fontSize: ResponsiveDimensions.f(13)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+        DropdownButtonFormField<String>(
+          value: selectedValue,
+          items: attribute.values.map((value) {
+            return DropdownMenuItem<String>(
+              value: value.value,
+              child: Row(
+                children: [
+                  if (value.colorCode != null)
+                    Container(
+                      width: 16,
+                      height: 16,
+                      margin: EdgeInsets.only(right: 6),
+                      decoration: BoxDecoration(
+                        color: _parseColor(value.colorCode!),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.grey[300]!),
                       ),
                     ),
-                  ],
-                ),
-              );
-            }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedValues[attribute.name] = newValue;
-                widget.variation.attributes[attribute.name] = newValue!;
-                widget.controller.saveCurrentState();
-              });
-            },
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: ResponsiveDimensions.f(10),
-                vertical: ResponsiveDimensions.f(8),
+                  Expanded(
+                    child: Text(
+                      value.value,
+                      style: getRegular(fontSize: ResponsiveDimensions.f(13)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-              border: InputBorder.none,
-              hintText: 'اختر ${attribute.name}',
-              hintStyle: getRegular(fontSize: ResponsiveDimensions.f(13)),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            setState(() {
+              _selectedValues[attribute.name] = newValue;
+              widget.variation.attributes[attribute.name] = newValue!;
+              widget.controller.saveCurrentState();
+            });
+          },
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: ResponsiveDimensions.f(10),
+              vertical: ResponsiveDimensions.f(8),
             ),
-            icon: Icon(
-              Icons.arrow_drop_down,
-              color: Colors.grey[600],
-              size: ResponsiveDimensions.f(20),
-            ),
-            isExpanded: true,
-            style: getRegular(fontSize: ResponsiveDimensions.f(13)),
+            border: InputBorder.none,
+            hintText: 'اختر ${attribute.name}',
+            hintStyle: getRegular(fontSize: ResponsiveDimensions.f(13)),
           ),
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: Colors.grey[600],
+            size: ResponsiveDimensions.f(15),
+          ),
+          isExpanded: true,
+          style: getRegular(fontSize: ResponsiveDimensions.f(13)),
         ),
       ],
     );
@@ -347,27 +343,32 @@ class _VariationCardState extends State<VariationCard> {
           ),
         ),
         SizedBox(height: ResponsiveDimensions.f(3)),
-        TextField(
-          controller: _priceController,
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
-            hintText: '0.0',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(25),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(50)),
-              borderSide: BorderSide(color: AppColors.primary300, width: 1.0),
-            ),
-            suffixText: '₪',
-          ),
+        SizedBox(
+          height: 50,
+          child: TextField(
 
-          onChanged: (value) {
-            final price = double.tryParse(value) ?? 0.0;
-            widget.variation.price.value = price;
-            widget.controller.saveCurrentState();
-          },
+            controller: _priceController,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              hintText: '0.0',
+              hintStyle: getMedium(fontSize: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(100),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(100)),
+                borderSide: BorderSide(color: AppColors.primary300, width: 1.0),
+              ),
+              suffixText: '₪',
+            ),
+
+            onChanged: (value) {
+              final price = double.tryParse(value) ?? 0.0;
+              widget.variation.price.value = price;
+              widget.controller.saveCurrentState();
+            },
+          ),
         ),
       ],
     );
@@ -449,7 +450,7 @@ class _VariationCardState extends State<VariationCard> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.primary100,
+                  color: AppColors.primary50,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -471,7 +472,8 @@ class _VariationCardState extends State<VariationCard> {
                   itemCount: widget.variation.images.length,
                   itemBuilder: (context, index) {
                     final imageUrl = widget.variation.images[index];
-          final displayUrl = _mediaController.getDisplayUrlFromStoredValue(imageUrl);
+                    final displayUrl = _mediaController
+                        .getDisplayUrlFromStoredValue(imageUrl);
                     return _buildImageItem(imageUrl, index);
                   },
                 ),
@@ -482,7 +484,7 @@ class _VariationCardState extends State<VariationCard> {
         OutlinedButton.icon(
           onPressed: () => _addImageFromMediaLibrary(),
           style: OutlinedButton.styleFrom(
-            backgroundColor: AppColors.primary100,
+            backgroundColor: AppColors.primary50,
             padding: EdgeInsets.symmetric(
               horizontal: ResponsiveDimensions.f(12),
               vertical: ResponsiveDimensions.f(10),
@@ -748,16 +750,27 @@ class _VariationCardState extends State<VariationCard> {
           style: getRegular(fontSize: ResponsiveDimensions.f(14)),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('إلغاء', style: getRegular(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () {
+          AateneButton(
+            onTap: () {
               Get.back();
               widget.controller.removeVariation(widget.variation);
             },
-            child: Text('حذف', style: getRegular(color: Colors.red)),
+
+            buttonText: "حدف",
+            color: AppColors.error200,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.error200,
+          ),
+
+          SizedBox(
+            height: 10,
+          ),
+          AateneButton(
+            onTap: () => Get.back(),
+            buttonText: "إلغاء",
+            color: AppColors.light1000,
+            textColor: AppColors.primary400,
+            borderColor: AppColors.primary400,
           ),
         ],
       ),

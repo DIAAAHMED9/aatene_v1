@@ -145,12 +145,12 @@ class PolicyScreen extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            Get.snackbar(
-                              'شروط الخدمة',
-                              'سيتم فتح صفحة شروط الخدمة قريباً',
-                              backgroundColor: Colors.blue,
-                              colorText: Colors.white,
-                            );
+                            // Get.snackbar(
+                            //   'شروط الخدمة',
+                            //   'سيتم فتح صفحة شروط الخدمة قريباً',
+                            //   backgroundColor: Colors.blue,
+                            //   colorText: Colors.white,
+                            // );
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(

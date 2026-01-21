@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 
@@ -45,47 +43,46 @@ class TimeUnitBottomSheet extends StatelessWidget {
             ),
           ),
 
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveDimensions.responsiveWidth(16),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveDimensions.responsiveWidth(16),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.search,
-                      color: Colors.grey[500],
-                      size: ResponsiveDimensions.responsiveFontSize(20),
-                    ),
-                    SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'بحث...',
-                          border: InputBorder.none,
-                          hintStyle: getRegular(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(
-                              14,
-                            ),
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
+          // Padding(
+          //   padding: EdgeInsets.symmetric(
+          //     horizontal: ResponsiveDimensions.responsiveWidth(16),
+          //   ),
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       color: Colors.grey[100],
+          //       borderRadius: BorderRadius.circular(12),
+          //     ),
+          //     child: Padding(
+          //       padding: EdgeInsets.symmetric(
+          //         horizontal: ResponsiveDimensions.responsiveWidth(16),
+          //       ),
+          //       child: Row(
+          //         children: [
+          //           Icon(
+          //             Icons.search,
+          //             color: Colors.grey[500],
+          //             size: ResponsiveDimensions.responsiveFontSize(20),
+          //           ),
+          //           SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
+          //           Expanded(
+          //             child: TextField(
+          //               decoration: InputDecoration(
+          //                 hintText: 'بحث...',
+          //                 border: InputBorder.none,
+          //                 hintStyle: getRegular(
+          //                   fontSize: ResponsiveDimensions.responsiveFontSize(
+          //                     14,
+          //                   ),
+          //                   color: Colors.grey,
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(16)),
 
           Expanded(
@@ -145,27 +142,14 @@ class TimeUnitBottomSheet extends StatelessWidget {
               },
             ),
           ),
-
           Padding(
             padding: EdgeInsets.all(ResponsiveDimensions.responsiveWidth(16)),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () => Get.back(),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    vertical: ResponsiveDimensions.responsiveHeight(14),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  side: BorderSide(color: Colors.grey[300]!),
-                ),
-                child: Text(
-                  'إلغاء',
-                  style: getMedium(color: Color(0xFF757575)),
-                ),
-              ),
+            child: AateneButton(
+              onTap: () => Get.back(),
+              buttonText: "إلغاء",
+              color: AppColors.primary400,
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
             ),
           ),
         ],

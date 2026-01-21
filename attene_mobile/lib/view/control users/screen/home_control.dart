@@ -107,7 +107,7 @@ class HomeControl extends StatelessWidget {
                         height: 20,
                         width: 20,
                       ),
-                      screen: HomeScreen(),
+                      screen: DashboardView(),
                     ),
                     NameControl(
                       name: "حساباتي",

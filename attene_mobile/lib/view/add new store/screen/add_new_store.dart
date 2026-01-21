@@ -37,6 +37,7 @@ class AddNewStore extends StatelessWidget {
             child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
+
       ),
       body: AddNewStoreForm(controller: controller, isRTL: isRTL),
     );

@@ -1,6 +1,3 @@
-
-
-
 import '../../../general_index.dart';
 
 class ProductService extends GetxService {
@@ -119,6 +116,20 @@ class ProductService extends GetxService {
     } catch (e) {
       print('❌ [PRODUCT SERVICE] Error deleting product: $e');
       return false;
+    }
+  }
+
+  Future<Product?> testproduct(Map<String, dynamic> productData) async {
+    try {
+      final response = await ApiHelper.post(
+        path: '/merchants/products',
+        body: productData,
+        withLoading: true,
+      );
+      print(response);
+    } catch (e) {
+      print('❌ [PRODUCT SERVICE] Error creating product: $e');
+      return null;
     }
   }
 

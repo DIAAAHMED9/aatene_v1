@@ -37,7 +37,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
     final controller = Get.find<ServiceController>();
 
     return Container(
-      height: ResponsiveDimensions.responsiveHeight(450),
+      height: ResponsiveDimensions.responsiveHeight(550),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -157,7 +157,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                     vertical: ResponsiveDimensions.responsiveHeight(16),
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                 ),
                 child: Text(

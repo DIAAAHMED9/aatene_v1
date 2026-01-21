@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 import '../index.dart';
@@ -153,7 +152,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                   horizontal: ResponsiveDimensions.f(15),
                 ),
                 decoration: BoxDecoration(
-                  color:  AppColors.customAddProductWidgets,
+                  color: AppColors.customAddProductWidgets,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: controller.fieldErrors.containsKey('media')
@@ -214,7 +213,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
     final controller = Get.find<AddProductController>();
 
     return Container(
-      height: ResponsiveDimensions.f(100),
+      height: ResponsiveDimensions.f(150),
       margin: EdgeInsets.only(bottom: ResponsiveDimensions.f(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,8 +246,8 @@ class ImageUploadSectionWidget extends StatelessWidget {
     final controller = Get.find<AddProductController>();
 
     return Container(
-      width: ResponsiveDimensions.f(80),
-      height: ResponsiveDimensions.f(80),
+      width: ResponsiveDimensions.f(150),
+      height: ResponsiveDimensions.f(150),
       margin: EdgeInsets.only(left: ResponsiveDimensions.f(8)),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -314,7 +313,7 @@ class ImageUploadSectionWidget extends StatelessWidget {
                     : media.name,
                 style: getRegular(
                   color: Colors.white,
-                  fontSize: ResponsiveDimensions.f(8),
+                  fontSize: ResponsiveDimensions.f(10),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -417,6 +416,7 @@ class PriceSectionWidget extends StatelessWidget {
                 TextFiledAatene(
                   heightTextFiled: ResponsiveDimensions.f(50),
                   controller: controller.priceController,
+                  textInputType: TextInputType.number,
                   isRTL: isRTL,
                   hintText: 'السعر',
                   errorText: controller.fieldErrors.containsKey('price')
@@ -431,7 +431,7 @@ class PriceSectionWidget extends StatelessWidget {
                     }
                   },
                   suffixIcon: Padding(
-                    padding: EdgeInsets.only(top: ResponsiveDimensions.f(12)),
+                    padding: const EdgeInsets.only(top: 7),
                     child: Text(
                       '₪',
                       style: TextStyle(
@@ -498,6 +498,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
+                    height: 50,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: controller.fieldErrors.containsKey('category')
@@ -505,7 +506,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                             : Colors.grey[300]!,
                         width: 1.5,
                       ),
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(100),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButtonFormField<String>(
@@ -516,7 +517,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                         decoration: InputDecoration(
                           hintText: 'اختر فئة المنتج',
                           hintStyle: getRegular(
-                            fontSize: ResponsiveDimensions.f(14),
+                            fontSize: ResponsiveDimensions.f(12),
                             color: Colors.grey,
                           ),
                           border: InputBorder.none,
@@ -538,7 +539,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                               maxLines: 1,
                               style: TextStyle(
                                 fontFamily: "PingAR",
-                                fontSize: ResponsiveDimensions.f(14),
+                                fontSize: ResponsiveDimensions.f(12),
                                 color:
                                     categoryId ==
                                         controller
@@ -662,7 +663,7 @@ class CategoriesSectionWidget extends StatelessWidget {
                   error,
                   style: getRegular(
                     color: Colors.red,
-                    fontSize: ResponsiveDimensions.f(14),
+                    fontSize: ResponsiveDimensions.f(12),
                   ),
                 ),
               ),
@@ -705,7 +706,7 @@ class CategoriesSectionWidget extends StatelessWidget {
             text,
             style: getRegular(
               color: Colors.grey,
-              fontSize: ResponsiveDimensions.f(14),
+              fontSize: ResponsiveDimensions.f(12),
             ),
           ),
         ],
@@ -729,6 +730,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
             TextWithStar(text: "حالة المنتج"),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Container(
+              height: 50,
               decoration: BoxDecoration(
                 border: Border.all(
                   color: controller.fieldErrors.containsKey('condition')
@@ -736,7 +738,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                       : Colors.grey[300]!,
                   width: 1.5,
                 ),
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(100),
               ),
               child: DropdownButtonFormField<String>(
                 value: controller.selectedCondition.isEmpty
@@ -745,7 +747,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'اختر حالة المنتج',
                   hintStyle: getRegular(
-                    fontSize: ResponsiveDimensions.f(14),
+                    fontSize: ResponsiveDimensions.f(12),
                     color: Colors.grey,
                   ),
                   border: InputBorder.none,
@@ -762,7 +764,7 @@ class ProductConditionSectionWidget extends StatelessWidget {
                       condition,
                       style: TextStyle(
                         fontFamily: "PingAR",
-                        fontSize: ResponsiveDimensions.f(14),
+                        fontSize: ResponsiveDimensions.f(12),
                         color: condition == controller.selectedCondition
                             ? AppColors.primary400
                             : Colors.black,
@@ -821,50 +823,36 @@ class ProductDescriptionSectionWidget extends StatelessWidget {
           children: [
             TextWithStar(text: 'وصف المنتج'),
             SizedBox(height: ResponsiveDimensions.f(8)),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color:
-                      controller.fieldErrors.containsKey('productDescription')
-                      ? Colors.red
-                      : Colors.grey[300]!,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextField(
-                controller: controller.productDescriptionController,
-                maxLines: 4,
-                maxLength: AddProductController.maxDescriptionLength,
-                onChanged: (value) {
-                  if (controller.fieldErrors.containsKey(
+            TextField(
+              controller: controller.productDescriptionController,
+              maxLines: 4,
+              maxLength: AddProductController.maxDescriptionLength,
+              onChanged: (value) {
+                if (controller.fieldErrors.containsKey('productDescription')) {
+                  controller.fieldErrors.remove('productDescription');
+                  controller.productCentralController.validationErrors.remove(
                     'productDescription',
-                  )) {
-                    controller.fieldErrors.remove('productDescription');
-                    controller.productCentralController.validationErrors.remove(
-                      'productDescription',
-                    );
-                    controller.update();
-                  }
-                },
-                decoration: InputDecoration(
-                  hintText: 'وصف المنتج',
-                  hintStyle: getRegular(
-                    fontSize: ResponsiveDimensions.f(14),
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(ResponsiveDimensions.f(12)),
-                  counterText:
-                      '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
-                  counterStyle: TextStyle(
-                    fontFamily: "PingAR",
-                    color:
-                        controller.characterCount >
-                            AddProductController.maxDescriptionLength
-                        ? Colors.red
-                        : Colors.grey,
-                  ),
+                  );
+                  controller.update();
+                }
+              },
+              decoration: InputDecoration(
+                hintText: 'وصف المنتج',
+                hintStyle: getRegular(
+                  fontSize: ResponsiveDimensions.f(12),
+                  color: Colors.grey,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(ResponsiveDimensions.f(12)),
+                counterText:
+                    '${controller.characterCount}/${AddProductController.maxDescriptionLength}',
+                counterStyle: TextStyle(
+                  fontFamily: "PingAR",
+                  color:
+                      controller.characterCount >
+                          AddProductController.maxDescriptionLength
+                      ? Colors.red
+                      : Colors.grey,
                 ),
               ),
             ),

@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/index.dart';
 
@@ -98,7 +97,7 @@ class _ProductSelectionBottomSheetState
       child: TextField(
         controller: widget.controller.searchController,
         decoration: InputDecoration(
-          hintText: 'ابحث عن منتج...',
+          hintText: 'بحث',
           prefixIcon: const Icon(Icons.search),
           suffixIcon: GetBuilder<RelatedProductsController>(
             id: 'search',
@@ -193,11 +192,11 @@ class _ProductSelectionBottomSheetState
 
         return Card(
           margin: EdgeInsets.only(bottom: ResponsiveDimensions.h(8)),
-          color: isSelected ? AppColors.primary100 : Colors.white,
+          color: isSelected ? AppColors.primary50 : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
-              color: isSelected ? AppColors.primary400 : Colors.grey[200]!,
+              color: isSelected ? AppColors.primary200 : Colors.grey[200]!,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -249,7 +248,7 @@ class _ProductSelectionBottomSheetState
                           Row(
                             children: [
                               Icon(
-                                Icons.category_outlined,
+                                Icons.local_offer_outlined,
                                 size: 12,
                                 color: Colors.grey[600],
                               ),
@@ -334,7 +333,7 @@ class _ProductSelectionBottomSheetState
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(Icons.shopping_bag, color: Colors.grey[400], size: 24),
+      child: Icon(Icons.image, color: Colors.grey[400], size: 24),
     );
   }
 
@@ -358,7 +357,7 @@ class _ProductSelectionBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('المنتجات المختارة:', style: getRegular()),
+                          Text('المنتجات المختارة:', style: getMedium()),
                           Text(
                             '${controller.selectedProductsCount} منتج',
                             style: getBold(),
@@ -369,7 +368,7 @@ class _ProductSelectionBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('السعر الإجمالي:', style: getRegular()),
+                          Text('السعر الإجمالي:', style: getMedium()),
                           Text(
                             '${controller.originalPrice.toStringAsFixed(2)} ₪',
                             style: getBold(color: AppColors.primary400),
@@ -383,27 +382,24 @@ class _ProductSelectionBottomSheetState
                 children: [
                   if (controller.hasSelectedProducts)
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
+                      child: AateneButton(
+                        color: AppColors.light1000,
+                        textColor: Colors.red,
+                        borderColor: Colors.red.shade400,
+                        buttonText: 'مسح الكل',
+                        onTap: () {
                           controller.clearAllSelections();
                           controller.refreshProducts();
                         },
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            vertical: ResponsiveDimensions.h(12),
-                          ),
-                          side: BorderSide(color: Colors.red.shade400),
-                        ),
-                        child: Text(
-                          'مسح الكل',
-                          style: getRegular(color: Colors.red),
-                        ),
                       ),
                     ),
                   if (controller.hasSelectedProducts)
                     SizedBox(width: ResponsiveDimensions.w(8)),
                   Expanded(
                     child: AateneButton(
+                      color: AppColors.primary400,
+                      textColor: AppColors.light1000,
+                      borderColor: AppColors.primary400,
                       buttonText: controller.hasSelectedProducts
                           ? 'تأكيد'
                           : 'إغلاق',

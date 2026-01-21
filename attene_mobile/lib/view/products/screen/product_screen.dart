@@ -1,4 +1,3 @@
-
 import '../../../general_index.dart';
 import '../../../utlis/responsive/responsive_dimensions.dart';
 
@@ -359,7 +358,7 @@ class ProductScreen extends GetView<ProductController> {
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(18)
                   : ResponsiveDimensions.f(22),
-              color:  AppColors.neutral400,
+              color: AppColors.neutral400,
             ),
             textAlign: TextAlign.center,
           ),
@@ -436,7 +435,7 @@ class ProductScreen extends GetView<ProductController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(color: AppColors.primary400),
-          SizedBox(height: ResponsiveDimensions.f(16)),
+          SizedBox(height: ResponsiveDimensions.h(16)),
           Text(
             'جاري تحميل المنتجات...',
             style: getRegular(

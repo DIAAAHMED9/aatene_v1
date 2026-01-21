@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:attene_mobile/component/aatene_button/aatene_button.dart';
 import 'package:attene_mobile/component/text/aatene_custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:attene_mobile/utlis/colors/app_color.dart';
 import '../../../utlis/responsive/index.dart';
 import '../index.dart';
-
 
 class DescriptionScreen extends StatefulWidget {
   const DescriptionScreen({super.key});
@@ -75,7 +75,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 onPressed: () {
                   controller.debugDescription();
                 },
-                icon: Icon(Icons.bug_report),
+                icon: Icon(Icons.edit_note_rounded),
                 tooltip: 'تصحيح الوصف',
               ),
             ],
@@ -617,67 +617,72 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
+            spacing: 10,
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${index + 1}. ${faq.question}',
-                      style: getMedium(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(15),
-                        color: Colors.grey,
-                      ),
+                child: GestureDetector(
+                  child: Container(
+                    width: double.infinity,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary500.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
-                    Text(
-                      faq.answer,
-                      style: getRegular(
-                        fontSize: ResponsiveDimensions.responsiveFontSize(14),
-                        color: Colors.grey,
-                      ),
+
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 10,
+                      children: [
+                        SizedBox(height: 15),
+                        Icon(
+                          Icons.edit,
+                          size: ResponsiveDimensions.responsiveFontSize(32),
+                          color: AppColors.primary500,
+                        ),
+                        Text(
+                          'تعديل السؤال',
+                          style: getMedium(
+                            fontSize: 14,
+                            color: AppColors.primary500,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                  onTap: () => _showEditFAQDialog(faq),
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  Get.bottomSheet(
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(25),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            onTap: () => _showEditFAQDialog(faq),
-                            title: Text('تعديل السؤال'),
-                            leading: Icon(
-                              Icons.edit,
-                              size: ResponsiveDimensions.responsiveFontSize(18),
-                              color: AppColors.primary500,
-                            ),
-                          ),
-                          ListTile(
-                            onTap: () => _showDeleteFAQDialog(faq.id??0),
-                            title: Text('حذف السؤال'),
-                            leading: Icon(
-                              Icons.delete_outline,
-                              size: ResponsiveDimensions.responsiveFontSize(18),
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    width: double.infinity,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: AppColors.error300.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  );
-                },
-                icon: Icon(Icons.more_horiz),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 10,
+                      children: [
+                        SizedBox(height: 15),
+                        Icon(
+                          Icons.delete_outline,
+                          size: ResponsiveDimensions.responsiveFontSize(32),
+                          color: AppColors.error300,
+                        ),
+                        Text(
+                          'حذف السؤال',
+                          style: getMedium(
+                            fontSize: 14,
+                            color: AppColors.error300,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () => _showDeleteFAQDialog(faq.id),
+                ),
               ),
             ],
           ),
@@ -792,7 +797,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('التالي', style: getRegular()),
+                        Text(
+                          'التالي',
+                          style: getRegular(color: AppColors.light1000),
+                        ),
                         SizedBox(
                           width: ResponsiveDimensions.responsiveWidth(8),
                         ),
@@ -1262,12 +1270,16 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء'),
+            AateneButton(
+              onTap: () => Navigator.pop(context),
+              buttonText: "الغاء",
+              color: AppColors.light1000,
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
             ),
-            TextButton(
-              onPressed: () {
+
+            AateneButton(
+              onTap: () {
                 final newQuestion = questionController.text.trim();
                 final newAnswer = answerController.text.trim();
 
@@ -1283,7 +1295,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   );
                 }
               },
-              child: const Text('حفظ'),
+              buttonText: "حفظ",
+              color: AppColors.primary400,
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
             ),
           ],
         );
@@ -1295,21 +1310,49 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     Get.defaultDialog(
       title: 'حذف السؤال',
       middleText: 'هل أنت متأكد من حذف هذا السؤال؟',
-      textConfirm: 'نعم، احذف',
-      textCancel: 'إلغاء',
-      confirmTextColor: Colors.white,
-      onConfirm: () {
-        controller.removeFAQ(id);
-        Get.back();
+      // textConfirm: '',
+      // textCancel: '',
+      actions: [
+        AateneButton(
+          onTap: () {
+            controller.removeFAQ(id);
+            Get.back();
 
-        Get.snackbar(
-          'نجاح',
-          'تم حذف السؤال بنجاح',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      },
-      onCancel: () => Get.back(),
+            Get.snackbar(
+              'نجاح',
+              'تم حذف السؤال بنجاح',
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+          },
+          buttonText: "نعم، احذف",
+          color: AppColors.primary400,
+          textColor: AppColors.light1000,
+          borderColor: AppColors.primary400,
+        ),
+        SizedBox(height: 10),
+        AateneButton(
+          onTap: () => Get.back(),
+          buttonText: "لا",
+          color: AppColors.light1000,
+          textColor: AppColors.primary400,
+          borderColor: AppColors.primary400,
+        ),
+      ],
+
+      // confirmTextColor: Colors.white,
+      // onConfirm: () {
+      //   controller.removeFAQ(id);
+      //   Get.back();
+      //
+      //   Get.snackbar(
+      //     'نجاح',
+      //     'تم حذف السؤال بنجاح',
+      //     backgroundColor: Colors.green,
+      //     colorText: Colors.white,
+      //   );
+      // },
+      // onCancel: () => Get.back(),
     );
   }
 }

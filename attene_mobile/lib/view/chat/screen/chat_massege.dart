@@ -1,6 +1,3 @@
-
-
-import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -99,78 +96,110 @@ class _ChatMassegeState extends State<ChatMassege> {
       final conv = (c.currentConversation.value?.id == widget.conversation.id)
           ? c.currentConversation.value!
           : widget.conversation;
-      final title = conv.displayName(myOwnerType: c.myOwnerType, myOwnerId: c.myOwnerId);
+      final title = conv.displayName(
+        myOwnerType: c.myOwnerType,
+        myOwnerId: c.myOwnerId,
+      );
       // listen to blockedVersion so UI updates immediately after block/unblock
       c.blockedVersion.value;
       final isBlocked = c.isConversationBlocked(conv);
 
       return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: _openConversationActions,
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          if (isBlocked)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              color: Colors.red.withOpacity(0.07),
-              child: Row(
-                children: const [
-                  Icon(Icons.block, size: 18),
-                  SizedBox(width: 8),
-                  Expanded(child: Text('هذا المستخدم محظور — لن تتمكن من إرسال رسائل.')),
-                ],
-              ),
+        appBar: AppBar(
+          elevation: 3,
+          title: Text(title),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: _openConversationActions,
             ),
-          Expanded(
-            child: Obx(() {
-              if (c.isLoadingMessages.value && c.currentMessages.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final msgs = c.currentMessages;
-
-              return ListView.builder(
-                controller: _scroll,
-                reverse: true, // newest at bottom (like WhatsApp)
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                itemCount: msgs.length,
-                itemBuilder: (context, index) {
-                  final m = msgs[msgs.length - 1 - index]; // because reverse:true
-                  final isMe = _isMe(m);
-                  return MessageBubble(
-                    message: m,
-                    isMe: isMe,
-                    isGroup: widget.conversation.type == 'group',
-                  );
-                },
-              );
-            }),
+          ],
+          leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Colors.grey[100],
+              ),
+              child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+            ),
           ),
+        ),
+        body: Column(
+          children: [
+            if (isBlocked)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                color: Colors.red.withOpacity(0.07),
+                child: Row(
+                  children: const [
+                    Icon(Icons.block, size: 18, color: AppColors.primary400),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'هذا المستخدم محظور — لن تتمكن من إرسال رسائل.',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            Expanded(
+              child: Obx(() {
+                if (c.isLoadingMessages.value && c.currentMessages.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final msgs = c.currentMessages;
 
-          if (_pendingFiles.isNotEmpty) PendingAttachmentsBar(files: _pendingFiles, onRemove: (i) => setState(() => _pendingFiles.removeAt(i))),
+                return ListView.builder(
+                  controller: _scroll,
+                  reverse: true,
+                  // newest at bottom (like WhatsApp)
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 12,
+                  ),
+                  itemCount: msgs.length,
+                  itemBuilder: (context, index) {
+                    final m =
+                        msgs[msgs.length - 1 - index]; // because reverse:true
+                    final isMe = _isMe(m);
+                    return MessageBubble(
+                      message: m,
+                      isMe: isMe,
+                      isGroup: widget.conversation.type == 'group',
+                    );
+                  },
+                );
+              }),
+            ),
 
-          Composer(
-            textController: _text,
-            isRecording: _isRecording,
-            recordDuration: _recordDuration,
-            onPickImages: _pickImages,
-            onPickFiles: _pickFiles,
-            onSend: _send,
-            onStartRecord: _startRecording,
-            onStopRecord: _stopRecordingAndSend,
-            onCancelRecord: _cancelRecording,
-            isBlocked: isBlocked,
-          ),
-        ],
-      ),
-    );
+            if (_pendingFiles.isNotEmpty)
+              PendingAttachmentsBar(
+                files: _pendingFiles,
+                onRemove: (i) => setState(() => _pendingFiles.removeAt(i)),
+              ),
+
+            Composer(
+              textController: _text,
+              isRecording: _isRecording,
+              recordDuration: _recordDuration,
+              onPickImages: _pickImages,
+              onPickFiles: _pickFiles,
+              onSend: _send,
+              onStartRecord: _startRecording,
+              onStopRecord: _stopRecordingAndSend,
+              onCancelRecord: _cancelRecording,
+              isBlocked: isBlocked,
+            ),
+          ],
+        ),
+      );
     });
   }
 
@@ -178,7 +207,10 @@ class _ChatMassegeState extends State<ChatMassege> {
     final conv = c.currentConversation.value ?? widget.conversation;
     final other = c.otherSideOfDirect(conv);
     final isDirect = (conv.type ?? '').toLowerCase() == 'direct';
-    final blocked = isDirect && other != null && c.isBlockedEntity(type: other['type']!, id: other['id']!);
+    final blocked =
+        isDirect &&
+        other != null &&
+        c.isBlockedEntity(type: other['type']!, id: other['id']!);
 
     showModalBottomSheet(
       context: context,
@@ -189,22 +221,37 @@ class _ChatMassegeState extends State<ChatMassege> {
           children: [
             if (isDirect && other != null)
               ListTile(
-                leading: Icon(blocked ? Icons.lock_open : Icons.block),
+                leading: Icon(
+                  blocked ? Icons.lock_open : Icons.block,
+                  color: AppColors.primary400,
+                ),
                 title: Text(blocked ? 'إلغاء الحظر' : 'حظر المستخدم'),
                 onTap: () async {
                   Navigator.pop(context);
                   if (!blocked) {
-                    final reason = await _askReason(title: 'سبب الحظر (اختياري)');
-                    await c.blockEntity(blockedType: other['type']!, blockedId: other['id']!, reason: reason);
+                    final reason = await _askReason(
+                      title: 'سبب الحظر (اختياري)',
+                    );
+                    await c.blockEntity(
+                      blockedType: other['type']!,
+                      blockedId: other['id']!,
+                      reason: reason,
+                    );
                   } else {
-                    await c.unBlockEntity(blockedType: other['type']!, blockedId: other['id']!);
+                    await c.unBlockEntity(
+                      blockedType: other['type']!,
+                      blockedId: other['id']!,
+                    );
                   }
                   if (mounted) setState(() {});
                 },
               ),
             if (isDirect && other != null)
               ListTile(
-                leading: const Icon(Icons.report_gmailerrorred_outlined),
+                leading: Icon(
+                  Icons.report_gmailerrorred_outlined,
+                  color: AppColors.primary400,
+                ),
                 title: const Text('إبلاغ'),
                 onTap: () async {
                   Navigator.pop(context);
@@ -217,7 +264,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                 },
               ),
             ListTile(
-              leading: const Icon(Icons.person_add_alt),
+              leading: Icon(Icons.person_add_alt, color: AppColors.primary400),
               title: const Text('إضافة مستخدم للمحادثة'),
               onTap: () {
                 Navigator.pop(context);
@@ -226,7 +273,7 @@ class _ChatMassegeState extends State<ChatMassege> {
             ),
             if ((widget.conversation.type ?? '').toLowerCase() == 'group')
               ListTile(
-                leading: const Icon(Icons.edit),
+                leading: const Icon(Icons.edit, color: AppColors.primary400),
                 title: const Text('تعديل اسم المجموعة'),
                 onTap: () {
                   Navigator.pop(context);
@@ -234,7 +281,10 @@ class _ChatMassegeState extends State<ChatMassege> {
                 },
               ),
             ListTile(
-              leading: const Icon(Icons.delete_outline),
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.primary400,
+              ),
               title: const Text('حذف المحادثة'),
               onTap: () async {
                 Navigator.pop(context);
@@ -255,12 +305,16 @@ class _ChatMassegeState extends State<ChatMassege> {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (_) => AddParticipantSheet(conversation: widget.conversation, controller: c),
+      builder: (_) =>
+          AddParticipantSheet(conversation: widget.conversation, controller: c),
     );
   }
 
   Future<void> _renameGroup() async {
-    final tc = TextEditingController(text: (c.currentConversation.value?.name ?? widget.conversation.name) ?? '');
+    final tc = TextEditingController(
+      text:
+          (c.currentConversation.value?.name ?? widget.conversation.name) ?? '',
+    );
     final newName = await showDialog<String?>(
       context: context,
       builder: (_) => AlertDialog(
@@ -270,15 +324,31 @@ class _ChatMassegeState extends State<ChatMassege> {
           decoration: const InputDecoration(hintText: 'اسم المجموعة'),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, tc.text.trim()), child: const Text('حفظ')),
+          AateneButton(
+            onTap: () => Navigator.pop(context, tc.text.trim()),
+            buttonText: "حفظ",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+          SizedBox(height: 10),
+          AateneButton(
+            onTap: () => Navigator.pop(context),
+            buttonText: "إلغاء",
+            color: AppColors.light1000,
+            textColor: AppColors.primary400,
+            borderColor: AppColors.primary400,
+          ),
         ],
       ),
     );
 
     if (newName == null || newName.isEmpty) return;
 
-    final ok = await c.updateGroupName(conversationId: widget.conversation.id, name: newName);
+    final ok = await c.updateGroupName(
+      conversationId: widget.conversation.id,
+      name: newName,
+    );
     if (ok) {
       // ✅ reflect immediately in AppBar + screen
       if (mounted) setState(() {});
@@ -297,8 +367,21 @@ class _ChatMassegeState extends State<ChatMassege> {
           decoration: const InputDecoration(hintText: 'اكتب هنا...'),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, tc.text.trim()), child: const Text('تم')),
+          AateneButton(
+            onTap: () => Navigator.pop(context, tc.text.trim()),
+            buttonText: "تم",
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+          ),
+          SizedBox(height: 10),
+          AateneButton(
+            onTap: () => Navigator.pop(context),
+            buttonText: "إلغاء",
+            color: AppColors.light1000,
+            textColor: AppColors.primary400,
+            borderColor: AppColors.primary400,
+          ),
         ],
       ),
     );
@@ -315,7 +398,10 @@ class _ChatMassegeState extends State<ChatMassege> {
     if (paths.isEmpty) return;
 
     // max 10 images total in selection
-    final toAdd = paths.take(10 - _pendingFiles.length).map((p) => File(p)).toList();
+    final toAdd = paths
+        .take(10 - _pendingFiles.length)
+        .map((p) => File(p))
+        .toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
 
@@ -329,7 +415,10 @@ class _ChatMassegeState extends State<ChatMassege> {
     if (paths.isEmpty) return;
 
     // max 10 files at once
-    final toAdd = paths.take(10 - _pendingFiles.length).map((p) => File(p)).toList();
+    final toAdd = paths
+        .take(10 - _pendingFiles.length)
+        .map((p) => File(p))
+        .toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
 
@@ -345,7 +434,11 @@ class _ChatMassegeState extends State<ChatMassege> {
     if (hasFiles) {
       final files = List<File>.from(_pendingFiles);
       setState(() => _pendingFiles.clear());
-      await c.sendFilesMessage(conversationId: convId, files: files, text: text.isEmpty ? null : text);
+      await c.sendFilesMessage(
+        conversationId: convId,
+        files: files,
+        text: text.isEmpty ? null : text,
+      );
       _text.clear();
       return;
     }
@@ -363,11 +456,12 @@ class _ChatMassegeState extends State<ChatMassege> {
       }
 
       final dir = await getTemporaryDirectory();
-      final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
+      final path =
+          '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
       _recordPath = path;
 
       await _recorder.start(
-         RecordConfig(
+        RecordConfig(
           encoder: AudioEncoder.wav,
           bitRate: 128000,
           sampleRate: 44100,
@@ -428,7 +522,11 @@ class _ChatMassegeState extends State<ChatMassege> {
       final f = File(path);
       if (!await f.exists()) return;
 
-      await c.sendFilesMessage(conversationId: widget.conversation.id, files: [f], text: null);
+      await c.sendFilesMessage(
+        conversationId: widget.conversation.id,
+        files: [f],
+        text: null,
+      );
     } catch (e) {
       // ignore: avoid_print
       print('❌ stopRecordingAndSend: $e');

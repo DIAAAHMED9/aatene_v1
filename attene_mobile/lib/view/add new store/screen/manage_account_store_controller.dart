@@ -67,8 +67,7 @@ class ManageAccountStoreController extends GetxController
       } else {
         errorMessage.value = response?['message'] ?? 'فشل تحميل المتاجر';
       }
-          update();
-
+      update();
     } catch (e) {
       errorMessage.value = 'حدث خطأ في تحميل المتاجر: $e';
     } finally {
@@ -78,14 +77,12 @@ class ManageAccountStoreController extends GetxController
 
   void addNewStore() {
     Get.to(() => TypeStore());
-        update();
-
+    update();
   }
 
   void editStore(Store store) {
     Get.to(() => AddNewStore(), arguments: {'storeId': int.parse(store.id)});
-        update();
-
+    update();
   }
 
   void deleteStore(Store store) {
@@ -95,8 +92,7 @@ class ManageAccountStoreController extends GetxController
         onConfirm: () async => _performDeleteStore(store),
       ),
     );
-        update();
-
+    update();
   }
 
   Future<void> _performDeleteStore(Store store) async {
@@ -104,7 +100,6 @@ class ManageAccountStoreController extends GetxController
       _performDeleteStoreInternal(store),
       message: 'جاري حذف المتجر...',
     );
-
   }
 
   Future<void> _performDeleteStoreInternal(Store store) async {
@@ -135,8 +130,7 @@ class ManageAccountStoreController extends GetxController
           colorText: Colors.white,
         );
       }
-          update();
-
+      update();
     } catch (e) {
       Get.snackbar(
         'خطأ',
@@ -151,8 +145,7 @@ class ManageAccountStoreController extends GetxController
 
   void onSearchChanged(String value) {
     searchQuery.value = value;
-        update();
-
+    update();
   }
 
   void onFilterPressed() {
@@ -162,8 +155,7 @@ class ManageAccountStoreController extends GetxController
       backgroundColor: Colors.blue,
       colorText: Colors.white,
     );
-        update();
-
+    update();
   }
 
   void onSortPressed() {
@@ -173,7 +165,6 @@ class ManageAccountStoreController extends GetxController
       backgroundColor: Colors.blue,
       colorText: Colors.white,
     );
-        update();
-
+    update();
   }
 }
