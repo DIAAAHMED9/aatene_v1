@@ -3,36 +3,76 @@
 
 
 
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../general_index.dart';
 
 export 'package:get/get.dart' hide FormData, MultipartFile,Response;
 
 class ApiHelper {
-  static Map<String, dynamic> _getBaseHeaders() {
+  /// Builds base headers.
+  ///
+  /// Important: Do NOT rely only on in-memory controllers for the token.
+  /// During navigation, GetX may recreate controllers and the first API call can happen
+  /// before MyAppController finishes loading user data.
+  /// So we also read the token from SharedPreferences as a fallback.
+  static Future<Map<String, dynamic>> _getBaseHeaders() async {
     try {
-      if (!Get.isRegistered<MyAppController>()) {
-        return {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Device-Type': 'MOBILE',
-          'Accept-Language': 'ar',
-        };
-      }
-
-      final MyAppController myAppController = Get.find<MyAppController>();
+      final bool hasMyApp = Get.isRegistered<MyAppController>();
+      final MyAppController? myAppController = hasMyApp ? Get.find<MyAppController>() : null;
 
       final String lang = Get.isRegistered<LanguageController>()
           ? Get.find<LanguageController>().appLocale.value
           : 'ar';
 
-      // Authorization
-      String authorization = '';
-      if (myAppController.isLoggedIn.value &&
+      // Authorization (controller first, SharedPreferences fallback)
+      String token = '';
+      if (myAppController != null &&
           myAppController.userData.isNotEmpty &&
           myAppController.userData['token'] != null) {
-        authorization = 'Bearer ${myAppController.userData['token']}';
+        token = myAppController.userData['token'].toString();
+      }
+
+      if (token.isEmpty) {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final raw = prefs.getString('user_data');
+          if (raw != null && raw.trim().isNotEmpty) {
+            final decoded = jsonDecode(raw);
+            if (decoded is Map && decoded['token'] != null) {
+              token = decoded['token'].toString();
+            }
+          }
+        } catch (_) {}
+      }
+
+      // Fallback: GetStorage (some builds persist user/token there).
+      if (token.isEmpty) {
+        try {
+          final box = GetStorage();
+          final dynamic ud = box.read('user_data') ?? box.read('user') ?? box.read('auth_user');
+          if (ud is Map && ud['token'] != null) {
+            token = ud['token'].toString();
+          } else if (ud is String && ud.trim().isNotEmpty) {
+            final decoded = jsonDecode(ud);
+            if (decoded is Map && decoded['token'] != null) {
+              token = decoded['token'].toString();
+            }
+          }
+
+          // Some apps store token directly.
+          final direct = box.read('token');
+          if (token.isEmpty && direct != null) {
+            token = direct.toString();
+          }
+        } catch (_) {}
+      }
+
+      final String authorization = token.isNotEmpty ? 'Bearer $token' : '';
+      if (authorization.isNotEmpty) {
         print('🔑 [API] Token ready');
       } else {
         print('⚠️ [API] No token / not logged in');
@@ -41,8 +81,8 @@ class ApiHelper {
       // Determine if merchant
       bool isMerchant = false;
       try {
-        final ud = (myAppController.userData is Map)
-            ? Map<String, dynamic>.from(myAppController.userData)
+        final ud = (myAppController?.userData is Map)
+            ? Map<String, dynamic>.from(myAppController!.userData)
             : <String, dynamic>{};
         final user = ud['user'];
         if (user is Map) {
@@ -54,12 +94,12 @@ class ApiHelper {
         }
       } catch (_) {}
 
-      // storeId (merchant only) from controller then storage
+      // storeId (merchant only) from controller then GetStorage
       String? storeId;
       if (isMerchant) {
         try {
-          final ud = (myAppController.userData is Map)
-              ? Map<String, dynamic>.from(myAppController.userData)
+          final ud = (myAppController?.userData is Map)
+              ? Map<String, dynamic>.from(myAppController!.userData)
               : <String, dynamic>{};
 
           final v = ud['active_store_id'] ??
@@ -118,9 +158,15 @@ class ApiHelper {
         final v = (ud['store_id'] ?? ud['storeId'] ?? ud['store']?['id']);
         if (v != null) return v.toString();
       }
-      final h = _getBaseHeaders();
-      final v2 = h['storeId'];
-      return v2?.toString();
+
+      // Fallback to GetStorage (sync) if controller is not ready.
+      try {
+        final box = GetStorage();
+        final v = box.read('storeId') ?? box.read('store_id') ?? box.read('selected_store_id');
+        if (v != null) return v.toString();
+      } catch (_) {}
+
+      return null;
     } catch (_) {
       return null;
     }
@@ -334,7 +380,8 @@ class ApiHelper {
         _startLoading();
       }
 
-      final requestHeaders = {..._getBaseHeaders(), ...?headers};
+      final baseHeaders = await _getBaseHeaders();
+      final requestHeaders = {...baseHeaders, ...?headers};
 
       if (body is FormData) {
         requestHeaders.removeWhere((k, _) => k.toLowerCase() == 'content-type');
@@ -874,7 +921,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         'file': await MultipartFile.fromFile(file.path, filename: fileName),
       });
 
-      final requestHeaders = _getBaseHeaders();
+      final requestHeaders = await _getBaseHeaders();
       requestHeaders.remove('Content-Type');
 
       print('''

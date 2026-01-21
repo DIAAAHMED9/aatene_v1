@@ -664,7 +664,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                             ),
                           ),
                           ListTile(
-                            onTap: () => _showDeleteFAQDialog(faq.id),
+                            onTap: () => _showDeleteFAQDialog(faq.id??0),
                             title: Text('حذف السؤال'),
                             leading: Icon(
                               Icons.delete_outline,
@@ -1272,7 +1272,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 final newAnswer = answerController.text.trim();
 
                 if (newQuestion.isNotEmpty && newAnswer.isNotEmpty) {
-                  controller.updateFAQ(faq.id, newQuestion, newAnswer);
+                  controller.updateFAQ(faq.id??0, newQuestion, newAnswer);
                   Navigator.pop(context);
 
                   Get.snackbar(

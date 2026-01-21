@@ -245,7 +245,7 @@ class ServiceListItem extends StatelessWidget {
 
   String _getSectionName(int sectionId) {
     final section = controller.sections.firstWhere(
-      (s) => (s['id'] as int?) == sectionId,
+      (s) => int.tryParse((s['id'] ?? '').toString()) == sectionId,
       orElse: () => {'name': 'غير محدد'},
     );
     return section['name']?.toString() ?? 'غير محدد';

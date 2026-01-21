@@ -417,11 +417,19 @@ class _ServiceStepperScreenState
                 textColor: Colors.white,
                 borderColor: AppColors.primary400,
                 onTap: () {
-                  Get.until((route) => route.isFirst);
-                  Get.find<ServiceController>().resetAll();
-                  setState(() {
-                    currentStep = 0;
-                  });
+                  // 1) إغلاق الـ BottomSheet
+                  if (Get.isBottomSheetOpen == true) {
+                    Get.back();
+                  }
+
+                  // 2) تنظيف بيانات الكنترولر
+                  if (Get.isRegistered<ServiceController>()) {
+                    Get.find<ServiceController>().resetAll();
+                  }
+
+                  // 3) الرجوع للشاشة السابقة مع نتيجة نجاح
+                  // حتى تقوم شاشة القائمة بعمل Refresh مثل المنتجات
+                  Get.back(result: true);
                 },
               ),
             ],

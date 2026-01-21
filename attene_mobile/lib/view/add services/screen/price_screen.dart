@@ -333,7 +333,7 @@ class PriceScreen extends StatelessWidget {
         );
       },
       onDismissed: (direction) {
-        controller.removeDevelopment(development.id);
+        controller.removeDevelopment(development.id??0);
       },
       child: Container(
         margin: EdgeInsets.only(

@@ -7,6 +7,64 @@ import '../../../../general_index.dart';
 import '../../models/models.dart';
 
 class ServiceController extends GetxController {
+
+  /// When editing an existing service, we may need to fetch sections/categories
+  /// using the service's `store_id`.
+  ///
+  /// Why: the API uses the `storeId` header to scope `/merchants/sections` and
+  /// `/merchants/categories/select`. If the current storeId header is different
+  /// from the service store, the selected section/category will not be found,
+  /// and the names won't show in the UI.
+  final RxString editingStoreId = ''.obs;
+
+  /// Convert numeric-looking strings returned by the API into numbers.
+  ///
+  /// Reason: some places in the UI/business logic may still do `as num` casts
+  /// (or expect `num` in dropdown/value comparisons). The backend sometimes
+  /// returns numbers as strings (e.g. "100.50", "4"). Normalizing here keeps
+  /// edit-prefill stable.
+  dynamic _normalizeNumericStrings(dynamic v, {String? key}) {
+    // Only normalize known numeric keys to avoid turning phone numbers/codes
+    // into numbers.
+    const numericKeys = <String>{
+      'id',
+      'price',
+      'execute_count',
+      'section_id',
+      'category_id',
+      'store_id',
+      'service_id',
+      'views_count',
+      'view_count',
+      'favorites_count',
+      'messages_count',
+      'recordsTotal',
+      'recordsFiltered',
+    };
+
+    if (v is Map) {
+      final out = <String, dynamic>{};
+      v.forEach((k, val) {
+        out[k.toString()] = _normalizeNumericStrings(val, key: k.toString());
+      });
+      return out;
+    }
+
+    if (v is List) {
+      return v
+          .map((e) => _normalizeNumericStrings(e, key: key))
+          .toList(growable: false);
+    }
+
+    if (v is String && key != null && numericKeys.contains(key)) {
+      final s = v.trim();
+      if (s.isEmpty) return v;
+      final n = num.tryParse(s);
+      if (n != null) return n;
+    }
+
+    return v;
+  }
   static const int maxSpecializations = 20;
   static const int maxKeywords = 25;
   static const int maxImages = 10;
@@ -71,7 +129,7 @@ class ServiceController extends GetxController {
   TextEditingController specializationTextController = TextEditingController();
   TextEditingController keywordTextController = TextEditingController();
 
-  RxString serviceId = ''.obs;
+ static RxString serviceId = ''.obs;
   RxString serviceSlug = ''.obs;
   RxString serviceStatus = 'pending'.obs;
   RxInt selectedSectionId = 0.obs;
@@ -863,22 +921,34 @@ class ServiceController extends GetxController {
     update(['images_list']);
   }
 
-  Future<void> loadSections() async {
+  Future<void> loadSections({String? storeIdOverride}) async {
     try {
       isLoadingCategories(true);
       categoriesError('');
 
       final response = await ApiHelper.get(
         path: '/merchants/sections',
+        headers: (storeIdOverride != null && storeIdOverride.trim().isNotEmpty)
+            ? {'storeId': storeIdOverride.trim()}
+            : null,
         withLoading: false,
         shouldShowMessage: false,
       );
 
       if (response != null && response['status'] == true) {
-        final sectionsList = List<Map<String, dynamic>>.from(
-          response['data'] ?? [],
-        );
-        sections.assignAll(sectionsList);
+        final raw = List<Map<String, dynamic>>.from(response['data'] ?? []);
+        final normalized = raw.map((e) {
+          final m = Map<String, dynamic>.from(e);
+          // API sometimes sends ids as strings
+          final id = m['id'];
+          if (id is String) {
+            m['id'] = int.tryParse(id) ?? 0;
+          } else if (id is num) {
+            m['id'] = id.toInt();
+          }
+          return m;
+        }).toList();
+        sections.assignAll(normalized);
       } else {
         final errorMsg = response?['message'] ?? 'فشل في تحميل الأقسام';
         categoriesError(errorMsg);
@@ -891,9 +961,11 @@ class ServiceController extends GetxController {
     }
   }
 
-  Future<void> loadCategories() async {
+  Future<void> loadCategories({int? sectionIdOverride, String? storeIdOverride}) async {
     try {
-      if (selectedSectionId.value == 0) {
+      final sectionId = sectionIdOverride ?? selectedSectionId.value;
+
+      if (sectionId == 0) {
         categories.clear();
         return;
       }
@@ -903,16 +975,27 @@ class ServiceController extends GetxController {
 
       final response = await ApiHelper.get(
         path: '/merchants/categories/select',
-        queryParameters: {'section_id': selectedSectionId.value},
+        queryParameters: {'section_id': sectionId},
+        headers: (storeIdOverride != null && storeIdOverride.trim().isNotEmpty)
+            ? {'storeId': storeIdOverride.trim()}
+            : null,
         withLoading: false,
         shouldShowMessage: false,
       );
 
       if (response != null && response['status'] == true) {
-        final categoriesList = List<Map<String, dynamic>>.from(
-          response['categories'] ?? [],
-        );
-        categories.assignAll(categoriesList);
+        final raw = List<Map<String, dynamic>>.from(response['categories'] ?? []);
+        final normalized = raw.map((e) {
+          final m = Map<String, dynamic>.from(e);
+          final id = m['id'];
+          if (id is String) {
+            m['id'] = int.tryParse(id) ?? 0;
+          } else if (id is num) {
+            m['id'] = id.toInt();
+          }
+          return m;
+        }).toList();
+        categories.assignAll(normalized);
 
         update(['categories_list', 'category_field']);
       } else {
@@ -1242,11 +1325,16 @@ class ServiceController extends GetxController {
       print('📦 البيانات المرسلة للخادم (تحديث):');
       print(jsonEncode(serviceData));
 
-      final response = await ApiHelper.put(
+      // ملاحظة مهمة:
+      // في هذا المشروع، تحديث المنتجات يتم عبر POST (وليس PUT).
+      // كثير من باكات Laravel تعتمد هذا النمط لتفادي مشاكل Method Override.
+      // لذلك نستخدم POST هنا لضمان عدم حدوث 401/Redirect غير متوقع.
+      final response = await ApiHelper.post(
         path: '/merchants/services/$serviceId',
         body: serviceData,
         withLoading: false,
-        shouldShowMessage: true,
+        // نمنع الرسائل العامة من ApiHelper حتى لا تتكرر السناك بار
+        shouldShowMessage: false,
       );
 
       if (response != null && response['status'] == true) {
@@ -1345,12 +1433,86 @@ class ServiceController extends GetxController {
         withLoading: false,
         shouldShowMessage: false,
       );
+      print('TESTE2020 $response');
 
       if (response != null && response['status'] == true) {
-        final data = response['data'] ?? {};
-        final service = Service.fromApiJson(data);
+        final data = response['data'];
 
-        _updateControllerFromService(service);
+        // Be defensive: details endpoint sometimes returns nested objects.
+        Map<String, dynamic>? serviceJson;
+        if (data is Map) {
+          final m = Map<String, dynamic>.from(data as Map);
+          if (m['service'] is Map) {
+            serviceJson = Map<String, dynamic>.from(m['service'] as Map);
+          } else if (m['data'] is Map) {
+            serviceJson = Map<String, dynamic>.from(m['data'] as Map);
+          } else {
+            serviceJson = m;
+          }
+        } else if (data is List) {
+          // Fallback if API returns a list.
+          final found = data.cast<dynamic>().firstWhere(
+            (e) => (e is Map) && e['id']?.toString() == serviceId,
+            orElse: () => null,
+          );
+          if (found is Map) {
+            serviceJson = Map<String, dynamic>.from(found);
+          }
+        }
+
+        if (serviceJson == null) {
+          throw Exception('Invalid service payload');
+        }
+
+        // If details payload is incomplete (common case), fallback to list endpoint and merge.
+        final bool looksIncomplete =
+            !serviceJson.containsKey('price') &&
+            !serviceJson.containsKey('description') &&
+            !serviceJson.containsKey('execute_type') &&
+            !serviceJson.containsKey('section_id') &&
+            !serviceJson.containsKey('category_id');
+
+        if (looksIncomplete) {
+          try {
+            final listResp = await ApiHelper.get(
+              path: '/merchants/services',
+              queryParameters: {'page': 1, 'limit': 1000},
+              withLoading: false,
+              shouldShowMessage: false,
+            );
+
+            if (listResp != null && listResp['status'] == true) {
+              final list = (listResp['data'] as List?) ?? [];
+              final found = list.cast<dynamic>().firstWhere(
+                (e) => (e is Map) && e['id']?.toString() == serviceId,
+                orElse: () => null,
+              );
+              if (found is Map) {
+                final m = Map<String, dynamic>.from(found);
+                // Merge missing keys only, keep detail keys if present.
+                for (final entry in m.entries) {
+                  serviceJson.putIfAbsent(entry.key, () => entry.value);
+                }
+              }
+            }
+          } catch (_) {
+            // ignore fallback errors
+          }
+        }
+
+        // Normalize numeric strings -> num to avoid runtime cast issues in other layers.
+        final normalized = _normalizeNumericStrings(serviceJson);
+        final service = Service.fromApiJson(
+          Map<String, dynamic>.from(normalized as Map),
+        );
+
+        // Update controller fields first (title, ids, lists, etc.)
+        await _updateControllerFromService(service);
+
+        // Then resolve section/category display names immediately.
+        // NOTE: we pass the ids explicitly so it works even if selection values
+        // are still being updated.
+        await _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
 
         isLoading.value = false;
         update();
@@ -1553,14 +1715,18 @@ class ServiceController extends GetxController {
     return serviceData;
   }
 
-  void _updateControllerFromService(Service service) {
-    serviceId.value = service.id.toString() ?? '';
+  Future<void> _updateControllerFromService(Service service) async {
+    // -------------------- Values --------------------
+    serviceId.value = service.id?.toString() ?? '';
     serviceSlug.value = service.slug;
     serviceTitle.value = service.title;
+
     selectedSectionId.value = service.sectionId;
     selectedCategoryId.value = service.categoryId;
+
     specializations.assignAll(service.specialties);
     keywords.assignAll(service.tags);
+
     serviceStatus.value = service.status;
     price.value = service.price.toString();
 
@@ -1568,7 +1734,6 @@ class ServiceController extends GetxController {
     executionTimeUnit.value = _convertTimeUnitFromApi(service.executeType);
 
     developments.assignAll(service.extras);
-
     faqs.assignAll(service.questions);
 
     setDescription(service.description);
@@ -1578,7 +1743,7 @@ class ServiceController extends GetxController {
       final imageUrl = service.images[i];
       serviceImages.add(
         ServiceImage(
-          id: service.id ?? 0,
+          id: (service.id ?? DateTime.now().millisecondsSinceEpoch),
           url: imageUrl,
           isMain: i == 0,
           isLocalFile: false,
@@ -1590,7 +1755,34 @@ class ServiceController extends GetxController {
     acceptedTerms.value = service.acceptedTerms;
     acceptedPrivacy.value = service.acceptedPrivacy;
 
-    _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
+    // IMPORTANT: keep the service store_id so we can fetch sections/categories
+    // with the correct `storeId` header.
+    editingStoreId.value = (service.storeId ?? '').toString();
+
+    // -------------------- Force UI refresh NOW --------------------
+    // This is the root cause of "data appears only after leaving and coming back".
+    // The screen uses GetBuilder IDs, so we MUST trigger them after prefill.
+    update([
+      'service_title_field',
+      'main_category_field',
+      'category_field',
+      'specialization_input',
+      'specializations_list',
+      'keyword_input',
+      'keywords_list',
+      'price_field',
+      'execution_time_field',
+      'developments_list',
+      'faqs_list',
+      'images_list',
+      'description_field',
+      'terms_section',
+      'privacy_section',
+    ]);
+    update(); // also refresh any builders without IDs
+
+    // Resolve section/category names and categories list based on selected ids.
+    await _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
   }
 
   Future<void> _loadCategoryAndSectionNames(
@@ -1598,27 +1790,41 @@ class ServiceController extends GetxController {
     int categoryId,
   ) async {
     try {
-      if (sections.isEmpty) {
-        await loadSections();
-      }
+      final String? storeIdOverride =
+          editingStoreId.value.trim().isNotEmpty ? editingStoreId.value.trim() : null;
+
+      // Ensure selected IDs are set first so UI + other logic relies on them.
+      selectedSectionId.value = sectionId;
+      selectedCategoryId.value = categoryId;
+
+      // Load sections with the correct storeId scope.
+      await loadSections(storeIdOverride: storeIdOverride);
 
       final section = sections.firstWhere(
-        (s) => (s['id'] as int?) == sectionId,
+        (s) => int.tryParse((s['id'] ?? '').toString()) == sectionId,
         orElse: () => {'name': ''},
       );
-      selectedMainCategory.value = section['name']?.toString() ?? '';
-      selectedSectionId.value = sectionId;
+      selectedMainCategory.value = (section['name'] ?? '').toString();
 
-      if (selectedSectionId.value > 0) {
-        await loadCategories();
-
-        final category = categories.firstWhere(
-          (c) => (c['id'] as int?) == categoryId,
-          orElse: () => {'name': ''},
+      // Load categories for the selected section (also scoped by storeId).
+      if (sectionId > 0) {
+        await loadCategories(
+          sectionIdOverride: sectionId,
+          storeIdOverride: storeIdOverride,
         );
-        selectedCategory.value = category['name']?.toString() ?? '';
-        selectedCategoryId.value = categoryId;
+
+        // Prefer existing category object name (if already set elsewhere), else resolve from list.
+        if (selectedCategory.value.trim().isEmpty && categoryId > 0) {
+          final category = categories.firstWhere(
+            (c) => int.tryParse((c['id'] ?? '').toString()) == categoryId,
+            orElse: () => {'name': ''},
+          );
+          selectedCategory.value = (category['name'] ?? '').toString();
+        }
       }
+
+      // Force-refresh UI fields immediately.
+      update(['main_category_field', 'category_field']);
     } catch (e) {
       print('❌ خطأ في تحميل أسماء القسم والفئة: $e');
     }
@@ -1680,16 +1886,79 @@ class ServiceController extends GetxController {
 
   Future<void> loadServiceForEditing(String id) async {
     try {
+      isInEditMode = true;
+      isLoading.value = true;
+      update(['loading_indicator']);
+
       final service = await getServiceById(id);
-      if (service != null) {
-        serviceId.value = id;
-        Get.snackbar(
-          'تم التحميل',
-          'تم تحميل بيانات الخدمة للتعديل',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+      if (service == null) {
+        throw Exception('فشل في جلب بيانات الخدمة');
       }
+
+      // ---- Guard: prevent editing service from another store ----
+      // NOTE: current store is what the API is using in headers.
+      final currentStoreId = (ApiHelper.getStoreIdOrNull() ?? '').trim();
+      final serviceStoreId = (service.storeId ?? '').toString().trim();
+
+      if (currentStoreId.isNotEmpty &&
+          serviceStoreId.isNotEmpty &&
+          currentStoreId != serviceStoreId) {
+        // Reset edit state so we don't accidentally submit.
+        isInEditMode = false;
+        isLoading.value = false;
+        update(['loading_indicator']);
+
+        await Get.defaultDialog(
+          title: 'تنبيه',
+          middleText:
+              'هذه الخدمة تتبع متجرًا مختلفًا عن المتجر المحدد حاليًا.\n\n'
+              'متجر الخدمة: $serviceStoreId\n'
+              'المتجر الحالي: $currentStoreId\n\n'
+              'يرجى تغيير المتجر من شاشة اختيار المتجر ثم إعادة فتح التعديل.',
+          textConfirm: 'تغيير المتجر',
+          textCancel: 'رجوع',
+          confirmTextColor: Colors.white,
+          buttonColor: AppColors.primary400,
+          onConfirm: () {
+            Get.back();
+            Get.offAllNamed('/selectStore');
+          },
+          onCancel: () {
+            Get.back();
+            if (Get.currentRoute == '/add-service') {
+              Get.back();
+            }
+          },
+        );
+        return;
+      }
+
+      serviceId.value = id;
+
+      // Force a full refresh for the edit screen widgets (instant rendering).
+      update([
+        'service_title_field',
+        'main_category_field',
+        'category_field',
+        'specializations_list',
+        'keywords_list',
+        'price_field',
+        'execution_time_field',
+        'developments_list',
+        'images_list',
+        'description_field',
+        'faqs_list',
+        'terms_section',
+        'privacy_section',
+        'stepper',
+      ]);
+
+      Get.snackbar(
+        'تم التحميل',
+        'تم تحميل بيانات الخدمة للتعديل',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.snackbar(
         'خطأ',
@@ -1697,6 +1966,9 @@ class ServiceController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      isLoading.value = false;
+      update(['loading_indicator']);
     }
   }
 
@@ -1754,7 +2026,7 @@ class ServiceController extends GetxController {
     );
   }
 
-  bool get isInEditMode => serviceId.value.isNotEmpty;
+  bool  isInEditMode = serviceId.value.isNotEmpty;
 
   String get currentServiceId => serviceId.value;
 

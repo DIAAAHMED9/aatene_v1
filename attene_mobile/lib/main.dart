@@ -10,6 +10,7 @@ import 'general_index.dart';
 import 'services/notification_services.dart';
 import 'utlis/responsive/index.dart';
 import 'utlis/services/device_name_service.dart';
+import 'view/add services/stepper/index.dart';
 
 import 'utlis/sheet_controller.dart';
 
@@ -23,7 +24,9 @@ class AppBindings extends Bindings {
     print('🔄 [APP BINDINGS] تسجيل المتحكمات الأساسية فقط...');
 
     Get.lazyPut(() => GetStorage(), fenix: true);
-    Get.lazyPut(() => MyAppController(), fenix: true);
+    // Keep MyAppController alive for the whole app lifecycle.
+    // It owns auth/session state used by API headers.
+    Get.put(MyAppController(), permanent: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
     // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
@@ -182,6 +185,23 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
         GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
+        // Services add/edit (same flow as products)
+        GetPage(
+          name: '/add-service',
+          page: () {
+            final args = (Get.arguments is Map)
+                ? Map<String, dynamic>.from(Get.arguments)
+                : <String, dynamic>{};
+
+            final bool isEditMode = args['isEditMode'] == true;
+            final String? serviceId = args['serviceId']?.toString();
+
+            return ServiceStepperScreen(
+              isEditMode: isEditMode,
+              serviceId: serviceId,
+            );
+          },
+        ),
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
       ],
       debugShowCheckedModeBanner: false,

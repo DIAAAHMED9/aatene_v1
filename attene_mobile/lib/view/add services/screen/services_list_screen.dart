@@ -118,7 +118,11 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
   void _navigateToAddService() {
     _serviceController.setCreateMode();
-    Get.to(() => const ServiceStepperScreen());
+    Get.to(() => const AddServiceStepperScreen())?.then((result) {
+      if (result == true) {
+        _refreshServices();
+      }
+    });
   }
 
   void _navigateToEditService(Service service) {
@@ -134,7 +138,11 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
     String serviceId = service.id.toString();
     _serviceController.setEditMode(serviceId, service.title);
-    Get.to(() => ServiceStepperScreen(isEditMode: true, serviceId: serviceId));
+    Get.to(() => EditServiceStepperScreen(serviceId: serviceId))?.then((result) {
+      if (result == true) {
+        _refreshServices();
+      }
+    });
   }
 
   Future<void> _deleteService(Service service) async {

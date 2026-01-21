@@ -140,7 +140,7 @@ class _FAQBottomSheetState extends State<FAQBottomSheet> {
                       colorText: Colors.white,
                     );
                   } else {
-                    controller.updateFAQ(widget.faq!.id, question, answer);
+                    controller.updateFAQ(widget.faq!.id??0, question, answer);
                     Get.back();
 
                     Get.snackbar(

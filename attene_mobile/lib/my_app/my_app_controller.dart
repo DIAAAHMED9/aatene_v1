@@ -23,7 +23,9 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   final RxInt _appLaunchCount = 0.obs;
   final RxString _appVersion = '1.0.0'.obs;
 
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  /// ⚠️ connectivity_plus (الإصدارات الحديثة) يرجّع List<ConnectivityResult>
+  /// لذلك نجعل الاشتراك nullable لتفادي LateInitializationError عند فشل التهيئة.
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   final Connectivity _connectivity = Connectivity();
 
   @override
@@ -61,34 +63,32 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
 
   Future<void> _startConnectivityMonitoring() async {
     try {
-      final connectivityResult = await _connectivity.checkConnectivity();
-      _isInternetConnect.value = connectivityResult != ConnectivityResult.none;
+      final results = await _connectivity.checkConnectivity();
+      final bool isConnected = !results.contains(ConnectivityResult.none);
+      _isInternetConnect.value = isConnected;
 
       print(
         '📶 حالة الاتصال الحالية: ${_isInternetConnect.value ? 'متصل' : 'غير متصل'}',
       );
 
-      _connectivitySubscription =
-          _connectivity.onConnectivityChanged.listen(
-                (ConnectivityResult result) {
-                      final bool isConnected =
-                          result != ConnectivityResult.none;
-                      if (_isInternetConnect.value != isConnected) {
-                        _isInternetConnect.value = isConnected;
-                        print(
-                          '📶 تغير حالة الاتصال: ${isConnected ? 'متصل' : 'غير متصل'}',
-                        );
+      _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+        (List<ConnectivityResult> results) {
+          final bool isConnected = !results.contains(ConnectivityResult.none);
 
-                        if (isConnected) {
-                          _onInternetRestored();
-                        } else {
-                          _onInternetLost();
-                        }
-                      }
-                    }
-                    as void Function(List<ConnectivityResult> event)?,
-              )
-              as StreamSubscription<ConnectivityResult>;
+          if (_isInternetConnect.value != isConnected) {
+            _isInternetConnect.value = isConnected;
+            print(
+              '📶 تغير حالة الاتصال: ${isConnected ? 'متصل' : 'غير متصل'}',
+            );
+
+            if (isConnected) {
+              _onInternetRestored();
+            } else {
+              _onInternetLost();
+            }
+          }
+        },
+      );
 
       print('📡 بدء مراقبة الاتصال بالإنترنت');
     } catch (e) {
@@ -478,8 +478,8 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
 
   Future<void> _checkConnectivity() async {
     try {
-      final connectivityResult = await _connectivity.checkConnectivity();
-      final isConnected = connectivityResult != ConnectivityResult.none;
+      final results = await _connectivity.checkConnectivity();
+      final bool isConnected = !results.contains(ConnectivityResult.none);
 
       if (_isInternetConnect.value != isConnected) {
         _isInternetConnect.value = isConnected;
@@ -492,7 +492,10 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
 
   @override
   void onClose() {
-    _connectivitySubscription.cancel();
+    try {
+      _connectivitySubscription?.cancel();
+      _connectivitySubscription = null;
+    } catch (_) {}
 
     WidgetsBinding.instance.removeObserver(this);
 

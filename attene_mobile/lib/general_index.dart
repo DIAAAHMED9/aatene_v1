@@ -5,7 +5,7 @@ export 'package:dio/dio.dart';
 export 'package:get_storage/get_storage.dart';
 export  'dart:convert';
 export 'package:flutter_svg/flutter_svg.dart';
-export 'view/add services/stepper/screen/service_stepper.dart';
+export 'view/add services/stepper/index.dart';
 export 'utlis/colors/index.dart';
 export 'api/index.dart';
 export 'controller/index.dart';

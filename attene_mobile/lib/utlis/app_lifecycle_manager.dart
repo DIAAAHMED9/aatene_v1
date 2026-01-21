@@ -49,9 +49,26 @@ class AppLifecycleManager extends GetxController with WidgetsBindingObserver {
   }
 
   void _onAppResumed() {
+    // ✅ لا تقطع تجربة المستخدم داخل مسارات الـ Stepper/الـ Pickers
+    // (هذه الشاشات عادة تفتح BottomSheet/Picker وتسبب inactive/resumed)
+    if (_isInCriticalFlow()) return;
+
     Future.delayed(const Duration(seconds: 1), () {
       _reloadDataOnResume();
     });
+  }
+
+  bool _isInCriticalFlow() {
+    try {
+      final r = Get.currentRoute;
+      return r == '/add-service' ||
+          r == '/edit-service' ||
+          r == '/add-product' ||
+          r == '/edit-product' ||
+          r.toLowerCase().contains('stepper');
+    } catch (_) {
+      return false;
+    }
   }
 
   void _onAppPaused() {

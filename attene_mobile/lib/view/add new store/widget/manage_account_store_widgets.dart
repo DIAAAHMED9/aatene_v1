@@ -187,33 +187,37 @@ class _AccountsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final filteredStores = _filteredStores();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _SearchBar(controller: controller),
-          _InfoBanner(controller: controller),
-          ListView.builder(
-            itemCount: filteredStores.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              final store = filteredStores[index];
-              return _StoreCard(
-                store: store,
-                onEdit: () => controller.editStore(store),
-                onDelete: () => controller.deleteStore(store),
-              );
-            },
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            children: [
+              _SearchBar(controller: controller),
+              _InfoBanner(controller: controller),
+              ListView.builder(
+                itemCount: filteredStores.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final store = filteredStores[index];
+                  return _StoreCard(
+                    store: store,
+                    onEdit: () => controller.editStore(store),
+                    onDelete: () => controller.deleteStore(store),
+                  );
+                },
+              ),
+                   const SizedBox(height: 16),
+        
+          // ✅ زر إضافة متجر جديد
+        
+        
+            ],
           ),
-               const SizedBox(height: 16),
+        ),
+              _AddNewStoreButton(controller: controller),
 
-      // ✅ زر إضافة متجر جديد
-      _AddNewStoreButton(controller: controller),
-
-      const SizedBox(height: 80),
-
-        ],
-      ),
+      ],
     );
   }
 }
@@ -225,7 +229,7 @@ class _AddNewStoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 30),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
