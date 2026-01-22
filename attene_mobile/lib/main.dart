@@ -54,6 +54,7 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => KeywordController(), fenix: true);
         Get.lazyPut(() => AddProductController(), fenix: true);
         Get.lazyPut(() => MediaLibraryController(), fenix: true);
+        Get.lazyPut(() => StoriesController(), fenix: true);
         Get.lazyPut(() => RelatedProductsController(), fenix: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
@@ -183,6 +184,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
+        GetPage(name: '/story-test', page: () => const StoryTestScreen()),
+        GetPage(name: '/add-story', page: () => const AddStoryScreen()),
         GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
         // Services add/edit (same flow as products)
         GetPage(

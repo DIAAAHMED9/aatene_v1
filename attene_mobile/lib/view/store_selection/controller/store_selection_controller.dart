@@ -77,7 +77,7 @@ class StoreSelectionController extends GetxController {
     await DataInitializerService.to.initializeCoreData(silent: true);
     await DataInitializerService.to.initializeStoreData(storeId: storeId, silent: true);
 
-    Get.offAllNamed('/mainScreen');
+    Get.offAllNamed('/story-test');
   }
 
   Future<void> resetStoreSelection() async {
