@@ -1,10 +1,6 @@
-
-
-
 import '../../../general_index.dart';
 import '../../../utlis/image flip/index.dart';
 import '../../../utlis/responsive/index.dart';
-
 
 class Onbording extends StatelessWidget {
   const Onbording({super.key});

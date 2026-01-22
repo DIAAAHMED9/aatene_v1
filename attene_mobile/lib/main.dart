@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
+import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user%20profile/controller/user_controller.dart';
 import 'package:attene_mobile/view/profile/user%20profile/screen/user_profile.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -173,7 +175,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/', page: () =>  OnboardingView()),
         GetPage(name: '/onboarding', page: () => const Onbording()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -229,6 +231,7 @@ Future<void> _initializeEssentialServices() async {
   await GetStorage.init();
 
   print('✅ تم تهيئة الخدمات الأساسية');
+
 }
 
 void _initializeBackgroundServices() {

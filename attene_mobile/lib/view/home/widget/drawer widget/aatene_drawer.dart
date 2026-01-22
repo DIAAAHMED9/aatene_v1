@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/responsive_dimensions.dart';
 import '../../controller/controller_drawer.dart';
@@ -132,22 +131,6 @@ class AateneDrawer extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _header() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: const [
-          Text(
-            'A’atene',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          Spacer(),
-          CircleAvatar(child: Text('A')),
-        ],
       ),
     );
   }
