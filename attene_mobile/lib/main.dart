@@ -62,7 +62,6 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
-        Get.lazyPut(() => StoriesController(), fenix: true);
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });
@@ -175,7 +174,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => FavoritesScreen()),
+        GetPage(name: '/', page: () => SplashScreen()),
         GetPage(name: '/onboarding', page: () => const Onboarding()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
