@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class StoryTestScreen extends StatefulWidget {
   const StoryTestScreen({super.key});
 
@@ -67,7 +66,10 @@ class _StoryTestScreenState extends State<StoryTestScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('قصص المتجر', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              const Text(
+                'قصص المتجر',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
               const SizedBox(height: 10),
               SizedBox(
                 height: 110,
@@ -78,12 +80,14 @@ class _StoryTestScreenState extends State<StoryTestScreen> {
                       imageUrl: thumbnail,
                       title: 'المتجر',
                       count: items.length,
-                      onTap: () => Get.to(() => StoryViewerScreen(stories: items, initialIndex: 0)),
+                      onTap: () => Get.to(
+                        () =>
+                            StoryViewerScreen(stories: items, initialIndex: 0),
+                      ),
                     ),
                   ],
                 ),
               ),
-             
             ],
           ),
         );

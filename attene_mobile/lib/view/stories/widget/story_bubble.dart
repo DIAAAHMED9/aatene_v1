@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../general_index.dart';
 
 class StoryBubble extends StatelessWidget {
@@ -32,7 +31,11 @@ class StoryBubble extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFF58529), Color(0xFFDD2A7B), Color(0xFF8134AF)],
+                      colors: [
+                        Color(0xFFF58529),
+                        Color(0xFFDD2A7B),
+                        Color(0xFF8134AF),
+                      ],
                     ),
                   ),
                   child: CircleAvatar(
@@ -44,7 +47,8 @@ class StoryBubble extends StatelessWidget {
                         width: 56,
                         height: 56,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(color: Colors.grey.shade200),
+                        placeholder: (_, __) =>
+                            Container(color: Colors.grey.shade200),
                         errorWidget: (_, __, ___) => Container(
                           color: Colors.grey.shade200,
                           child: const Icon(Icons.broken_image),
@@ -58,7 +62,10 @@ class StoryBubble extends StatelessWidget {
                     top: -2,
                     end: -2,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.redAccent,
                         borderRadius: BorderRadius.circular(999),
@@ -66,7 +73,11 @@ class StoryBubble extends StatelessWidget {
                       ),
                       child: Text(
                         '$count',
-                        style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),

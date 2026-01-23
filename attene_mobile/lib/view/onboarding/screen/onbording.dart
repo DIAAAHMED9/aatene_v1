@@ -2,8 +2,8 @@ import '../../../general_index.dart';
 import '../../../utlis/image flip/index.dart';
 import '../../../utlis/responsive/index.dart';
 
-class Onbording extends StatelessWidget {
-  const Onbording({super.key});
+class Onboarding extends StatelessWidget {
+  const Onboarding({super.key});
 
   void _changeLanguage(String languageCode, String countryCode) {
     Get.updateLocale(Locale(languageCode, countryCode));

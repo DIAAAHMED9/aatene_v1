@@ -1,9 +1,5 @@
 import 'dart:io';
-
 import '../../../general_index.dart';
-import '../model/story_item_model.dart';
-import '../../../api/story/story_api.dart';
-import '../../media_library/model/media_model.dart';
 
 class StoriesController extends GetxController {
   final RxBool isLoading = false.obs;
@@ -127,5 +123,4 @@ class StoriesController extends GetxController {
       isLoading.value = false;
     }
   }
-
 }

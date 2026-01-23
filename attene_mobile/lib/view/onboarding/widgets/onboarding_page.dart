@@ -35,17 +35,22 @@ class OnboardingPage extends StatelessWidget {
               ],
             ),
             /// صورة
+
+            /// GIF فوق الجزء الأزرق
             Positioned(
-              top: 70,
+              top: 80,
               left: 0,
               right: 0,
-              child: SvgPicture.asset(
-                data.svg,
-                height: 200,
+              child: Image.asset(
+                data.gif,
+                height: 240,
                 fit: BoxFit.contain,
-              ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
-            ),
-          ],
+                gaplessPlayback: true, // يمنع الوميض عند إعادة البناء
+              )
+                  .animate()
+                  .fadeIn(duration: 600.ms)
+                  .slideY(begin: -0.2),
+            ),          ],
         ),
       ],
     );

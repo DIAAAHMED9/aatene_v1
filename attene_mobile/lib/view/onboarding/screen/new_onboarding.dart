@@ -7,20 +7,20 @@ class OnboardingView extends StatelessWidget {
 
   final pages = const [
     OnboardingModel(
-      svg: 'assets/images/svg_images/onboarding1.svg',
-      title: 'مساعد ذكي معك دائمًا',
-      description: 'اسأل، اختر، وتابع طلبك مع مساعد ذكي يسهل عليك كل خطوة.',
+      gif: 'assets/images/gif/dropshipping_model.gif',
+      title: 'تسوق كل اللي تحتاجه بسهولة',
+      description:
+          'اكتشف منتجات متنوعة، قارن الأسعار وعاين التفاصيل قبل الشراء.',
     ),
     OnboardingModel(
-      svg: 'assets/images/svg_images/onboarding1.svg',
+      gif: 'assets/images/gif/shop_giveaway.gif',
       title: 'خدمات متكاملة في مكان واحد',
       description: 'احجز خدماتك بسهولة وتابع كل التفاصيل من خلال التطبيق.',
     ),
     OnboardingModel(
-      svg: 'assets/images/svg_images/onboarding1.svg',
-      title: 'تسوق كل اللي تحتاجه بسهولة',
-      description:
-          'اكتشف منتجات متنوعة، قارن الأسعار وعاين التفاصيل قبل الشراء.',
+      gif: 'assets/images/gif/chat_bot.gif',
+      title: 'مساعد ذكي معك دائمًا',
+      description: 'اسأل، اختر، وتابع طلبك مع مساعد ذكي يسهل عليك كل خطوة.',
     ),
   ];
 

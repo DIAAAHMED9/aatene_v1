@@ -1,9 +1,4 @@
-import 'dart:async';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../general_index.dart';
-import '../model/story_item_model.dart';
-import '../widget/story_progress_bar.dart';
 
 class StoryViewerScreen extends StatefulWidget {
   final List<StoryItemModel> stories;
@@ -150,7 +145,10 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
                         Center(
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 20),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.45),
                               borderRadius: BorderRadius.circular(14),
@@ -213,7 +211,9 @@ class _StoryMediaGrid extends StatelessWidget {
     if (urls.isEmpty) {
       return Container(
         color: Colors.black,
-        child: const Center(child: Icon(Icons.broken_image, color: Colors.white)),
+        child: const Center(
+          child: Icon(Icons.broken_image, color: Colors.white),
+        ),
       );
     }
 
@@ -224,7 +224,9 @@ class _StoryMediaGrid extends StatelessWidget {
         placeholder: (_, __) => Container(color: Colors.black),
         errorWidget: (_, __, ___) => Container(
           color: Colors.black,
-          child: const Center(child: Icon(Icons.broken_image, color: Colors.white)),
+          child: const Center(
+            child: Icon(Icons.broken_image, color: Colors.white),
+          ),
         ),
       );
     }

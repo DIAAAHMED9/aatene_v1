@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import '../general_index.dart';
 
 enum BottomSheetType {
@@ -833,7 +831,6 @@ class BottomSheetController extends GetxController {
           ),
         );
       }
-
       return ListView.builder(
         itemCount: _filteredSections.length,
         itemBuilder: (context, index) {
@@ -870,9 +867,7 @@ class BottomSheetController extends GetxController {
                   activeColor: AppColors.primary400,
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

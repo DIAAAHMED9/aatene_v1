@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class AddStoryScreen extends StatefulWidget {
   const AddStoryScreen({super.key});
 
@@ -17,10 +16,8 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
 
   Future<void> openMediaLibrary() async {
     final result = await Get.to<List<MediaItem>>(
-      () => const MediaLibraryScreen(
-        isSelectionMode: true,
-        maxSelectionCount: 4,
-      ),
+      () =>
+          const MediaLibraryScreen(isSelectionMode: true, maxSelectionCount: 4),
     );
 
     if (result == null || result.isEmpty) return;
@@ -59,7 +56,9 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
 
   Widget _previewGrid() {
     if (selectedMediaItems.isEmpty) {
-      return const Center(child: Text('اضغط لاختيار صورة/صور من مكتبة الوسائط'));
+      return const Center(
+        child: Text('اضغط لاختيار صورة/صور من مكتبة الوسائط'),
+      );
     }
 
     // Simple preview grid for up to 4 selected items
@@ -192,7 +191,9 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
                                           decoration: BoxDecoration(
                                             color: c,
                                             shape: BoxShape.circle,
-                                            border: Border.all(color: Colors.black12),
+                                            border: Border.all(
+                                              color: Colors.black12,
+                                            ),
                                           ),
                                         ),
                                       );
@@ -238,7 +239,11 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
                           height: 22,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text(selectedMediaItems.length <= 1 ? 'نشر القصة' : 'نشر ${selectedMediaItems.length} قصص'),
+                      : Text(
+                          selectedMediaItems.length <= 1
+                              ? 'نشر القصة'
+                              : 'نشر ${selectedMediaItems.length} قصص',
+                        ),
                 ),
               ),
             ],
