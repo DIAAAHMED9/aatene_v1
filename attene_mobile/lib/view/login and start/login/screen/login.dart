@@ -60,7 +60,7 @@ class Login extends StatelessWidget {
                         : 'Email / Phone Number',
                     errorText: controller.emailError.value,
                     onChanged: controller.updateEmail,
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.next, textInputType: null,
                   ),
                 ),
                 SizedBox(height: ResponsiveDimensions.h(16)),

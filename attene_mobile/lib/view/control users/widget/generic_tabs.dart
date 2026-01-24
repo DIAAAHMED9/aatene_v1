@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../component/text/aatene_custom_text.dart';
 
-
-
 class GenericTabs extends StatelessWidget {
   final List<String> tabs;
   final int selectedIndex;

@@ -86,7 +86,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                           backgroundColor: AppColors.primary400,
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
-                      ),
+                      ), textInputType: TextInputType.name,
                     ),
                   ),
                   CircleAvatar(

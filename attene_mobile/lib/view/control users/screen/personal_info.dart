@@ -94,7 +94,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   width: 24,
                   height: 24,
                 ),
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.next, textInputType: TextInputType.name,
               ),
               TextWithStar(text: "المدينة"),
               DropdownButtonFormField(

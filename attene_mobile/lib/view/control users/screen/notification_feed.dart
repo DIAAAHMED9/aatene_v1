@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class NotificationFeed extends StatefulWidget {
   const NotificationFeed({super.key});
 

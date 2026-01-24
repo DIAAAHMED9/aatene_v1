@@ -1,6 +1,3 @@
-
-
-
 import '../../../general_index.dart';
 
 class SectionCard3 extends StatelessWidget {
@@ -42,17 +39,13 @@ class SectionCard3 extends StatelessWidget {
                   ),
                   child: Center(child: icon),
                 ),
-                Text(
-                  title,
-                  style: getBold(fontSize: 14,),
-                ),
+                Text(title, style: getBold(fontSize: 14)),
               ],
             ),
             Text(
-                subtitle,
-                textAlign: TextAlign.start,
-                style: getRegular(fontSize: 12,
-                  color: AppColors.neutral600,)
+              subtitle,
+              textAlign: TextAlign.start,
+              style: getRegular(fontSize: 12, color: AppColors.neutral600),
             ),
           ],
         ),

@@ -8,9 +8,9 @@ class ProductCardUI extends StatelessWidget {
   Widget build(BuildContext context) {
     /// صور ثابتة
     final images = [
-      'assets/images/product_1.png',
-      'assets/images/product_2.png',
-      'assets/images/product_3.png',
+      'assets/images/png/closed-store.png',
+      'assets/images/png/closed-store.png',
+      'assets/images/png/closed-store.png',
     ];
 
     return Container(
@@ -29,9 +29,7 @@ class ProductCardUI extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// =========================
-          /// Image Slider (UI Only)
-          /// =========================
+          /// Image Slider
           Stack(
             children: [
               ClipRRect(
@@ -52,7 +50,7 @@ class ProductCardUI extends StatelessWidget {
                 ),
               ),
 
-              /// ❤️ Heart Button (Static)
+              /// ❤️ Button
               Positioned(
                 top: 12,
                 right: 12,

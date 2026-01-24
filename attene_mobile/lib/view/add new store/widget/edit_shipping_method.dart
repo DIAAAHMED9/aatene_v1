@@ -37,7 +37,7 @@ class EditShippingMethod extends StatelessWidget {
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "اكتب اسم الشركة هنا",
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.next, textInputType: TextInputType.name,
               ),
               // Text("شركة الشحن"),
               // TextFiledAatene(
@@ -77,7 +77,7 @@ class EditShippingMethod extends StatelessWidget {
                     ),
                   ),
                 ),
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.next, textInputType: TextInputType.number,
               ),
               Divider(color: AppColors.neutral900),
               Row(
@@ -98,7 +98,7 @@ class EditShippingMethod extends StatelessWidget {
                 isRTL: isRTL,
                 hintText: "٣",
                 suffixIcon: Icon(Icons.keyboard_arrow_down, size: 30),
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.next, textInputType: TextInputType.number,
               ),
               Text("سعر التوصيل"),
               TextFiledAatene(
@@ -111,7 +111,7 @@ class EditShippingMethod extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ),
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.done, textInputType: TextInputType.number,
               ),
               AateneButtonWithIcon(buttonText: "التالي"),
             ],

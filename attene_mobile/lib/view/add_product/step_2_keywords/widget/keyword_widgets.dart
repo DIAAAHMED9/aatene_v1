@@ -267,7 +267,7 @@ class KeywordSearchBoxWidget extends StatelessWidget {
         child: GetBuilder<KeywordController>(
           builder: (_) => _buildAddButton(controller),
         ),
-      ),
+      ), textInputType: TextInputType.name,
     );
   }
 

@@ -77,7 +77,7 @@ class OnboardingView extends StatelessWidget {
                     controller.currentIndex.value == pages.length - 1;
                 return AateneButton(
                   onTap: controller.next,
-                  buttonText: isLast ? 'ابدأ الآن' : 'التالي',
+                  buttonText: isLast ? 'التالي' : 'التالي',
                   color: AppColors.primary400,
                   textColor: AppColors.light1000,
                   borderColor: AppColors.primary400,

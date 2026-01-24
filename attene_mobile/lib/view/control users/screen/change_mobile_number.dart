@@ -54,18 +54,9 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
               value: selectedLanguage,
               hint: Text("اختر اللغة"),
               items: [
-                DropdownMenuItem<String>(
-                 value: 'ar',
-                 child: Text('العربية'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'he',
-                  child: Text('عبري'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'en',
-                  child: Text('english'),
-                ),
+                DropdownMenuItem<String>(value: 'ar', child: Text('العربية')),
+                DropdownMenuItem<String>(value: 'he', child: Text('عبري')),
+                DropdownMenuItem<String>(value: 'en', child: Text('english')),
               ],
               onChanged: (value) {
                 selectedLanguage = value;

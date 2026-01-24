@@ -1,3 +1,6 @@
+import 'package:attene_mobile/view/control%20users/screen/faq_page.dart';
+import 'package:attene_mobile/view/control%20users/screen/safety_tips.dart';
+
 import '../../../../general_index.dart';
 import '../../../../utlis/responsive/responsive_dimensions.dart';
 import '../../controller/controller_drawer.dart';
@@ -42,7 +45,9 @@ class AateneDrawer extends StatelessWidget {
                         ),
                       ),
                       InkWell(
-                        onTap: controller.addAccount,
+                        onTap: () {
+                          Get.to(ManageAccountStore());
+                        },
                         child: const Row(
                           children: [
                             Icon(Icons.add),
@@ -64,7 +69,9 @@ class AateneDrawer extends StatelessWidget {
                   width: 22,
                 ),
                 title: 'اعدادات الحساب',
-                onTap: () {},
+                onTap: () {
+                  Get.to(HomeControl());
+                },
               ),
               DrawerMenuItem(
                 icon: Icon(
@@ -72,7 +79,9 @@ class AateneDrawer extends StatelessWidget {
                   color: AppColors.neutral500,
                 ),
                 title: 'تواصل معنا',
-                onTap: () {},
+                onTap: () {
+
+                },
               ),
               DrawerMenuItem(
                 icon: SvgPicture.asset(
@@ -82,7 +91,10 @@ class AateneDrawer extends StatelessWidget {
                   width: 18,
                 ),
                 title: 'سياسة الخصوصية',
-                onTap: () {},
+                onTap: () {
+                  Get.to(PriceScreen());
+
+                },
               ),
               DrawerMenuItem(
                 icon: SvgPicture.asset(
@@ -92,7 +104,10 @@ class AateneDrawer extends StatelessWidget {
                   width: 22,
                 ),
                 title: 'شروط الخدمة',
-                onTap: () {},
+                onTap: () {
+                  Get.to(TermsOfUseScreen());
+
+                },
               ),
               DrawerMenuItem(
                 icon: Icon(
@@ -100,7 +115,10 @@ class AateneDrawer extends StatelessWidget {
                   color: AppColors.neutral500,
                 ),
                 title: 'بوابة الشكاوى والاقتراحات',
-                onTap: () {},
+                onTap: () {
+                  Get.to(SellectReport());
+
+                },
               ),
               DrawerMenuItem(
                 icon: SvgPicture.asset(
@@ -110,12 +128,18 @@ class AateneDrawer extends StatelessWidget {
                   width: 22,
                 ),
                 title: 'قواعد السلامة',
-                onTap: () {},
+                onTap: () {
+                  Get.to(SafetyTipsPage());
+
+                },
               ),
               DrawerMenuItem(
                 icon: Icon(Icons.info_outline, color: AppColors.neutral500),
                 title: 'عن أعطيني',
-                onTap: () {},
+                onTap: () {
+                  Get.to(AboutUsScreen());
+
+                },
               ),
               DrawerMenuItem(
                 //chat-question
@@ -126,7 +150,13 @@ class AateneDrawer extends StatelessWidget {
                   width: 22,
                 ),
                 title: 'الأسئلة الشائعة',
-                onTap: () {},
+                onTap: () {
+                  Get.to(FaqPage());
+
+                },
+              ),
+              SizedBox(
+                height: 100,
               ),
             ],
           ),

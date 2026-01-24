@@ -728,7 +728,7 @@ class BottomSheetController extends GetxController {
               prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
               isRTL: isRTL,
               hintText: 'ابحث في الأقسام',
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.done, textInputType: TextInputType.name,
             ),
             const SizedBox(height: 20),
 
@@ -949,7 +949,7 @@ class BottomSheetController extends GetxController {
           // ),
           isRTL: isRTL,
           hintText: 'أدخل اسم القسم الجديد',
-          textInputAction: TextInputAction.next,
+          textInputAction: TextInputAction.next, textInputType: TextInputType.name,
         ),
         const SizedBox(height: 20),
 
@@ -1572,7 +1572,7 @@ class BottomSheetController extends GetxController {
           onChanged: (value) => _newAttributeName.value = value,
           isRTL: isRTL,
           hintText: 'اسم السمة',
-          textInputAction: TextInputAction.next,
+          textInputAction: TextInputAction.next, textInputType: TextInputType.name,
         ),
         const SizedBox(height: 20),
         AateneButton(
@@ -1601,7 +1601,7 @@ class BottomSheetController extends GetxController {
           onChanged: (value) => _newAttributeValue.value = value,
           isRTL: isRTL,
           hintText: 'قيمة الصفة',
-          textInputAction: TextInputAction.done,
+          textInputAction: TextInputAction.done, textInputType: TextInputType.name,
         ),
         const SizedBox(height: 20),
         AateneButton(

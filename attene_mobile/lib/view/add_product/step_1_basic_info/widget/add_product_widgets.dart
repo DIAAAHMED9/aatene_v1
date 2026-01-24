@@ -361,7 +361,7 @@ class ProductNameSectionWidget extends StatelessWidget {
                       controller.update();
                     }
                   },
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.next, textInputType: TextInputType.name,
                 ),
                 if (controller.fieldErrors.containsKey('productName'))
                   Padding(

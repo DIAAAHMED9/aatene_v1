@@ -101,7 +101,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                 textInputAction: TextInputAction.done,
                 isRTL: isRTL,
                 hintText: "اكتب اسم الشركة هنا",
-                controller: nameController,
+                controller: nameController, textInputType: TextInputType.name,
               ),
               SizedBox(height: 20),
 

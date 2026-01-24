@@ -3,6 +3,7 @@ import 'package:attene_mobile/view/profile/user%20profile/screen/user_profile.da
 import 'package:flutter/material.dart';
 
 import '../../../../utlis/index.dart';
+import '../../../../utlis/responsive/responsive_dimensions.dart';
 
 class SelectionBottomSheet extends StatefulWidget {
   const SelectionBottomSheet({super.key});
@@ -125,7 +126,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                             TextFiledAatene(
                               isRTL: isRTL,
                               hintText: "اكتب هنا",
-                              textInputAction: TextInputAction.next,
+                              textInputAction: TextInputAction.next, textInputType: TextInputType.name,
                             ),
                           ],
                         ),
@@ -134,7 +135,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "الشكوى/ الأفتراح",
+                              "الشكوى/ الأقتراح",
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                 fontSize: 14,
@@ -146,39 +147,38 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                               keyboardType: TextInputType.text,
                               maxLines: 4,
                               decoration: InputDecoration(
+                                isDense: true,
+                                hintStyle: getMedium(color: Colors.grey),
                                 hintText: "اكتب هنا",
-                                hintTextDirection: TextDirection.rtl,
-                                hintStyle: getRegular(
-                                  color: AppColors.neutral600,
-                                  fontSize: 14,
-                                ),
-                                border: const UnderlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-
-                                  borderSide: BorderSide(
-                                    color: AppColors.neutral600,
-                                    width: 2,
-                                  ),
-                                ),
-                                enabledBorder: const UnderlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveDimensions.w(20),
                                   ),
                                   borderSide: BorderSide(
-                                    color: AppColors.neutral900,
-                                    width: 2,
+                                    color: Colors.grey[300]!,
+                                    width: 1.0,
                                   ),
                                 ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveDimensions.w(10),
+                                  ),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveDimensions.w(50),
                                   ),
                                   borderSide: BorderSide(
                                     color: AppColors.primary400,
+                                    width: 1,
                                   ),
                                 ),
+                                filled: true,
+                                fillColor: Colors.grey[50],
                               ),
                             ),
                           ],
@@ -270,7 +270,8 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
         groupValue: _selectedReason,
         activeColor: AppColors.primary400,
         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        controlAffinity: ListTileControlAffinity.leading, // الدائرة على اليسار
+        controlAffinity: ListTileControlAffinity.leading,
+        // الدائرة على اليسار
         onChanged: (value) {
           setState(() {
             _selectedReason = value;

@@ -27,27 +27,22 @@ class DistinctProduct extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        // image: DecorationImage(
-        //   image: NetworkImage(imageUrl),
-        //   fit: BoxFit.cover,
-        // ),
+        image: DecorationImage(
+          image: AssetImage("assets/images/png/background_product.png"),
+          fit: BoxFit.cover,
+        ),
       ),
       child: Stack(
         children: [
-          Image.asset(
-            "assets/images/png/background_product.png",
-            width: double.infinity,
-            height: 200,
-          ),
-          // 2. Dark Gradient Overlay (لتحسين قراءة النص)
-          // 1. Content
+          // Image.asset(
+          //   "assets/images/png/background_product.png",
+          //   width: double.infinity,
+          //   height: 200,
+          // ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                // مساحة فارغة لإظهار صورة المنتج على اليسار
-
-                // النصوص والتفاصيل على اليمين
                 Expanded(
                   flex: 3,
                   child: Column(

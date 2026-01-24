@@ -20,7 +20,8 @@ class FollowersSearchField extends StatelessWidget {
           backgroundColor: AppColors.primary400,
           child: const Icon(Icons.search, color: Colors.white),
         ),
-      ), textInputAction: TextInputAction.done,
+      ),
+      textInputAction: TextInputAction.done, textInputType: TextInputType.name,
     );
   }
 }

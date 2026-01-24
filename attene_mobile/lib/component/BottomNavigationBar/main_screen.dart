@@ -1,5 +1,3 @@
-
-
 import '../../general_index.dart';
 
 class MainScreen extends StatelessWidget {
@@ -47,10 +45,9 @@ class MainScreen extends StatelessWidget {
       // }
 
       /// Search Tab
-        mNames.add('بحث');
-        mPages.add(SearchScreen());
-        mIcons.add(Icons.search);
-
+      mNames.add('بحث');
+      mPages.add(SearchScreen());
+      mIcons.add(Icons.search);
 
       /// Services tab
       // if (mode == StoreMode.services || mode == StoreMode.mixed) {

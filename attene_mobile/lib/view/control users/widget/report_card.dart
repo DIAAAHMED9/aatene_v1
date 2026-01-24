@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class ReportCard extends StatelessWidget {
@@ -36,7 +34,7 @@ class ReportCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               image,
-              Text(title, style:getBold()),
+              Text(title, style: getBold()),
             ],
           ),
         ),

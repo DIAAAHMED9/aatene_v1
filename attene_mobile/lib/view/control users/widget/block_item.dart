@@ -1,6 +1,4 @@
-
 import '../../../general_index.dart';
-
 
 class BlockItem extends StatelessWidget {
   final BlockEntry entry;
@@ -32,7 +30,9 @@ class BlockItem extends StatelessWidget {
             child: hasAvatar
                 ? null
                 : Icon(
-                    entry.type.toLowerCase() == 'store' ? Icons.store : Icons.person,
+                    entry.type.toLowerCase() == 'store'
+                        ? Icons.store
+                        : Icons.person,
                     color: Colors.grey[600],
                   ),
           ),

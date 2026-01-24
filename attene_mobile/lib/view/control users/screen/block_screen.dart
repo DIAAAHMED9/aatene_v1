@@ -1,8 +1,4 @@
-
-
-
 import '../../../general_index.dart';
-
 
 class BlockScreen extends StatelessWidget {
   BlockScreen({super.key});
@@ -44,7 +40,7 @@ class BlockScreen extends StatelessWidget {
                 selectedIndex: controller.currentIndex.value,
                 onTap: controller.changeTab,
                 selectedColor: AppColors.primary500,
-                unSelectedColor:  AppColors.customColor10,
+                unSelectedColor: AppColors.customColor10,
               ),
             ),
             const SizedBox(height: 12),
@@ -52,7 +48,7 @@ class BlockScreen extends StatelessWidget {
               isRTL: isRTL,
               hintText: 'بحث',
               textInputAction: TextInputAction.done,
-              onChanged: controller.onSearch,
+              onChanged: controller.onSearch, textInputType: TextInputType.name,
             ),
             const SizedBox(height: 12),
             Expanded(

@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 
 class PrivacyScreen extends StatefulWidget {
@@ -85,9 +83,18 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 value: selectedLanguage,
                 hint: Text("اختر اللغة"),
                 items: [
-                  DropdownMenuItem<String>(value: 'ar', child: Text('العربية',style: getRegular(fontSize: 14),)),
-                  DropdownMenuItem<String>(value: 'he', child: Text('عبري',style: getRegular(fontSize: 14),)),
-                  DropdownMenuItem<String>(value: 'en', child: Text('english',style: getRegular(fontSize: 14),)),
+                  DropdownMenuItem<String>(
+                    value: 'ar',
+                    child: Text('العربية', style: getRegular(fontSize: 14)),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'he',
+                    child: Text('عبري', style: getRegular(fontSize: 14)),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'en',
+                    child: Text('english', style: getRegular(fontSize: 14)),
+                  ),
                 ],
                 onChanged: (value) {
                   selectedLanguage = value;
@@ -144,7 +151,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                     ),
                     title: Row(
                       children: [
-                        Text(items[index]['title']!, style: getRegular(fontSize: 14)),
+                        Text(
+                          items[index]['title']!,
+                          style: getRegular(fontSize: 14),
+                        ),
                         const Spacer(),
                         _circleIconPlus(isExpanded ? Icons.remove : Icons.add),
                       ],

@@ -21,10 +21,7 @@ class FollowerListItem extends StatelessWidget {
       child: Row(
         spacing: 10,
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundImage: NetworkImage(model.avatar),
-          ),
+          CircleAvatar(radius: 28, backgroundImage: NetworkImage(model.avatar)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

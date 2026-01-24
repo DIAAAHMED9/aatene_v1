@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
 class BlockSkeleton extends StatelessWidget {
   const BlockSkeleton({super.key});
 

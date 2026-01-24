@@ -107,7 +107,7 @@ class HomeServices extends GetView<HomeController> {
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
                       ),
-                      textInputAction: TextInputAction.done,
+                      textInputAction: TextInputAction.done, textInputType: TextInputType.name,
                     ),
                   ),
                 ],

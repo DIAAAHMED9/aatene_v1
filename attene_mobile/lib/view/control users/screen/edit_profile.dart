@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class Edit_Profile extends StatelessWidget {
   const Edit_Profile({super.key});
 
@@ -161,9 +160,8 @@ class Edit_Profile extends StatelessWidget {
                             EditProfileLabel(
                               title: " كلمة المرور",
                               subtitle: "تغيير كلمة المرور",
-                              icon: SvgPicture.asset(
-                                'assets/images/svg_images/password.svg',
-                                semanticsLabel: 'My SVG Image',
+                              icon: Image.asset(
+                                "assets/images/svg_images/Path 11.png",
                                 height: 20,
                                 width: 20,
                               ),

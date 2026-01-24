@@ -1,5 +1,6 @@
 import 'package:attene_mobile/view/favorite/screen/favorites.dart';
 import 'package:attene_mobile/view/notification/screen/notification.dart';
+import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user%20profile/controller/user_controller.dart';
 import 'package:attene_mobile/view/story/controller/stories_controller.dart';
@@ -176,7 +177,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => SplashScreen()),
-        GetPage(name: '/onboarding', page: () => const Onboarding()),
+        GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
         GetPage(name: '/register', page: () => Register()),

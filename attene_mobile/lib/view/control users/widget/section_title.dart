@@ -1,6 +1,3 @@
-
-
-
 import '../../../general_index.dart';
 
 class SectionTitle extends StatelessWidget {

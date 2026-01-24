@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import 'complete_abuse.dart';
 
@@ -65,7 +63,7 @@ class ReportAddAbuse extends StatelessWidget {
                   TextFiledAatene(
                     isRTL: isRTL,
                     hintText: "اكتب هنا",
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.next, textInputType: TextInputType.name,
                   ),
 
                   Text('الشكوى/ الأفتراح', style: getRegular(fontSize: 14)),

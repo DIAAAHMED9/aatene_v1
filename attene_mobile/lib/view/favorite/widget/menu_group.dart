@@ -42,7 +42,6 @@ class CustomMenuWidget extends StatelessWidget {
                 builder: (context) => DetailsGroupButtonSheet(),
               );
             },
-
           ),
           _buildDivider(),
           _buildMenuItem(
@@ -69,7 +68,6 @@ class CustomMenuWidget extends StatelessWidget {
                 builder: (context) => DeleteGroupButtonSheet(),
               );
             },
-
           ),
         ];
       },

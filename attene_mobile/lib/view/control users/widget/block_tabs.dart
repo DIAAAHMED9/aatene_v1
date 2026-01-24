@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class BlockTabs extends StatelessWidget {
   BlockTabs({super.key});
 
@@ -59,13 +58,13 @@ class BlockTabs extends StatelessWidget {
           height: 42,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ?  AppColors.customColor09 :  AppColors.customColor10,
+            color: selected ? AppColors.customColor09 : AppColors.customColor10,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Text(
             text,
             style: getMedium(
-              color: selected ? Colors.white :  AppColors.customColor09,
+              color: selected ? Colors.white : AppColors.customColor09,
               fontWeight: FontWeight.w600,
             ),
           ),

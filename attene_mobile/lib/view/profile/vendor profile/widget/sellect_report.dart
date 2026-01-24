@@ -125,7 +125,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                             TextFiledAatene(
                               isRTL: isRTL,
                               hintText: "اكتب هنا",
-                              textInputAction: TextInputAction.next,
+                              textInputAction: TextInputAction.next, textInputType: TextInputType.name,
                             ),
                           ],
                         ),

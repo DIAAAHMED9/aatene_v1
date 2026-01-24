@@ -345,7 +345,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             value,
                             priceControllers[index].text,
                           );
-                        },
+                        }, textInputType: TextInputType.number,
                       ),
 
                       SizedBox(height: 16),
@@ -368,7 +368,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             daysControllers[index].text,
                             value,
                           );
-                        },
+                        }, textInputType: TextInputType.number,
                       ),
                     ],
                   ),
