@@ -47,11 +47,10 @@ class MainScreen extends StatelessWidget {
       // }
 
       /// Search Tab
-      if (mode == StoreMode.products || mode == StoreMode.mixed) {
         mNames.add('بحث');
         mPages.add(SearchScreen());
         mIcons.add(Icons.search);
-      }
+
 
       /// Services tab
       // if (mode == StoreMode.services || mode == StoreMode.mixed) {
