@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:attene_mobile/view/favorite/widget/all_page.dart';
+import 'package:attene_mobile/view/favorite/widget/group_page.dart';
+import 'package:attene_mobile/view/favorite/widget/new_page.dart';
+import 'package:attene_mobile/view/favorite/widget/store_page.dart';
 
-import '../../../api/api_request.dart';
-import '../../../component/text/aatene_custom_text.dart';
-import '../../../utlis/colors/app_color.dart';
+import '../../../general_index.dart';
+import '../widget/product_page.dart';
+import '../widget/services_page.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -32,7 +35,7 @@ class FavoritesScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: DefaultTabController(
-          length: 5, // عدد التبويبات
+          length: 6, // عدد التبويبات
           child: Column(
             children: [
               // (TabBar)
@@ -56,6 +59,7 @@ class FavoritesScreen extends StatelessWidget {
                     Tab(text: 'المجموعات'),
                     Tab(text: 'المتاجر المفضلة'),
                     Tab(text: 'المنتجات'),
+                    Tab(text: 'الخدمات'),
                   ],
                 ),
               ),
@@ -64,11 +68,12 @@ class FavoritesScreen extends StatelessWidget {
               const Expanded(
                 child: TabBarView(
                   children: [
-                    Center(child: Text('محتوى الجديد')),
-                    Center(child: Text('محتوى الكل')),
-                    Center(child: Text('محتوى المجموعات')),
-                    Center(child: Text('محتوى المتاجر')),
-                    Center(child: Text('محتوى المنتجات')),
+                    NewPage(),
+                    AllPage(),
+                    GroupPage(),
+                    StorePage(),
+                    ProductPage(),
+                    ServicesPage(),
                   ],
                 ),
               ),

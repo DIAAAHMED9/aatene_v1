@@ -1,8 +1,7 @@
 import 'package:attene_mobile/view/favorite/screen/favorites.dart';
-import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
+import 'package:attene_mobile/view/notification/screen/notification.dart';
 import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user%20profile/controller/user_controller.dart';
-import 'package:attene_mobile/view/search/screen/search_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,7 +9,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'general_index.dart';
 import 'utlis/responsive/index.dart';
 import 'utlis/services/device_name_service.dart';
-
 import 'utlis/sheet_controller.dart';
 
 class AppBindings extends Bindings {
@@ -56,12 +54,14 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => KeywordController(), fenix: true);
         Get.lazyPut(() => AddProductController(), fenix: true);
         Get.lazyPut(() => MediaLibraryController(), fenix: true);
+        Get.lazyPut(() => StoriesController(), fenix: true);
         Get.lazyPut(() => RelatedProductsController(), fenix: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
+        Get.lazyPut(() => StoriesController(), fenix: true);
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });
@@ -174,7 +174,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/', page: () => NotificationPage()),
         GetPage(name: '/onboarding', page: () => const Onboarding()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -185,6 +185,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
+        GetPage(name: '/story-test', page: () => const StoryTestScreen()),
+        GetPage(name: '/add-story', page: () => const AddStoryScreen()),
         GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
         // Services add/edit (same flow as products)
         GetPage(
