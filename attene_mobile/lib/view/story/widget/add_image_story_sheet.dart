@@ -11,7 +11,7 @@ class AddImageStorySheet extends StatelessWidget {
   AddImageStorySheet({super.key});
 
   final AddImageStorySheetController controller =
-      Get.put(AddImageStorySheetController());
+  Get.put(AddImageStorySheetController());
 
   @override
   Widget build(BuildContext context) {
@@ -92,19 +92,19 @@ class AddImageStorySheet extends StatelessWidget {
           borderRadius: BorderRadius.circular(ResponsiveDimensions.w(14)),
           child: file == null
               ? Center(
-                  child: Text(
-                    'اختر صورة لعرضها هنا',
-                    style: TextStyle(
-                      fontSize: ResponsiveDimensions.f(13),
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.neutral600,
-                    ),
-                  ),
-                )
+            child: Text(
+              'اختر صورة لعرضها هنا',
+              style: TextStyle(
+                fontSize: ResponsiveDimensions.f(13),
+                fontWeight: FontWeight.w600,
+                color: AppColors.neutral600,
+              ),
+            ),
+          )
               : Image.file(
-                  file,
-                  fit: BoxFit.cover,
-                ),
+            file,
+            fit: BoxFit.cover,
+          ),
         ),
       );
     });
@@ -153,34 +153,34 @@ class AddImageStorySheet extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                 FutureBuilder<Uint8List?>(
-  future: asset.thumbnailDataWithSize(
-    const ThumbnailSize(300, 300),
-    quality: 90,
-  ),
-  builder: (context, snap) {
-    final data = snap.data;
+                    FutureBuilder<Uint8List?>(
+                      future: asset.thumbnailDataWithSize(
+                        const ThumbnailSize(300, 300),
+                        quality: 90,
+                      ),
+                      builder: (context, snap) {
+                        final data = snap.data;
 
-    if (data == null) {
-      return Container(
-        color: AppColors.neutral900,
-        child: Center(
-          child: Icon(
-            Icons.image_outlined,
-            color: AppColors.neutral600,
-            size: ResponsiveDimensions.w(22),
-          ),
-        ),
-      );
-    }
+                        if (data == null) {
+                          return Container(
+                            color: AppColors.neutral900,
+                            child: Center(
+                              child: Icon(
+                                Icons.image_outlined,
+                                color: AppColors.neutral600,
+                                size: ResponsiveDimensions.w(22),
+                              ),
+                            ),
+                          );
+                        }
 
-    return Image.memory(
-      data,
-      fit: BoxFit.cover,
-      gaplessPlayback: true,
-    );
-  },
-),
+                        return Image.memory(
+                          data,
+                          fit: BoxFit.cover,
+                          gaplessPlayback: true,
+                        );
+                      },
+                    ),
 
                     if (tab == 2)
                       Align(
@@ -195,7 +195,7 @@ class AddImageStorySheet extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.45),
                               borderRadius:
-                                  BorderRadius.circular(ResponsiveDimensions.w(8)),
+                              BorderRadius.circular(ResponsiveDimensions.w(8)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

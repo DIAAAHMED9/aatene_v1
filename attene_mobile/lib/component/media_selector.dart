@@ -1,6 +1,3 @@
-
-
-
 import '../general_index.dart';
 import '../utlis/responsive/index.dart';
 

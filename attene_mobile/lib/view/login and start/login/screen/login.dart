@@ -113,57 +113,59 @@ class Login extends StatelessWidget {
                   spacing: 20,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () => controller.socialLogin('google'),
-                      child: Container(
-                        width: ResponsiveDimensions.w(150),
-                        height: ResponsiveDimensions.h(50),
-                        decoration: BoxDecoration(
-                          color: AppColors.neutral100,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.apple,
-                              color: AppColors.light1000,
-                              size: 25,
-                            ),
-                            Text(
-                              " أبل",
-                              style: getBold(color: AppColors.light1000),
-                            ),
-                          ],
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => controller.socialLogin('google'),
+                        child: Container(
+                          height: ResponsiveDimensions.h(50),
+                          decoration: BoxDecoration(
+                            color: AppColors.neutral100,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.apple,
+                                color: AppColors.light1000,
+                                size: 25,
+                              ),
+                              Text(
+                                " أبل",
+                                style: getBold(color: AppColors.light1000),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => controller.socialLogin('google'),
-                      child: Container(
-                        width: ResponsiveDimensions.w(150),
-                        height: ResponsiveDimensions.h(50),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(color: AppColors.neutral600),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: Image.asset(
-                                'assets/images/png/google.png',
-                                width: 24,
-                                height: 24,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => controller.socialLogin('google'),
+                        child: Container(
+                          height: ResponsiveDimensions.h(50),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(color: AppColors.neutral600),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: Image.asset(
+                                  'assets/images/png/google.png',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                onPressed: () {},
                               ),
-                              onPressed: () {},
-                            ),
-
-                            Text(
-                              " جوجل",
-                              style: getBold(color: AppColors.neutral100),
-                            ),
-                          ],
+                      
+                              Text(
+                                " جوجل",
+                                style: getBold(color: AppColors.neutral100),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

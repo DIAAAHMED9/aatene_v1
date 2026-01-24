@@ -1,4 +1,6 @@
 import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/view/favorite/widget/group_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CustomMenuWidget extends StatelessWidget {
   const CustomMenuWidget({super.key});
@@ -22,24 +24,52 @@ class CustomMenuWidget extends StatelessWidget {
             value: 'rename',
             text: 'إعادة تسمية',
             url: 'assets/images/svg_images/Edit1.svg',
+            onTap: () {
+              showBottomSheet(
+                context: context,
+                builder: (context) => RenameGroupButtonSheet(),
+              );
+            },
           ),
           _buildDivider(),
           _buildMenuItem(
             value: 'private',
             text: 'اجعلها مخصصة',
             url: 'assets/images/svg_images/Lock.svg',
+            onTap: () {
+              showBottomSheet(
+                context: context,
+                builder: (context) => DetailsGroupButtonSheet(),
+              );
+            },
+
           ),
           _buildDivider(),
           _buildMenuItem(
             value: 'share',
             text: 'مشاركة',
             url: 'assets/images/svg_images/Send.svg',
+            onTap: () {
+              SharePlus.instance.share(
+                ShareParams(
+                  title: 'Check out this app!',
+                  text: 'Check out this app!',
+                ),
+              );
+            },
           ),
           _buildDivider(),
           _buildMenuItem(
             value: 'delete',
             text: 'حذف المجموعة',
             url: 'assets/images/svg_images/Delete.svg',
+            onTap: () {
+              showBottomSheet(
+                context: context,
+                builder: (context) => DeleteGroupButtonSheet(),
+              );
+            },
+
           ),
         ];
       },
@@ -51,16 +81,20 @@ class CustomMenuWidget extends StatelessWidget {
     required String value,
     required String text,
     required String url,
+    required VoidCallback onTap,
   }) {
     return PopupMenuItem<String>(
       value: value,
-      child: Row(
-        spacing: 5,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SvgPicture.asset(url, width: 16, height: 16, fit: BoxFit.cover),
-          Text(text, style: getMedium()),
-        ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Row(
+          spacing: 5,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SvgPicture.asset(url, width: 16, height: 16, fit: BoxFit.cover),
+            Text(text, style: getMedium()),
+          ],
+        ),
       ),
     );
   }

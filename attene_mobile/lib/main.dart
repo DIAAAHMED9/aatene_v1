@@ -2,6 +2,7 @@ import 'package:attene_mobile/view/favorite/screen/favorites.dart';
 import 'package:attene_mobile/view/notification/screen/notification.dart';
 import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user%20profile/controller/user_controller.dart';
+import 'package:attene_mobile/view/story/controller/stories_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,7 +30,7 @@ class AppBindings extends Bindings {
     // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
     Get.lazyPut(() => DataInitializerService(), fenix: true);
     Get.lazyPut(() => StoreSelectionController(), fenix: true);
-    // Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<HomeController>(() => HomeController());
 
     print('✅ [APP BINDINGS] تم تسجيل الأساسيات');
 
@@ -185,8 +186,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
-        GetPage(name: '/story-test', page: () => const StoryTestScreen()),
-        GetPage(name: '/add-story', page: () => const AddStoryScreen()),
+        // GetPage(name: '/story-test', page: () => const StoryTestScreen()),
+        // GetPage(name: '/add-story', page: () => const AddStoryScreen()),
         GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
         // Services add/edit (same flow as products)
         GetPage(

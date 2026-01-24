@@ -166,8 +166,8 @@ class AddImageStorySheetController extends GetxController
     final tab = currentTabIndex.value == 0
         ? StoryMediaSourceTab.studio
         : currentTabIndex.value == 1
-            ? StoryMediaSourceTab.camera
-            : StoryMediaSourceTab.video;
+        ? StoryMediaSourceTab.camera
+        : StoryMediaSourceTab.video;
 
     Get.back(
       result: StoryMediaPickResult(tab: tab, file: file),

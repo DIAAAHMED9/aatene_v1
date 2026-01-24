@@ -48,10 +48,10 @@ class StoriesHighlightsScreen extends StatelessWidget {
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: items.length,
-          separatorBuilder: (_, __) => SizedBox(width: ResponsiveDimensions.w(10)),
+          separatorBuilder: (_, __) =>
+              SizedBox(width: ResponsiveDimensions.w(10)),
           itemBuilder: (context, index) {
             final item = items[index];
-
             return StoryCircleItem(
               title: item.name,
               imageUrl: item.avatarUrl,

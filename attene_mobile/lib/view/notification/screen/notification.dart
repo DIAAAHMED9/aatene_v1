@@ -160,6 +160,7 @@ class NotificationPage extends StatelessWidget {
         actions: [
           IconButton(onPressed: () {
             ///NotificationFeed
+            Get.to(NotificationFeed());
           },
               icon: SvgPicture.asset(
                 "assets/images/svg_images/setting2.svg", height: 25,
@@ -262,9 +263,7 @@ class NotificationList extends StatelessWidget {
   }
 }
 
-/// =======================================================
 /// ANIMATED ITEM (Swipe + Scale + Collapse)
-/// =======================================================
 class AnimatedNotificationItem extends StatefulWidget {
   final NotificationModel model;
   final VoidCallback onDelete;

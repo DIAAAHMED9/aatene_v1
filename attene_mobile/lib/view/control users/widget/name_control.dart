@@ -1,6 +1,4 @@
-
-
-import '../general_index.dart';
+import '../../../general_index.dart';
 
 class NameControl extends StatelessWidget {
   const NameControl({

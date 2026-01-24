@@ -103,28 +103,36 @@ class AddNewCollectionCard extends StatefulWidget {
 class _AddNewCollectionCardState extends State<AddNewCollectionCard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: AppColors.primary50,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Center(
-        child: Row(
-          spacing: 5,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_circle_outline,
-              size: 15,
-              color: AppColors.primary400,
-            ),
-            Text(
-              'إضافة مجموعة جديدة',
-              style: getBold(fontSize: 14, color: AppColors.primary400),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        showBottomSheet(
+          context: context,
+          builder: (context) => AddGroupButtonSheet(),
+        );
+      },
+      child: Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: AppColors.primary50,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Center(
+          child: Row(
+            spacing: 5,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_circle_outline,
+                size: 15,
+                color: AppColors.primary400,
+              ),
+              Text(
+                'إضافة مجموعة جديدة',
+                style: getBold(fontSize: 14, color: AppColors.primary400),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -144,67 +152,70 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
   Widget build(BuildContext context) {
     bool isPublicSelected = true;
     final isRTL = LanguageUtils.isRTL;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        spacing: 15,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // مقبض السحب (Drag Handle) في الأعلى
-          Center(
-            child: Container(
-              width: 50,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(10),
+    return SizedBox(
+      height: 550,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
+          spacing: 15,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // مقبض السحب (Drag Handle) في الأعلى
+            Center(
+              child: Container(
+                width: 50,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
-          ),
 
-          // العنوان الرئيسي
-          Center(
-            child: Text('إضافة مجموعة جديدة', style: getBold(fontSize: 20)),
-          ),
+            // العنوان الرئيسي
+            Center(
+              child: Text('إضافة مجموعة جديدة', style: getBold(fontSize: 20)),
+            ),
 
-          // حقل اسم المجموعة
-          Text('اسم المجموعة', style: getBold(fontSize: 18)),
-          TextFiledAatene(
-            isRTL: isRTL,
-            hintText: 'عنوان المجموعة',
-            textInputAction: TextInputAction.done,
-          ),
+            // حقل اسم المجموعة
+            Text('اسم المجموعة', style: getBold(fontSize: 18)),
+            TextFiledAatene(
+              isRTL: isRTL,
+              hintText: 'عنوان المجموعة',
+              textInputAction: TextInputAction.done,
+            ),
 
-          // قسم الخصوصية
-          Text('الخصوصية', style: getBold(fontSize: 18)),
+            // قسم الخصوصية
+            Text('الخصوصية', style: getBold(fontSize: 18)),
 
-          // خيار "عامة"
-          _buildPrivacyOption(
-            title: 'عامة',
-            subtitle: 'أي شخص يمكنه رؤية هذه المجموعة',
-            icon: Icons.public,
-            isSelected: isPublicSelected,
-            onTap: () => setState(() => isPublicSelected = true),
-          ),
+            // خيار "عامة"
+            _buildPrivacyOption(
+              title: 'عامة',
+              subtitle: 'أي شخص يمكنه رؤية هذه المجموعة',
+              icon: Icons.public,
+              isSelected: isPublicSelected,
+              onTap: () => setState(() => isPublicSelected = true),
+            ),
 
-          // خيار "خاصة"
-          _buildPrivacyOption(
-            title: 'خاصة',
-            subtitle: 'أنت فقط من يمكنه رؤية هذه المجموعة',
-            icon: Icons.lock_outline,
-            isSelected: !isPublicSelected,
-            onTap: () => setState(() => isPublicSelected = false),
-          ),
+            // خيار "خاصة"
+            _buildPrivacyOption(
+              title: 'خاصة',
+              subtitle: 'أنت فقط من يمكنه رؤية هذه المجموعة',
+              icon: Icons.lock_outline,
+              isSelected: !isPublicSelected,
+              onTap: () => setState(() => isPublicSelected = false),
+            ),
 
-          // زر "التالي"
-          AateneButton(
-            buttonText: "التالي",
-            textColor: AppColors.light1000,
-            borderColor: AppColors.primary400,
-            color: AppColors.primary400,
-          ),
-          const SizedBox(height: 10),
-        ],
+            // زر "التالي"
+            AateneButton(
+              buttonText: "التالي",
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
+              color: AppColors.primary400,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
@@ -274,35 +285,46 @@ class DeleteGroupButtonSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("حذف المجموعة", style: getBold()),
-          Text("هل انت متاكد من حذف المجموعة، سيؤدي ذلك لحذف جميع العناصر الموجودة بداخلها", style: getMedium(fontSize: 14)),
-          Row(
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: SizedBox(
+        height: 180,
+        child: Center(
+          child: Column(
             spacing: 10,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: AateneButton(
-                  buttonText: "تم",
-                  textColor: AppColors.light1000,
-                  borderColor: AppColors.primary400,
-                  color: AppColors.primary400,
-                ),
+              Text("حذف المجموعة", style: getBold(fontSize: 20)),
+              Text(
+                "هل انت متاكد من حذف المجموعة، سيؤدي ذلك لحذف جميع العناصر الموجودة بداخلها",
+                textAlign: TextAlign.center,
+                style: getMedium(fontSize: 14),
               ),
-              Expanded(
-                child: AateneButton(
-                  buttonText: "إلغاء",
-                  textColor: AppColors.primary400,
-                  borderColor: AppColors.primary400,
-                  color: AppColors.light1000,
-                ),
+              Row(
+                spacing: 10,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: AateneButton(
+                      buttonText: "تم",
+                      textColor: AppColors.light1000,
+                      borderColor: AppColors.primary400,
+                      color: AppColors.primary400,
+                    ),
+                  ),
+                  Expanded(
+                    child: AateneButton(
+                      buttonText: "إلغاء",
+                      textColor: AppColors.primary400,
+                      borderColor: AppColors.primary400,
+                      color: AppColors.light1000,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -314,39 +336,47 @@ class RenameGroupButtonSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("إعادة تسمية المجموعة", style: getBold()),
-          TextFiledAatene(
-            isRTL: isRTL,
-            hintText: "اسم المجموعة الجديد",
-            textInputAction: TextInputAction.done,
-          ),
-          Row(
+    return SizedBox(
+      height: 250,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Center(
+          child: Column(
             spacing: 10,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: AateneButton(
-                  buttonText: "تم",
-                  textColor: AppColors.light1000,
-                  borderColor: AppColors.primary400,
-                  color: AppColors.primary400,
-                ),
+              SizedBox(height: 20),
+              Text("إعادة تسمية المجموعة", style: getBold(fontSize: 20)),
+              TextFiledAatene(
+                isRTL: isRTL,
+                hintText: "اسم المجموعة الجديد",
+                textInputAction: TextInputAction.done,
               ),
-              Expanded(
-                child: AateneButton(
-                  buttonText: "إلغاء",
-                  textColor: AppColors.primary400,
-                  borderColor: AppColors.primary400,
-                  color: AppColors.light1000,
-                ),
+              Row(
+                spacing: 10,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: AateneButton(
+                      buttonText: "تم",
+                      textColor: AppColors.light1000,
+                      borderColor: AppColors.primary400,
+                      color: AppColors.primary400,
+                    ),
+                  ),
+                  Expanded(
+                    child: AateneButton(
+                      buttonText: "إلغاء",
+                      textColor: AppColors.primary400,
+                      borderColor: AppColors.primary400,
+                      color: AppColors.light1000,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -358,6 +388,7 @@ class DetailsGroupButtonSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 550,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
@@ -382,10 +413,7 @@ class DetailsGroupButtonSheet extends StatelessWidget {
                 children: [
                   const Text(
                     'محفوظة في المفضلة',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildStatusBadge('عامة', Icons.public),
                 ],
@@ -397,11 +425,7 @@ class DetailsGroupButtonSheet extends StatelessWidget {
                   color: Colors.blue[50]?.withOpacity(0.5),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                  size: 24,
-                ),
+                child: const Icon(Icons.favorite, color: Colors.red, size: 24),
               ),
             ],
           ),
@@ -412,7 +436,12 @@ class DetailsGroupButtonSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('المجموعات', style: getBold(fontSize: 18)),
-              _buildAddButton(),
+              _buildAddButton(() {
+                showBottomSheet(
+                  context: context,
+                  builder: (context) => AddGroupButtonSheet(),
+                );
+              }),
             ],
           ),
           // قائمة المجموعات
@@ -450,14 +479,15 @@ class DetailsGroupButtonSheet extends StatelessWidget {
       ),
     );
   }
+
   // ودجت لبناء عنصر المجموعة
   Widget _buildCollectionItem(
-      String title,
-      String status,
-      IconData icon,
-      bool isSelected,
-      String imageUrl,
-      ) {
+    String title,
+    String status,
+    IconData icon,
+    bool isSelected,
+    String imageUrl,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -522,22 +552,25 @@ class DetailsGroupButtonSheet extends StatelessWidget {
   }
 
   // ودجت زر "إنشاء مجموعة جديدة"
-  Widget _buildAddButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.primary50,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.add_box, size: 20, color: AppColors.primary400),
-          SizedBox(width: 5),
-          Text(
-            'إنشاء مجموعة جديدة',
-            style: getMedium(fontSize: 14, color: AppColors.primary400),
-          ),
-        ],
+  Widget _buildAddButton(VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: AppColors.primary50,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.add_box, size: 20, color: AppColors.primary400),
+            SizedBox(width: 5),
+            Text(
+              'إنشاء مجموعة جديدة',
+              style: getMedium(fontSize: 14, color: AppColors.primary400),
+            ),
+          ],
+        ),
       ),
     );
   }
