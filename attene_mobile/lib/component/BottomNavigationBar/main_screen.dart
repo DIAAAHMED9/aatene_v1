@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
       HomeProduct(),
       // ManageAccountStore(),
       SearchScreen(),
-      ProductScreen(),
+      // ProductScreen(),
       ChatScreen(),
       ProfilePage(),
     ];

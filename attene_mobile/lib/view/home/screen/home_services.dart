@@ -107,7 +107,8 @@ class HomeServices extends GetView<HomeController> {
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
                       ),
-                      textInputAction: TextInputAction.done, textInputType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      textInputType: TextInputType.name,
                     ),
                   ),
                 ],
@@ -173,6 +174,16 @@ class HomeServices extends GetView<HomeController> {
                 ],
               ),
               ImageSlider(),
+              TextButton(
+                onPressed: () {
+                  Get.to(ServicesListScreen);
+                },
+                child: Text(
+                  "اضافة خدمات (زر مؤقت لاضافة الخدمات)",
+                  style: getBlack(fontSize: 24, color: AppColors.primary400),
+                ),
+              ),
+
               Text("قصص", style: getBold(fontSize: 21)),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,

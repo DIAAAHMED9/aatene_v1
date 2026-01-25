@@ -489,7 +489,7 @@ class NewChatSheetState extends State<NewChatSheet> {
                     Icons.drive_file_rename_outline_rounded,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                 ),
               ),
@@ -505,7 +505,7 @@ class NewChatSheetState extends State<NewChatSheet> {
                     : 'ابحث واختر أعضاء...',
                 prefixIcon: const Icon(Icons.search_rounded),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(100),
                 ),
               ),
             ),
@@ -663,7 +663,7 @@ class ModeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? AppColors.primary400 : Colors.transparent,
+      color: selected ? AppColors.primary400 :AppColors.primary50,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         borderRadius: BorderRadius.circular(999),
@@ -676,7 +676,7 @@ class ModeButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+                color: selected ?AppColors.primary400 : cs.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Text(

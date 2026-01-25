@@ -1,18 +1,19 @@
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/view/home/controller/home_controller.dart';
+import 'package:attene_mobile/view/profile/vendor%20profile/screen/store_profile.dart';
 import 'package:flutter/material.dart';
 import '../utlis/colors/app_color.dart';
 
 class VendorCard extends StatelessWidget {
-  const VendorCard({super.key, required this.screen});
-  final Widget screen;
+  const VendorCard({super.key, });
+
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HomeController());
     return GestureDetector(
-      onTap: (){
-        Get.to(screen);
+      onTap: () {
+        Get.to(StoreProfilePage());
       },
       child: Container(
         width: 162,
@@ -91,8 +92,12 @@ class VendorCard extends StatelessWidget {
 
                         /// تغيير الأيقونة حسب الحالة
                         child: Icon(
-                          isFollowed ? Icons.arrow_forward : Icons.person_add_alt,
-                          color: isFollowed ? AppColors.primary400 : Colors.white,
+                          isFollowed
+                              ? Icons.arrow_forward
+                              : Icons.person_add_alt,
+                          color: isFollowed
+                              ? AppColors.primary400
+                              : Colors.white,
                           size: 22,
                         ),
                       ),

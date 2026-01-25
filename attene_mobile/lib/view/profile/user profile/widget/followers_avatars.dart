@@ -23,7 +23,7 @@ class FollowersAvatars extends StatelessWidget {
             left: entry.key * (size * 0.6),
             child: CircleAvatar(
               radius: size / 2,
-              backgroundImage: NetworkImage(entry.value),
+              backgroundImage: AssetImage(entry.value),
             ),
           );
         }).toList(),

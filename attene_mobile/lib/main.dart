@@ -3,6 +3,7 @@ import 'package:attene_mobile/view/notification/screen/notification.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user%20profile/controller/user_controller.dart';
+import 'package:attene_mobile/view/profile/vendor%20profile/screen/store_profile.dart';
 import 'package:attene_mobile/view/story/controller/stories_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

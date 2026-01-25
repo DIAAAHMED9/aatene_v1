@@ -214,7 +214,8 @@ class HomeProduct extends GetView<HomeController> {
                           backgroundColor: AppColors.primary400,
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
-                      ), textInputType: TextInputType.name,
+                      ),
+                      textInputType: TextInputType.name,
                     ),
                   ),
                   CircleAvatar(
@@ -230,6 +231,15 @@ class HomeProduct extends GetView<HomeController> {
                     ),
                   ),
                 ],
+              ),
+              TextButton(
+                onPressed: () {
+                  Get.to(ProductScreen);
+                },
+                child: Text(
+                  "اضافة منتجات (زر مؤقت لاضافة المنتجات)",
+                  style: getBlack(fontSize: 24, color: AppColors.primary400),
+                ),
               ),
               Text("قصص", style: getBold(fontSize: 21)),
               SingleChildScrollView(
@@ -247,7 +257,7 @@ class HomeProduct extends GetView<HomeController> {
                 title: "المتاجر المميزة",
                 subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
               ),
-              VendorCard(screen: ProfilePage()),
+              VendorCard(),
               TitleHome(
                 title: "منتجات تم تخصيصها لك",
                 subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",

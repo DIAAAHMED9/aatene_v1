@@ -319,7 +319,7 @@ class LoginController extends GetxController {
         } else if (statusCode == 422) {
           _handleValidationErrors(response?.data);
         } else if (statusCode == 500) {
-          _showErrorSnackbar('خطأ في الخادم', 'يرجى المحاولة لاحقاً');
+          // _showErrorSnackbar('خطأ في الخادم', 'يرجى المحاولة لاحقاً');
         } else {
           _showErrorSnackbar('خطأ في الاستجابة', 'رمز الخطأ: $statusCode');
         }
