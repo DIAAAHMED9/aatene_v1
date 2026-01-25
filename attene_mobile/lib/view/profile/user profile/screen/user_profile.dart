@@ -1,7 +1,8 @@
 import 'package:attene_mobile/general_index.dart' hide VendorCard;
+import 'package:attene_mobile/view/story_vendor_ui/dummy/story_vendor_dummy.dart';
+import 'package:attene_mobile/view/story_vendor_ui/widgets/story_highlights_row.dart';
 import 'package:attene_mobile/view/profile/user%20profile/widget/rating_profile_screen.dart';
 import 'package:attene_mobile/view/profile/user%20profile/widget/sellect_report.dart';
-import 'package:attene_mobile/view/profile/user%20profile/widget/story_items.dart';
 import 'package:attene_mobile/view/profile/user%20profile/widget/silver_tabs.dart';
 // import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
@@ -614,7 +615,7 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
-        StoryItem(),
+        StoryHighlightsRow(vendors: demoVendors),
       ],
     );
   }

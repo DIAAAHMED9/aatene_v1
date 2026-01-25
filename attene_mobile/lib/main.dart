@@ -12,6 +12,7 @@ import 'utlis/responsive/index.dart';
 import 'utlis/services/device_name_service.dart';
 
 import 'utlis/sheet_controller.dart';
+import 'package:attene_mobile/view/add new store/screen/manage_account_store_controller.dart';
 
 class AppBindings extends Bindings {
   static bool _initialized = false;

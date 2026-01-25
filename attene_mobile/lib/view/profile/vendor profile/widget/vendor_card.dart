@@ -1,5 +1,7 @@
 import 'package:attene_mobile/general_index.dart';
 
+import 'vendor_products_bottom_sheet.dart';
+
 class VendorCard extends StatelessWidget {
   final String storeName;
   final String logoUrl;
@@ -86,9 +88,34 @@ class VendorCard extends StatelessWidget {
             ),
           ],
         ),
-        Text(
-          'المنتجات المفضلة ',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            const Text(
+              'المنتجات المفضلة ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const VendorProductsBottomSheet(),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Text(
+                  'عرض الكل',
+                  style: getMedium(
+                    fontSize: 12,
+                    color: AppColors.primary400,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
 
         Wrap(
@@ -96,13 +123,53 @@ class VendorCard extends StatelessWidget {
           spacing: 17,
           runSpacing: 20,
           children: [
-            ProductCard(),
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const VendorProductsBottomSheet(),
+                );
+              },
+              child: const ProductCard(),
+            ),
 
-            ProductCard(),
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const VendorProductsBottomSheet(),
+                );
+              },
+              child: const ProductCard(),
+            ),
 
-            ProductCard(),
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const VendorProductsBottomSheet(),
+                );
+              },
+              child: const ProductCard(),
+            ),
 
-            ProductCard(),
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const VendorProductsBottomSheet(),
+                );
+              },
+              child: const ProductCard(),
+            ),
           ],
         ),
 

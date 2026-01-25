@@ -37,6 +37,16 @@ class UnifiedLoadingScreen {
       print('⚠️ [LOADING] Cannot show dialog - app is not in active state');
       return;
     }
+
+    _showDialogInternal(
+      message: message,
+      isDismissible: isDismissible,
+      showProgress: showProgress,
+      progressValue: progressValue,
+      backgroundColor: backgroundColor,
+      progressColor: progressColor,
+      dialogId: dialogId,
+    );
   }
 
   static void _showDialogInternal({
@@ -67,7 +77,9 @@ class UnifiedLoadingScreen {
     }
 
     try {
-      Get.dialog(
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (Get.isDialogOpen ?? false) return;
+        Get.dialog(
         WillPopScope(
           onWillPop: () async => isDismissible,
           child: _LoadingDialog(
@@ -81,7 +93,8 @@ class UnifiedLoadingScreen {
         ),
         barrierDismissible: isDismissible,
         barrierColor: Colors.black.withOpacity(0.5),
-      );
+        );
+      });
     } catch (e) {
       print('❌ [LOADING] Error showing dialog: $e');
     }

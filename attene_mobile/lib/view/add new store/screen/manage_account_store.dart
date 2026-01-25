@@ -1,6 +1,6 @@
 import '../../../general_index.dart';
 
-class ManageAccountStore extends GetView<ManageAccountStoreController> {
+class ManageAccountStore extends StatelessWidget {
   const ManageAccountStore({super.key});
 
   @override
@@ -8,6 +8,10 @@ class ManageAccountStore extends GetView<ManageAccountStoreController> {
     final MyAppController myAppController = Get.find<MyAppController>();
 
     return GetBuilder<ManageAccountStoreController>(
+      // ✅ Defensive init to avoid "Unexpected null value" if bindings order changes.
+      init: Get.isRegistered<ManageAccountStoreController>()
+          ? Get.find<ManageAccountStoreController>()
+          : ManageAccountStoreController(),
       builder: (ManageAccountStoreController controller) {
         return GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
