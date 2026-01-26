@@ -1,5 +1,5 @@
-import 'package:attene_mobile/view/profile/user%20profile/widget/review_sheet.dart';
 import '../../../../general_index.dart';
+import '../../user_profile/widget/review_sheet.dart';
 
 class RatingProfile extends StatelessWidget {
   const RatingProfile({super.key});

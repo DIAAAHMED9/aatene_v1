@@ -1,8 +1,8 @@
 import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/view/home/controller/home_controller.dart';
-import 'package:attene_mobile/view/profile/vendor%20profile/screen/store_profile.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors/app_color.dart';
+import '../view/profile/vendor_profile/screen/store_profile.dart';
 
 class VendorCard extends StatelessWidget {
   const VendorCard({super.key, });

@@ -4,7 +4,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../user profile/widget/rating_profile_screen.dart';
 import '../../user profile/widget/sellect_report.dart';
-import '../../user profile/widget/story_items.dart';
+import '../../user_profile/widget/story_items.dart';
 import '../widget/offers.dart';
 import '../widget/store_states.dart';
 
