@@ -3,14 +3,14 @@ import '../../../../general_index.dart';
 
 class DrawerAccountItem extends StatelessWidget {
   final String name;
-  final String? avatar;
+  final String avatar;
   final bool isSelected;
   final VoidCallback onTap;
 
   const DrawerAccountItem({
     super.key,
     required this.name,
-    this.avatar,
+    required this.avatar,
     required this.isSelected,
     required this.onTap,
   });
@@ -25,12 +25,7 @@ class DrawerAccountItem extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundImage: (avatar != null && avatar!.trim().isNotEmpty)
-                  ? NetworkImage(avatar!.trim())
-                  : null,
-              child: (avatar == null || avatar!.trim().isEmpty)
-                  ? const Icon(Icons.store, size: 18)
-                  : null,
+              backgroundImage: NetworkImage(avatar),
             ),
             const SizedBox(width: 12),
             Expanded(

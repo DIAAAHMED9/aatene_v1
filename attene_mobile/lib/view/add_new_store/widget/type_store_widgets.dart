@@ -25,7 +25,7 @@ class TypeStoreBody extends StatelessWidget {
           children: const [
             TypeStoreHeader(),
             StoreTypeOptions(),
-            SizedBox(height: 30),
+            Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: 30),
               child: TypeStoreNextButton(),

@@ -4,7 +4,8 @@ import 'package:attene_mobile/view/story_vendor_ui/widgets/story_highlights_row.
 import 'package:attene_mobile/view/profile/user_profile/widget/rating_profile_screen.dart';
 import 'package:attene_mobile/view/profile/user_profile/widget/sellect_report.dart';
 import 'package:attene_mobile/view/profile/user_profile/widget/silver_tabs.dart';
-import 'package:attene_mobile/view/profile/user_profile/widget/read_more_text.dart';
+import 'package:readmore/readmore.dart';
+// import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 import '../controller/user_controller.dart';
 import '../widget/vendor_card.dart';

@@ -171,36 +171,6 @@ Future<void> _touch(String key) async {
     }
   }
 
-  Future<void> _ensureDefaultStoreIfNeeded(List<dynamic> stores) async {
-    try {
-      if (stores.isEmpty) return;
-
-      final current = _getActiveStoreId();
-      if (current != null && current > 0) return;
-
-      final first = stores.first;
-      if (first is! Map) return;
-
-      final firstId = int.tryParse('${first['id'] ?? ''}');
-      if (firstId == null || firstId <= 0) return;
-
-      // Update user_data + store_id so ApiHelper picks it up immediately
-      final userData = (_storage.read('user_data') is Map)
-          ? Map<String, dynamic>.from(_storage.read('user_data'))
-          : <String, dynamic>{};
-
-      userData['active_store_id'] = firstId;
-      userData['store_id'] = firstId;
-      await _storage.write('user_data', userData);
-      await _storage.write('store_id', firstId);
-
-      print('🏪 [STORES] تم تعيين المتجر الافتراضي: $firstId');
-    } catch (e) {
-      print('⚠️ [STORES] فشل تعيين المتجر الافتراضي: $e');
-    }
-  }
-
-
   String _kProducts(int storeId) => '${_PRODUCTS_KEY}_store_$storeId';
   String _kSections(int storeId) => '${_SECTIONS_KEY}_store_$storeId';
   String _kMedia(int storeId) => '${_MEDIA_KEY}_store_$storeId';
@@ -711,7 +681,6 @@ Future<void> initializeAppData({
       if (response != null && response['status'] == true) {
         final stores = response['data'] ?? [];
         await _storage.write(_STORES_KEY, stores);
-        await _ensureDefaultStoreIfNeeded(stores);
         print('✅ [STORES] تم تحميل ${stores.length} متجر');
       }
     } catch (e) {
