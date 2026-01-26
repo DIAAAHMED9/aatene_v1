@@ -1,9 +1,9 @@
-import '../../utlis/colors/index.dart';
+import '../../utils/colors/index.dart';
 import 'package:flutter/material.dart';
 
 
 
-import '../../utlis/colors/app_color.dart';
+import '../../utils/colors/app_color.dart';
 
 class StepperConstants {
   static const Color primaryColor = AppColors.primary400;

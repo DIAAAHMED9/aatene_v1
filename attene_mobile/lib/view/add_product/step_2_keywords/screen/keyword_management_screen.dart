@@ -1,7 +1,7 @@
 
 
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/index.dart';
+import '../../../../utils/responsive/index.dart';
 
 class KeywordManagementScreen extends StatefulWidget {
   const KeywordManagementScreen({super.key});

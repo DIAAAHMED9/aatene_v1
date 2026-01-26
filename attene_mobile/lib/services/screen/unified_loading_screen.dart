@@ -80,7 +80,9 @@ class UnifiedLoadingScreen {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (Get.isDialogOpen ?? false) return;
         Get.dialog(
-        WillPopScope(
+        Material(
+          type: MaterialType.transparency,
+          child: WillPopScope(
           onWillPop: () async => isDismissible,
           child: _LoadingDialog(
             message: message,
@@ -90,6 +92,7 @@ class UnifiedLoadingScreen {
             backgroundColor: backgroundColor,
             progressColor: progressColor,
           ),
+        ),
         ),
         barrierDismissible: isDismissible,
         barrierColor: Colors.black.withOpacity(0.5),

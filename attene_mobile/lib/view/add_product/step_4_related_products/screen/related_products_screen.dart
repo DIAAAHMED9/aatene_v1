@@ -1,5 +1,5 @@
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/index.dart';
+import '../../../../utils/responsive/index.dart';
 
 class RelatedProductsScreen extends StatelessWidget {
   final bool isLinkingMode;
@@ -402,42 +402,38 @@ class RelatedProductsScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: ResponsiveDimensions.h(20)),
-              Row(
+              Column(
                 children: [
                   if (isLinkingMode) ...[
-                    Expanded(
-                      child: AateneButton(
-                        buttonText: 'ربط مع المنتج الرئيسي',
-                        onTap: () {
-                          controller.linkToProductCentral();
-                          Get.back();
-                        },
-                      ),
+                    AateneButton(
+                      buttonText: 'ربط مع المنتج الرئيسي',
+                      onTap: () {
+                        controller.linkToProductCentral();
+                        Get.back();
+                      },
                     ),
                   ] else ...[
-                    Expanded(
-                      child: AateneButton(
-                        borderColor: AppColors.primary400,
-                        textColor: AppColors.primary400,
-                        color: AppColors.light1000,
-                        buttonText: 'تخفيض',
-                        onTap: () => Get.bottomSheet(
-                          AddDiscountBottomSheet(
-                            controller: Get.find<RelatedProductsController>(),
-                          ),
+                       AateneButton(
+                      borderColor: AppColors.primary400,
+                      textColor: AppColors.light1000,
+                      color: AppColors.primary400,
+                      buttonText: 'التالي',
+                      onTap: () => _showSuccessMessage(),
+                    ),
+                                        SizedBox(height: ResponsiveDimensions.w(12)),
+
+                    AateneButton(
+                      borderColor: AppColors.primary400,
+                      textColor: AppColors.primary400,
+                      color: AppColors.light1000,
+                      buttonText: 'تخفيض علي المنتجات المختارة',
+                      onTap: () => Get.bottomSheet(
+                        AddDiscountBottomSheet(
+                          controller: Get.find<RelatedProductsController>(),
                         ),
                       ),
                     ),
-                    SizedBox(width: ResponsiveDimensions.w(12)),
-                    Expanded(
-                      child: AateneButton(
-                        borderColor: AppColors.primary400,
-                        textColor: AppColors.light1000,
-                        color: AppColors.primary400,
-                        buttonText: 'حفظ',
-                        onTap: () => _showSuccessMessage(),
-                      ),
-                    ),
+                 
                   ],
                 ],
               ),

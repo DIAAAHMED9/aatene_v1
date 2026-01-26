@@ -331,39 +331,33 @@ class EmptyState extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
+          spacing: 10,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 76,
-              height: 76,
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHighest.withOpacity(0.7),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.forum_rounded,
-                size: 36,
-                color: cs.onSurfaceVariant,
-              ),
+            SvgPicture.asset(
+              "assets/images/svg_images/no_massege.svg",
+              width: 250,
+              height: 250,
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 14),
             const Text(
-              'لا توجد محادثات',
+              'لا توجد رسائل',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 6),
             Text(
               'ابدأ محادثة فردية أو أنشئ مجموعة جديدة.',
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
-            const SizedBox(height: 14),
-            AateneButton(
-              onTap: onNewChat,
-              buttonText: "إنشاء محادثة",
-              color: AppColors.primary400,
-              borderColor: AppColors.primary400,
-              textColor: AppColors.light1000,
-            ),
+            // SizedBox(
+            //   width: 170,
+            //   child: AateneButton(
+            //     onTap: onNewChat,
+            //     buttonText: "إنشاء محادثة",
+            //     color: AppColors.primary400,
+            //     borderColor: AppColors.primary400,
+            //     textColor: AppColors.light1000,
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -1,5 +1,5 @@
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/index.dart';
+import '../../../../utils/responsive/index.dart';
 
 class KeywordHeaderWidget extends StatelessWidget {
   const KeywordHeaderWidget({super.key});
@@ -267,7 +267,7 @@ class KeywordSearchBoxWidget extends StatelessWidget {
         child: GetBuilder<KeywordController>(
           builder: (_) => _buildAddButton(controller),
         ),
-      ),
+      ), textInputType: TextInputType.name,
     );
   }
 

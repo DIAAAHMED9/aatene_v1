@@ -1,11 +1,13 @@
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import 'package:attene_mobile/utils/platform/xfile_fs.dart';
 
 import '../../../general_index.dart' hide ChatController;
 import '../index.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:image_picker/image_picker.dart';
 
 class ChatMassege extends StatefulWidget {
   final ChatConversation conversation;
@@ -23,7 +25,7 @@ class _ChatMassegeState extends State<ChatMassege> {
   final ScrollController _scroll = ScrollController();
 
   // Attachments (local) before sending
-  final List<File> _pendingFiles = [];
+  final List<XFile> _pendingFiles = [];
 
   // Audio recording
   final AudioRecorder _recorder = AudioRecorder();
@@ -400,7 +402,7 @@ class _ChatMassegeState extends State<ChatMassege> {
     // max 10 images total in selection
     final toAdd = paths
         .take(10 - _pendingFiles.length)
-        .map((p) => File(p))
+        .map((p) => XFile(p))
         .toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
@@ -417,7 +419,7 @@ class _ChatMassegeState extends State<ChatMassege> {
     // max 10 files at once
     final toAdd = paths
         .take(10 - _pendingFiles.length)
-        .map((p) => File(p))
+        .map((p) => XFile(p))
         .toList();
     setState(() => _pendingFiles.addAll(toAdd));
   }
@@ -432,7 +434,7 @@ class _ChatMassegeState extends State<ChatMassege> {
 
     // Send files first (if any) with optional text
     if (hasFiles) {
-      final files = List<File>.from(_pendingFiles);
+      final files = List<XFile>.from(_pendingFiles);
       setState(() => _pendingFiles.clear());
       await c.sendFilesMessage(
         conversationId: convId,
@@ -455,6 +457,10 @@ class _ChatMassegeState extends State<ChatMassege> {
         return;
       }
 
+    if (kIsWeb) {
+      Get.snackbar('تنبيه', 'حفظ الملفات غير مدعوم على الويب حالياً');
+      return;
+    }
       final dir = await getTemporaryDirectory();
       final path =
           '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
@@ -494,9 +500,9 @@ class _ChatMassegeState extends State<ChatMassege> {
       // delete file if exists
       final p = _recordPath;
       if (p != null) {
-        final f = File(p);
-        if (await f.exists()) {
-          await f.delete();
+        final f = XFile(p);
+        if (await xfileExists(f)) {
+          await xfileDelete(f);
         }
       }
     } catch (_) {}
@@ -519,8 +525,8 @@ class _ChatMassegeState extends State<ChatMassege> {
 
       if (path == null) return;
 
-      final f = File(path);
-      if (!await f.exists()) return;
+      final f = XFile(path);
+      if (!await xfileExists(f)) return;
 
       await c.sendFilesMessage(
         conversationId: widget.conversation.id,

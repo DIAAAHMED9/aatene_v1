@@ -1,6 +1,6 @@
 
 import '../../../../general_index.dart';
-import '../../../../utlis/sheet_controller.dart';
+import '../../../../utils/sheet_controller.dart';
 
 class ProductCentralController extends GetxController {
   static ProductCentralController get to => Get.find();

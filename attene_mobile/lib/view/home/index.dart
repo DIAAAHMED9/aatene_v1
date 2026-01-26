@@ -1,23 +1,23 @@
 export 'screen/home_product.dart';
 export 'package:attene_mobile/view/home/screen/home_services.dart';
-export 'package:attene_mobile/view/home/widget/product%20widget/big_product.dart';
-export 'package:attene_mobile/view/home/widget/product%20widget/distinct_product.dart';
+export 'package:attene_mobile/view/home/widget/product_widget/big_product.dart';
+export 'package:attene_mobile/view/home/widget/product_widget/distinct_product.dart';
 export 'package:attene_mobile/view/home/widget/show_all_title.dart';
 export 'package:attene_mobile/view/home/widget/title.dart';
 export 'package:attene_mobile/view/home/controller/home_controller.dart';
-export 'package:attene_mobile/view/home/widget/drawer%20widget/aatene_drawer.dart';
-export 'package:attene_mobile/view/home/widget/product%20widget/big_vindor_card.dart';
+export 'package:attene_mobile/view/home/widget/drawer_widget/aatene_drawer.dart';
+export 'package:attene_mobile/view/home/widget/product_widget/big_vindor_card.dart';
 export 'package:attene_mobile/view/home/widget/image_slider.dart';
 export 'package:attene_mobile/view/home/widget/promo_video_card.dart';
-export 'package:attene_mobile/view/home/widget/product%20widget/singel_product.dart';
-export 'package:attene_mobile/view/home/widget/services widget/ads_services.dart';
-export 'package:attene_mobile/view/home/widget/services widget/services_big.dart';
+export 'package:attene_mobile/view/home/widget/product_widget/singel_product.dart';
+export 'package:attene_mobile/view/home/widget/services_widget/ads_services.dart';
+export 'package:attene_mobile/view/home/widget/services_widget/services_big.dart';
 export 'package:attene_mobile/view/home/controller/video_controller.dart';
 export 'package:attene_mobile/view/home/model/story_model.dart';
 export 'package:video_player/video_player.dart';
 export 'package:attene_mobile/view/home/model/vendor_model.dart';
 export 'package:attene_mobile/view/home/model/account_model.dart';
-
 export 'dart:async';
 export 'package:attene_mobile/view/home/model/adds_model.dart';
-
+export 'package:attene_mobile/view/favorite/screen/favorites.dart';
+export 'package:attene_mobile/view/notification/screen/notification.dart';

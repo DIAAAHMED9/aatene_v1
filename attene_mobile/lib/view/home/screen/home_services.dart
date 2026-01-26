@@ -1,5 +1,5 @@
 import '../../../general_index.dart';
-import '../widget/services widget/big_services_card.dart';
+import '../widget/services_widget/big_services_card.dart';
 
 class HomeServices extends GetView<HomeController> {
   const HomeServices({super.key});
@@ -107,7 +107,7 @@ class HomeServices extends GetView<HomeController> {
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
                       ),
-                      textInputAction: TextInputAction.done,
+                      textInputAction: TextInputAction.done, textInputType: TextInputType.name,
                     ),
                   ),
                 ],

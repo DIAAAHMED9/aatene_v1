@@ -1,9 +1,9 @@
 // GENERATED BARREL FILE. DO NOT EDIT MANUALLY.
-export 'add new store/index.dart';
-export 'add services/index.dart';
-export 'control panel vendor/index.dart';
-export 'control users/index.dart';
-export 'login and start/index.dart';
+export 'add_new_store/index.dart';
+export 'add_services/index.dart';
+export 'control_panel_vendor/index.dart';
+export 'control_users/index.dart';
+export 'login_start/index.dart';
 export 'media_library/index.dart';
 export 'onboarding/index.dart';
 export 'products/index.dart';

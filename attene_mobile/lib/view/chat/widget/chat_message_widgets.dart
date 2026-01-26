@@ -1,14 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../../general_index.dart';
 import '../index.dart' hide ChatController;
+import 'package:image_picker/image_picker.dart';
+import '../../../utils/platform/local_image.dart';
 
 class PendingAttachmentsBar extends StatelessWidget {
-  final List<File> files;
+  final List<XFile> files;
   final void Function(int index) onRemove;
 
   const PendingAttachmentsBar({required this.files, required this.onRemove});
@@ -39,7 +40,7 @@ class PendingAttachmentsBar extends StatelessWidget {
                     height: 76,
                     color: Colors.white,
                     child: isImage
-                        ? Image.file(f, fit: BoxFit.cover)
+                        ? buildLocalImage(f.path, fit: BoxFit.cover)
                         : Center(
                             child: Padding(
                               padding: const EdgeInsets.all(8),
@@ -658,4 +659,4 @@ bool _isImagePath(String path) {
   return p.endsWith('.png') || p.endsWith('.jpg') || p.endsWith('.jpeg') || p.endsWith('.webp');
 }
 
-String _fileName(String path) => path.split(Platform.pathSeparator).last;
+String _fileName(String path) => path.split(RegExp(r'[\\/]')).last;

@@ -12,36 +12,46 @@ class HomeProduct extends GetView<HomeController> {
         actions: [
           Row(
             children: [
-              Container(
-                margin: const EdgeInsets.only(right: 5.0, left: 5.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  border: Border.all(color: AppColors.primary50),
-                ),
-                child: IconButton(
-                  icon: SvgPicture.asset(
-                    'assets/images/svg_images/Heart.svg',
-                    semanticsLabel: 'My SVG Image',
-                    height: 22,
-                    width: 22,
+              GestureDetector(
+                onTap: () {
+                  Get.to(FavoritesScreen());
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 5.0, left: 5.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50.0),
+                    border: Border.all(color: AppColors.primary50),
                   ),
-                  onPressed: () {},
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/images/svg_images/Heart.svg',
+                      semanticsLabel: 'My SVG Image',
+                      height: 22,
+                      width: 22,
+                    ),
+                    onPressed: () {},
+                  ),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(right: 5.0, left: 10.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  border: Border.all(color: AppColors.primary50),
-                ),
-                child: IconButton(
-                  icon: SvgPicture.asset(
-                    'assets/images/svg_images/Notification.svg',
-                    semanticsLabel: 'My SVG Image',
-                    height: 22,
-                    width: 22,
+              GestureDetector(
+                onTap: () {
+                  Get.to(NotificationPage());
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 5.0, left: 10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50.0),
+                    border: Border.all(color: AppColors.primary50),
                   ),
-                  onPressed: () {},
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/images/svg_images/Notification.svg',
+                      semanticsLabel: 'My SVG Image',
+                      height: 22,
+                      width: 22,
+                    ),
+                    onPressed: () {},
+                  ),
                 ),
               ),
             ],
@@ -68,7 +78,7 @@ class HomeProduct extends GetView<HomeController> {
                 children: [
                   Container(
                     width: 90,
-                    height: 40,
+                    height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(color: AppColors.primary400),
@@ -94,18 +104,37 @@ class HomeProduct extends GetView<HomeController> {
                     ),
                   ),
                   Expanded(
-                    child: TextFiledAatene(
-                      isRTL: isRTL,
-                      hintText: 'ابحث عن المطاعم، البقالة والمزيد..',
-                      filled: true,
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: CircleAvatar(
-                          backgroundColor: AppColors.primary400,
-                          child: const Icon(Icons.search, color: Colors.white),
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(SearchScreen());
+                      },
+                      child: Container(
+                        height: 50,
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(color: AppColors.neutral700),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              'ابحث عن المطاعم، البقالة والمزيد..',
+                              style: getMedium(
+                                fontSize: 12,
+                                color: AppColors.neutral300,
+                              ),
+                            ),
+                            Spacer(),
+                            CircleAvatar(
+                              backgroundColor: AppColors.primary400,
+                              child: const Icon(
+                                Icons.search,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      textInputAction: TextInputAction.done,
                     ),
                   ),
                 ],
@@ -185,7 +214,7 @@ class HomeProduct extends GetView<HomeController> {
                           backgroundColor: AppColors.primary400,
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
-                      ),
+                      ), textInputType: TextInputType.name,
                     ),
                   ),
                   CircleAvatar(
@@ -218,7 +247,7 @@ class HomeProduct extends GetView<HomeController> {
                 title: "المتاجر المميزة",
                 subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
               ),
-              VendorCard(),
+              VendorCard(screen: ProfilePage()),
               TitleHome(
                 title: "منتجات تم تخصيصها لك",
                 subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
@@ -282,6 +311,7 @@ class HomeProduct extends GetView<HomeController> {
                             const SizedBox(height: 12),
                             ElevatedButton(
                               onPressed: () {
+                                Get.to(ManageAccountStore());
                                 // تنفيذ الإجراء المطلوب عند الضغط على الزر
                               },
                               style: ElevatedButton.styleFrom(
@@ -421,12 +451,11 @@ class HomeProduct extends GetView<HomeController> {
               StoreCard(
                 storeName: "EtnixByron",
                 description:
-                "متجر إلكتروني متخصص في أحدث صيحات الموضة والأزياء العصرية للشباب والشابات",
+                    "متجر إلكتروني متخصص في أحدث صيحات الموضة والأزياء العصرية للشباب والشابات",
                 rating: 5.0,
                 imagePath:
-                "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80", // صورة تعبيرية
+                    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80", // صورة تعبيرية
               ),
-
             ],
           ),
         ),

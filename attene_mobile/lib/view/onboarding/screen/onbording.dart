@@ -1,6 +1,6 @@
 import '../../../general_index.dart';
-import '../../../utlis/image flip/index.dart';
-import '../../../utlis/responsive/index.dart';
+import '../../../utils/image_flip/index.dart';
+import '../../../utils/responsive/index.dart';
 
 class Onboarding extends StatelessWidget {
   const Onboarding({super.key});

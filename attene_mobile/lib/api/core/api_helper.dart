@@ -4,7 +4,8 @@
 
 
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -905,7 +906,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }
 
   static Future<dynamic> uploadMedia({
-    required File file,
+    required XFile file,
     required String type,
     bool withLoading = false,
     Function(int, int)? onSendProgress,
@@ -915,10 +916,10 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         _startLoading();
       }
 
-      final String fileName = file.path.split('/').last;
+      final String fileName = (file.name.isNotEmpty) ? file.name : file.path.split('/').last;
       final FormData formData = FormData.fromMap({
         'type': type,
-        'file': await MultipartFile.fromFile(file.path, filename: fileName),
+        'file': MultipartFile.fromBytes(await file.readAsBytes(), filename: fileName),
       });
 
       final requestHeaders = await _getBaseHeaders();
@@ -928,7 +929,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
 🔼 [UPLOAD] Starting upload...
 📁 File: $fileName
 📊 Type: $type
-📦 Size: ${file.lengthSync()} bytes
+📦 Size: ${await file.length()} bytes
     ''');
 
       final Dio dio = Dio(

@@ -1,5 +1,5 @@
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/responsive_dimensions.dart';
+import '../../../../utils/responsive/responsive_dimensions.dart';
 
 class VariationToggleWidget extends StatelessWidget {
   const VariationToggleWidget({super.key});

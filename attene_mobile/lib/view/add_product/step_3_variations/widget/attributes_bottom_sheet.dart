@@ -1,5 +1,5 @@
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/index.dart';
+import '../../../../utils/responsive/index.dart';
 
 class AttributesBottomSheet extends StatefulWidget {
   final List<ProductAttribute> allAttributes;

@@ -1,8 +1,10 @@
 
 
 import 'dart:async';
-import 'dart:io';
 import '../../../general_index.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../utils/platform/dio_multipart.dart';
 
 
 /// Tabs for the chat list.
@@ -461,7 +463,7 @@ groubConversations.assignAll(
   /// Unified sender: sends files (images/audio/docs) + optional text
   Future<ChatMessage?> sendFilesMessage({
     required int conversationId,
-    required List<File> files,
+    required List<XFile> files,
     String? text,
   }) async {
     final paths = files.map((f) => f.path).toList();
@@ -484,20 +486,20 @@ groubConversations.assignAll(
       }
 
       // Identify sender without relying on participants list.
-// Backend typically expects owner type + owner id (e.g. storeId/userId), not the participant-row id.
-final ownerType = myOwnerType;
-final ownerId = myOwnerId ?? ApiHelper.getStoreIdOrNull();
-if (ownerType == null || ownerId == null) {
-  throw 'Cannot determine my participant identity (type/id)';
-}
+      // Backend typically expects owner type + owner id (e.g. storeId/userId), not the participant-row id.
+      final ownerType = myOwnerType;
+      final ownerId = myOwnerId ?? ApiHelper.getStoreIdOrNull();
+      if (ownerType == null || ownerId == null) {
+        throw 'Cannot determine my participant identity (type/id)';
+      }
 
-final form = FormData();
+      final form = FormData();
 
-// REQUIRED BY BACKEND
-form.fields.add(MapEntry('conversation_id', conversationId.toString()));
-form.fields.add(MapEntry('participant_type', ownerType));
-form.fields.add(MapEntry('participant_id', ownerId.toString()));
-if (body != null && body.trim().isNotEmpty) {
+      // REQUIRED BY BACKEND
+      form.fields.add(MapEntry('conversation_id', conversationId.toString()));
+      form.fields.add(MapEntry('participant_type', ownerType));
+      form.fields.add(MapEntry('participant_id', ownerId.toString()));
+      if (body != null && body.trim().isNotEmpty) {
         form.fields.add(MapEntry('body', body.trim()));
       }
       if (productId != null) form.fields.add(MapEntry('product_id', productId.toString()));
@@ -506,7 +508,13 @@ if (body != null && body.trim().isNotEmpty) {
 
       if (filePaths != null && filePaths.isNotEmpty) {
         for (final p in filePaths) {
-          form.files.add(MapEntry('files[]', await MultipartFile.fromFile(p, filename: p.split('/').last)));
+          // NOTE:
+          // - On Mobile/Desktop: attach file bytes from local path.
+          // - On Web: local file paths are not accessible; we skip attachments to keep build stable.
+          final mf = await dioMultipartFromLocalPath(p);
+          if (mf != null) {
+            form.files.add(MapEntry('files[]', mf));
+          }
         }
       }
 

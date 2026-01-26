@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -391,7 +390,7 @@ class MediaLibraryController extends GetxController
   }
 
   Future<void> _uploadFilesToAPI(
-    List<File> files,
+    List<XFile> files,
     List<MediaItem> mediaItems,
   ) async {
     final MyAppController myAppController = Get.find<MyAppController>();
@@ -419,7 +418,7 @@ class MediaLibraryController extends GetxController
         }
 
         print(
-          '🔼 [UPLOAD] Uploading: ${mediaItem.name} (Type: $uploadType, Size: ${file.lengthSync()} bytes)',
+          '🔼 [UPLOAD] Uploading: ${mediaItem.name} (Type: $uploadType, Size: ${await file.length()} bytes)',
         );
 
         final response = await ApiHelper.uploadMedia(
@@ -530,7 +529,7 @@ class MediaLibraryController extends GetxController
   }
 
   Future<bool> _tryAlternativeUpload(
-    File file,
+    XFile file,
     MediaItem mediaItem,
     List<MediaItem> successfulUploads,
   ) async {
@@ -674,12 +673,12 @@ class MediaLibraryController extends GetxController
     );
 
     final newMediaItems = <MediaItem>[];
-    final filesToUpload = <File>[];
+    final filesToUpload = <XFile>[];
 
     try {
       for (int i = 0; i < files.length; i++) {
         final file = files[i];
-        final fileSize = await _getFileSize(file.path);
+        final fileSize = await file.length();
 
         final mediaItem = MediaItem(
           id: 'temp_${DateTime.now().millisecondsSinceEpoch}_$i',
@@ -692,7 +691,7 @@ class MediaLibraryController extends GetxController
         );
 
         newMediaItems.add(mediaItem);
-        filesToUpload.add(File(file.path));
+        filesToUpload.add(file);
         print(
           '   📄 Added to queue: ${file.name} (${_formatFileSize(fileSize)})',
         );
@@ -742,16 +741,6 @@ class MediaLibraryController extends GetxController
       fileUrl: json['fileUrl'],
       userId: json['userId'],
     );
-  }
-
-  Future<int> _getFileSize(String path) async {
-    try {
-      final file = File(path);
-      final stat = await file.stat();
-      return stat.size;
-    } catch (e) {
-      return 0;
-    }
   }
 
   String _formatFileSize(int bytes) {

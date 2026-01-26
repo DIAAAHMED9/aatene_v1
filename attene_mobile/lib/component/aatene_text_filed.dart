@@ -1,7 +1,5 @@
-
-
 import '../general_index.dart';
-import '../utlis/responsive/index.dart';
+import '../utils/responsive/index.dart';
 
 class TextFiledAatene extends StatelessWidget {
   const TextFiledAatene({
@@ -32,7 +30,8 @@ class TextFiledAatene extends StatelessWidget {
     this.style,
     this.hintStyle,
     this.labelText,
-    this.floatingLabelBehavior, this.filled,
+    this.floatingLabelBehavior,
+    this.filled,
   });
 
   final bool isRTL;
@@ -42,7 +41,7 @@ class TextFiledAatene extends StatelessWidget {
   final Function(String)? onChanged;
   final Function(String)? onSubmitted;
   final bool? obscureText;
-  final double? radios =50;
+  final double? radios = 50;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final TextInputType? textInputType;
@@ -113,7 +112,9 @@ class TextFiledAatene extends StatelessWidget {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(ResponsiveDimensions.w(radios!)),
+              borderRadius: BorderRadius.circular(
+                ResponsiveDimensions.w(radios!),
+              ),
               borderSide: BorderSide(
                 color: hasError ? Colors.red : Colors.grey[300]!,
                 width: hasError ? 2.0 : 1.5,
@@ -135,7 +136,7 @@ class TextFiledAatene extends StatelessWidget {
               borderSide: const BorderSide(color: Colors.red, width: 2.0),
             ),
             filled: true,
-                fillColor: hasError ? Colors.red[50] : fillColor ?? Colors.grey[50],
+            fillColor: hasError ? Colors.red[50] : fillColor ?? Colors.grey[50],
 
             contentPadding: EdgeInsets.symmetric(
               horizontal: ResponsiveDimensions.w(20),

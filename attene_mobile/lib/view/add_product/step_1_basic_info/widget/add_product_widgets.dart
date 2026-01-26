@@ -1,5 +1,5 @@
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/index.dart';
+import '../../../../utils/responsive/index.dart';
 import '../index.dart';
 
 class SectionTitleWidget extends StatelessWidget {
@@ -361,7 +361,7 @@ class ProductNameSectionWidget extends StatelessWidget {
                       controller.update();
                     }
                   },
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.next, textInputType: TextInputType.name,
                 ),
                 if (controller.fieldErrors.containsKey('productName'))
                   Padding(

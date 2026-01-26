@@ -1,8 +1,5 @@
-
-
-
 import '../general_index.dart';
-import '../utlis/responsive/index.dart';
+import '../utils/responsive/index.dart';
 
 class MediaSelector extends StatelessWidget {
   final Function(List<String>) onMediaSelected;

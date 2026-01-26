@@ -1,6 +1,6 @@
 
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/index.dart';
+import '../../../../utils/responsive/index.dart';
 
 class DiscountDetailsBottomSheet extends StatelessWidget {
   final RelatedProductsController controller;

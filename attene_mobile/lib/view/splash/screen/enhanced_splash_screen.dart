@@ -1,7 +1,7 @@
 
 
 import '../../../general_index.dart';
-import '../../../utlis/services/index.dart';
+import '../../../utils/services/index.dart';
 
 class EnhancedSplashScreen extends StatefulWidget {
   const EnhancedSplashScreen({super.key});

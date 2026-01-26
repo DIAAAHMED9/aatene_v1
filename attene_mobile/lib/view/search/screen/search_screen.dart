@@ -6,7 +6,6 @@ import '../widget/search_type.dart' hide SearchType;
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -73,7 +72,7 @@ class SearchScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
+                        ), textInputType: TextInputType.name,
                       ),
                     ),
                   ],

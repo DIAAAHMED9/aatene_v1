@@ -1,8 +1,8 @@
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../general_index.dart';
+import '../../../utils/platform/local_image.dart';
 
 class MediaLibraryScreen extends StatefulWidget {
   final bool isSelectionMode;
@@ -448,11 +448,9 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
 
   Widget _buildImageWidget(MediaItem media) {
     if (media.isLocal == true) {
-      return Image.file(
-        File(media.path),
+      return buildLocalImage(
+        media.path,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) =>
-            Icon(Icons.image, size: 40, color: Colors.grey[400]),
       );
     } else {
       final imageUrl = controller.getMediaDisplayUrl(media);

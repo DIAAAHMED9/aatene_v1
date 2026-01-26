@@ -1,4 +1,5 @@
 import '../../../general_index.dart';
+import '../screen/onbording.dart';
 
 class OnboardingController extends GetxController {
   final pageController = PageController();
@@ -22,6 +23,6 @@ class OnboardingController extends GetxController {
   Future<void> finish() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_done', true);
-    Get.offAllNamed('/home');
+    Get.to(Onboarding());
   }
 }

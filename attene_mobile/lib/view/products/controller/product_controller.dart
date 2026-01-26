@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import '../../../general_index.dart';
-import '../../../utlis/sheet_controller.dart';
+import '../../../utils/sheet_controller.dart';
 
 class ProductController extends GetxController
     with SingleGetTickerProviderMixin {

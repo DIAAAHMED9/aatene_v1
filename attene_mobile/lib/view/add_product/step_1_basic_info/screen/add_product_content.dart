@@ -1,6 +1,6 @@
 
 import '../../../../general_index.dart';
-import '../../../../utlis/responsive/responsive_dimensions.dart';
+import '../../../../utils/responsive/responsive_dimensions.dart';
 import '../index.dart';
 
 /// خطوة (1) المعلومات الأساسية.
