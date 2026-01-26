@@ -5,12 +5,30 @@ class StoryItem extends StatelessWidget {
 
   // بيانات تجريبية لمحاكاة الصورة المرفقة
   final List<Map<String, String>> stories = const [
-    {'username': 'johndoe', 'image': 'https://i.pravatar.cc/150?img=1'},
-    {'username': 'x_ae-23b', 'image': 'https://i.pravatar.cc/150?img=2'},
-    {'username': 'saylortwift', 'image': 'https://i.pravatar.cc/150?img=3'},
-    {'username': 'maisenpai', 'image': 'https://i.pravatar.cc/150?img=4'},
-    {'username': 'x_ae-23b', 'image': 'https://i.pravatar.cc/150?img=2'},
-    {'username': 'johndoe', 'image': 'https://i.pravatar.cc/150?img=1'},
+    {
+      'username': 'johndoe',
+      'image': 'assets/images/png/placeholder_bag_image_png.png',
+    },
+    {
+      'username': 'x_ae-23b',
+      'image': 'assets/images/png/placeholder_bag_image_png.png',
+    },
+    {
+      'username': 'saylortwift',
+      'image': 'assets/images/png/placeholder_bag_image_png.png',
+    },
+    {
+      'username': 'maisenpai',
+      'image': 'assets/images/png/placeholder_bag_image_png.png',
+    },
+    {
+      'username': 'x_ae-23b',
+      'image': 'assets/images/png/placeholder_bag_image_png.png',
+    },
+    {
+      'username': 'johndoe',
+      'image': 'assets/images/png/placeholder_bag_image_png.png',
+    },
   ];
 
   @override
@@ -68,7 +86,7 @@ class StoryItem extends StatelessWidget {
                           ),
                           child: CircleAvatar(
                             radius: 22,
-                            backgroundImage: NetworkImage(
+                            backgroundImage: AssetImage(
                               stories[index]['image']!,
                             ),
                           ),

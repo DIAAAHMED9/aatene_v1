@@ -207,16 +207,13 @@ class _AccountsListView extends StatelessWidget {
                   );
                 },
               ),
-                   const SizedBox(height: 16),
-        
-          // ✅ زر إضافة متجر جديد
-        
-        
+              const SizedBox(height: 16),
+
+              // ✅ زر إضافة متجر جديد
+              _AddNewStoreButton(controller: controller),
             ],
           ),
         ),
-              _AddNewStoreButton(controller: controller),
-
       ],
     );
   }
@@ -230,8 +227,9 @@ class _AddNewStoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 30),
+      padding: const EdgeInsets.all(12.0),
       child: SizedBox(
+        height: 50,
         width: double.infinity,
         child: ElevatedButton.icon(
           icon: Icon(Icons.add),

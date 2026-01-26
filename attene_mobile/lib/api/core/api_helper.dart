@@ -860,13 +860,13 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         );
         break;
       case 404:
-        Get.snackbar(
-          'غير موجود',
-          'المورد المطلوب غير موجود',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'غير موجود',
+        //   'المورد المطلوب غير موجود',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.orange,
+        //   colorText: Colors.white,
+        // );
         break;
       case 422:
         break;

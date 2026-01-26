@@ -13,7 +13,7 @@ class StoreSelectionScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('اختيار المتجر'),
+        title: const Text('شاشة مؤقتة لتبديل المتاجر'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),

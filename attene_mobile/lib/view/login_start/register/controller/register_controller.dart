@@ -1,6 +1,5 @@
 import '../../../../general_index.dart';
 
-
 class RegisterController extends GetxController {
   var email = ''.obs;
   var name = ''.obs;
@@ -256,7 +255,7 @@ class RegisterController extends GetxController {
 
   void goToLogin() {
     print('Navigating to login...');
-    Get.offAllNamed('/login');
+    Get.offAllNamed('/mainScreen');
   }
 
   Future<bool> checkUserExists() async {

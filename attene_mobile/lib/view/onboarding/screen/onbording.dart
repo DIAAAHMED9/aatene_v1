@@ -178,7 +178,7 @@ class Onboarding extends StatelessWidget {
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/start_login');
               },
-              buttonText: isRTL ? 'ابدأ' : 'Start',
+              buttonText: isRTL ? 'ابدأ الان' : 'Start Now',
               textColor: AppColors.light1000,
               color: AppColors.primary400,
               borderColor: AppColors.primary400,

@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
+
 import '../../../general_index.dart';
 
 class OnboardingView extends StatelessWidget {
@@ -37,11 +39,18 @@ class OnboardingView extends StatelessWidget {
             Positioned(
               top: 25,
               right: 10,
-              child: TextButton(
-                onPressed: controller.finish,
-                child: const Text(
-                  'تخطي',
-                  style: TextStyle(color: Colors.white),
+              child: GestureDetector(
+                onTap: () {
+                  Get.to(Onboarding());
+                },
+                child: TextButton(
+                  onPressed: () {
+                    // Get.to(Onboarding());
+                  },
+                  child: const Text(
+                    'تخطي',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ),
