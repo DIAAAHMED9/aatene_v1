@@ -209,6 +209,7 @@ class MyApp extends StatelessWidget {
           },
         ),
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
+        GetPage(name: '/services-Screen', page: ()=>ServicesListScreen()),
       ],
       debugShowCheckedModeBanner: false,
     );

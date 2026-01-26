@@ -83,7 +83,21 @@ class MainScreen extends StatelessWidget {
           fabColor: AppColors.primary400,
           selectedColor: AppColors.primary400,
           unselectedColor: Colors.grey,
-          onFabTap: () => Get.to(ProductScreen()),
+          onFabTap: () {
+            final di = Get.find<DataInitializerService>();
+            if (di.currentStoreMode == StoreMode.services) {
+              Get.toNamed('/add-service', arguments: {'isEditMode': false});
+            } else {
+              Get.toNamed('/services-Screen', arguments: {'isEditMode': false});
+
+              // products store: open Add Product flow
+              try {
+                Get.find<ProductController>().navigateToAddProduct();
+              } catch (_) {
+                Get.to(() => ProductScreen());
+              }
+            }
+          },
           // onFabTap: () => Get.to(ServiceStepperScreen()),
         ),
 
