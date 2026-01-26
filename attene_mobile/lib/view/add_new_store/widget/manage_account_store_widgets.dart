@@ -96,8 +96,9 @@ class _ErrorView extends StatelessWidget {
                   controller.errorMessage.value,
                   textAlign: TextAlign.center,
                   style: getRegular(color: Colors.grey),
-                ),
-              ),
+                  ),
+        ),
+              
               const SizedBox(height: 16),
               AateneButton(
                 buttonText: 'إعادة المحاولة',
@@ -256,7 +257,9 @@ class _SearchBar extends StatelessWidget {
           color: AppColors.colorManageAccountStore,
           borderRadius: BorderRadius.circular(25),
         ),
-        child: TextField(
+        child: Material(
+          color: Colors.transparent,
+          child: TextField(
           controller: controller.searchController,
           onChanged: controller.onSearchChanged,
           decoration: InputDecoration(
@@ -271,7 +274,7 @@ class _SearchBar extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 

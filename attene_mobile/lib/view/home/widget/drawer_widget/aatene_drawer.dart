@@ -40,13 +40,13 @@ class AateneDrawer extends StatelessWidget {
                           name: controller.accounts[index].name,
                           avatar: controller.accounts[index].avatar,
                           isSelected:
-                              controller.selectedAccountIndex.value == index,
-                          onTap: () => controller.switchAccount(index),
+                              controller.accounts[index].id == controller.selectedAccountId.value,
+                          onTap: () async { await controller.selectAccount(controller.accounts[index]); Get.back(); },
                         ),
                       ),
                       InkWell(
                         onTap: () {
-                          Get.to(ManageAccountStore());
+                          Get.to(() => ManageAccountStore());
                         },
                         child: const Row(
                           children: [

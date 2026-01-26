@@ -14,6 +14,29 @@ import '../../general_index.dart';
 export 'package:get/get.dart' hide FormData, MultipartFile,Response;
 
 class ApiHelper {
+  /// Whether the current logged-in user is a merchant (has stores endpoints).
+  /// Safe to call on web/mobile and does not throw.
+  static bool get isMerchantUser {
+    try {
+      final storage = GetStorage();
+      final raw = storage.read('user_data');
+      final Map<String, dynamic> user = (raw is Map)
+          ? Map<String, dynamic>.from(raw as Map)
+          : <String, dynamic>{};
+      // Common backends: role, type, guard, user_type, is_merchant ...
+      final role = (user['role'] ?? user['type'] ?? user['guard'] ?? user['user_type'] ?? '')
+          .toString()
+          .toLowerCase();
+      if (role.contains('merchant') || role.contains('vendor') || role == 'store') return true;
+      final isMerchant = user['is_merchant'];
+      if (isMerchant is bool) return isMerchant;
+      if (isMerchant is num) return isMerchant == 1;
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Builds base headers.
   ///
   /// Important: Do NOT rely only on in-memory controllers for the token.

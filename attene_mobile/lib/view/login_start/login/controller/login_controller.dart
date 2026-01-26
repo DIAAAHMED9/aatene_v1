@@ -243,13 +243,12 @@ class LoginController extends GetxController {
     final dynamic storeIdRaw = ud['active_store_id'] ?? ud['store_id'];
     final String storeIdStr = storeIdRaw?.toString() ?? '';
 
-    // ✅ للتاجر فقط: إذا لا يوجد متجر => شاشة اختيار المتجر
-    if (isMerchant && storeIdStr.isEmpty) {
-      Get.offAllNamed('/selectStore');
-      return;
-    }
-
-    // ✅ للتاجر: تهيئة بيانات المتجر بعد توفر storeId
+    // ✅ للتاجر فقط: لا نعرض شاشة اختيار المتجر بعد تسجيل الدخول.
+// إذا لا يوجد متجر فعّال، DataInitializerService يقوم بتعيين المتجر الأول تلقائياً (إن وُجد).
+if (isMerchant && storeIdStr.isEmpty) {
+  // لا نفعل شيء هنا، سنكمل للرئيسية (وقد تكون قائمة المتاجر فارغة عند حساب جديد)
+}
+// ✅ للتاجر: تهيئة بيانات المتجر بعد توفر storeId
     if (isMerchant && storeIdStr.isNotEmpty) {
       final sid = int.tryParse(storeIdStr);
       if (sid != null) {
