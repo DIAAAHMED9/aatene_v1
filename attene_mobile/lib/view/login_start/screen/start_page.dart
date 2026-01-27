@@ -6,6 +6,19 @@ import '../../../utils/responsive/index.dart';
 class StartLogin extends StatelessWidget {
   const StartLogin({super.key});
 
+  Future<void> _continueAsGuest() async {
+    final storage = GetStorage();
+
+    // Enable guest mode
+    await storage.write('is_guest', true);
+
+    // Clear any previous authenticated session to avoid mixed states
+    await storage.remove('token');
+    await storage.remove('user_data');
+    await storage.remove('store_id');
+    await storage.remove('active_store_id');
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -62,7 +75,10 @@ class StartLogin extends StatelessWidget {
                     borderColor: AppColors.neutral500,
                     buttonText: isRTL ? 'متابعة كزائر' : 'Continue as guest',
                     onTap: () {
-                      Navigator.pushReplacementNamed(context, '/onboarding');
+                      _continueAsGuest().then((_) {
+                        // Go directly to the main app in guest mode
+                        Get.offAllNamed('/mainScreen');
+                      });
                     },
                   ),
                 ],

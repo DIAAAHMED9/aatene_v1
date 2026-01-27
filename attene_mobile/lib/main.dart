@@ -13,6 +13,9 @@ import 'utils/services/device_name_service.dart';
 import 'utils/sheet_controller.dart';
 import 'package:attene_mobile/view/add_new_store/screen/manage_account_store_controller.dart';
 import 'package:attene_mobile/services/app_lifecycle_manager.dart';
+import 'package:attene_mobile/api/core/api_helper.dart';
+import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
+import 'package:attene_mobile/services/screen/auth_required_screen.dart';
 
 class AppBindings extends Bindings {
   static bool _initialized = false;
@@ -44,6 +47,11 @@ class AppBindings extends Bindings {
   void _delayOtherBindings() {
     Future.delayed(const Duration(seconds: 3), () {
       print('🔄 [APP BINDINGS] تسجيل المتحكمات المتبقية...');
+
+      if (ApiHelper.isGuestMode) {
+        print('ℹ️ [APP BINDINGS] Guest mode: skipping protected controllers');
+        return;
+      }
 
       Get.lazyPut(() => BottomSheetController(), fenix: true);
       Get.lazyPut(() => CreateStoreController(), fenix: true);
@@ -177,6 +185,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
+        GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
         GetPage(name: '/', page: () => SplashScreen()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
@@ -190,7 +199,11 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
         // GetPage(name: '/story-test', page: () => const StoryTestScreen()),
         // GetPage(name: '/add-story', page: () => const AddStoryScreen()),
-        GetPage(name: '/related-products', page: () => RelatedProductsScreen()),
+        GetPage(
+          name: '/related-products',
+          page: () => RelatedProductsScreen(),
+          middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
+        ),
         // Services add/edit (same flow as products)
         GetPage(
           name: '/add-service',
@@ -209,7 +222,11 @@ class MyApp extends StatelessWidget {
           },
         ),
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
-        GetPage(name: '/services-Screen', page: ()=>ServicesListScreen()),
+        GetPage(
+          name: '/services-Screen',
+          page: () => ServicesListScreen(),
+          middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
+        ),
       ],
       debugShowCheckedModeBanner: false,
     );

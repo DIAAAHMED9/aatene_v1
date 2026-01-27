@@ -37,6 +37,57 @@ class ApiHelper {
     }
   }
 
+  /// True when we currently have an auth token stored.
+  /// Used to avoid triggering forced sign-out loops for guest users.
+  static bool get hasAuthToken {
+    try {
+      final storage = GetStorage();
+      final raw = storage.read('user_data');
+      final Map<String, dynamic> user = (raw is Map)
+          ? Map<String, dynamic>.from(raw as Map)
+          : <String, dynamic>{};
+
+      final token = (user['token'] ?? '').toString();
+      return token.trim().isNotEmpty;
+    } catch (_) {
+      return false;
+    }
+    }
+
+
+/// Whether the app is currently running in "guest mode".
+/// Stored in GetStorage under key `is_guest`.
+static bool get isGuestMode {
+  try {
+    return GetStorage().read('is_guest') == true;
+  } catch (_) {
+    return false;
+  }
+}
+  
+
+  /// Returns true if this API path should only be called when the user is authenticated.
+  ///
+  /// In guest mode we **skip** calling these endpoints to avoid noisy 401 responses
+  /// and unexpected "session انتهت" sign-out loops.
+  static bool _isProtectedPath(String path) {
+    final p = path.trim();
+
+    // Merchant area
+    if (p.startsWith('/merchants')) return true;
+
+    // Chat / blocks
+    if (p.startsWith('/conversations')) return true;
+    if (p.startsWith('/blocks')) return true;
+
+    // Favorites, notifications, profile, etc. (extend as needed)
+    if (p.startsWith('/favorites')) return true;
+    if (p.startsWith('/notifications')) return true;
+    if (p.startsWith('/profile')) return true;
+
+    return false;
+  }
+
   /// Builds base headers.
   ///
   /// Important: Do NOT rely only on in-memory controllers for the token.
@@ -396,6 +447,12 @@ class ApiHelper {
 
     if (!myAppController.isInternetConnect.value) {
       _showNoInternetError(shouldShowMessage);
+      return null;
+    }
+
+    // ✅ Guest mode guard: do NOT hit protected endpoints without a token
+    if (!hasAuthToken && _isProtectedPath(path)) {
+      print('⚠️ [API] Guest mode: skipping protected request $method $path');
       return null;
     }
 
@@ -870,6 +927,20 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
 
     switch (error.response?.statusCode) {
       case 401:
+        // Guest / not-authenticated requests can return 401. Don't force sign-out loops.
+        final bool isGuest = (() {
+          try {
+            return GetStorage().read('is_guest') == true;
+          } catch (_) {
+            return false;
+          }
+        })();
+
+        if (isGuest || !ApiHelper.hasAuthToken) {
+          // Just ignore in guest mode.
+          return;
+        }
+
         myAppController.onSignOut();
         Get.offAllNamed('/login');
         break;

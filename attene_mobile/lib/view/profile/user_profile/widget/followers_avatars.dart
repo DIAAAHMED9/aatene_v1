@@ -23,7 +23,9 @@ class FollowersAvatars extends StatelessWidget {
             left: entry.key * (size * 0.6),
             child: CircleAvatar(
               radius: size / 2,
-              backgroundImage: AssetImage(entry.value),
+              backgroundImage: (entry.value.startsWith('http') || entry.value.startsWith('https'))
+                ? NetworkImage(entry.value)
+                : AssetImage(entry.value),
             ),
           );
         }).toList(),

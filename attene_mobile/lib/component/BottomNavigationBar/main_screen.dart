@@ -1,4 +1,6 @@
 import '../../general_index.dart';
+import '../../services/screen/auth_required_screen.dart';
+import '../../api/core/api_helper.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -6,16 +8,19 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dataService = DataInitializerService.to;
+    final bool isGuest = ApiHelper.isGuestMode;
 
     // Default tabs (used for customer as well)
     List<String> names = ['الرئسية', 'منتجات', 'دردشة', 'USER'];
     List<Widget> pages = [
       HomeProduct(),
-      // ManageAccountStore(),
       SearchScreen(),
-      // ProductScreen(),
-      ChatScreen(),
-      ProfilePage(),
+      isGuest
+          ? const AuthRequiredScreen(featureName: 'الدردشة')
+          : ChatScreen(),
+      isGuest
+          ? const AuthRequiredScreen(featureName: 'الملف الشخصي')
+          : ProfilePage(),
     ];
     List<IconData> icons = const [
       Icons.home_filled,
@@ -34,7 +39,7 @@ class MainScreen extends StatelessWidget {
 
       // Home
       mNames.add('الرئسية');
-      mPages.add(HomeProduct());
+      mPages.add(isGuest ? SearchScreen() : HomeProduct());
       mIcons.add(Icons.home_filled);
 
       /// Products tab
@@ -58,12 +63,16 @@ class MainScreen extends StatelessWidget {
 
       // Chat
       mNames.add('دردشة');
-      mPages.add(ChatScreen());
+      mPages.add(
+        isGuest ? const AuthRequiredScreen(featureName: 'المحادثات') : ChatScreen(),
+      );
       mIcons.add(Icons.chat_sharp);
 
       // User/Profile
-      mNames.add('USER');
-      mPages.add(HomeControl());
+      mNames.add('الحساب');
+      mPages.add(
+        isGuest ? const AuthRequiredScreen(featureName: 'الحساب') : ProfilePage(),
+      );
       mIcons.add(Icons.person_sharp);
 
       names = mNames;
@@ -85,11 +94,13 @@ class MainScreen extends StatelessWidget {
           unselectedColor: Colors.grey,
           onFabTap: () {
             final di = Get.find<DataInitializerService>();
+            if (ApiHelper.isGuestMode) {
+              Get.to(() => const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'));
+              return;
+            }
             if (di.currentStoreMode == StoreMode.services) {
               Get.toNamed('/add-service', arguments: {'isEditMode': false});
             } else {
-              Get.toNamed('/services-Screen', arguments: {'isEditMode': false});
-
               // products store: open Add Product flow
               try {
                 Get.find<ProductController>().navigateToAddProduct();

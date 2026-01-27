@@ -47,6 +47,12 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     _resolveIdentity();
+    // In guest mode (no auth token), do not call protected chat endpoints.
+    if (!ApiHelper.hasAuthToken) {
+      print('ℹ️ [CHAT] Guest mode: skipping chat initialization');
+      return;
+    }
+
     loadInitialData();
     refreshBlockedCache(silent: true);
   }

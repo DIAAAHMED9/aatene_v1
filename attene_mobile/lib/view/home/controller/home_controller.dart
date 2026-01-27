@@ -54,6 +54,9 @@ class HomeController extends GetxController {
   /// =========================
   void _startAutoSlide() {
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (images.isEmpty) return;
+      if (!pageController.hasClients) return;
+
       final nextPage = (currentIndex.value + 1) % images.length;
       pageController.animateToPage(
         nextPage,

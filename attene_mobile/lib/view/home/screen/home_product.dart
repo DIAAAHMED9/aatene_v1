@@ -1,10 +1,15 @@
 import '../../../general_index.dart';
+import '../../../api/core/api_helper.dart';
+import '../../../services/screen/auth_required_screen.dart';
 
 class HomeProduct extends GetView<HomeController> {
   const HomeProduct({super.key});
 
   @override
   Widget build(BuildContext context) {
+    if (ApiHelper.isGuestMode) {
+      return const AuthRequiredScreen(featureName: 'الرئيسية');
+    }
     final isRTL = LanguageUtils.isRTL;
     return Scaffold(
       drawer: AateneDrawer(),

@@ -37,7 +37,12 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       await AppInitializationService.initialize();
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/onboarding');
+        final storage = GetStorage();
+        final bool isGuest = storage.read('is_guest') == true;
+        Navigator.pushReplacementNamed(
+          context,
+          isGuest ? '/mainScreen' : '/onboarding',
+        );
       }
     } catch (error) {
       print('❌ Error during app initialization: $error');
@@ -89,25 +94,41 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/gif/aatene.gif', fit: BoxFit.contain),
-              const SizedBox(height: 20),
-              if (_isInitializing)
-                SizedBox(
-                  width: ResponsiveDimensions.w(40),
-                  height: ResponsiveDimensions.h(40),
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.light1000,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxH = constraints.maxHeight.isFinite
+                ? constraints.maxHeight
+                : MediaQuery.of(context).size.height;
+
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: SizedBox(
+                      height: maxH * 0.55,
+                      child: Image.asset(
+                        'assets/images/gif/aatene.gif',
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    strokeWidth: 3,
                   ),
-                ),
-            ],
-          ),
+                  const SizedBox(height: 20),
+                  if (_isInitializing)
+                    SizedBox(
+                      width: ResponsiveDimensions.w(40),
+                      height: ResponsiveDimensions.h(40),
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.light1000,
+                        ),
+                        strokeWidth: 3,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
