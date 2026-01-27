@@ -1,5 +1,7 @@
 
 import '../../../general_index.dart';
+import 'package:flutter/material.dart';
+
 
 
 class ChatAll extends StatefulWidget {
@@ -45,7 +47,7 @@ class _ChatAllState extends State<ChatAll> {
           ],
         ),
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 60),
+          padding: const EdgeInsets.only(bottom: 40),
           child: FloatingActionButton.extended(
             backgroundColor: AppColors.primary400,
             onPressed: _openNewChatSheet,

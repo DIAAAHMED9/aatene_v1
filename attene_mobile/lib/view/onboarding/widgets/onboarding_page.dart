@@ -1,4 +1,5 @@
 import '../../../general_index.dart';
+import 'package:flutter/material.dart';
 
 class OnboardingPage extends StatelessWidget {
   final OnboardingModel data;
@@ -34,6 +35,7 @@ class OnboardingPage extends StatelessWidget {
                 ).animate().fadeIn(delay: 200.ms),
               ],
             ),
+
             /// صورة
 
             /// GIF فوق الجزء الأزرق
@@ -43,14 +45,12 @@ class OnboardingPage extends StatelessWidget {
               right: 0,
               child: Image.asset(
                 data.gif,
-                height: 240,
+                height: 170,
                 fit: BoxFit.contain,
                 gaplessPlayback: true, // يمنع الوميض عند إعادة البناء
-              )
-                  .animate()
-                  .fadeIn(duration: 600.ms)
-                  .slideY(begin: -0.2),
-            ),          ],
+              ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
+            ),
+          ],
         ),
       ],
     );

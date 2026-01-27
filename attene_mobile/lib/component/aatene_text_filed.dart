@@ -1,5 +1,6 @@
 import '../general_index.dart';
 import '../utils/responsive/index.dart';
+import 'package:flutter/material.dart';
 
 class TextFiledAatene extends StatelessWidget {
   const TextFiledAatene({
@@ -136,7 +137,7 @@ class TextFiledAatene extends StatelessWidget {
               borderSide: const BorderSide(color: Colors.red, width: 2.0),
             ),
             filled: true,
-            fillColor: hasError ? Colors.red[50] : fillColor ?? Colors.grey[50],
+            fillColor: fillColor ?? Colors.grey[50],
 
             contentPadding: EdgeInsets.symmetric(
               horizontal: ResponsiveDimensions.w(20),
