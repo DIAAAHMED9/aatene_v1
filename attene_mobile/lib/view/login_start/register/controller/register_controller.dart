@@ -65,7 +65,7 @@ class RegisterController extends GetxController {
     if (v.length < 11) return 'رقم الهاتف أقل من 11 رقم';
 
     // لو بدك حد أعلى (اختياري)
-    if (v.length > 15) return 'رقم الجوال طويل جدًا (15 رقم كحد أقصى)';
+    if (v.length > 11) return 'رقم الجوال طويل جدًا (11 رقم كحد أقصى)';
 
     return null;
   }
