@@ -53,22 +53,22 @@ class RegisterController extends GetxController {
     return null;
   }
 
-  String? _validatePhoneLive(String value) {
-    final v = value.trim();
+  // String? _validatePhoneLive(String value) {
+  //   final v = value.trim();
 
-    if (v.isEmpty) return 'يرجى إدخال رقم الجوال';
+  //   if (v.isEmpty) return 'يرجى إدخال رقم الجوال';
 
-    // فقط أرقام
-    if (!RegExp(r'^\d+$').hasMatch(v)) return 'رقم الجوال يجب أن يحتوي أرقام فقط';
+  //   // فقط أرقام
+  //   if (!RegExp(r'^\d+$').hasMatch(v)) return 'رقم الجوال يجب أن يحتوي أرقام فقط';
 
-    // عندك طلب واضح: أقل من 11 يظهر خطأ
-    if (v.length < 11) return 'رقم الهاتف أقل من 11 رقم';
+  //   // عندك طلب واضح: أقل من 11 يظهر خطأ
+  //   if (v.length < 11) return 'رقم الهاتف أقل من 11 رقم';
 
-    // لو بدك حد أعلى (اختياري)
-    if (v.length > 11) return 'رقم الجوال طويل جدًا (11 رقم كحد أقصى)';
+  //   // لو بدك حد أعلى (اختياري)
+  //   if (v.length > 11) return 'رقم الجوال طويل جدًا (11 رقم كحد أقصى)';
 
-    return null;
-  }
+  //   return null;
+  // }
 
   String? _validateNameLive(String value) {
     final v = value.trim();
@@ -117,8 +117,8 @@ class RegisterController extends GetxController {
     phone.value = cleaned;
 
     // ✅ Live validation
-    final err = _validatePhoneLive(cleaned);
-    phoneError.value = err ?? '';
+    // final err = _validatePhoneLive(cleaned);
+    // phoneError.value = err ?? '';
   }
 
   void updatePassword(String value) {
@@ -163,9 +163,9 @@ class RegisterController extends GetxController {
     emailError.value = eErr ?? '';
     if (eErr != null) isValid = false;
 
-    final pErr = _validatePhoneLive(phone.value);
-    phoneError.value = pErr ?? '';
-    if (pErr != null) isValid = false;
+    // final pErr = _validatePhoneLive(phone.value);
+    // phoneError.value = pErr ?? '';
+    // if (pErr != null) isValid = false;
 
     final passErr = _validatePasswordLive(password.value);
     passwordError.value = passErr ?? '';

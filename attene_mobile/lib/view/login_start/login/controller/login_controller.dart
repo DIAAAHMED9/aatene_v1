@@ -26,7 +26,7 @@ class LoginController extends GetxController {
   }
 
   void _setupListeners() {
-    ever(email, (_) => _validateEmail());
+ever(email, (_) => _validateLoginFieldLive());
     ever(password, (_) => _validatePassword());
 
     ever(lastLoginAttempt, (DateTime? timestamp) {
@@ -47,10 +47,86 @@ class LoginController extends GetxController {
     }
   }
 
-  void updateEmail(String value) {
-    email.value = value.trim();
-    emailError.value = '';
+void updateEmail(String value) {
+  final v = value.trim();
+
+  // لو كله أرقام (أو فيه + ومسافات) نعتبره هاتف وننظفه
+  final cleanedPhone = v.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
+  final isProbablyPhone = cleanedPhone.isNotEmpty && RegExp(r'^\d+$').hasMatch(cleanedPhone);
+
+  if (isProbablyPhone) {
+    email.value = cleanedPhone; // نخزن هاتف نظيف
+  } else {
+    email.value = v; // نخزن كإيميل
   }
+
+  // ✅ Live validation مباشرة
+  _validateLoginFieldLive();
+}
+bool _validateLoginFieldLive() {
+  final v = email.value.trim();
+
+  if (v.isEmpty) {
+    emailError.value = 'يرجى إدخال البريد الإلكتروني أو رقم الجوال';
+    return false;
+  }
+
+  // إذا كله أرقام => هاتف
+  final isDigitsOnly = RegExp(r'^\d+$').hasMatch(v);
+
+  if (isDigitsOnly) {
+    if (v.length < 11) {
+      emailError.value = 'رقم الهاتف أقل من 11 رقم';
+      return false;
+    }
+    if (v.length > 15) {
+      emailError.value = 'رقم الهاتف طويل جدًا (15 رقم كحد أقصى)';
+      return false;
+    }
+    emailError.value = '';
+    return true;
+  }
+
+  // غير أرقام => إيميل
+  final err = _validateEmailLive(v);
+  emailError.value = err ?? '';
+  return err == null;
+}
+String? _validateEmailLive(String value) {
+  final v = value.trim();
+
+  // لو المستخدم يكتب إيميل بدون @
+  if (!v.contains('@')) {
+    return 'البريد الإلكتروني يجب أن يحتوي على @';
+  }
+
+  // لازم جزء قبل وبعد @
+  final parts = v.split('@');
+  if (parts.length != 2 || parts[0].isEmpty || parts[1].isEmpty) {
+    return 'صيغة البريد الإلكتروني غير صحيحة';
+  }
+
+  final domain = parts[1];
+
+  // لازم يكون فيه نقطة "."
+  if (!domain.contains('.')) {
+    return 'أكمل الدومين مثل example.com';
+  }
+
+  final lastDot = domain.lastIndexOf('.');
+  if (lastDot == -1 || lastDot == domain.length - 1) {
+    return 'أدخل الامتداد مثل .com';
+  }
+
+  final tld = domain.substring(lastDot + 1);
+  if (tld.length < 2) {
+    return 'امتداد غير صحيح (مثل .com)';
+  }
+
+  if (v.contains(' ')) return 'البريد الإلكتروني لا يجب أن يحتوي مسافات';
+
+  return null;
+}
 
   void updatePassword(String value) {
     password.value = value;
@@ -62,26 +138,13 @@ class LoginController extends GetxController {
   }
 
   bool validateFields() {
-    final isEmailValid = _validateEmail();
+final isEmailValid = _validateLoginFieldLive();
     final isPasswordValid = _validatePassword();
 
     return isEmailValid && isPasswordValid;
   }
 
-  bool _validateEmail() {
-    if (email.value.isEmpty) {
-      emailError.value = 'يرجى إدخال البريد الإلكتروني أو رقم الجوال';
-      return false;
-    }
 
-    if (!isValidEmail(email.value) && !isValidPhone(email.value)) {
-      emailError.value = 'يرجى إدخال بريد إلكتروني أو رقم جوال صحيح';
-      return false;
-    }
-
-    emailError.value = '';
-    return true;
-  }
 
   bool _validatePassword() {
     if (password.value.isEmpty) {
