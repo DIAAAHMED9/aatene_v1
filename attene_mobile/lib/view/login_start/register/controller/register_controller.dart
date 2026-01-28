@@ -6,45 +6,139 @@ class RegisterController extends GetxController {
   var password = ''.obs;
   var confirmPassword = ''.obs;
   var phone = ''.obs;
+
   var isLoading = false.obs;
   var obscurePassword = true.obs;
   var obscureConfirmPassword = true.obs;
+
   var emailError = RxString('');
   var nameError = RxString('');
   var passwordError = RxString('');
   var confirmPasswordError = RxString('');
   var phoneError = RxString('');
 
+  // =========================
+  // Live validators (helpers)
+  // =========================
+
+  String? _validateEmailLive(String value) {
+    final v = value.trim();
+
+    if (v.isEmpty) return 'يرجى إدخال البريد الإلكتروني';
+
+    if (!v.contains('@')) return 'البريد الإلكتروني يجب أن يحتوي على @';
+
+    // لازم يكون فيه جزء قبل وبعد @
+    final parts = v.split('@');
+    if (parts.length != 2 || parts[0].isEmpty || parts[1].isEmpty) {
+      return 'صيغة البريد الإلكتروني غير صحيحة';
+    }
+
+    // الدومين لازم يحتوي نقطة "."
+    final domain = parts[1];
+    if (!domain.contains('.')) return 'أكمل الدومين مثل example.com';
+
+    // لازم يكون فيه امتداد (TLD) بعد آخر نقطة (مثل com, net, org...)
+    final lastDot = domain.lastIndexOf('.');
+    if (lastDot == -1 || lastDot == domain.length - 1) {
+      return 'أدخل الامتداد مثل .com';
+    }
+
+    final tld = domain.substring(lastDot + 1);
+    if (tld.length < 2) return 'امتداد غير صحيح (مثل .com)';
+
+    // تحقق عام بسيط إضافي: لا يسمح بمسافات
+    if (v.contains(' ')) return 'البريد الإلكتروني لا يجب أن يحتوي مسافات';
+
+    return null;
+  }
+
+  String? _validatePhoneLive(String value) {
+    final v = value.trim();
+
+    if (v.isEmpty) return 'يرجى إدخال رقم الجوال';
+
+    // فقط أرقام
+    if (!RegExp(r'^\d+$').hasMatch(v)) return 'رقم الجوال يجب أن يحتوي أرقام فقط';
+
+    // عندك طلب واضح: أقل من 11 يظهر خطأ
+    if (v.length < 11) return 'رقم الهاتف أقل من 11 رقم';
+
+    // لو بدك حد أعلى (اختياري)
+    if (v.length > 15) return 'رقم الجوال طويل جدًا (15 رقم كحد أقصى)';
+
+    return null;
+  }
+
+  String? _validateNameLive(String value) {
+    final v = value.trim();
+    if (v.isEmpty) return 'يرجى إدخال الاسم الكامل';
+    if (v.length < 2) return 'الاسم يجب أن يكون على الأقل حرفين';
+    return null;
+  }
+
+  String? _validatePasswordLive(String value) {
+    final v = value;
+    if (v.isEmpty) return 'يرجى إدخال كلمة المرور';
+    if (v.length < 6) return 'كلمة المرور يجب أن تكون على الأقل 6 أحرف';
+    return null;
+  }
+
+  String? _validateConfirmPasswordLive(String value) {
+    final v = value;
+    if (v.isEmpty) return 'يرجى تأكيد كلمة المرور';
+    if (password.value.isNotEmpty && v != password.value) return 'كلمة المرور غير متطابقة';
+    return null;
+  }
+
+  // =========================
+  // OnChanged handlers (Live)
+  // =========================
+
   void updateEmail(String value) {
     email.value = value;
-    emailError.value = '';
+
+    // ✅ Live validation
+    final err = _validateEmailLive(value);
+    emailError.value = err ?? '';
   }
 
   void updateName(String value) {
     name.value = value;
-    nameError.value = '';
+
+    final err = _validateNameLive(value);
+    nameError.value = err ?? '';
   }
 
   void updatePhone(String value) {
-    phone.value = value;
-    phoneError.value = '';
+    // لو بدك تمنع غير الأرقام من البداية:
+    final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
+
+    phone.value = cleaned;
+
+    // ✅ Live validation
+    final err = _validatePhoneLive(cleaned);
+    phoneError.value = err ?? '';
   }
 
   void updatePassword(String value) {
     password.value = value;
-    passwordError.value = '';
+
+    final err = _validatePasswordLive(value);
+    passwordError.value = err ?? '';
+
+    // ✅ Live update confirm password match مثل ما بدك
     if (confirmPassword.value.isNotEmpty) {
-      confirmPasswordError.value = confirmPassword.value == value
-          ? ''
-          : 'كلمة المرور غير متطابقة';
+      final cErr = _validateConfirmPasswordLive(confirmPassword.value);
+      confirmPasswordError.value = cErr ?? '';
     }
   }
 
   void updateConfirmPassword(String value) {
     confirmPassword.value = value;
-    confirmPasswordError.value = value == password.value
-        ? ''
-        : 'كلمة المرور غير متطابقة';
+
+    final err = _validateConfirmPasswordLive(value);
+    confirmPasswordError.value = err ?? '';
   }
 
   void togglePasswordVisibility() {
@@ -55,79 +149,41 @@ class RegisterController extends GetxController {
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
 
+  // =========================
+  // Final validation on submit
+  // =========================
   bool validateFields() {
     bool isValid = true;
-    if (name.value.isEmpty) {
-      nameError.value = 'يرجى إدخال الاسم الكامل';
-      isValid = false;
-    } else if (name.value.length < 2) {
-      nameError.value = 'الاسم يجب أن يكون على الأقل حرفين';
-      isValid = false;
-    } else {
-      nameError.value = '';
-    }
-    if (email.value.isEmpty) {
-      emailError.value = 'يرجى إدخال البريد الإلكتروني';
-      isValid = false;
-    } else if (!isValidEmail(email.value)) {
-      emailError.value = 'يرجى إدخال بريد إلكتروني صحيح';
-      isValid = false;
-    } else {
-      emailError.value = '';
-    }
-    if (phone.value.isEmpty) {
-      phoneError.value = 'يرجى إدخال رقم الجوال';
-      isValid = false;
-    } else if (!isValidPhoneNumber(phone.value)) {
-      phoneError.value = 'يرجى إدخال رقم جوال صحيح (10-15 رقم)';
-      isValid = false;
-    } else {
-      phoneError.value = '';
-    }
-    if (password.value.isEmpty) {
-      passwordError.value = 'يرجى إدخال كلمة المرور';
-      isValid = false;
-    } else if (password.value.length < 6) {
-      passwordError.value = 'كلمة المرور يجب أن تكون على الأقل 6 أحرف';
-      isValid = false;
-    } else {
-      passwordError.value = '';
-    }
-    if (confirmPassword.value.isEmpty) {
-      confirmPasswordError.value = 'يرجى تأكيد كلمة المرور';
-      isValid = false;
-    } else if (confirmPassword.value != password.value) {
-      confirmPasswordError.value = 'كلمة المرور غير متطابقة';
-      isValid = false;
-    } else {
-      confirmPasswordError.value = '';
-    }
+
+    final nErr = _validateNameLive(name.value);
+    nameError.value = nErr ?? '';
+    if (nErr != null) isValid = false;
+
+    final eErr = _validateEmailLive(email.value);
+    emailError.value = eErr ?? '';
+    if (eErr != null) isValid = false;
+
+    final pErr = _validatePhoneLive(phone.value);
+    phoneError.value = pErr ?? '';
+    if (pErr != null) isValid = false;
+
+    final passErr = _validatePasswordLive(password.value);
+    passwordError.value = passErr ?? '';
+    if (passErr != null) isValid = false;
+
+    final cErr = _validateConfirmPasswordLive(confirmPassword.value);
+    confirmPasswordError.value = cErr ?? '';
+    if (cErr != null) isValid = false;
+
     return isValid;
   }
 
-  bool isValidEmail(String email) {
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegex.hasMatch(email);
-  }
-
-  bool isValidPhoneNumber(String phone) {
-    final phoneRegex = RegExp(r'^[0-9]{10,15}$');
-    return phoneRegex.hasMatch(phone);
-  }
-
   Future<void> register() async {
-    print('Register function called');
-
-    if (!validateFields()) {
-      print('Register Failed - Validation failed');
-      return;
-    }
+    if (!validateFields()) return;
 
     isLoading.value = true;
 
     try {
-      print('Sending registration request...');
-
       final response = await ApiHelper.register(
         name: name.value.trim(),
         email: email.value.trim(),
@@ -137,11 +193,7 @@ class RegisterController extends GetxController {
         withLoading: false,
       );
 
-      print('API Response: $response');
-
       if (response != null && response['status'] == true) {
-        print('Registration successful');
-
         final Map<String, dynamic>? userData =
             (response['user'] is Map) ? Map<String, dynamic>.from(response['user']) : null;
         final String? token = response['token']?.toString();
@@ -168,21 +220,17 @@ class RegisterController extends GetxController {
           duration: const Duration(seconds: 2),
         );
 
-        await Future.delayed(const Duration(milliseconds: 1500));
+        await Future.delayed(const Duration(milliseconds: 1200));
 
         if (token != null && token.isNotEmpty) {
-          print('Navigating to main screen (registered & logged-in)...');
           Get.offAllNamed('/mainScreen');
         } else {
-          print('Navigating to login screen...');
           Get.toNamed('/login');
         }
       } else {
-        print('Registration failed with response: $response');
         _handleApiError(response);
       }
     } catch (error) {
-      print('Registration error: $error');
       _handleGeneralError(error);
     } finally {
       isLoading.value = false;
@@ -190,31 +238,32 @@ class RegisterController extends GetxController {
   }
 
   void _handleApiError(dynamic response) {
-    print('Handling API error: $response');
-
     String errorMessage = 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.';
 
     if (response != null && response['errors'] != null) {
       final errors = response['errors'];
-      if (errors['email'] != null) {
-        emailError.value = errors['email'][0];
+
+      // هذه قد تكون Arrays
+      if (errors is Map) {
+        if (errors['email'] != null && errors['email'] is List && errors['email'].isNotEmpty) {
+          emailError.value = errors['email'][0].toString();
+        }
+        if (errors['name'] != null && errors['name'] is List && errors['name'].isNotEmpty) {
+          nameError.value = errors['name'][0].toString();
+        }
+        if (errors['phone'] != null && errors['phone'] is List && errors['phone'].isNotEmpty) {
+          phoneError.value = errors['phone'][0].toString();
+        }
+        if (errors['password'] != null && errors['password'] is List && errors['password'].isNotEmpty) {
+          passwordError.value = errors['password'][0].toString();
+        }
       }
-      if (errors['name'] != null) {
-        nameError.value = errors['name'][0];
-      }
-      if (errors['phone'] != null) {
-        phoneError.value = errors['phone'][0];
-      }
-      if (errors['password'] != null) {
-        passwordError.value = errors['password'][0];
-      }
-      if (errors['message'] != null) {
-        errorMessage = errors['message'];
-      } else if (response['message'] != null) {
-        errorMessage = response['message'];
+
+      if (response['message'] != null) {
+        errorMessage = response['message'].toString();
       }
     } else if (response != null && response['message'] != null) {
-      errorMessage = response['message'];
+      errorMessage = response['message'].toString();
     }
 
     Get.snackbar(
@@ -227,31 +276,28 @@ class RegisterController extends GetxController {
   }
 
   void _handleGeneralError(dynamic error) {
-    print('Register error: $error');
-    String errorMessage = 'حدث خطأ أثناء إنشاء الحساب. ';
+    String errorMessage = 'حدث خطأ أثناء إنشاء الحساب.';
 
     if (error is DioException) {
       switch (error.type) {
         case DioExceptionType.connectionTimeout:
         case DioExceptionType.sendTimeout:
         case DioExceptionType.receiveTimeout:
-          errorMessage += 'انتهت مهلة الاتصال. يرجى التحقق من اتصال الإنترنت.';
+          errorMessage = 'انتهت مهلة الاتصال. تحقق من الإنترنت.';
           break;
         case DioExceptionType.badResponse:
-          errorMessage += 'استجابة غير صالحة من الخادم.';
+          errorMessage = 'استجابة غير صالحة من الخادم.';
           break;
         case DioExceptionType.cancel:
-          errorMessage += 'تم إلغاء الطلب.';
+          errorMessage = 'تم إلغاء الطلب.';
           break;
         case DioExceptionType.unknown:
-          if (error.toString().contains('SocketException')) {
-            errorMessage += 'لا يوجد اتصال بالإنترنت.';
-          } else {
-            errorMessage += 'خطأ غير معروف.';
-          }
+          errorMessage = error.toString().contains('SocketException')
+              ? 'لا يوجد اتصال بالإنترنت.'
+              : 'حدث خطأ غير معروف.';
           break;
         default:
-          errorMessage += 'خطأ غير معروف.';
+          errorMessage = 'حدث خطأ غير معروف.';
       }
     }
 
@@ -265,38 +311,7 @@ class RegisterController extends GetxController {
   }
 
   void goToLogin() {
-    print('Navigating to login...');
     Get.offAllNamed('/login');
-  }
-
-  Future<bool> checkUserExists() async {
-    try {
-      final response = await ApiHelper.post(
-        path: '/auth/check-email',
-        body: {'email': email.value},
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-      return response != null && response['exists'] == true;
-    } catch (error) {
-      print('Check user exists error: $error');
-      return false;
-    }
-  }
-
-  Future<bool> checkPhoneExists() async {
-    try {
-      final response = await ApiHelper.post(
-        path: '/auth/check-phone',
-        body: {'phone': phone.value},
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-      return response != null && response['exists'] == true;
-    } catch (error) {
-      print('Check phone exists error: $error');
-      return false;
-    }
   }
 
   @override
@@ -306,11 +321,13 @@ class RegisterController extends GetxController {
     phone.value = '';
     password.value = '';
     confirmPassword.value = '';
+
     emailError.value = '';
     nameError.value = '';
     phoneError.value = '';
     passwordError.value = '';
     confirmPasswordError.value = '';
+
     super.onClose();
   }
 }
