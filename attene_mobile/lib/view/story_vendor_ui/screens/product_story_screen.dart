@@ -11,7 +11,6 @@ class ProductStoryScreen extends StatefulWidget {
 }
 
 class _ProductStoryScreenState extends State<ProductStoryScreen> {
-  /// ✅ اختيار واحد فقط (null = لا يوجد اختيار)
   int? selectedIndex;
 
   @override
@@ -72,21 +71,17 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
                         setState(() {
-                          // ✅ ضغط نفس العنصر => إلغاء اختيار
                           if (isSelected) {
                             selectedIndex = null;
                           } else {
-                            selectedIndex = i; // ✅ اختيار واحد فقط
+                            selectedIndex = i;
                           }
                         });
                       },
                       child: Stack(
                         children: [
-                          // كرت المنتج نفسه (أنت عندك ProductCard جاهز)
-                          // إذا ProductCard يحتاج بيانات مرّرها هنا
                           ProductCard(),
 
-                          // ✅ Overlay يوضح التحديد
                           if (isSelected)
                             Positioned.fill(
                               child: Container(
@@ -98,7 +93,6 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                               ),
                             ),
 
-                          // ✅ علامة check
                           Positioned(
                             top: 10,
                             left: 10,
@@ -138,8 +132,6 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                         ? () {
                             final p = demoProducts[selectedIndex!];
 
-                            // ✅ نرجع “منتج مختار” كـ result
-                            // (لو p عنده id/title/imageUrl رجّعهم)
                             Navigator.pop(context, p);
                           }
                         : null,

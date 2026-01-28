@@ -21,10 +21,8 @@ class StoryVendorGroupModel {
     required this.items,
   });
 
-  /// Backward-compatible getter for old code.
   List<String> get mediaUrls => items.map((e) => e.url).toList(growable: false);
 
-  /// Convenience for creating a group from simple URLs.
   factory StoryVendorGroupModel.fromUrls({
     required String title,
     required List<String> mediaUrls,
@@ -36,7 +34,6 @@ class StoryVendorGroupModel {
   }
 }
 
-/// A single story media item (image/video) with optional overlay data.
 class StoryMediaItem {
   final String url;
   final int? id;

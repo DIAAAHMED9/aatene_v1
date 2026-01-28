@@ -26,18 +26,6 @@ class AateneAppbar extends StatelessWidget {
         ),
       ),
 
-      // leading: IconButton(
-      //   onPressed: () {},
-      //   icon: Container(
-      //     width: 50,
-      //     height: 50,
-      //     decoration: BoxDecoration(
-      //       borderRadius: BorderRadius.circular(100),
-      //       color: Colors.grey[300],
-      //     ),
-      //     child: Icon(Icons.arrow_back, color: AppColors.primary500),
-      //   ),
-      // ),
     );
   }
 }

@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class ProductCardUI extends StatelessWidget {
@@ -6,7 +5,6 @@ class ProductCardUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// صور ثابتة
     final images = [
       'assets/images/png/closed-store.png',
       'assets/images/png/closed-store.png',
@@ -29,7 +27,6 @@ class ProductCardUI extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Image Slider
           Stack(
             children: [
               ClipRRect(
@@ -50,7 +47,6 @@ class ProductCardUI extends StatelessWidget {
                 ),
               ),
 
-              /// ❤️ Button
               Positioned(
                 top: 12,
                 right: 12,
@@ -68,7 +64,6 @@ class ProductCardUI extends StatelessWidget {
                 ),
               ),
 
-              /// Indicators (Static UI)
               Positioned(
                 bottom: 12,
                 left: 0,
@@ -96,9 +91,6 @@ class ProductCardUI extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          /// =========================
-          /// Sponsored
-          /// =========================
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
@@ -122,9 +114,6 @@ class ProductCardUI extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          /// =========================
-          /// Title
-          /// =========================
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
@@ -140,9 +129,6 @@ class ProductCardUI extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          /// =========================
-          /// Rating (Static)
-          /// =========================
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
@@ -159,9 +145,6 @@ class ProductCardUI extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          /// =========================
-          /// Price
-          /// =========================
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(

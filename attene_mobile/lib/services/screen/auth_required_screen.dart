@@ -37,7 +37,6 @@ class AuthRequiredScreen extends StatelessWidget {
               AateneButton(
                 buttonText: 'تسجيل الدخول',
                 onTap: () {
-                  // Leave guest mode & go to login
                   try {
                     final storage = GetStorage();
                     storage.write('is_guest', false);

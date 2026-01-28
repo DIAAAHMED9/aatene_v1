@@ -12,6 +12,6 @@ class SearchTypeController extends GetxController {
 
   void selectType(SearchType type) {
     selectedType.value = type;
-    Get.back(result: type); // إغلاق + إرجاع القيمة
+    Get.back(result: type);
   }
 }

@@ -50,10 +50,8 @@ class _SafetyTipsPageState extends State<SafetyTipsPage> {
               style: getMedium(color: AppColors.neutral400),
             ),
 
-            /// 🔹 Tabs
             _tabs(),
 
-            /// 🔹 PageView with Animation
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -84,7 +82,6 @@ class _SafetyTipsPageState extends State<SafetyTipsPage> {
               ),
             ),
 
-            /// 🔹 Bottom Button
             AateneButton(
               buttonText: 'تواصل معنا',
               color: AppColors.primary400,
@@ -142,8 +139,6 @@ class _SafetyTipsPageState extends State<SafetyTipsPage> {
     );
   }
 }
-
-/// ================= DYNAMIC CONTENT =================
 
 class SafetyContent extends StatelessWidget {
   final UserType userType;
@@ -297,8 +292,6 @@ class SafetyContent extends StatelessWidget {
     return Text(title, style: getBold());
   }
 }
-
-/// ================= SECURITY CARD =================
 
 class SecurityCard extends StatelessWidget {
   const SecurityCard({super.key, required this.icon, required this.title});

@@ -1,5 +1,3 @@
-// Auto-generated barrel file. Do not export generated parts.
-
 export 'empty_state.dart';
 export 'error_state.dart';
 export 'loading_state.dart';

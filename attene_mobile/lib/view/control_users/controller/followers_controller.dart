@@ -82,7 +82,6 @@ class FollowersController extends GetxController {
     Get.defaultDialog(
       title: 'تأكيد',
       middleText: 'هل تريد إلغاء متابعة ${model.name}؟',
-      // textConfirm: 'نعم',
       actions: [
         AateneButton(
           onTap: () {
@@ -119,28 +118,6 @@ class FollowersController extends GetxController {
           borderColor: AppColors.primary400,
         ),
       ],
-      //
-      // textCancel: 'إلغاء',
-      // onConfirm: () {
-      //   _lastRemovedIndex = followingList.indexOf(model);
-      //   _lastRemoved = model;
-      //
-      //   followingList.remove(model);
-      //   onSearch(searchController.text);
-      //
-      //   Get.back();
-      //
-      //   Get.snackbar(
-      //     'تم إلغاء المتابعة',
-      //     snackPosition: SnackPosition.BOTTOM,
-      //     duration: const Duration(seconds: 4),
-      //     model.name,
-      //     mainButton: TextButton(
-      //       onPressed: undoUnfollow,
-      //       child: Text('تراجع', style: getBold(color: AppColors.primary500)),
-      //     ),
-      //   );
-      // },
     );
   }
 

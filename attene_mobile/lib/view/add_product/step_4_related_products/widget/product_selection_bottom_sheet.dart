@@ -42,7 +42,6 @@ class _ProductSelectionBottomSheetState
         children: [
           _buildHeader(),
           _buildSearchBar(),
-          // _buildSelectedCount(),
           Expanded(child: _buildProductsList()),
           _buildActionButtons(),
         ],
@@ -349,35 +348,6 @@ class _ProductSelectionBottomSheetState
         builder: (controller) {
           return Column(
             children: [
-              // if (controller.hasSelectedProducts)
-              //   Padding(
-              //     padding: EdgeInsets.only(bottom: ResponsiveDimensions.h(12)),
-              //     child: Column(
-              //       children: [
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             Text('المنتجات المختارة:', style: getMedium()),
-              //             Text(
-              //               '${controller.selectedProductsCount} منتج',
-              //               style: getBold(),
-              //             ),
-              //           ],
-              //         ),
-              //         const SizedBox(height: 8),
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             Text('السعر الإجمالي:', style: getMedium()),
-              //             Text(
-              //               '${controller.originalPrice.toStringAsFixed(2)} ₪',
-              //               style: getBold(color: AppColors.primary400),
-              //             ),
-              //           ],
-              //         ),
-              //       ],
-              //     ),
-              //   ),
                    AateneButton(
                      color: AppColors.primary400,
                      textColor: AppColors.light1000,
@@ -392,41 +362,6 @@ class _ProductSelectionBottomSheetState
                        Get.back();
                      },
                    ),
-              // Row(
-              //   children: [
-              //     if (controller.hasSelectedProducts)
-              //       Expanded(
-              //         child: AateneButton(
-              //           color: AppColors.light1000,
-              //           textColor: Colors.red,
-              //           borderColor: Colors.red.shade400,
-              //           buttonText: 'مسح الكل',
-              //           onTap: () {
-              //             controller.clearAllSelections();
-              //             controller.refreshProducts();
-              //           },
-              //         ),
-              //       ),
-              //     if (controller.hasSelectedProducts)
-              //       SizedBox(width: ResponsiveDimensions.w(8)),
-              //     Expanded(
-              //       child: AateneButton(
-              //         color: AppColors.primary400,
-              //         textColor: AppColors.light1000,
-              //         borderColor: AppColors.primary400,
-              //         buttonText: controller.hasSelectedProducts
-              //             ? 'تأكيد'
-              //             : 'إغلاق',
-              //         onTap: () {
-              //           if (controller.hasSelectedProducts) {
-              //             controller.calculateTotalPrice();
-              //           }
-              //           Get.back();
-              //         },
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ],
           );
         },

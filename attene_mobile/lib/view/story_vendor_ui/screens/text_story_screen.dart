@@ -43,7 +43,6 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
     if (_submitting) return;
     setState(() => _submitting = true);
     try {
-      // TODO: replace with real selected image/background upload.
       const demoImagePath = 'images/QzuU8cxzP0pgRFit46Dh5LifmCrxSCm8eg49f10v.png';
       await MerchantStoriesApi.create(
         image: demoImagePath,
@@ -115,7 +114,6 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                           filled: true,
                           contentPadding: EdgeInsets.zero,
                           isCollapsed: true,
-                          // إزالة أي تأثيرات للـ underline
                           isDense: true,
                           alignLabelWithHint: true,
                         ),
@@ -132,7 +130,6 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // زر التم بدون خلفية بيضاء
                     InkWell(
                       onTap: _submitting ? null : _submitPublish,
                       borderRadius: BorderRadius.circular(999),
@@ -154,7 +151,6 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                               ),
                       ),
                     ),
-                    // زر الإغلاق بدون خلفية بيضاء
                     InkWell(
                       onTap: () => Navigator.pop(context),
                       borderRadius: BorderRadius.circular(999),

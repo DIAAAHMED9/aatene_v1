@@ -1,4 +1,3 @@
-
 import '../../../general_index.dart';
 
 class CurvedBackground extends StatelessWidget {

@@ -1,5 +1,3 @@
-// Auto-generated barrel file. Do not export generated parts.
-
 export 'aatene_appbar.dart';
 export 'aatene_text_filed.dart';
 export 'attribute_selection_sheet.dart';
@@ -16,5 +14,3 @@ export 'aatene_button/index.dart';
 export 'custom_stepper/stepper_screen_base.dart';
 export 'package:attene_mobile/view/profile/user_profile/screen/user_profile.dart';
 export 'package:attene_mobile/view/search/screen/search_screen.dart';
-
-

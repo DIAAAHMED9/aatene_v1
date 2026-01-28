@@ -1,14 +1,7 @@
-
 import '../../../../general_index.dart';
 import '../../../../utils/responsive/responsive_dimensions.dart';
 import '../index.dart';
 
-/// خطوة (1) المعلومات الأساسية.
-///
-/// ملاحظة مهمة:
-/// - في الإضافة يتم تمرير القسم عبر Get.arguments.
-/// - في التعديل يتم جلب القسم من ProductCentralController بعد تحميل بيانات المنتج.
-/// لذلك يجب أن تكون الواجهة Reactive وتنتظر إلى أن يتم تعبئة selectedSection.
 class AddProductContent extends StatelessWidget {
   const AddProductContent({super.key});
 
@@ -68,15 +61,12 @@ class AddProductContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1) إذا تم تمرير القسم عبر arguments (سيناريو الإضافة)
     final Section? argSection = Get.arguments?['selectedSection'] as Section?;
     if (argSection != null) {
       return _buildLoaded(context, argSection);
     }
 
-    // 2) في التعديل: نأخذ القسم من الـ central controller (بعد تحميل الـ API)
     if (!Get.isRegistered<ProductCentralController>()) {
-      // هذا لا يفترض أن يحدث داخل stepper، لكنه يحمي من كراش.
       return Scaffold(
         appBar: AppBar(title: Text('خطأ', style: getRegular())),
         body: Center(child: Text('لم يتم تهيئة بيانات المنتج', style: getRegular())),
@@ -89,7 +79,6 @@ class AddProductContent extends StatelessWidget {
       final selectedSection = central.selectedSection.value;
 
       if (selectedSection == null) {
-        // ننتظر تحميل بيانات المنتج.
         return Scaffold(
           appBar: AppBar(title: Text('تحميل', style: getRegular())),
           body: Center(

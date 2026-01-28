@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_color.dart';
 
-
-
 class ColorExamples extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

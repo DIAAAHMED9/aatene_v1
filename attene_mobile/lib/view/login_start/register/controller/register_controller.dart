@@ -128,18 +128,13 @@ class RegisterController extends GetxController {
     try {
       print('Sending registration request...');
 
-      final response = await ApiHelper.post(
-        path: '/auth/register',
-        body: {
-          'first_name': name.value,
-          'last_name': name.value,
-          'email': email.value,
-          'phone': phone.value,
-          'password': password.value,
-          'device_name': 'mobile',
-        },
+      final response = await ApiHelper.register(
+        name: name.value.trim(),
+        email: email.value.trim(),
+        phone: phone.value.trim(),
+        password: password.value,
+        passwordConfirmation: confirmPassword.value,
         withLoading: false,
-        shouldShowMessage: false,
       );
 
       print('API Response: $response');
@@ -147,11 +142,22 @@ class RegisterController extends GetxController {
       if (response != null && response['status'] == true) {
         print('Registration successful');
 
-        final userData = response['user'];
-        final token = response['token'];
+        final Map<String, dynamic>? userData =
+            (response['user'] is Map) ? Map<String, dynamic>.from(response['user']) : null;
+        final String? token = response['token']?.toString();
 
-        final MyAppController myAppController = Get.find<MyAppController>();
-        myAppController.updateUserData(userData);
+        if (token != null && token.isNotEmpty) {
+          final storage = GetStorage();
+          await storage.write('auth_token', token);
+          await storage.write('user_data', userData ?? {});
+          await storage.write('is_guest', false);
+          await storage.write('has_completed_onboarding', true);
+
+          if (Get.isRegistered<MyAppController>()) {
+            final myAppController = Get.find<MyAppController>();
+            myAppController.updateUserData(userData ?? {});
+          }
+        }
 
         Get.snackbar(
           'نجاح',
@@ -164,8 +170,13 @@ class RegisterController extends GetxController {
 
         await Future.delayed(const Duration(milliseconds: 1500));
 
-        print('Navigating to login screen...');
-        Get.toNamed('/login');
+        if (token != null && token.isNotEmpty) {
+          print('Navigating to main screen (registered & logged-in)...');
+          Get.offAllNamed('/mainScreen');
+        } else {
+          print('Navigating to login screen...');
+          Get.toNamed('/login');
+        }
       } else {
         print('Registration failed with response: $response');
         _handleApiError(response);
@@ -255,7 +266,7 @@ class RegisterController extends GetxController {
 
   void goToLogin() {
     print('Navigating to login...');
-    Get.offAllNamed('/mainScreen');
+    Get.offAllNamed('/login');
   }
 
   Future<bool> checkUserExists() async {

@@ -1,6 +1,3 @@
-
-
-
 import '../../general_index.dart';
 enum StoreMode { products, services, mixed }
 
@@ -21,7 +18,6 @@ class DataInitializerService extends GetxService {
 
   RxBool get isDataLoadedRx => _isDataLoaded;
 
-// ========= Phase 2: Role & TTL helpers =========
 bool get isMerchantUser {
   final ud = getUserData();
   final user = ud['user'];
@@ -32,7 +28,6 @@ bool get isMerchantUser {
   final t2 = (ud['user_type'] ?? ud['role'] ?? ud['type'] ?? '').toString().toLowerCase();
   return t2 == 'merchant';
 }
-
 
 StoreMode get currentStoreMode {
   if (!isMerchantUser) return StoreMode.products;
@@ -67,7 +62,6 @@ Future<void> _touch(String key) async {
   await _storage.write(key, DateTime.now().toIso8601String());
 }
 
-
   final RxBool _productsUpdated = false.obs;
 
   RxBool get productsUpdated => _productsUpdated;
@@ -95,14 +89,12 @@ Future<void> _touch(String key) async {
       if (response != null && response['status'] == true) {
         final products = response['data'] ?? [];
 
-        // ✅ store-scoped + unified type (List)
         await _storage.write(_kProducts(storeId), products);
         await _storage.write(
           _kLastUpdateProducts(storeId),
           DateTime.now().toIso8601String(),
         );
 
-        // ✅ rebuild enhanced sections after products update
         await _rebuildEnhancedSections(storeId);
 
         notifyProductsUpdated();
@@ -154,7 +146,6 @@ Future<void> _touch(String key) async {
 
   MyAppController get _myAppController => Get.find<MyAppController>();
 
-  // ========= STORE SCOPE HELPERS (Phase 1) =========
   int? _getActiveStoreId() {
     try {
       final userData = getUserData();
@@ -184,7 +175,6 @@ Future<void> _touch(String key) async {
       final firstId = int.tryParse('${first['id'] ?? ''}');
       if (firstId == null || firstId <= 0) return;
 
-      // Update user_data + store_id so ApiHelper picks it up immediately
       final userData = (_storage.read('user_data') is Map)
           ? Map<String, dynamic>.from(_storage.read('user_data'))
           : <String, dynamic>{};
@@ -200,7 +190,6 @@ Future<void> _touch(String key) async {
     }
   }
 
-
   String _kProducts(int storeId) => '${_PRODUCTS_KEY}_store_$storeId';
   String _kSections(int storeId) => '${_SECTIONS_KEY}_store_$storeId';
   String _kMedia(int storeId) => '${_MEDIA_KEY}_store_$storeId';
@@ -213,7 +202,6 @@ Future<void> _touch(String key) async {
       'last_update_sections_store_$storeId';
   String _kLastUpdateMedia(int storeId) => 'last_update_media_store_$storeId';
 
-  // Legacy key (كان يتم تخزين المنتجات فيه بشكل String JSON)
   static const String _LEGACY_PRODUCTS_KEY = 'products';
 
   Future<void> _migrateLegacyProductsIfNeeded() async {
@@ -221,7 +209,6 @@ Future<void> _touch(String key) async {
       final storeId = _getActiveStoreId();
       if (storeId == null) return;
 
-      // legacy: app_products العام
       if (_storage.hasData(_PRODUCTS_KEY) &&
           !_storage.hasData(_kProducts(storeId))) {
         final legacy = _storage.read(_PRODUCTS_KEY);
@@ -231,7 +218,6 @@ Future<void> _touch(String key) async {
         }
       }
 
-      // legacy: key 'products' قد يكون String JSON أو List
       if (_storage.hasData(_LEGACY_PRODUCTS_KEY)) {
         final v = _storage.read(_LEGACY_PRODUCTS_KEY);
         if (v is String && v.isNotEmpty) {
@@ -244,7 +230,6 @@ Future<void> _touch(String key) async {
               );
             }
           } catch (_) {
-            // ignore
           }
         } else if (v is List) {
           await _storage.write(_kProducts(storeId), v);
@@ -291,7 +276,6 @@ Future<void> _touch(String key) async {
 
       await _loadInitialStatistics();
 
-      // Phase 1: migrate legacy products keys to store-scoped storage
       await _migrateLegacyProductsIfNeeded();
 
       if (_hasCachedData()) {
@@ -305,10 +289,6 @@ Future<void> _touch(String key) async {
     }
   }
 
-  
-// ========= Phase 2: Split initialization (Core vs Store) =========
-
-/// تهيئة بيانات عامة (تعمل للمستخدم والتاجر)
 Future<void> initializeCoreData({bool forceRefresh = false, bool silent = false}) async {
   if (_isInitializing.value) return;
 
@@ -318,7 +298,6 @@ Future<void> initializeCoreData({bool forceRefresh = false, bool silent = false}
     _currentStep.value = 'تهيئة البيانات العامة...';
 
     try {
-      // إذا لم يكن المستخدم مسجل دخول، لا نحمّل من الشبكة
       if (!_isUserAuthenticated()) {
         _isDataLoaded.value = true;
         _progress.value = 1.0;
@@ -330,35 +309,30 @@ Future<void> initializeCoreData({bool forceRefresh = false, bool silent = false}
         throw Exception('لا يوجد اتصال بالإنترنت');
       }
 
-      // SETTINGS (24h)
       _currentStep.value = 'جاري تحميل الإعدادات...';
       if (forceRefresh || !_isFresh('last_update_settings', maxAgeHours: 24)) {
         await _loadSettings();
         await _touch('last_update_settings');
       }
 
-      // STORES (24h) - للتاجر مهم لاختيار المتجر
       _currentStep.value = 'جاري تحميل المتاجر...';
       if (forceRefresh || !_isFresh('last_update_stores', maxAgeHours: 24)) {
         await _loadStores();
         await _touch('last_update_stores');
       }
 
-      // CITIES (72h)
       _currentStep.value = 'جاري تحميل المدن...';
       if (forceRefresh || !_isFresh('last_update_cities', maxAgeHours: 72)) {
         await _loadCities();
         await _touch('last_update_cities');
       }
 
-      // DISTRICTS (72h)
       _currentStep.value = 'جاري تحميل المناطق...';
       if (forceRefresh || !_isFresh('last_update_districts', maxAgeHours: 72)) {
         await _loadDistricts();
         await _touch('last_update_districts');
       }
 
-      // CURRENCIES (72h)
       _currentStep.value = 'جاري تحميل العملات...';
       if (forceRefresh || !_isFresh('last_update_currencies', maxAgeHours: 72)) {
         await _loadCurrencies();
@@ -383,7 +357,6 @@ Future<void> initializeCoreData({bool forceRefresh = false, bool silent = false}
   return run();
 }
 
-/// تهيئة بيانات المتجر (تعمل للتاجر فقط بعد اختيار المتجر)
 Future<void> initializeStoreData({
   required int storeId,
   bool forceRefresh = false,
@@ -403,38 +376,32 @@ Future<void> initializeStoreData({
         throw Exception('لا يوجد اتصال بالإنترنت');
       }
 
-      // SECTIONS (12h)
       _currentStep.value = 'جاري تحميل الأقسام...';
       if (forceRefresh || !_isFresh(_kLastUpdateSections(storeId), maxAgeHours: 12)) {
         await _loadSections();
         await _touch(_kLastUpdateSections(storeId));
       }
 
-      // ATTRIBUTES (24h)
       _currentStep.value = 'جاري تحميل السمات...';
       if (forceRefresh || !_isFresh('last_update_attributes', maxAgeHours: 24)) {
         await _loadAttributes();
         await _touch('last_update_attributes');
       }
 
-      // CATEGORIES (24h)
       _currentStep.value = 'جاري تحميل الفئات...';
       if (forceRefresh || !_isFresh('last_update_categories', maxAgeHours: 24)) {
         await _loadCategories();
         await _touch('last_update_categories');
       }
 
-      // PRODUCTS (6h)
       _currentStep.value = 'جاري تحميل المنتجات...';
       if (forceRefresh || !_isFresh(_kLastUpdateProducts(storeId), maxAgeHours: 6)) {
         await _loadProducts();
         await _touch(_kLastUpdateProducts(storeId));
       }
 
-      // ✅ rebuild enhanced sections AFTER products
       await _rebuildEnhancedSections(storeId);
 
-      // MEDIA (12h)
       _currentStep.value = 'جاري تحميل الوسائط...';
       if (forceRefresh || !_isFresh(_kLastUpdateMedia(storeId), maxAgeHours: 12)) {
         await _loadMedia();
@@ -459,7 +426,6 @@ Future<void> initializeStoreData({
   return run();
 }
 
-/// Wrapper: تهيئة مناسبة حسب نوع المستخدم
 Future<void> initializeData({bool forceRefresh = false, bool silent = false}) async {
   await initializeCoreData(forceRefresh: forceRefresh, silent: true);
 
@@ -471,8 +437,6 @@ Future<void> initializeData({bool forceRefresh = false, bool silent = false}) as
   }
 
   if (!silent) {
-    // لو استدعيت هذه الدالة بدون silent نعرض رسالة بسيطة بعد إنتهاء العمل
-    // (بدون فتح لودينج ثاني حتى لا نكرر الـ UI)
     print('✅ [DATA] initializeData complete');
   }
 }
@@ -616,7 +580,6 @@ Future<void> initializeAppData({
       _currentStep.value = 'جاري تحميل المنتجات...';
       await _loadProducts();
 
-      // Phase 1: build enhanced sections after products are available
       final storeId = _getActiveStoreId();
       if (storeId != null) {
         await _rebuildEnhancedSections(storeId);
@@ -660,7 +623,6 @@ Future<void> initializeAppData({
     final storeId = _getActiveStoreId();
     if (storeId == null) return false;
 
-    // الحد الأدنى للمرحلة 1
     return _storage.hasData(_STORES_KEY) &&
         _storage.hasData(_SETTINGS_KEY) &&
         _storage.hasData(_kSections(storeId)) &&

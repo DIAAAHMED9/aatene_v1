@@ -1,8 +1,8 @@
 class DrawerAccount {
   final int id;
   final String name;
-  final String? avatar; // يمكن أن تكون null أو رابط
-  final String? type; // products | services ...
+  final String? avatar;
+  final String? type;
 
   DrawerAccount({
     required this.id,

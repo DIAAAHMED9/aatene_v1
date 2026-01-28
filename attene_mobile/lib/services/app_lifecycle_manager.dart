@@ -21,7 +21,6 @@ class AppLifecycleManager with WidgetsBindingObserver {
 
   bool get isRegistered => _registered;
 
-  /// ✅ يسمح بإظهار الديلوج فقط عندما يكون التطبيق نشط/ظاهر
   bool get canShowDialogs =>
       _state == AppLifecycleState.resumed || _state == AppLifecycleState.inactive;
 

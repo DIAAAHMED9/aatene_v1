@@ -1,4 +1,3 @@
-
 import '../../../general_index.dart';
 
 class OnboardingDots extends StatelessWidget {

@@ -1,7 +1,6 @@
 import '../../../../general_index.dart';
 import '../../../../utils/responsive/index.dart';
 
-
 class Login extends StatelessWidget {
   final LoginController controller = Get.put(LoginController());
 

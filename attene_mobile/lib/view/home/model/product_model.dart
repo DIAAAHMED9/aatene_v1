@@ -1,4 +1,3 @@
-/// Model يمثل المنتج
 class ProductModel {
   final String title;
   final double price;

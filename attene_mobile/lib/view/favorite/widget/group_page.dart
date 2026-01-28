@@ -14,9 +14,7 @@ class GroupPage extends StatelessWidget {
         child: Row(
           spacing: 15,
           children: [
-            // كارت إضافة مجموعة جديدة
             const Expanded(child: AddNewCollectionCard()),
-            // كارت عرض الصور (المجموعة)
             Expanded(
               child: CollectionPreviewCard(onTap: () => Get.to(GroupName())),
             ),
@@ -27,7 +25,6 @@ class GroupPage extends StatelessWidget {
   }
 }
 
-/// كارت عرض الصور بتصميم شبكي (Grid)
 class CollectionPreviewCard extends StatelessWidget {
   const CollectionPreviewCard({super.key, this.onTap});
 
@@ -41,7 +38,6 @@ class CollectionPreviewCard extends StatelessWidget {
         height: 180,
         decoration: BoxDecoration(
           color: const Color(0xFFC5D3E8),
-          // لون الخلفية الزرقاء الباهتة خلف الصور
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
@@ -92,7 +88,6 @@ class CollectionPreviewCard extends StatelessWidget {
   }
 }
 
-/// كارت "إضافة مجموعة جديدة"
 class AddNewCollectionCard extends StatefulWidget {
   const AddNewCollectionCard({super.key});
 
@@ -139,7 +134,6 @@ class _AddNewCollectionCardState extends State<AddNewCollectionCard> {
   }
 }
 
-/// ButtonSheetPage
 class AddGroupButtonSheet extends StatefulWidget {
   const AddGroupButtonSheet({super.key});
 
@@ -160,7 +154,6 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
           spacing: 15,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // مقبض السحب (Drag Handle) في الأعلى
             Center(
               child: Container(
                 width: 50,
@@ -172,12 +165,10 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
               ),
             ),
 
-            // العنوان الرئيسي
             Center(
               child: Text('إضافة مجموعة جديدة', style: getBold(fontSize: 20)),
             ),
 
-            // حقل اسم المجموعة
             Text('اسم المجموعة', style: getBold(fontSize: 18)),
             TextFiledAatene(
               isRTL: isRTL,
@@ -185,10 +176,8 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
               textInputAction: TextInputAction.done, textInputType: TextInputType.name,
             ),
 
-            // قسم الخصوصية
             Text('الخصوصية', style: getBold(fontSize: 18)),
 
-            // خيار "عامة"
             _buildPrivacyOption(
               title: 'عامة',
               subtitle: 'أي شخص يمكنه رؤية هذه المجموعة',
@@ -197,7 +186,6 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
               onTap: () => setState(() => isPublicSelected = true),
             ),
 
-            // خيار "خاصة"
             _buildPrivacyOption(
               title: 'خاصة',
               subtitle: 'أنت فقط من يمكنه رؤية هذه المجموعة',
@@ -206,7 +194,6 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
               onTap: () => setState(() => isPublicSelected = false),
             ),
 
-            // زر "التالي"
             AateneButton(
               buttonText: "التالي",
               textColor: AppColors.light1000,
@@ -220,7 +207,6 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
     );
   }
 
-  // ودجت مخصص لبناء خيارات الخصوصية (عامة/خاصة)
   Widget _buildPrivacyOption({
     required String title,
     required String subtitle,
@@ -398,9 +384,7 @@ class DetailsGroupButtonSheet extends StatelessWidget {
         spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // مقبض السحب العلوي
 
-          // القسم العلوي: الصورة والعنوان وزر القلب
           Row(
             spacing: 5,
             children: [
@@ -431,7 +415,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
           ),
           const Divider(),
 
-          // قسم "المجموعات" وزر الإضافة
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -444,7 +427,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
               }),
             ],
           ),
-          // قائمة المجموعات
           _buildCollectionItem(
             'كل المفضلة',
             'عامة',
@@ -467,7 +449,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
             'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=100',
           ),
 
-          // Button
           AateneButton(
             onTap: () => Navigator.pop(context),
             buttonText: "تم",
@@ -480,7 +461,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
     );
   }
 
-  // ودجت لبناء عنصر المجموعة
   Widget _buildCollectionItem(
     String title,
     String status,
@@ -517,7 +497,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
     );
   }
 
-  // ودجت لشارة الحالة (عامة/خاصة)
   Widget _buildStatusBadge(String text, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -539,7 +518,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
     );
   }
 
-  // ودجت للصورة المصغرة المنحنية
   Widget _buildSmallThumbnail(String url) {
     return Container(
       width: 60,
@@ -551,7 +529,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
     );
   }
 
-  // ودجت زر "إنشاء مجموعة جديدة"
   Widget _buildAddButton(VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,

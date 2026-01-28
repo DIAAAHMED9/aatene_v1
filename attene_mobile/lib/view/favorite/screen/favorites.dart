@@ -35,15 +35,13 @@ class FavoritesScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: DefaultTabController(
-          length: 6, // عدد التبويبات
+          length: 6,
           child: Column(
             children: [
-              // (TabBar)
               Align(
                 alignment: Alignment.centerRight,
                 child: TabBar(
                   isScrollable: true,
-                  // للسماح بالتمرير إذا زادت العناصر
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.grey[700],
                   labelStyle: getBold(),
@@ -51,7 +49,6 @@ class FavoritesScreen extends StatelessWidget {
                   indicatorColor: AppColors.primary400,
                   indicatorWeight: 4.0,
                   indicatorSize: TabBarIndicatorSize.tab,
-                  // إزالة الحواف الافتراضية
                   dividerColor: Colors.grey[300],
                   tabs: const [
                     Tab(text: 'الجديد'),
@@ -64,7 +61,6 @@ class FavoritesScreen extends StatelessWidget {
                 ),
               ),
 
-              // محتوى التبويبات
               const Expanded(
                 child: TabBarView(
                   children: [

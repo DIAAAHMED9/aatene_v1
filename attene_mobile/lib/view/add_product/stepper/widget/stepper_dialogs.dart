@@ -6,9 +6,6 @@ class AddProductStepperDialogs {
       title: 'تأكيد الإلغاء',
       middleText: 'هل أنت متأكد من إلغاء عملية إضافة المنتج؟',
 
-      // textConfirm: 'نعم، إلغاء',
-      // textCancel: 'لا، استمر',
-      // confirmTextColor: Colors.white,
       actions: [
         AateneButton(
           onTap: () {
@@ -29,13 +26,6 @@ class AddProductStepperDialogs {
           borderColor: AppColors.primary400,
         ),
       ],
-      // cancelTextColor: AppColors.primary400,
-      // buttonColor: AppColors.primary400,
-      // onConfirm: () {
-      //   Get.back(result: true);
-      //   Get.back();
-      // },
-      // onCancel: () => Get.back(result: false),
     );
     return result ?? false;
   }
@@ -91,13 +81,6 @@ class AddProductStepperDialogs {
       AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        // title: Row(
-        //   children: const [
-        //     Icon(Icons.check_circle, color: Colors.green, size: 28),
-        //     SizedBox(width: 12),
-        //     Text('تمت العملية بنجاح!'),
-        //   ],
-        // ),
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 5,

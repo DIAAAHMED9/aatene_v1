@@ -8,24 +8,9 @@ import 'package:image_picker/image_picker.dart';
 
 class ServiceController extends GetxController {
 
-  /// When editing an existing service, we may need to fetch sections/categories
-  /// using the service's `store_id`.
-  ///
-  /// Why: the API uses the `storeId` header to scope `/merchants/sections` and
-  /// `/merchants/categories/select`. If the current storeId header is different
-  /// from the service store, the selected section/category will not be found,
-  /// and the names won't show in the UI.
   final RxString editingStoreId = ''.obs;
 
-  /// Convert numeric-looking strings returned by the API into numbers.
-  ///
-  /// Reason: some places in the UI/business logic may still do `as num` casts
-  /// (or expect `num` in dropdown/value comparisons). The backend sometimes
-  /// returns numbers as strings (e.g. "100.50", "4"). Normalizing here keeps
-  /// edit-prefill stable.
   dynamic _normalizeNumericStrings(dynamic v, {String? key}) {
-    // Only normalize known numeric keys to avoid turning phone numbers/codes
-    // into numbers.
     const numericKeys = <String>{
       'id',
       'price',
@@ -939,7 +924,6 @@ class ServiceController extends GetxController {
         final raw = List<Map<String, dynamic>>.from(response['data'] ?? []);
         final normalized = raw.map((e) {
           final m = Map<String, dynamic>.from(e);
-          // API sometimes sends ids as strings
           final id = m['id'];
           if (id is String) {
             m['id'] = int.tryParse(id) ?? 0;
@@ -1325,15 +1309,10 @@ class ServiceController extends GetxController {
       print('📦 البيانات المرسلة للخادم (تحديث):');
       print(jsonEncode(serviceData));
 
-      // ملاحظة مهمة:
-      // في هذا المشروع، تحديث المنتجات يتم عبر POST (وليس PUT).
-      // كثير من باكات Laravel تعتمد هذا النمط لتفادي مشاكل Method Override.
-      // لذلك نستخدم POST هنا لضمان عدم حدوث 401/Redirect غير متوقع.
       final response = await ApiHelper.post(
         path: '/merchants/services/$serviceId',
         body: serviceData,
         withLoading: false,
-        // نمنع الرسائل العامة من ApiHelper حتى لا تتكرر السناك بار
         shouldShowMessage: false,
       );
 
@@ -1438,7 +1417,6 @@ class ServiceController extends GetxController {
       if (response != null && response['status'] == true) {
         final data = response['data'];
 
-        // Be defensive: details endpoint sometimes returns nested objects.
         Map<String, dynamic>? serviceJson;
         if (data is Map) {
           final m = Map<String, dynamic>.from(data as Map);
@@ -1450,7 +1428,6 @@ class ServiceController extends GetxController {
             serviceJson = m;
           }
         } else if (data is List) {
-          // Fallback if API returns a list.
           final found = data.cast<dynamic>().firstWhere(
             (e) => (e is Map) && e['id']?.toString() == serviceId,
             orElse: () => null,
@@ -1464,7 +1441,6 @@ class ServiceController extends GetxController {
           throw Exception('Invalid service payload');
         }
 
-        // If details payload is incomplete (common case), fallback to list endpoint and merge.
         final bool looksIncomplete =
             !serviceJson.containsKey('price') &&
             !serviceJson.containsKey('description') &&
@@ -1489,29 +1465,22 @@ class ServiceController extends GetxController {
               );
               if (found is Map) {
                 final m = Map<String, dynamic>.from(found);
-                // Merge missing keys only, keep detail keys if present.
                 for (final entry in m.entries) {
                   serviceJson.putIfAbsent(entry.key, () => entry.value);
                 }
               }
             }
           } catch (_) {
-            // ignore fallback errors
           }
         }
 
-        // Normalize numeric strings -> num to avoid runtime cast issues in other layers.
         final normalized = _normalizeNumericStrings(serviceJson);
         final service = Service.fromApiJson(
           Map<String, dynamic>.from(normalized as Map),
         );
 
-        // Update controller fields first (title, ids, lists, etc.)
         await _updateControllerFromService(service);
 
-        // Then resolve section/category display names immediately.
-        // NOTE: we pass the ids explicitly so it works even if selection values
-        // are still being updated.
         await _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
 
         isLoading.value = false;
@@ -1716,7 +1685,6 @@ class ServiceController extends GetxController {
   }
 
   Future<void> _updateControllerFromService(Service service) async {
-    // -------------------- Values --------------------
     serviceId.value = service.id?.toString() ?? '';
     serviceSlug.value = service.slug;
     serviceTitle.value = service.title;
@@ -1755,13 +1723,8 @@ class ServiceController extends GetxController {
     acceptedTerms.value = service.acceptedTerms;
     acceptedPrivacy.value = service.acceptedPrivacy;
 
-    // IMPORTANT: keep the service store_id so we can fetch sections/categories
-    // with the correct `storeId` header.
     editingStoreId.value = (service.storeId ?? '').toString();
 
-    // -------------------- Force UI refresh NOW --------------------
-    // This is the root cause of "data appears only after leaving and coming back".
-    // The screen uses GetBuilder IDs, so we MUST trigger them after prefill.
     update([
       'service_title_field',
       'main_category_field',
@@ -1779,9 +1742,8 @@ class ServiceController extends GetxController {
       'terms_section',
       'privacy_section',
     ]);
-    update(); // also refresh any builders without IDs
+    update();
 
-    // Resolve section/category names and categories list based on selected ids.
     await _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
   }
 
@@ -1793,11 +1755,9 @@ class ServiceController extends GetxController {
       final String? storeIdOverride =
           editingStoreId.value.trim().isNotEmpty ? editingStoreId.value.trim() : null;
 
-      // Ensure selected IDs are set first so UI + other logic relies on them.
       selectedSectionId.value = sectionId;
       selectedCategoryId.value = categoryId;
 
-      // Load sections with the correct storeId scope.
       await loadSections(storeIdOverride: storeIdOverride);
 
       final section = sections.firstWhere(
@@ -1806,14 +1766,12 @@ class ServiceController extends GetxController {
       );
       selectedMainCategory.value = (section['name'] ?? '').toString();
 
-      // Load categories for the selected section (also scoped by storeId).
       if (sectionId > 0) {
         await loadCategories(
           sectionIdOverride: sectionId,
           storeIdOverride: storeIdOverride,
         );
 
-        // Prefer existing category object name (if already set elsewhere), else resolve from list.
         if (selectedCategory.value.trim().isEmpty && categoryId > 0) {
           final category = categories.firstWhere(
             (c) => int.tryParse((c['id'] ?? '').toString()) == categoryId,
@@ -1823,7 +1781,6 @@ class ServiceController extends GetxController {
         }
       }
 
-      // Force-refresh UI fields immediately.
       update(['main_category_field', 'category_field']);
     } catch (e) {
       print('❌ خطأ في تحميل أسماء القسم والفئة: $e');
@@ -1895,15 +1852,12 @@ class ServiceController extends GetxController {
         throw Exception('فشل في جلب بيانات الخدمة');
       }
 
-      // ---- Guard: prevent editing service from another store ----
-      // NOTE: current store is what the API is using in headers.
       final currentStoreId = (ApiHelper.getStoreIdOrNull() ?? '').trim();
       final serviceStoreId = (service.storeId ?? '').toString().trim();
 
       if (currentStoreId.isNotEmpty &&
           serviceStoreId.isNotEmpty &&
           currentStoreId != serviceStoreId) {
-        // Reset edit state so we don't accidentally submit.
         isInEditMode = false;
         isLoading.value = false;
         update(['loading_indicator']);
@@ -1935,7 +1889,6 @@ class ServiceController extends GetxController {
 
       serviceId.value = id;
 
-      // Force a full refresh for the edit screen widgets (instant rendering).
       update([
         'service_title_field',
         'main_category_field',
@@ -1986,8 +1939,6 @@ class ServiceController extends GetxController {
     final confirm = await Get.defaultDialog<bool>(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف هذه الخدمة؟',
-      // textConfirm: 'نعم، احذف',
-      // textCancel: ,
       actions: [
         AateneButton(
           onTap: () async {
@@ -2011,16 +1962,6 @@ class ServiceController extends GetxController {
           borderColor: AppColors.primary400,
         ),
       ],
-      //
-      // confirmTextColor: Colors.white,
-      // onConfirm: () async {
-      //   final result = await deleteService(serviceId.value);
-      //   if (result?['success'] == true) {
-      //     resetAll();
-      //     Get.back(result: true);
-      //   }
-      // },
-      // onCancel: () => Get.back(result: false),
     );
 
     if (confirm == true) {
@@ -2042,12 +1983,6 @@ class ServiceController extends GetxController {
   void setCreateMode() {
     serviceId.value = '';
     resetAll();
-    // Get.snackbar(
-    //   'وضع الإنشاء',
-    //   'أنت الآن تقوم بإنشاء خدمة جديدة',
-    //   backgroundColor: Colors.green,
-    //   colorText: Colors.white,
-    // );
   }
 
   bool  isInEditMode = serviceId.value.isNotEmpty;

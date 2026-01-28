@@ -199,9 +199,10 @@ class LoginController extends GetxController {
       ..['token'] = token
       ..['login_time'] = DateTime.now().toString();
 
-    // ✅ Fix: sync session to GetStorage (DataInitializerService depends on it)
     try {
       final storage = Get.find<GetStorage>();
+      await storage.write('auth_token', token);
+      await storage.write('is_guest', false);
       await storage.write('user_data', {
         'user': Map<String, dynamic>.from(userData),
         'token': token,
@@ -226,14 +227,9 @@ class LoginController extends GetxController {
     await _redirectAfterLogin();
   }
 
-  /// بعد نجاح تسجيل الدخول (أو إذا كان المستخدم مسجل دخول سابقاً)
-  /// نتحقق هل تم اختيار متجر أم لا.
-  /// - إذا لا يوجد store_id/active_store_id => نذهب لشاشة اختيار المتجر.
-  /// - إذا موجود => نكمل إلى الشاشة الرئيسية.
   Future<void> _redirectAfterLogin() async {
     await Future.delayed(const Duration(milliseconds: 300));
 
-    // ✅ Phase 2: تهيئة عامة للجميع
     try {
       await DataInitializerService.to.initializeCoreData(silent: true);
     } catch (_) {}
@@ -243,12 +239,8 @@ class LoginController extends GetxController {
     final dynamic storeIdRaw = ud['active_store_id'] ?? ud['store_id'];
     final String storeIdStr = storeIdRaw?.toString() ?? '';
 
-    // ✅ للتاجر فقط: لا نعرض شاشة اختيار المتجر بعد تسجيل الدخول.
-// إذا لا يوجد متجر فعّال، DataInitializerService يقوم بتعيين المتجر الأول تلقائياً (إن وُجد).
 if (isMerchant && storeIdStr.isEmpty) {
-  // لا نفعل شيء هنا، سنكمل للرئيسية (وقد تكون قائمة المتاجر فارغة عند حساب جديد)
 }
-// ✅ للتاجر: تهيئة بيانات المتجر بعد توفر storeId
     if (isMerchant && storeIdStr.isNotEmpty) {
       final sid = int.tryParse(storeIdStr);
       if (sid != null) {
@@ -318,7 +310,6 @@ if (isMerchant && storeIdStr.isEmpty) {
         } else if (statusCode == 422) {
           _handleValidationErrors(response?.data);
         } else if (statusCode == 500) {
-          // _showErrorSnackbar('خطأ في الخادم', 'يرجى المحاولة لاحقاً');
         } else {
           _showErrorSnackbar('خطأ في الاستجابة', 'رمز الخطأ: $statusCode');
         }

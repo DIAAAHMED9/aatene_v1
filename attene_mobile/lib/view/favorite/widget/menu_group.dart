@@ -8,11 +8,9 @@ class CustomMenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      // تخصيص شكل القائمة (الحواف المنحنية واللون)
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: Colors.white,
       elevation: 10,
-      // ضبط مكان ظهور القائمة بالنسبة للزر
       offset: const Offset(0, 50),
       icon: const Icon(Icons.more_vert, color: AppColors.primary300),
       onSelected: (value) {
@@ -74,7 +72,6 @@ class CustomMenuWidget extends StatelessWidget {
     );
   }
 
-  // ودجت لبناء عنصر القائمة بشكل موحد
   PopupMenuItem<String> _buildMenuItem({
     required String value,
     required String text,
@@ -97,7 +94,6 @@ class CustomMenuWidget extends StatelessWidget {
     );
   }
 
-  // ودجت لرسم الخط الفاصل الخفيف بين العناصر
   PopupMenuEntry<String> _buildDivider() {
     return const PopupMenuDivider(height: 1);
   }

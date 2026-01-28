@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Canonical responsive helpers used across the app.
-///
-/// Keep this API stable: multiple legacy screens/widgets depend on it.
-///
-/// Historically, some feature folders shipped their own `ResponsiveWidgets`.
-/// Those feature-local files should now `export` this canonical implementation
-/// to avoid duplicate-class import conflicts.
 class ResponsiveWidgets {
   static bool isMobile(BuildContext context) =>
       MediaQuery.of(context).size.width < 600;
@@ -49,7 +42,6 @@ class ResponsiveWidgets {
     return baseSize * 1.2;
   }
 
-  // Extra helpers used in some product screens (kept for compatibility)
   static double getButtonHeight(BuildContext context) {
     if (isMobile(context)) return 48.0;
     if (isTablet(context)) return 52.0;

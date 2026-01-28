@@ -185,17 +185,6 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                   borderColor: AppColors.primary400,
                   color: AppColors.light1000,
                 ),
-                // OutlinedButton(
-                //   onPressed: () => Get.back(),
-                //   style: OutlinedButton.styleFrom(
-                //     padding: EdgeInsets.symmetric(vertical: 14),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //     side: BorderSide(color: Colors.grey[400]!),
-                //   ),
-                //   child: Text('إلغاء', style: getRegular(color: Colors.grey)),
-                // ),
               ),
               Expanded(
                 child: AateneButton(
@@ -208,19 +197,6 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                   color: AppColors.primary400,
                 ),
 
-                // ElevatedButton(
-                //   onPressed: _getSelectedAttributesCount() > 0
-                //       ? _proceedToValuesStep
-                //       : null,
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: AppColors.primary400,
-                //     padding: EdgeInsets.symmetric(vertical: 14),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //   ),
-                //   child: Text('التالي', style: getRegular(color: Colors.white)),
-                // ),
               ),
             ],
           ),
@@ -450,17 +426,6 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               borderColor: AppColors.primary400,
               color: AppColors.primary400,
             ),
-            // ElevatedButton(
-            //   onPressed: _saveAndClose,
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: AppColors.primary400,
-            //     padding: EdgeInsets.symmetric(vertical: 14),
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(8),
-            //     ),
-            //   ),
-            //   child: Text('حفظ', style: getRegular(color: Colors.white)),
-            // ),
           ),
         ),
       ],

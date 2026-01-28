@@ -23,7 +23,6 @@ class ProfilePage extends StatelessWidget {
         return Scaffold(
           body: CustomScrollView(
             slivers: [
-              // SliverAppBar (UPDATED)
               SliverAppBar(
                 expandedHeight: size.height * 0.32,
                 pinned: true,
@@ -390,9 +389,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              // --------------------------------------------------
-              // Profile Card
-              // --------------------------------------------------
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -400,17 +396,11 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              // --------------------------------------------------
-              // Tabs (SliverPersistentHeader)
-              // --------------------------------------------------
               SliverPersistentHeader(
                 pinned: true,
                 delegate: SilverTabs(controller),
               ),
 
-              // --------------------------------------------------
-              // Body Content
-              // --------------------------------------------------
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -424,7 +414,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------
   Widget _coverImage() {
     return Stack(
       fit: StackFit.expand,
@@ -461,7 +450,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------
   Widget _profileCard(ProfileController controller) {
     return Column(
       children: [
@@ -485,7 +473,6 @@ class ProfilePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        // controller.profileData['fullname']??
                         'Cody Fisher',
                         style: TextStyle(
                           fontSize: 18,
@@ -526,7 +513,6 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              // Follow Button Animation
               Obx(
                 () => AnimatedScale(
                   scale: controller.isFollowing.value ? 1.05 : 1,
@@ -619,7 +605,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------
   Widget _bodyContent(ProfileController controller) {
     return Obx(() {
       switch (controller.currentTab.value) {

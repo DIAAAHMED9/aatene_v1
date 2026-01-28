@@ -36,7 +36,6 @@ class OnboardingView extends StatelessWidget {
           children: [
             const CurvedBackground(),
 
-            /// تخطي
             Positioned(
               top: 25,
               right: 10,
@@ -46,7 +45,6 @@ class OnboardingView extends StatelessWidget {
                 },
                 child: TextButton(
                   onPressed: () {
-                    // Get.to(Onboarding());
                   },
                   child: const Text(
                     'تخطي',
@@ -56,7 +54,6 @@ class OnboardingView extends StatelessWidget {
               ),
             ),
 
-            /// الصفحات
             PageView.builder(
               controller: controller.pageController,
               onPageChanged: controller.onPageChanged,
@@ -64,7 +61,6 @@ class OnboardingView extends StatelessWidget {
               itemBuilder: (_, i) => OnboardingPage(data: pages[i]),
             ),
 
-            /// Dots
             Positioned(
               bottom: 100,
               left: 0,
@@ -77,7 +73,6 @@ class OnboardingView extends StatelessWidget {
               }),
             ),
 
-            /// زر التالي
             Positioned(
               bottom: 24,
               left: 24,

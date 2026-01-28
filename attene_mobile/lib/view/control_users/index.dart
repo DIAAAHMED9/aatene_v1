@@ -24,4 +24,3 @@ export 'screen/sellect_report.dart';
 export 'screen/terms_of_use_screen.dart';
 export 'models/follower_model.dart';
 export 'widget/unfollow_dialog.dart';
-

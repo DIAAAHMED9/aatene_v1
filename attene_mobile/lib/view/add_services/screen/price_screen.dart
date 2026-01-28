@@ -329,8 +329,6 @@ class PriceScreen extends StatelessWidget {
         return await Get.defaultDialog(
           title: 'تأكيد الحذف',
           content: const Text('هل أنت متأكد من حذف هذا التطوير؟'),
-          // textConfirm: 'نعم',
-          // textCancel: 'لا',
           actions: [
             AateneButton(
               onTap: () => Get.back(result: true),
@@ -349,8 +347,6 @@ class PriceScreen extends StatelessWidget {
             ),
           ],
 
-          // onConfirm:
-          // onCancel: () =>
         );
       },
       onDismissed: (direction) {

@@ -1,8 +1,6 @@
-
 import '../../../general_index.dart';
 import '../../../utils/responsive/index.dart';
 import '../../../utils/services/index.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,10 +36,47 @@ class _SplashScreenState extends State<SplashScreen> {
       await AppInitializationService.initialize();
       if (mounted) {
         final storage = GetStorage();
+        final bool hasCompletedOnboarding = storage.read('has_completed_onboarding') == true;
+
+			String? _readToken() {
+				final dynamic t = storage.read('auth_token');
+				final String? direct = t is String ? t.trim() : t?.toString().trim();
+				if (direct != null && direct.isNotEmpty) return direct;
+
+				final dynamic ud = storage.read('user_data');
+				if (ud is Map) {
+					final dynamic ut = ud['token'];
+					final String? fromUserData = ut is String ? ut.trim() : ut?.toString().trim();
+					if (fromUserData != null && fromUserData.isNotEmpty) {
+						storage.write('auth_token', fromUserData);
+						return fromUserData;
+					}
+				}
+				return null;
+			}
+
+        bool isAuthenticated = false;
+        try {
+          if (Get.isRegistered<MyAppController>()) {
+            isAuthenticated = Get.find<MyAppController>().isAuthenticated;
+          } else {
+					final token = _readToken();
+					isAuthenticated = token != null && token.isNotEmpty;
+          }
+        } catch (_) {
+				final token = _readToken();
+				isAuthenticated = token != null && token.isNotEmpty;
+        }
+
+        if (!isAuthenticated && hasCompletedOnboarding) {
+          storage.write('is_guest', true);
+        }
+
         final bool isGuest = storage.read('is_guest') == true;
+
         Navigator.pushReplacementNamed(
           context,
-          isGuest ? '/mainScreen' : '/onboarding',
+          (isAuthenticated || isGuest) ? '/mainScreen' : '/onboarding',
         );
       }
     } catch (error) {

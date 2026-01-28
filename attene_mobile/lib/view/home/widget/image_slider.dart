@@ -13,7 +13,6 @@ class ImageSlider extends GetView<HomeController> {
       width: double.infinity,
       child: Stack(
         children: [
-          /// PageView (Slider)
           PageView.builder(
             controller: controller.pageController,
             itemCount: controller.images.length,
@@ -31,7 +30,6 @@ class ImageSlider extends GetView<HomeController> {
             },
           ),
 
-          /// Dots Indicator (Bottom Left)
           Positioned(
             bottom: 16,
             left: 0,

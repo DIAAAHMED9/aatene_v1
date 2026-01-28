@@ -28,18 +28,6 @@ class SearchScreen extends StatelessWidget {
                         textInputAction: TextInputAction.done,
                         suffixIcon: GestureDetector(
                           onTap: () {
-                            /// بحث عن الاشخاص والعناصر
-                            // Future<void> openSearchTypeSheet() async {
-                            //   final result = await Get.bottomSheet<SearchType>(
-                            //     const SearchTypeBottomSheet(),
-                            //     backgroundColor: Colors.transparent,
-                            //     isScrollControlled: true,
-                            //   );
-                            //
-                            //   if (result != null) {
-                            //     debugPrint('Selected Type: $result');
-                            //   }
-                            // }
 
                             showModalBottomSheet(
                               context: context,

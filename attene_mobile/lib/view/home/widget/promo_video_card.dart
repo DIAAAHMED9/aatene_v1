@@ -20,7 +20,6 @@ class PromoVideoCard extends StatelessWidget {
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: Stack(
             children: [
-              /// Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
@@ -31,7 +30,6 @@ class PromoVideoCard extends StatelessWidget {
                 ),
               ),
 
-              /// Overlay
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
@@ -46,7 +44,6 @@ class PromoVideoCard extends StatelessWidget {
                 ),
               ),
 
-              /// Play Icon
               Center(
                 child: Container(
                   width: 32,
@@ -63,7 +60,6 @@ class PromoVideoCard extends StatelessWidget {
                 ),
               ),
 
-              /// Avatar
               Positioned(
                 bottom: 12,
                 right: 12,

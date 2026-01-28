@@ -1,12 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-/// BottomSheet لعرض منتجات المتجر داخل البروفايل.
-///
-/// - يعيد استخدام شريط البحث والفلاتر الموجود في VendorCard.
-/// - يعرض بطاقات المنتجات الموجودة بالفعل (ProductCard) للتجربة.
-///
-/// ملاحظة: حالياً يعتمد على داتا وهمية (ProductCard نفسه فيه داتا ثابتة).
-/// لاحقاً بنربطه بليست المنتجات الحقيقية القادمة من الـ Controller/API.
 class VendorProductsBottomSheet extends StatelessWidget {
   const VendorProductsBottomSheet({super.key});
 
@@ -55,7 +48,6 @@ class VendorProductsBottomSheet extends StatelessWidget {
                 ),
               ),
 
-              // ✅ شريط البحث + الفلاتر (بنفس الموجود في VendorCard)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Row(
@@ -72,7 +64,6 @@ class VendorProductsBottomSheet extends StatelessWidget {
                       child: Center(
                         child: IconButton(
                           onPressed: () {
-                            // TODO: فتح فلاتر المنتجات لاحقاً
                           },
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/filter_alt.svg',
@@ -107,7 +98,6 @@ class VendorProductsBottomSheet extends StatelessWidget {
                       child: Center(
                         child: IconButton(
                           onPressed: () {
-                            // TODO: فلتر إضافي/ترتيب لاحقاً
                           },
                           icon: SvgPicture.asset(
                             'assets/images/svg_images/filter_mine.svg',
@@ -123,7 +113,6 @@ class VendorProductsBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // ✅ بطاقات المنتجات (موجودة بالفعل في البروفايل)
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,

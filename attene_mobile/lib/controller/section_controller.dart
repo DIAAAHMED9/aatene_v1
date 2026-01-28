@@ -2,8 +2,6 @@ import '../api/index.dart';
 import '../models/index.dart';
 import 'package:get/get.dart';
 
-
-
 import '../api/api_request.dart';
 import '../models/section_model.dart';
 

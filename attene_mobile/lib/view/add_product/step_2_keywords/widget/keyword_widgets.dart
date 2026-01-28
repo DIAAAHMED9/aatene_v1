@@ -339,78 +339,16 @@ class AvailableKeywordsWidget extends StatelessWidget {
       builder: (_) {
         final keywords = controller.filteredKeywords;
 
-        // if (keywords.isEmpty) {
-        //   return _buildEmptyAvailableKeywords();
-        // }
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Text('الكلمات المفتاحية المتاحة', style: getMedium()),
-            // SizedBox(height: ResponsiveDimensions.f(12)),
-            // Wrap(
-            //   spacing: ResponsiveDimensions.f(8),
-            //   runSpacing: ResponsiveDimensions.f(8),
-            //   children: keywords.map((keyword) {
-            //     return InkWell(
-            //       onTap: () => controller.addKeyword(keyword),
-            //       child: Container(
-            //         child: Text(
-            //           keyword,
-            //           style: getRegular(color: AppColors.primary400),
-            //         ),
-            //         padding: EdgeInsets.symmetric(
-            //           horizontal: ResponsiveDimensions.f(15),
-            //           vertical: ResponsiveDimensions.f(10),
-            //         ),
-            //         decoration: BoxDecoration(
-            //           border: Border.all(color: AppColors.primary400),
-            //           borderRadius: BorderRadius.circular(25),
-            //         ),
-            //       ),
-            //     );
-            //   }).toList(),
-            // ),
           ],
         );
       },
     );
   }
 
-  // Widget _buildEmptyAvailableKeywords() {
-  //   return Container(
-  //     padding: EdgeInsets.all(ResponsiveDimensions.f(16)),
-  //     decoration: BoxDecoration(
-  //       color: Colors.grey[50],
-  //       borderRadius: BorderRadius.circular(12),
-  //       border: Border.all(color: Colors.grey[300]!),
-  //     ),
-  //     child: Column(
-  //       children: [
-  //         Icon(
-  //           Icons.search_off,
-  //           size: ResponsiveDimensions.f(40),
-  //           color: Colors.grey[400],
-  //         ),
-  //         SizedBox(height: ResponsiveDimensions.f(8)),
-  //         Text(
-  //           'لا توجد كلمات مفتاحية متاحة',
-  //           style: getRegular(
-  //             fontSize: ResponsiveDimensions.f(14),
-  //             color: Colors.grey,
-  //           ),
-  //         ),
-  //         SizedBox(height: ResponsiveDimensions.f(4)),
-  //         Text(
-  //           'جرب البحث بكلمات مختلفة',
-  //           style: getRegular(fontSize: ResponsiveDimensions.f(12)),
-  //           textAlign: TextAlign.center,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 class SelectedKeywordsWidget extends StatelessWidget {
@@ -468,12 +406,6 @@ class SelectedKeywordsWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon(
-            //   Icons.tag,
-            //   size: ResponsiveDimensions.f(40),
-            //   color: Colors.grey[300],
-            // ),
-            // SizedBox(height: ResponsiveDimensions.f(8)),
             Text(
               'لا توجد كلمات مفتاحية مختارة',
               style: getRegular(

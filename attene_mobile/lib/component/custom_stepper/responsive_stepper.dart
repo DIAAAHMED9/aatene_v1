@@ -2,7 +2,6 @@ import '../../general_index.dart'hide DeviceType;
 import 'index.dart';
 import 'stepper_step.dart';
 
-
 class ResponsiveStepper extends StatelessWidget {
   final List<StepperStep> steps;
   final int currentStep;

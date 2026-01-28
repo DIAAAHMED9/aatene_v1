@@ -135,7 +135,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
     Navigator.pop(context);
   }
 
-  /// ✅ دعم قصة المنتج: product://title|imageUrl
   ({bool isProduct, String title, String imageUrl}) _parseProductStory(String raw) {
     if (!raw.startsWith('product://')) {
       return (isProduct: false, title: '', imageUrl: '');
@@ -204,13 +203,11 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
               final bool isProductStory = parsed.isProduct;
               final bool isApiStoryWithText = !isProductStory && (item.text ?? '').trim().isNotEmpty;
 
-              // الخلفية: صورة المنتج أو الميديا العادية
               final String bgUrl = isProductStory ? parsed.imageUrl : item.url;
               final Color? storyColor = (item.color == null) ? null : Color(item.color!);
 
               return Stack(
                 children: [
-                  // الخلفية
                   Positioned.fill(
                     child: bgUrl.isEmpty
                         ? Container(color: Colors.black)
@@ -226,7 +223,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                           ),
                   ),
 
-                  // تدرج سفلي (لتوضيح كرت المنتج)
                   if (isProductStory)
                     Positioned(
                       left: 0,
@@ -250,7 +246,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                       ),
                     ),
 
-                  // progress
                   Positioned(
                     left: 12,
                     right: 12,
@@ -287,7 +282,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                     ),
                   ),
 
-                  // ✅ نص القصة (من API) + لون الخلفية
                   if (isApiStoryWithText)
                     Positioned.fill(
                       child: Container(
@@ -307,14 +301,12 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                       ),
                     ),
 
-                  // top info
                   Positioned(
                     left: 12,
                     right: 12,
                     top: 26,
                     child: Row(
                       children: [
-                        // ✅ Avatar آمن (بدون crashes على web)
                         ClipOval(
                           child: SizedBox(
                             width: 36,
@@ -357,7 +349,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                     ),
                   ),
 
-                  // ✅ كرت المنتج + زر معاينة (مثل التصميم)
                   if (isProductStory)
                     Positioned(
                       left: 16,
@@ -412,7 +403,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                             height: 52,
                             child: ElevatedButton(
                               onPressed: () {
-                                // لاحقاً: افتح صفحة المنتج
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white.withOpacity(0.15),

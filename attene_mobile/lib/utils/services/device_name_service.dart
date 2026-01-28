@@ -2,9 +2,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart'
     show kIsWeb, kDebugMode, debugPrint, defaultTargetPlatform, TargetPlatform;
 
-/// خدمة بسيطة لإرجاع اسم/نوع الجهاز بشكل آمن على Android/iOS/Web.
-/// - على Web: ترجع معلومات المتصفح (browserName + userAgent مختصر)
-/// - على Android/iOS: ترجع model / name
 class DeviceNameService {
   static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 

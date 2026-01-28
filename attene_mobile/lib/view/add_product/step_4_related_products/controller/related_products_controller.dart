@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class RelatedProductsController extends GetxController {
@@ -6,8 +5,6 @@ class RelatedProductsController extends GetxController {
 
   final RxList<Product> _allProducts = <Product>[].obs;
   final RxList<Product> _selectedProducts = <Product>[].obs;
-  /// Holds selected cross-sell product ids (from API) so we can apply them
-  /// after we load products (cache or API).
   final RxList<int> _selectedIds = <int>[].obs;
   final RxList<ProductDiscount> _discounts = <ProductDiscount>[].obs;
   final RxString _searchQuery = ''.obs;
@@ -53,14 +50,9 @@ class RelatedProductsController extends GetxController {
   void onInit() {
     super.onInit();
     initializeControllers();
-    // Try to load cached products first. If cache is empty we will fetch
-    // from API on-demand (especially in edit flows).
     loadProductsFromCache();
   }
 
-  /// Reset all related-products selections and discount info.
-  /// This is important when user navigates from Edit -> Add to avoid
-  /// leaking the previous product's cross-sells into the new product flow.
   void resetAll() {
     _selectedProducts.clear();
     _selectedIds.clear();
@@ -124,16 +116,12 @@ class RelatedProductsController extends GetxController {
     }
   }
 
-  /// Ensures the products list is available for selection.
-  /// - Uses cached products if present.
-  /// - Falls back to API if cache is empty.
   Future<void> ensureProductsLoaded() async {
     if (_allProducts.isNotEmpty) {
       _applySelectedIdsToProducts();
       return;
     }
 
-    // Try cache again (in case it was refreshed elsewhere)
     loadProductsFromCache();
     if (_allProducts.isNotEmpty) {
       _applySelectedIdsToProducts();
@@ -169,8 +157,6 @@ class RelatedProductsController extends GetxController {
     }
   }
 
-  /// Prefill cross-sells selection and discount fields from API product response.
-  /// Expected keys: crossSells (List<int>) / cross_sells_price / cross_sells_due_date
   Future<void> loadFromProductApi(Map<String, dynamic> productData) async {
     try {
       final dynamic rawCrossSells =
@@ -197,13 +183,10 @@ class RelatedProductsController extends GetxController {
         }
       }
 
-
       _selectedIds.assignAll(ids);
 
-      // Ensure products are available, then apply selected ids.
       await ensureProductsLoaded();
 
-      // Prices
       _originalPrice.value = 0.0;
       calculateTotalPrice();
       final csPriceRaw = productData['cross_sells_price'] ?? productData['crossSells_price'];
@@ -214,7 +197,6 @@ class RelatedProductsController extends GetxController {
         _discountedPrice.value = csPrice;
       }
 
-      // Due date
       final dueRaw = (productData['cross_sells_due_date'] ?? productData['crossSells_due_date'])?.toString();
       if (dueRaw != null && dueRaw.trim().isNotEmpty) {
         final parsed = DateTime.tryParse(dueRaw);
@@ -405,7 +387,6 @@ class RelatedProductsController extends GetxController {
         '🔗 [CROSS SELL] عدد المنتجات المختارة: ${_selectedProducts.length}',
       );
 
-      // Prefer selected products (when list is loaded), otherwise fallback to selected ids.
       final List<int> productIds = _selectedProducts.isNotEmpty
           ? _selectedProducts
               .where((product) => product.id > 0)

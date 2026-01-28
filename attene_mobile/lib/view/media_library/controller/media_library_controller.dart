@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -868,10 +866,6 @@ class MediaLibraryController extends GetxController
     return '';
   }
 
-  /// Return an URL suitable for display from a stored value.
-  /// Stored values may be:
-  /// - full URL (http...) -> returned as is
-  /// - relative path (images/.., gallery/.., etc) -> baseUrl/storage/<path>
   String getDisplayUrlFromStoredValue(String value) {
     final v = value.trim();
     if (v.isEmpty) return '';
@@ -879,10 +873,7 @@ class MediaLibraryController extends GetxController
     return '${ApiHelper.getBaseUrl()}/storage/$v';
   }
 
-  /// Return the value that should be sent to backend when picking a media item.
-  /// If we got a full URL, we try to strip `/storage/` and send the relative path.
   String getMediaApiValue(MediaItem media) {
-    // Prefer relative server path when available
     final raw = (media.path.isNotEmpty) ? media.path : (media.fileUrl ?? '');
     final v = raw.trim();
     if (v.isEmpty) return '';
@@ -894,7 +885,6 @@ class MediaLibraryController extends GetxController
     }
     return v;
   }
-
 
   void _handleTabChange() {
     if (!tabController.indexIsChanging) {

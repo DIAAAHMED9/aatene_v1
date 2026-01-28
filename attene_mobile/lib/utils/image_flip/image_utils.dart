@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-
-
 class ImageUtils {
   static Widget flipHorizontal(
     String imagePath, {

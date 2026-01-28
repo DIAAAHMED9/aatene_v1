@@ -1,4 +1,3 @@
-/// Model يمثل بيانات الشخص / الخدمة
 class ServiceModel {
   final String name;
   final double rating;

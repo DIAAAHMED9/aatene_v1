@@ -19,7 +19,6 @@ class FilterBottomSheet extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                /// Indicator
                 Container(
                   width: 48,
                   height: 5,
@@ -31,7 +30,6 @@ class FilterBottomSheet extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                /// Top Tabs
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -69,7 +67,6 @@ class FilterBottomSheet extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                /// Filters List (مع أيقونات)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -118,7 +115,6 @@ class FilterBottomSheet extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                /// Switches
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -186,7 +182,6 @@ class FilterBottomSheet extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                /// Price Range
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -235,7 +230,6 @@ class FilterBottomSheet extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                /// Apply Button
                 AateneButton(
                   onTap: () {
                     Get.back();
@@ -254,7 +248,6 @@ class FilterBottomSheet extends StatelessWidget {
   }
 }
 
-/// ================= CONTROLLER (داخل نفس الملف) =================
 class _FilterController extends GetxController {
   int selectedTab = 3;
 
@@ -295,7 +288,6 @@ class _FilterController extends GetxController {
   }
 }
 
-/// ================= MODEL =================
 class _FilterItem {
   final String title;
   final IconData icon;

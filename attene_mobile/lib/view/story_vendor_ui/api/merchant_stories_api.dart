@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import '../../../api/core/api_helper.dart';
 
-/// Merchant Stories API wrapper.
-///
-/// Uses [ApiHelper] so headers (token/storeId/lang) are added automatically.
 class MerchantStoriesApi {
   static const String _base = '/merchants/stories';
 
@@ -24,7 +21,6 @@ class MerchantStoriesApi {
           .toList();
     }
 
-    // Some backends wrap list in {data:{data:[...]}}
     if (res is Map && res['data'] is Map) {
       final inner = res['data'];
       if (inner is Map && inner['data'] is List) {
@@ -53,10 +49,6 @@ class MerchantStoriesApi {
     return null;
   }
 
-  /// Create a new story.
-  ///
-  /// Backend expects:
-  /// {"image": "images/...png", "text": "...", "color": "5246456"}
   static Future<MerchantStoryModel?> create({
     String? image,
     String? text,
@@ -84,9 +76,9 @@ class MerchantStoriesApi {
 
 class MerchantStoryModel {
   final int id;
-  final String? imageUrl; // full URL from API (GET)
+  final String? imageUrl;
   final String? text;
-  final int? color; // int color value, optional
+  final int? color;
   final String? createdAt;
 
   MerchantStoryModel({

@@ -11,7 +11,6 @@ class ImagePickerStoryScreen extends StatefulWidget {
 }
 
 class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
-  /// ✅ اختيار واحد فقط: نخزن index واحد (أو null إذا ما في اختيار)
   int? selectedIndex;
 
   final colors = List<Color>.generate(
@@ -46,7 +45,6 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
               ),
               const SizedBox(height: 10),
 
-              /// ✅ معاينة كبيرة بالأعلى تظهر فقط عند الاختيار
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: AnimatedSize(
@@ -72,7 +70,6 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
 
               if (hasSelection) const SizedBox(height: 10),
 
-              /// ✅ الجريد: لا تختفي عند الاختيار
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -89,11 +86,9 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
                         setState(() {
-                          /// ✅ ضغط على نفس الصورة => إلغاء التحديد
                           if (isSelected) {
                             selectedIndex = null;
                           } else {
-                            /// ✅ اختيار صورة واحدة فقط
                             selectedIndex = i;
                           }
                         });
@@ -105,7 +100,6 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                             child: Container(color: colors[i]),
                           ),
 
-                          /// ✅ إطار واضح للصورة المختارة
                           if (isSelected)
                             Positioned.fill(
                               child: Container(
@@ -116,7 +110,6 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                               ),
                             ),
 
-                          /// ✅ علامة التحديد
                           Positioned(
                             top: 10,
                             left: 10,
@@ -152,17 +145,14 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                       ),
                     ),
 
-                    /// ✅ تعطيل النشر إذا لم يتم اختيار صورة
                     onPressed: hasSelection
                         ? () async {
-                            // TODO: replace with real selected image path from your media library.
                             const demoImagePath = 'images/QzuU8cxzP0pgRFit46Dh5LifmCrxSCm8eg49f10v.png';
 
                             try {
                               await MerchantStoriesApi.create(
                                 image: demoImagePath,
                                 text: null,
-                                // optional: you can set color as int string or int. We'll keep null.
                                 color: null,
                               );
                               if (context.mounted) {

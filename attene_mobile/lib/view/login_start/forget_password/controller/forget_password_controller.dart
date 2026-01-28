@@ -1,5 +1,3 @@
-
-
 import '../../../../general_index.dart';
 
 class ForgetPasswordController extends GetxController {
@@ -14,14 +12,24 @@ class ForgetPasswordController extends GetxController {
 
   bool validateFields() {
     bool isValid = true;
-    if (email.value.isEmpty) {
-      emailError.value = 'يرجى إدخال البريد الإلكتروني';
+    final v = email.value.trim();
+    if (v.isEmpty) {
+      emailError.value = 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف';
       isValid = false;
-    } else if (!isValidEmail(email.value)) {
-      emailError.value = 'يرجى إدخال بريد إلكتروني صحيح';
-      isValid = false;
+    } else if (v.contains('@')) {
+      if (!isValidEmail(v)) {
+        emailError.value = 'يرجى إدخال بريد إلكتروني صحيح';
+        isValid = false;
+      } else {
+        emailError.value = '';
+      }
     } else {
-      emailError.value = '';
+      if (v.length < 6) {
+        emailError.value = 'يرجى إدخال رقم هاتف صحيح';
+        isValid = false;
+      } else {
+        emailError.value = '';
+      }
     }
     return isValid;
   }
@@ -41,9 +49,8 @@ class ForgetPasswordController extends GetxController {
     try {
       print('📧 إرسال طلب إعادة تعيين كلمة المرور لـ: ${email.value}');
 
-      final response = await ApiHelper.post(
-        path: '/auth/password/send_code',
-        body: {'identifier': email.value.trim()},
+      final response = await ApiHelper.sendPasswordResetCode(
+        login: email.value.trim(),
         withLoading: false,
       );
 
@@ -51,6 +58,12 @@ class ForgetPasswordController extends GetxController {
 
       if (response != null &&
           (response['status'] == true || response['success'] == true)) {
+        final dynamic data = response['data'];
+        final String? sessionId =
+            (data is Map && data['id'] != null) ? data['id'].toString() :
+            (response['id'] != null) ? response['id'].toString() :
+            (response['reset_id'] != null) ? response['reset_id'].toString() : null;
+
         Get.snackbar(
           'نجاح',
           response['message'] ?? 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
@@ -63,9 +76,9 @@ class ForgetPasswordController extends GetxController {
         Get.toNamed(
           '/verification',
           arguments: {
-            'email': email.value,
-            'isForgetPassword': true,
-            'verificationType': 'password_reset',
+            'login': email.value.trim(),
+            'flow': 'reset_password',
+            'sessionId': sessionId,
           },
         );
       } else {
@@ -90,18 +103,18 @@ class ForgetPasswordController extends GetxController {
 
       if (response['errors'] != null) {
         final errors = response['errors'];
-        if (errors['identifier'] != null) {
-          if (errors['identifier'] is List) {
-            emailError.value = errors['identifier'][0];
-          } else {
-            emailError.value = errors['identifier'].toString();
-          }
+        if (errors['login'] != null) {
+          emailError.value = (errors['login'] is List)
+              ? errors['login'][0]
+              : errors['login'].toString();
         } else if (errors['email'] != null) {
-          if (errors['email'] is List) {
-            emailError.value = errors['email'][0];
-          } else {
-            emailError.value = errors['email'].toString();
-          }
+          emailError.value = (errors['email'] is List)
+              ? errors['email'][0]
+              : errors['email'].toString();
+        } else if (errors['phone'] != null) {
+          emailError.value = (errors['phone'] is List)
+              ? errors['phone'][0]
+              : errors['phone'].toString();
         }
       }
     }

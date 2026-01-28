@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class KeywordController extends GetxController {
@@ -91,7 +90,6 @@ class KeywordController extends GetxController {
     );
   }
 
-  /// Public helper for edit-mode: re-sync selected keywords from ProductCentralController.
   void syncFromProductController() {
     _syncWithProductController();
     update();

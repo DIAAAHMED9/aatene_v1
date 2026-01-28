@@ -12,7 +12,6 @@ class OnboardingPage extends StatelessWidget {
       children: [
         Stack(
           children: [
-            /// النصوص
             Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.60),
@@ -36,9 +35,6 @@ class OnboardingPage extends StatelessWidget {
               ],
             ),
 
-            /// صورة
-
-            /// GIF فوق الجزء الأزرق
             Positioned(
               top: 80,
               left: 0,
@@ -47,7 +43,7 @@ class OnboardingPage extends StatelessWidget {
                 data.gif,
                 height: 170,
                 fit: BoxFit.contain,
-                gaplessPlayback: true, // يمنع الوميض عند إعادة البناء
+                gaplessPlayback: true,
               ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
             ),
           ],

@@ -46,19 +46,15 @@ class _FaqPageState extends State<FaqPage> {
           children: [
             const SizedBox(height: 16),
 
-            /// 🔹 Description
             Text(
               "إجابات وافية على أكثر الأسئلة شيوعًا لضمان تجربة سلسة وواضحة.",
               style: getMedium(color: AppColors.neutral400),
             ),
 
-            /// 🔹 Tabs
             _buildTabs(),
 
-            /// 🔹 Search
             _searchField(),
 
-            /// 🔹 PageView
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -160,8 +156,6 @@ class _FaqPageState extends State<FaqPage> {
   }
 }
 
-/// ================= FAQ CONTENT =================
-
 class FaqContent extends StatelessWidget {
   final UserType userType;
 
@@ -185,8 +179,6 @@ class FaqContent extends StatelessWidget {
     );
   }
 }
-
-/// ================= FAQ ITEM =================
 
 class FaqItem extends StatefulWidget {
   final String question;
@@ -247,8 +239,6 @@ class _FaqItemState extends State<FaqItem> with SingleTickerProviderStateMixin {
     );
   }
 }
-
-/// ================= DATA =================
 
 final merchantFaq = [
   {

@@ -6,7 +6,6 @@ class AppDialogs {
 
   static bool _isLoadingOpen = false;
 
-  /// Loading dialog آمن (يضمن وجود Material) + يمنع التكرار
   static void showLoading({String? message}) {
     if (_isLoadingOpen) return;
     _isLoadingOpen = true;
@@ -50,7 +49,6 @@ class AppDialogs {
     });
   }
 
-  /// إغلاق آمن
   static void hideLoading() {
     if (!_isLoadingOpen) return;
     _isLoadingOpen = false;

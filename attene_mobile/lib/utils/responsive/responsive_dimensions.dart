@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'responsive_service.dart';
@@ -8,15 +7,6 @@ class ResponsiveDimensions {
 
   static double w(double figmaWidth) => _responsive.getWidth(figmaWidth);
 
-  /// Backward compatible API:
-  ///
-  /// Older screens sometimes call:
-  ///   ResponsiveDimensions.responsiveWidth(mobile, tablet, laptop)
-  /// while newer code calls:
-  ///   ResponsiveDimensions.w(figmaWidth)
-  ///
-  /// To avoid import conflicts and refactors across the codebase, we support
-  /// both call styles via optional parameters.
   static double responsiveWidth(double mobile, [double? tablet, double? laptop]) {
     final value = isLaptop
         ? (laptop ?? tablet ?? mobile)
@@ -53,10 +43,6 @@ class ResponsiveDimensions {
 
   static EdgeInsets p(double padding) => _responsive.getPadding(padding);
 
-  /// Backward compatible padding helper used across a few screens.
-  ///
-  /// Example:
-  ///   ResponsiveDimensions.responsivePadding(mobile: 12, tablet: 16, laptop: 20)
   static EdgeInsets responsivePadding({
     required double mobile,
     double? tablet,

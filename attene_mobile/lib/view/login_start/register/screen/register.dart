@@ -1,7 +1,6 @@
 import '../../../../general_index.dart';
 import '../../../../utils/responsive/index.dart';
 
-
 class Register extends StatelessWidget {
   final RegisterController controller = Get.put(RegisterController());
 

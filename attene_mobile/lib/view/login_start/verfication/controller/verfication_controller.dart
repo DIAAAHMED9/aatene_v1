@@ -2,147 +2,155 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
+import '../../../../general_index.dart';
 
 class VerificationController extends GetxController {
-  var codes = List<String>.filled(5, '').obs;
-  var isLoading = false.obs;
-  var errorMessage = RxString('');
-  var isVerified = false.obs;
-  var canResend = false.obs;
-  var resendCountdown = 60.obs;
-  List<FocusNode> focusNodes = List.generate(5, (index) => FocusNode());
+  final int otpLength = 4;
+
+  late final String sessionId;
+
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+
+  final RxInt resendCountdown = 0.obs;
+  final RxBool canResend = true.obs;
+
+  late final List<TextEditingController> textControllers;
+  late final List<FocusNode> focusNodes;
+
+  Timer? _timer;
 
   @override
   void onInit() {
     super.onInit();
-    startCountdown();
-  }
 
-  void startCountdown() {
-    canResend.value = false;
-    resendCountdown.value = 60;
-  }
-
-  void updateCode(int index, String value) {
-    if (value.length <= 1) {
-      codes[index] = value;
-      errorMessage.value = '';
-      if (value.isNotEmpty && index < 4) {
-        Future.delayed(Duration(milliseconds: 50), () {
-          focusNodes[index + 1].requestFocus();
-        });
-      }
-      if (value.isEmpty && index > 0) {
-        Future.delayed(Duration(milliseconds: 50), () {
-          focusNodes[index - 1].requestFocus();
-        });
-      }
-      if (isAllFieldsFilled()) {
-        focusNodes[index].unfocus();
-        verifyCode();
-      }
+    final args = Get.arguments;
+    String? id;
+    if (args is String) {
+      id = args;
+    } else if (args is Map) {
+      final m = Map<String, dynamic>.from(args as Map);
+      id = (m['id'] ?? m['sessionId'] ?? m['otp_id'] ?? m['otpId'])?.toString();
     }
-  }
+    sessionId = (id ?? '').trim();
 
-  bool isAllFieldsFilled() {
-    return codes.every((code) => code.isNotEmpty);
-  }
+    textControllers = List.generate(otpLength, (_) => TextEditingController());
+    focusNodes = List.generate(otpLength, (_) => FocusNode());
 
-  String getFullCode() {
-    return codes.join();
-  }
+    ever<int>(resendCountdown, (v) => canResend.value = v <= 0);
 
-  bool validateFields() {
-    if (!isAllFieldsFilled()) {
-      errorMessage.value = 'يرجى إدخال جميع الأرقام';
-      for (int i = 0; i < codes.length; i++) {
-        if (codes[i].isEmpty) {
-          focusNodes[i].requestFocus();
-          break;
-        }
-      }
-      return false;
-    }
-    errorMessage.value = '';
-    return true;
-  }
-
-  Future<void> verifyCode() async {
-    if (!validateFields()) {
-      return;
-    }
-    isLoading.value = true;
-    try {
-      await Future.delayed(Duration(seconds: 2));
-      String enteredCode = getFullCode();
-      if (enteredCode == "12345") {
-        isVerified.value = true;
-        Get.snackbar(
-          'نجاح',
-          'تم التحقق بنجاح',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        Get.offAllNamed('/set_new_password');
-      } else {
-        errorMessage.value = 'رمز التحقق غير صحيح';
-        resetFields();
-        focusNodes[0].requestFocus();
-      }
-    } catch (e) {
-      errorMessage.value = 'حدث خطأ أثناء التحقق';
-      resetFields();
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  void resetFields() {
-    for (int i = 0; i < codes.length; i++) {
-      codes[i] = '';
-    }
-  }
-
-  Future<void> resendCode() async {
-    isLoading.value = true;
-    try {
-      await Future.delayed(Duration(seconds: 1));
-      resetFields();
-      focusNodes[0].requestFocus();
-      errorMessage.value = '';
-      startCountdown();
-      Get.snackbar(
-        'تم الإرسال',
-        'تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني',
-        backgroundColor: Colors.blue,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'فشل إعادة إرسال الرمز',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  void goBack() {
-    Get.back();
+    startResendCountdown(seconds: 60);
   }
 
   @override
   void onClose() {
-    for (var node in focusNodes) {
-      node.dispose();
+    _timer?.cancel();
+    for (final c in textControllers) {
+      c.dispose();
     }
-    resetFields();
-    errorMessage.value = '';
+    for (final n in focusNodes) {
+      n.dispose();
+    }
     super.onClose();
+  }
+
+  void setDigit(int index, String value) {
+    if (index < 0 || index >= otpLength) return;
+
+    errorMessage.value = '';
+
+    final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (cleaned.length > 1) {
+      _applyPaste(index, cleaned);
+      return;
+    }
+
+    final v = cleaned;
+    textControllers[index].text = v;
+  }
+
+  void _applyPaste(int startIndex, String digits) {
+    var i = startIndex;
+    for (int k = 0; k < digits.length && i < otpLength; k++, i++) {
+      textControllers[i].text = digits[k];
+    }
+  }
+
+  String joinedCode() => textControllers.map((c) => c.text.trim()).join();
+
+  bool isCodeComplete() =>
+      joinedCode().length == otpLength &&
+      textControllers.every((c) => c.text.trim().isNotEmpty);
+
+Future<void> verifyCode() async {
+  final code = joinedCode();
+
+  if (!isCodeComplete()) {
+    errorMessage.value = 'يرجى إدخال رمز التحقق بالكامل';
+    return;
+  }
+  if (sessionId.isEmpty) {
+    errorMessage.value = 'معرّف الجلسة غير موجود. أعد طلب الرمز.';
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    Get.offAllNamed(
+      '/ResetPassword',
+      arguments: {'id': sessionId, 'code': code},
+    );
+  } catch (e) {
+    errorMessage.value = e.toString();
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+  Future<void> resendCode() async => resend();
+
+  Future<void> resend() async {
+    if (!canResend.value) return;
+
+    if (sessionId.isEmpty) {
+      errorMessage.value = 'معرّف الجلسة غير موجود. أعد طلب الرمز.';
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      for (final c in textControllers) {
+        c.clear();
+      }
+
+      startResendCountdown(seconds: 60);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void startResendCountdown({required int seconds}) {
+    _timer?.cancel();
+    resendCountdown.value = seconds;
+    canResend.value = seconds <= 0;
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      final next = resendCountdown.value - 1;
+      resendCountdown.value = next;
+      if (next <= 0) {
+        resendCountdown.value = 0;
+        canResend.value = true;
+        t.cancel();
+      }
+    });
   }
 }

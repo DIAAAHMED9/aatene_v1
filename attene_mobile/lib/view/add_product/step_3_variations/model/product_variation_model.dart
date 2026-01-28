@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-
 class ProductVariation {
   final String id;
   final RxMap<String, String> attributes;

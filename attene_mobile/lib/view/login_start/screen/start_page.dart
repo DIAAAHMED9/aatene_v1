@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utils/responsive/index.dart';
 
@@ -9,10 +7,8 @@ class StartLogin extends StatelessWidget {
   Future<void> _continueAsGuest() async {
     final storage = GetStorage();
 
-    // Enable guest mode
     await storage.write('is_guest', true);
 
-    // Clear any previous authenticated session to avoid mixed states
     await storage.remove('token');
     await storage.remove('user_data');
     await storage.remove('store_id');
@@ -76,7 +72,6 @@ class StartLogin extends StatelessWidget {
                     buttonText: isRTL ? 'متابعة كزائر' : 'Continue as guest',
                     onTap: () {
                       _continueAsGuest().then((_) {
-                        // Go directly to the main app in guest mode
                         Get.offAllNamed('/mainScreen');
                       });
                     },

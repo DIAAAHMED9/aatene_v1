@@ -142,7 +142,6 @@ class AateneDrawer extends StatelessWidget {
                 },
               ),
               DrawerMenuItem(
-                //chat-question
                 icon: SvgPicture.asset(
                   'assets/images/svg_images/chat-question.svg',
                   semanticsLabel: 'My SVG Image',

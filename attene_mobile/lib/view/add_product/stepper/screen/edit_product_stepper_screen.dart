@@ -26,10 +26,8 @@ class _EditProductStepperScreenState
     3: false,
   };
 
-  
   @override
   Future<void> initializeControllers() async {
-    // This method is required by StepperScreenBaseState and is called in super.initState().
     try {
       if (!Get.isRegistered<ProductCentralController>()) {
         Get.put<ProductCentralController>(
@@ -76,12 +74,10 @@ class _EditProductStepperScreenState
       print('❌ [EDIT STEPPER] initializeControllers error: $e');
     }
 
-    // Load and prefill after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         final central = Get.find<ProductCentralController>();
 
-        // Start from a clean state (important if user previously opened the add-stepper)
         central.resetAllData();
 
         await UnifiedLoadingScreen.showWithFuture<bool>(
@@ -89,7 +85,6 @@ class _EditProductStepperScreenState
           message: 'جاري تحميل بيانات المنتج...',
         );
 
-        // Sync UI text fields in basic info step (if needed)
         if (Get.isRegistered<AddProductController>()) {
           Get.find<AddProductController>().applyCentralToTextFields();
         }
@@ -101,7 +96,6 @@ class _EditProductStepperScreenState
       }
     });
   }
-
 
   @override
   List<StepperStep> getSteps() {
@@ -183,14 +177,10 @@ class _EditProductStepperScreenState
     }
   }
 
-  // -------------------------
-  // Finish / Submit (EDIT)
-  // -------------------------
   @override
   Future<void> onFinish() async {
     bool allValid = true;
 
-    // Validate all steps before submitting
     for (int i = 0; i < steps.length; i++) {
       if (!validateStep(i)) {
         allValid = false;
@@ -240,11 +230,9 @@ class _EditProductStepperScreenState
       }
 
       if (result['success'] == true) {
-        // Success dialog (same component used in add flow)
         AddProductStepperDialogs.showSuccessDialog(
           result: result,
           onOk: () {
-            // After update, go back to previous screen or main.
             if (Get.previousRoute.isNotEmpty) {
               Get.back();
             } else {

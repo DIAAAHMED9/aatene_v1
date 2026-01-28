@@ -100,7 +100,7 @@ class BlockItem extends StatelessWidget {
 
             child: TextButton(
               onPressed: () {
-                Get.back(); // ⬅️ إغلاق الـ Dialog أولاً
+                Get.back();
                 controller.unblock(tab: tab, index: index);
               },
               child: Text(

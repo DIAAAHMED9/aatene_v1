@@ -1,4 +1,3 @@
-
 import '../../../general_index.dart';
 import '../model/account_model.dart';
 
@@ -8,14 +7,13 @@ class DrawerControllerX extends GetxController {
   final RxList<DrawerAccount> accounts = <DrawerAccount>[].obs;
   final RxInt selectedAccountId = 0.obs;
 
-  // Key must match DataInitializerService
   static const String _storesKey = '_stores_cache_v1';
 
   @override
   void onInit() {
     super.onInit();
     _loadFromCache();
-    refreshStores(); // حاول التحديث من السيرفر
+    refreshStores();
   }
 
   DrawerAccount? get selectedAccount {
@@ -55,7 +53,6 @@ class DrawerControllerX extends GetxController {
       if (activeId > 0) {
         selectedAccountId.value = activeId;
       } else if (accounts.isNotEmpty) {
-        // Default to first store
         selectAccount(accounts.first, initializeData: false);
       }
     } catch (_) {}
@@ -84,7 +81,6 @@ class DrawerControllerX extends GetxController {
         }
       }
     } catch (e) {
-      // ignore refresh failure
     }
   }
 
@@ -93,7 +89,6 @@ class DrawerControllerX extends GetxController {
 
     selectedAccountId.value = account.id;
 
-    // Persist as active store
     final userData = (_storage.read('user_data') is Map)
         ? Map<String, dynamic>.from(_storage.read('user_data'))
         : <String, dynamic>{};

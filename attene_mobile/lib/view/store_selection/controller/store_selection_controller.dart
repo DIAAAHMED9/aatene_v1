@@ -66,14 +66,12 @@ class StoreSelectionController extends GetxController {
     final storeId = int.tryParse(storeIdRaw.toString());
     if (storeId == null) return;
 
-    // حفظ المتجر بالطريقة الصحيحة داخل user_data
     await DataInitializerService.to.updateUserData({
       'store_id': storeId,
       'active_store_id': storeId,
       'store': store,
     });
 
-    // ✅ Phase 2: تهيئة عامة للجميع + تهيئة بيانات المتجر للتاجر
     await DataInitializerService.to.initializeCoreData(silent: true);
     await DataInitializerService.to.initializeStoreData(storeId: storeId, silent: true);
 
@@ -81,7 +79,6 @@ class StoreSelectionController extends GetxController {
   }
 
   Future<void> resetStoreSelection() async {
-    // زر مؤقت: إزالة المتجر الحالي ثم الذهاب للاختيار
     await DataInitializerService.to.updateUserData({
       'store_id': null,
       'active_store_id': null,

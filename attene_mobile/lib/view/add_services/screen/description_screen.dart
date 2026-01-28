@@ -1309,8 +1309,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     Get.defaultDialog(
       title: 'حذف السؤال',
       middleText: 'هل أنت متأكد من حذف هذا السؤال؟',
-      // textConfirm: '',
-      // textCancel: '',
       actions: [
         AateneButton(
           onTap: () {
@@ -1339,19 +1337,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
         ),
       ],
 
-      // confirmTextColor: Colors.white,
-      // onConfirm: () {
-      //   controller.removeFAQ(id);
-      //   Get.back();
-      //
-      //   Get.snackbar(
-      //     'نجاح',
-      //     'تم حذف السؤال بنجاح',
-      //     backgroundColor: Colors.green,
-      //     colorText: Colors.white,
-      //   );
-      // },
-      // onCancel: () => Get.back(),
     );
   }
 }

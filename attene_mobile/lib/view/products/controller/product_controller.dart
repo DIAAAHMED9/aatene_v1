@@ -872,9 +872,6 @@ class ProductController extends GetxController
 
   bool get isTabControllerValid => isTabControllerReady;
 
-  /// Notifies listeners that products were updated.
-  ///
-  /// Used by screens that refresh product data and need UI updates.
   void notifyProductsUpdated() {
     update();
   }

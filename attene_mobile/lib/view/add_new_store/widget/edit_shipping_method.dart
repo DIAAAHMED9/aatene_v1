@@ -39,12 +39,6 @@ class EditShippingMethod extends StatelessWidget {
                 hintText: "اكتب اسم الشركة هنا",
                 textInputAction: TextInputAction.next, textInputType: TextInputType.name,
               ),
-              // Text("شركة الشحن"),
-              // TextFiledAatene(
-              //   isRTL: isRTL,
-              //   hintText: "اسم شركة الشحن",
-              //   textInputAction: TextInputAction.next,
-              // ),
               Text("رقم الهاتف"),
               TextFiledAatene(
                 isRTL: isRTL,

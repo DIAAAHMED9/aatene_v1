@@ -116,13 +116,11 @@ class VendorCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // الجزء العلوي: معلومات المتجر
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
                   spacing: 5,
                   children: [
-                    // شعار المتجر
                     CircleAvatar(
                       radius: 25,
                       backgroundColor: Colors.black,
@@ -136,7 +134,6 @@ class VendorCard extends StatelessWidget {
                       ),
                     ),
 
-                    // تفاصيل المتجر
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -192,7 +189,6 @@ class VendorCard extends StatelessWidget {
                       ],
                     ),
                     const Spacer(),
-                    // زر المتابعة
                     ElevatedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.person_add_alt_1, size: 15),
@@ -215,7 +211,6 @@ class VendorCard extends StatelessWidget {
                 ),
               ),
 
-              // الجزء السفلي: معرض الصور
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(28),
@@ -225,7 +220,6 @@ class VendorCard extends StatelessWidget {
                   height: 120,
                   child: Row(
                     children: [
-                      // الصورة الأولى
                       Expanded(
                         child: Image.network(
                           productImages[1],
@@ -233,14 +227,12 @@ class VendorCard extends StatelessWidget {
                         ),
                       ),
 
-                      // الصورة الثانية
                       Expanded(
                         child: Image.network(
                           productImages[2],
                           fit: BoxFit.cover,
                         ),
                       ),
-                      // الصورة الثالثة
                       Expanded(
                         child: Stack(
                           fit: StackFit.expand,
@@ -278,13 +270,11 @@ class VendorCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // الجزء العلوي: معلومات المتجر
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
                   spacing: 5,
                   children: [
-                    // شعار المتجر
                     CircleAvatar(
                       radius: 25,
                       backgroundColor: Colors.black,
@@ -298,7 +288,6 @@ class VendorCard extends StatelessWidget {
                       ),
                     ),
 
-                    // تفاصيل المتجر
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -354,7 +343,6 @@ class VendorCard extends StatelessWidget {
                       ],
                     ),
                     const Spacer(),
-                    // زر المتابعة
                     ElevatedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.person_add_alt_1, size: 15),
@@ -377,7 +365,6 @@ class VendorCard extends StatelessWidget {
                 ),
               ),
 
-              // الجزء السفلي: معرض الصور
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(28),
@@ -387,7 +374,6 @@ class VendorCard extends StatelessWidget {
                   height: 120,
                   child: Row(
                     children: [
-                      // الصورة الأولى
                       Expanded(
                         child: Image.network(
                           productImages[1],
@@ -395,14 +381,12 @@ class VendorCard extends StatelessWidget {
                         ),
                       ),
 
-                      // الصورة الثانية
                       Expanded(
                         child: Image.network(
                           productImages[2],
                           fit: BoxFit.cover,
                         ),
                       ),
-                      // الصورة الثالثة
                       Expanded(
                         child: Stack(
                           fit: StackFit.expand,

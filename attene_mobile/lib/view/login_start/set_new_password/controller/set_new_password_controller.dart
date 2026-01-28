@@ -1,159 +1,136 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-
+import '../../../../general_index.dart';
 
 class SetNewPasswordController extends GetxController {
-  var email = ''.obs;
-  var name = ''.obs;
-  var password = ''.obs;
-  var confirmPassword = ''.obs;
-  var phone = ''.obs;
-  var isLoading = false.obs;
-  var obscurePassword = true.obs;
-  var obscureConfirmPassword = true.obs;
-  var emailError = RxString('');
-  var nameError = RxString('');
-  var passwordError = RxString('');
-  var confirmPasswordError = RxString('');
-  var phoneError = RxString('');
+  final RxString password = ''.obs;
+  final RxString confirmPassword = ''.obs;
 
-  void updateEmail(String value) {
-    email.value = value;
-    emailError.value = '';
-  }
+  final RxString passwordError = ''.obs;
+  final RxString confirmPasswordError = ''.obs;
 
-  void updateName(String value) {
-    name.value = value;
-    nameError.value = '';
-  }
+  final RxBool isLoading = false.obs;
 
-  void updatePhone(String value) {
-    phone.value = value;
-    phoneError.value = '';
-  }
+  final RxBool obscurePassword = true.obs;
+  final RxBool obscureConfirmPassword = true.obs;
+
+  void togglePasswordVisibility() =>
+      obscurePassword.value = !obscurePassword.value;
+
+  void toggleConfirmPasswordVisibility() =>
+      obscureConfirmPassword.value = !obscureConfirmPassword.value;
 
   void updatePassword(String value) {
     password.value = value;
-    passwordError.value = '';
-    if (confirmPassword.value.isNotEmpty) {
-      confirmPasswordError.value = confirmPassword.value == value
-          ? ''
-          : 'كلمة المرور غير متطابقة';
-    }
+    if (passwordError.value.isNotEmpty) passwordError.value = '';
   }
 
   void updateConfirmPassword(String value) {
     confirmPassword.value = value;
-    confirmPasswordError.value = value == password.value
-        ? ''
-        : 'كلمة المرور غير متطابقة';
+    if (confirmPasswordError.value.isNotEmpty) confirmPasswordError.value = '';
   }
 
-  void togglePasswordVisibility() {
-    obscurePassword.value = !obscurePassword.value;
-  }
+  String _sessionId = '';
+  String _code = '';
 
-  void toggleConfirmPasswordVisibility() {
-    obscureConfirmPassword.value = !obscureConfirmPassword.value;
+  @override
+  void onInit() {
+    super.onInit();
+    final args = Get.arguments;
+
+    if (args is Map) {
+      _sessionId = (args['sessionId'] ?? args['id'] ?? '').toString().trim();
+      _code = (args['code'] ?? args['otp'] ?? '').toString().trim();
+    }
   }
 
   bool validateFields() {
     bool isValid = true;
-    if (name.value.isEmpty) {
-      nameError.value = 'يرجى إدخال الاسم الكامل';
-      isValid = false;
-    } else if (name.value.length < 2) {
-      nameError.value = 'الاسم يجب أن يكون على الأقل حرفين';
-      isValid = false;
-    } else {
-      nameError.value = '';
-    }
-    if (email.value.isEmpty) {
-      emailError.value = 'يرجى إدخال البريد الإلكتروني';
-      isValid = false;
-    } else if (!isValidEmail(email.value)) {
-      emailError.value = 'يرجى إدخال بريد إلكتروني صحيح';
-      isValid = false;
-    } else {
-      emailError.value = '';
-    }
-    if (phone.value.isEmpty) {
-      phoneError.value = 'يرجى إدخال رقم الجوال';
-      isValid = false;
-    } else if (!isValidPhoneNumber(phone.value)) {
-      phoneError.value = 'يرجى إدخال رقم جوال صحيح (10-15 رقم)';
-      isValid = false;
-    } else {
-      phoneError.value = '';
-    }
-    if (password.value.isEmpty) {
+
+    final p = password.value.trim();
+    final pc = confirmPassword.value.trim();
+
+    if (p.isEmpty) {
       passwordError.value = 'يرجى إدخال كلمة المرور';
       isValid = false;
-    } else if (password.value.length < 6) {
-      passwordError.value = 'كلمة المرور يجب أن تكون على الأقل 6 أحرف';
+    } else if (p.length < 6) {
+      passwordError.value = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
       isValid = false;
     } else {
       passwordError.value = '';
     }
-    if (confirmPassword.value.isEmpty) {
+
+    if (pc.isEmpty) {
       confirmPasswordError.value = 'يرجى تأكيد كلمة المرور';
       isValid = false;
-    } else if (confirmPassword.value != password.value) {
-      confirmPasswordError.value = 'كلمة المرور غير متطابقة';
+    } else if (pc != p) {
+      confirmPasswordError.value = 'كلمتا المرور غير متطابقتين';
       isValid = false;
     } else {
       confirmPasswordError.value = '';
     }
+
+    if (_sessionId.isEmpty || _code.isEmpty) {
+      Get.snackbar(
+        'خطأ',
+        'بيانات التحقق غير مكتملة، أعد طلب كود جديد',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      isValid = false;
+    }
+
     return isValid;
   }
 
-  bool isValidEmail(String email) {
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegex.hasMatch(email);
-  }
+  Future<void> submitNewPassword() async {
+    if (!validateFields()) return;
 
-  bool isValidPhoneNumber(String phone) {
-    final phoneRegex = RegExp(r'^[0-9]{10,15}$');
-    return phoneRegex.hasMatch(phone);
-  }
+    final p = password.value.trim();
+    final pc = confirmPassword.value.trim();
 
-  Future<void> register() async {
-    if (!validateFields()) {
-      return;
-    }
     isLoading.value = true;
     try {
-      await Future.delayed(Duration(seconds: 2));
-      Get.offAllNamed('/mainScreen');
+      final response = await ApiHelper.verifyPasswordResetCode(
+        id: _sessionId,
+        code: _code,
+        newPassword: p,
+        passwordConfirmation: pc,
+        withLoading: true,
+        shouldShowMessage: true,
+      );
+
+      final ok = (response is Map) && (response['status'] == true);
+
+      if (ok) {
+        Get.snackbar(
+          'تم',
+          (response['message'] ?? 'تم تحديث كلمة المرور بنجاح').toString(),
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        Get.offAllNamed('/login');
+        return;
+      }
+
+      final msg = (response is Map && response['message'] != null)
+          ? response['message'].toString()
+          : 'فشل تحديث كلمة المرور';
+
+      Get.snackbar(
+        'خطأ',
+        msg,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.snackbar(
         'خطأ',
-        'فشل إنشاء الحساب. يرجى التحقق من البيانات والمحاولة مرة أخرى.',
+        'حدث خطأ غير متوقع: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     } finally {
       isLoading.value = false;
     }
-  }
-
-  void goToLogin() {
-    Get.toNamed('/login');
-  }
-
-  @override
-  void onClose() {
-    email.value = '';
-    name.value = '';
-    phone.value = '';
-    password.value = '';
-    confirmPassword.value = '';
-    emailError.value = '';
-    nameError.value = '';
-    phoneError.value = '';
-    passwordError.value = '';
-    confirmPasswordError.value = '';
-    super.onClose();
   }
 }

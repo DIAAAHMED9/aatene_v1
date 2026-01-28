@@ -1,30 +1,23 @@
-
-
 import 'dart:async';
 import '../../../general_index.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../utils/platform/dio_multipart.dart';
 
-
-/// Tabs for the chat list.
 enum ChatTab { all, unread, active, notActive, interested,groub }
 
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
 
-  // Identity (best effort) to know "me" among participants
-  String? myOwnerType; // 'user' | 'store'
-  String? myOwnerId; // string id
+  String? myOwnerType;
+  String? myOwnerId;
 
-  // UI state
   final Rx<ChatTab> currentTab = ChatTab.all.obs;
   final RxString searchQuery = ''.obs;
 
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMessages = false.obs;
 
-  // Data
   final RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
@@ -33,21 +26,18 @@ class ChatController extends GetxController {
 
   final RxList<Map<String, dynamic>> previousParticipants = <Map<String, dynamic>>[].obs;
 
-  // Current conversation
   final Rxn<ChatConversation> currentConversation = Rxn<ChatConversation>();
   final RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
 
   Timer? _pollTimer;
 
-  // ---- Block cache (to prevent starting chats with blocked users) ----
   final Set<String> _blockedKeySet = <String>{};
-  final RxInt blockedVersion = 0.obs; // bump to rebuild any dependent widgets
+  final RxInt blockedVersion = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
     _resolveIdentity();
-    // In guest mode (no auth token), do not call protected chat endpoints.
     if (!ApiHelper.hasAuthToken) {
       print('ℹ️ [CHAT] Guest mode: skipping chat initialization');
       return;
@@ -70,7 +60,6 @@ class ChatController extends GetxController {
     ]);
   }
 
-  /// Loads blocked entities from API and keeps a local set for fast checks.
   Future<void> refreshBlockedCache({bool silent = false}) async {
     try {
       final res = await ApiHelper.get(
@@ -90,7 +79,6 @@ class ChatController extends GetxController {
           final id = (pd['id'] ?? '').toString();
           if (t.isEmpty || id.isEmpty) continue;
 
-          // ignore self
           if (myOwnerType != null && myOwnerId != null && t == myOwnerType && id == myOwnerId) continue;
 
           next.add('$t:$id');
@@ -103,7 +91,6 @@ class ChatController extends GetxController {
       blockedVersion.value++;
     } catch (e) {
       if (!silent) {
-        // ignore: avoid_print
         print('❌ refreshBlockedCache: $e');
       }
     }
@@ -113,7 +100,6 @@ class ChatController extends GetxController {
     return _blockedKeySet.contains('${type.toLowerCase()}:$id');
   }
 
-  /// For direct chats: returns (type,id) of the other participant, if found.
   Map<String, String>? otherSideOfDirect(ChatConversation conv) {
     if ((conv.type ?? '').toLowerCase() != 'direct') return null;
     for (final p in conv.participants) {
@@ -134,7 +120,6 @@ class ChatController extends GetxController {
     return isBlockedEntity(type: other['type']!, id: other['id']!);
   }
 
-  /// Block/unblock API wrappers. Also refreshes Block screen instantly if it's open.
   Future<bool> blockEntity({
     required String blockedType,
     required String blockedId,
@@ -164,7 +149,6 @@ class ChatController extends GetxController {
       }
       return ok;
     } catch (e) {
-      // ignore: avoid_print
       print('❌ blockEntity: $e');
       return false;
     }
@@ -195,7 +179,6 @@ class ChatController extends GetxController {
       }
       return ok;
     } catch (e) {
-      // ignore: avoid_print
       print('❌ unBlockEntity: $e');
       return false;
     }
@@ -223,14 +206,12 @@ class ChatController extends GetxController {
         return;
       }
 
-      // fallback: store_id implies store
       if (ud['store_id'] != null) {
         myOwnerType = 'store';
         myOwnerId = (ud['store_id'] ?? ud['id'])?.toString();
         return;
       }
 
-      // fallback: if API layer uses storeId header, adopt it
       final sid = ApiHelper.getStoreIdOrNull();
       if (sid != null) {
         myOwnerType = 'store';
@@ -238,13 +219,11 @@ class ChatController extends GetxController {
         return;
       }
 
-      // fallback: assume user
       if (ud['id'] != null) {
         myOwnerType = 'user';
         myOwnerId = ud['id']?.toString();
       }
     } catch (_) {
-      // ignore
     }
   }
 
@@ -267,13 +246,11 @@ class ChatController extends GetxController {
     return null;
   }
 
-  /// Refresh list
   Future<void> refreshConversations() async {
     await loadConversations();
     await loadPreviousParticipants();
   }
 
-  /// Load conversations list from API
   Future<void> loadConversations({bool silent = false}) async {
     try {
       if (!silent) isLoading.value = true;
@@ -292,15 +269,12 @@ class ChatController extends GetxController {
               .map((e) => ChatConversation.fromJson(Map<String, dynamic>.from(e)))
               .toList();
 
-          // Keep order (API usually returns newest first). If not, sort by updatedAt.
           allConversations.assignAll(list);
 
-          // unread is: conversation has any participant unread > 0
           unreadConversations.assignAll(
             list.where((c) => c.totalUnread > 0).toList(),
           );
 
-          // interested: optional tab, here just keep direct/group with lastMessage null? (adjust if your API has flag)
           interestedConversations.assignAll(
             list.where((c) => (c.type == 'direct' || c.type == 'group')).toList(),
           );
@@ -311,7 +285,6 @@ groubConversations.assignAll(
         }
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ loadConversations: $e');
     } finally {
       if (!silent) isLoading.value = false;
@@ -364,7 +337,6 @@ groubConversations.assignAll(
     _applyFilters();
   }
 
-  /// Participants list used by "New chat" screen
   Future<void> loadPreviousParticipants() async {
     try {
       final res = await ApiHelper.get(
@@ -381,18 +353,14 @@ groubConversations.assignAll(
         );
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ loadPreviousParticipants: $e');
     }
   }
 
-  /// For old code that calls it
   Future<void> loadUnreadCounts() async {
-    // unread counts already included in conversations response
     await loadConversations();
   }
 
-  /// Opens conversation and starts polling (no sockets)
   Future<void> openConversation(ChatConversation conversation) async {
     currentConversation.value = conversation;
     await loadConversationMessages(conversation.id);
@@ -412,17 +380,14 @@ groubConversations.assignAll(
     _pollTimer = null;
   }
 
-  /// Loads conversation details (fallback to local list)
   Future<ChatConversation?> loadConversationDetails(int conversationId) async {
     final local = _findConversation(conversationId);
     if (local != null) return local;
 
-    // Try refresh then find
     await loadConversations();
     return _findConversation(conversationId);
   }
 
-  /// Loads messages list and sorts ASC by createdAt if possible.
   Future<void> loadConversationMessages(int conversationId, {bool silent = false}) async {
     try {
       if (!silent) isLoadingMessages.value = true;
@@ -451,14 +416,12 @@ groubConversations.assignAll(
         }
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ loadConversationMessages: $e');
     } finally {
       if (!silent) isLoadingMessages.value = false;
     }
   }
 
-  /// Unified sender: sends text only
   Future<ChatMessage?> sendTextMessage({
     required int conversationId,
     required String text,
@@ -466,7 +429,6 @@ groubConversations.assignAll(
     return sendMessage(conversationId: conversationId, body: text);
   }
 
-  /// Unified sender: sends files (images/audio/docs) + optional text
   Future<ChatMessage?> sendFilesMessage({
     required int conversationId,
     required List<XFile> files,
@@ -476,14 +438,13 @@ groubConversations.assignAll(
     return sendMessage(conversationId: conversationId, body: text, filePaths: paths);
   }
 
-  /// Original sender (kept) - uses participant_id as required by your backend.
   Future<ChatMessage?> sendMessage({
     required int conversationId,
     String? body,
     List<String>? filePaths,
     int? productId,
     int? serviceId,
-    int? varationId, // backend: varation_id
+    int? varationId,
   }) async {
     try {
       final conv = _findConversation(conversationId) ?? currentConversation.value;
@@ -491,8 +452,6 @@ groubConversations.assignAll(
         throw 'Conversation not found locally';
       }
 
-      // Identify sender without relying on participants list.
-      // Backend typically expects owner type + owner id (e.g. storeId/userId), not the participant-row id.
       final ownerType = myOwnerType;
       final ownerId = myOwnerId ?? ApiHelper.getStoreIdOrNull();
       if (ownerType == null || ownerId == null) {
@@ -501,7 +460,6 @@ groubConversations.assignAll(
 
       final form = FormData();
 
-      // REQUIRED BY BACKEND
       form.fields.add(MapEntry('conversation_id', conversationId.toString()));
       form.fields.add(MapEntry('participant_type', ownerType));
       form.fields.add(MapEntry('participant_id', ownerId.toString()));
@@ -514,9 +472,6 @@ groubConversations.assignAll(
 
       if (filePaths != null && filePaths.isNotEmpty) {
         for (final p in filePaths) {
-          // NOTE:
-          // - On Mobile/Desktop: attach file bytes from local path.
-          // - On Web: local file paths are not accessible; we skip attachments to keep build stable.
           final mf = await dioMultipartFromLocalPath(p);
           if (mf != null) {
             form.files.add(MapEntry('files[]', mf));
@@ -534,18 +489,15 @@ groubConversations.assignAll(
       if (res is Map && res['status'] == true && res['message'] is Map) {
         final msg = ChatMessage.fromJson(Map<String, dynamic>.from(res['message']));
 
-        // append if open
         if (currentConversation.value?.id == conversationId) {
           currentMessages.add(msg);
         }
 
-        // update conversation if returned
         final convJson = (res['message'] as Map)['conversation'];
         if (convJson is Map) {
           final updated = ChatConversation.fromJson(Map<String, dynamic>.from(convJson));
           _upsertConversation(updated);
         } else {
-          // otherwise, bump conversation to top
           final idx = allConversations.indexWhere((c) => c.id == conversationId);
           if (idx >= 0) {
             final c0 = allConversations.removeAt(idx);
@@ -556,7 +508,6 @@ groubConversations.assignAll(
         return msg;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ sendMessage: $e');
     }
     return null;
@@ -568,7 +519,6 @@ groubConversations.assignAll(
       allConversations.insert(0, conv);
     } else {
       allConversations[idx] = conv;
-      // move to top
       final c0 = allConversations.removeAt(idx);
       allConversations.insert(0, c0);
     }
@@ -587,17 +537,12 @@ groubConversations.assignAll(
     return false;
   }
 
-  // ---- Conversation management (already supported by your backend) ----
-
   Future<ChatConversation?> createConversation({
-    required String type, // direct | group
+    required String type,
     String? name,
     required List<Map<String, dynamic>> participants,
   }) async {
     try {
-      // Prevent starting chats with blocked users/stores.
-      // For direct: if the other side is blocked -> stop.
-      // For group: if any added participant is blocked -> stop.
       for (final p in participants) {
         final t = (p['type'] ?? '').toString();
         final id = (p['id'] ?? '').toString();
@@ -628,7 +573,6 @@ groubConversations.assignAll(
         return conv;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ createConversation: $e');
     }
     return null;
@@ -647,7 +591,6 @@ groubConversations.assignAll(
       );
 
       if (res is Map && res['status'] == true) {
-        // refresh conversations to ensure list + currentConversation are up to date
         await loadConversations(silent: true);
 
         if (currentConversation.value?.id == conversationId) {
@@ -658,7 +601,6 @@ groubConversations.assignAll(
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ updateGroupName: $e');
     }
     return false;
@@ -687,7 +629,6 @@ groubConversations.assignAll(
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ deleteConversation: $e');
     }
     return false;
@@ -717,7 +658,6 @@ groubConversations.assignAll(
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ addParticipant: $e');
     }
     return false;
@@ -739,7 +679,6 @@ groubConversations.assignAll(
         return true;
       }
     } catch (e) {
-      // ignore: avoid_print
       print('❌ removeParticipant: $e');
     }
     return false;

@@ -1,25 +1,9 @@
 import 'package:flutter/material.dart';
 
-
-/// ---------------- ENUMS ----------------
 enum StoreStatus { closed, tempClosed, open }
 
 enum DayStatus { open, tempClosed, closed, inactive }
 
-/// ---------------- APP ----------------
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: StoreStatusPage(status: StoreStatus.open),
-//     );
-//   }
-// }
-
-/// ---------------- PAGE ----------------
 class StoreStatusPage extends StatelessWidget {
   final StoreStatus status;
 
@@ -45,7 +29,6 @@ class StoreStatusPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                /// -------- Image --------
                 Container(
                   width: 150,
                   height: 150,
@@ -61,7 +44,6 @@ class StoreStatusPage extends StatelessWidget {
             
                 const SizedBox(height: 16),
             
-                /// -------- TITLE --------
                 Text(
                   config.title,
                   style: TextStyle(
@@ -73,7 +55,6 @@ class StoreStatusPage extends StatelessWidget {
             
                 const SizedBox(height: 6),
             
-                /// -------- DESCRIPTION --------
                 Text(
                   config.description,
                   textAlign: TextAlign.center,
@@ -82,7 +63,6 @@ class StoreStatusPage extends StatelessWidget {
             
                 const SizedBox(height: 22),
             
-                /// -------- DAYS LIST --------
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(days.length, (index) {
@@ -93,7 +73,6 @@ class StoreStatusPage extends StatelessWidget {
                       spacing: 10,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// -------- INDICATOR --------
             
                         Column(
                           children: [
@@ -118,7 +97,6 @@ class StoreStatusPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
             
-                        /// (TIME + DAY)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Column(
@@ -147,8 +125,6 @@ class StoreStatusPage extends StatelessWidget {
                           ),
                         ),
             
-            
-                        /// -------- STATUS TEXT --------
                         const Spacer(),
                         Padding(
                           padding: const EdgeInsets.only(top: 14),
@@ -169,14 +145,12 @@ class StoreStatusPage extends StatelessWidget {
             ),
           ),
 
-
         ),
       ),
     );
   }
 }
 
-/// ---------------- HELPERS ----------------
 Color _dayStatusColor(DayStatus status) {
   switch (status) {
     case DayStatus.open:
@@ -203,7 +177,6 @@ String _statusText(DayStatus status) {
   }
 }
 
-/// ---------------- CONFIG MODEL ----------------
 class StoreStatusConfig {
   final String title;
   final String description;
@@ -272,7 +245,6 @@ class StoreStatusConfig {
   }
 }
 
-/// ---------------- DATA ----------------
 const days = [
   'السبت',
   'الأحد',

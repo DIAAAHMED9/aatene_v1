@@ -9,7 +9,6 @@ class ManageAccountStore extends StatelessWidget {
 
     return Scaffold(
       body: GetBuilder<ManageAccountStoreController>(
-        // ✅ Defensive init to avoid "Unexpected null value" if bindings order changes.
         init: Get.isRegistered<ManageAccountStoreController>()
             ? Get.find<ManageAccountStoreController>()
             : ManageAccountStoreController(),

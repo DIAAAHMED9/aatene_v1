@@ -8,7 +8,6 @@ class OffersTabPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // كرت عرض يحتوي على صور متعددة قابلة للتمرير
         _buildOfferCardWithScroll(
           title: "عرض الشتاء المميز",
           description: "مجموعة من 5 قطع شتوية مختارة بعناية",
@@ -23,10 +22,9 @@ class OffersTabPage extends StatelessWidget {
         ),
 
         const SizedBox(height: 16),
-        _buildSpecialOfferTimer(), // شريط العداد التنازلي
+        _buildSpecialOfferTimer(),
         const SizedBox(height: 16),
 
-        // كرت عرض آخر
         _buildOfferCardWithScroll(
           title: "باكيج الأناقة",
           description: "3 قمصان قطنية عالية الجودة",
@@ -62,7 +60,6 @@ class OffersTabPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // 1. الجزء الخاص بالصور (التمرير الأفقي)
           SizedBox(
             height: 180,
             child: ListView.builder(
@@ -70,7 +67,7 @@ class OffersTabPage extends StatelessWidget {
               itemCount: images.length,
               itemBuilder: (context, index) {
                 return Container(
-                  width: 300, // عرض الصورة الواحدة داخل التمرير
+                  width: 300,
                   margin: const EdgeInsets.all(8),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
@@ -78,7 +75,6 @@ class OffersTabPage extends StatelessWidget {
                       fit: StackFit.expand,
                       children: [
                         Image.asset(images[index], fit: BoxFit.cover),
-                        // Show number
                         Positioned(
                           bottom: 10,
                           left: 10,
@@ -108,7 +104,6 @@ class OffersTabPage extends StatelessWidget {
             ),
           ),
 
-          // 2. تفاصيل العرض أسفل الصور
           Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
@@ -130,7 +125,6 @@ class OffersTabPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // السعر
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -153,7 +147,6 @@ class OffersTabPage extends StatelessWidget {
                           ),
                       ],
                     ),
-                    // زر إضافة للسلة أو تفاصيل
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4A6982),
@@ -177,7 +170,6 @@ class OffersTabPage extends StatelessWidget {
     );
   }
 
-  // العداد التنازلي
   Widget _buildSpecialOfferTimer() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

@@ -1,8 +1,5 @@
-
-
 import '../../general_index.dart';
 import 'index.dart';
-
 
 class VariationResponsive {
   static bool get isMobile => Get.width < 600;

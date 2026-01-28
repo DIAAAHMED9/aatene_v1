@@ -52,22 +52,6 @@ class GenericTabs extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        // AnimatedAlign(
-        //   duration: const Duration(milliseconds: 300),
-        //   alignment: Alignment(
-        //     -1 + (2 / (tabs.length - 1)) * selectedIndex,
-        //     0,
-        //   ),
-        //   child: Container(
-        //     height: 3,
-        //     width:
-        //     MediaQuery.of(context).size.width / tabs.length - 30,
-        //     decoration: BoxDecoration(
-        //       color: selectedColor,
-        //       borderRadius: BorderRadius.circular(4),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }

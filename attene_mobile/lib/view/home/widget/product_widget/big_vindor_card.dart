@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class StoreCard extends StatelessWidget {
@@ -33,10 +32,8 @@ class StoreCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 1. The Banner Section (الجزء العلوي)
           _buildBannerSection(),
 
-          // 2. The Info Section (الجزء السفلي)
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -55,21 +52,17 @@ class StoreCard extends StatelessWidget {
     );
   }
 
-  // --- Helper Widgets for Clean Code ---
-
   Widget _buildBannerSection() {
     return Stack(
       children: [
-        // الخلفية والصورة
         Container(
           height: 250,
           decoration: const BoxDecoration(
-            color: Color(0xFFFBECE6), // لون الخلفية البيج
+            color: Color(0xFFFBECE6),
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Row(
             children: [
-              // محاكاة النصوص الإنجليزية في التصميم (كصورة أو تصميم)
               Expanded(
                 flex: 4,
                 child: Padding(
@@ -78,9 +71,6 @@ class StoreCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // هذا الجزء محاكاة للنصوص الإنجليزية في الصورة
-                      // في التطبيق الحقيقي يفضل أن تكون الصورة كاملة مصممة مسبقاً
-                      // أو استخدام CustomPaint وتنسيقات معقدة
                       Directionality(
                         textDirection: TextDirection.ltr,
                         child: Column(
@@ -140,7 +130,6 @@ class StoreCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // الصورة
               Expanded(
                 flex: 5,
                 child: ClipRRect(
@@ -159,11 +148,9 @@ class StoreCard extends StatelessWidget {
           ),
         ),
 
-        // شارة "إعلان ممول"
         Positioned(
           bottom: 10,
           right: 10,
-          // لأننا RTL ستظهر في اليمين، عدلها ل left إذا أردتها يساراً
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
@@ -200,7 +187,6 @@ class StoreCard extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             const Icon(Icons.workspace_premium, color: Colors.amber, size: 24),
-            // التاج الذهبي
           ],
         ),
       ],
@@ -250,7 +236,6 @@ class StoreCard extends StatelessWidget {
         onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF3E5F84),
-          // اللون الأزرق الرمادي الغامق
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

@@ -18,7 +18,6 @@ class StoreSelectionScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () {
-            // لأن المتجر إلزامي لتجربة المرحلة الأولى: نرجع لصفحة تسجيل الدخول
             Get.offAllNamed('/login');
           },
         ),

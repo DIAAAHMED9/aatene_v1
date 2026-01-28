@@ -1,8 +1,3 @@
-
-
-
-
-
 import 'dart:convert';
 
 import 'package:image_picker/image_picker.dart';
@@ -14,8 +9,6 @@ import '../../general_index.dart';
 export 'package:get/get.dart' hide FormData, MultipartFile,Response;
 
 class ApiHelper {
-  /// Whether the current logged-in user is a merchant (has stores endpoints).
-  /// Safe to call on web/mobile and does not throw.
   static bool get isMerchantUser {
     try {
       final storage = GetStorage();
@@ -23,7 +16,6 @@ class ApiHelper {
       final Map<String, dynamic> user = (raw is Map)
           ? Map<String, dynamic>.from(raw as Map)
           : <String, dynamic>{};
-      // Common backends: role, type, guard, user_type, is_merchant ...
       final role = (user['role'] ?? user['type'] ?? user['guard'] ?? user['user_type'] ?? '')
           .toString()
           .toLowerCase();
@@ -37,8 +29,6 @@ class ApiHelper {
     }
   }
 
-  /// True when we currently have an auth token stored.
-  /// Used to avoid triggering forced sign-out loops for guest users.
   static bool get hasAuthToken {
     try {
       final storage = GetStorage();
@@ -54,9 +44,6 @@ class ApiHelper {
     }
     }
 
-
-/// Whether the app is currently running in "guest mode".
-/// Stored in GetStorage under key `is_guest`.
 static bool get isGuestMode {
   try {
     return GetStorage().read('is_guest') == true;
@@ -65,22 +52,14 @@ static bool get isGuestMode {
   }
 }
   
-
-  /// Returns true if this API path should only be called when the user is authenticated.
-  ///
-  /// In guest mode we **skip** calling these endpoints to avoid noisy 401 responses
-  /// and unexpected "session انتهت" sign-out loops.
   static bool _isProtectedPath(String path) {
     final p = path.trim();
 
-    // Merchant area
     if (p.startsWith('/merchants')) return true;
 
-    // Chat / blocks
     if (p.startsWith('/conversations')) return true;
     if (p.startsWith('/blocks')) return true;
 
-    // Favorites, notifications, profile, etc. (extend as needed)
     if (p.startsWith('/favorites')) return true;
     if (p.startsWith('/notifications')) return true;
     if (p.startsWith('/profile')) return true;
@@ -88,12 +67,6 @@ static bool get isGuestMode {
     return false;
   }
 
-  /// Builds base headers.
-  ///
-  /// Important: Do NOT rely only on in-memory controllers for the token.
-  /// During navigation, GetX may recreate controllers and the first API call can happen
-  /// before MyAppController finishes loading user data.
-  /// So we also read the token from SharedPreferences as a fallback.
   static Future<Map<String, dynamic>> _getBaseHeaders() async {
     try {
       final bool hasMyApp = Get.isRegistered<MyAppController>();
@@ -103,7 +76,6 @@ static bool get isGuestMode {
           ? Get.find<LanguageController>().appLocale.value
           : 'ar';
 
-      // Authorization (controller first, SharedPreferences fallback)
       String token = '';
       if (myAppController != null &&
           myAppController.userData.isNotEmpty &&
@@ -124,7 +96,6 @@ static bool get isGuestMode {
         } catch (_) {}
       }
 
-      // Fallback: GetStorage (some builds persist user/token there).
       if (token.isEmpty) {
         try {
           final box = GetStorage();
@@ -138,7 +109,6 @@ static bool get isGuestMode {
             }
           }
 
-          // Some apps store token directly.
           final direct = box.read('token');
           if (token.isEmpty && direct != null) {
             token = direct.toString();
@@ -153,7 +123,6 @@ static bool get isGuestMode {
         print('⚠️ [API] No token / not logged in');
       }
 
-      // Determine if merchant
       bool isMerchant = false;
       try {
         final ud = (myAppController?.userData is Map)
@@ -169,7 +138,6 @@ static bool get isGuestMode {
         }
       } catch (_) {}
 
-      // storeId (merchant only) from controller then GetStorage
       String? storeId;
       if (isMerchant) {
         try {
@@ -234,7 +202,6 @@ static bool get isGuestMode {
         if (v != null) return v.toString();
       }
 
-      // Fallback to GetStorage (sync) if controller is not ready.
       try {
         final box = GetStorage();
         final v = box.read('storeId') ?? box.read('store_id') ?? box.read('selected_store_id');
@@ -450,7 +417,6 @@ static bool get isGuestMode {
       return null;
     }
 
-    // ✅ Guest mode guard: do NOT hit protected endpoints without a token
     if (!hasAuthToken && _isProtectedPath(path)) {
       print('⚠️ [API] Guest mode: skipping protected request $method $path');
       return null;
@@ -548,8 +514,10 @@ static bool get isGuestMode {
    final  GetStorage storage= GetStorage();
     final bool isEmail = email.contains('@');
 
-    Map<String, dynamic> body = {'password': password};
-    body['login'] = email;
+    final Map<String, dynamic> body = {
+      'login': email,
+      'password': password,
+    };
     final dynamic storedToken = storage.read('device_token');
     final String deviceToken = (storedToken == null || storedToken.toString().trim().isEmpty)
         ? 'temp_${DateTime.now().millisecondsSinceEpoch}'
@@ -566,9 +534,8 @@ static bool get isGuestMode {
 
     return await post(
       path: '/auth/login',
-      body: body,
+      body: FormData.fromMap(body),
       withLoading: withLoading,
-      shouldShowMessage: true,
     );
   }
 
@@ -582,21 +549,23 @@ static bool get isGuestMode {
   }) async {
        final  GetStorage storage= GetStorage();
 
+    final Map<String, dynamic> body = {
+      'first_name': name,
+      'last_name': name,
+      'email': email,
+      'phone': phone,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+      'device_name': storage.read('device_name'),
+      'device_token': (storage.read('device_token') == null || storage.read('device_token').toString().trim().isEmpty)
+          ? 'temp_${DateTime.now().millisecondsSinceEpoch}'
+          : storage.read('device_token').toString(),
+    };
+
     return await post(
       path: '/auth/register',
-      body: {
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-            'device_name': storage.read('device_name'),
-            'device_token': (storage.read('device_token') == null || storage.read('device_token').toString().trim().isEmpty)
-                ? 'temp_${DateTime.now().millisecondsSinceEpoch}'
-                : storage.read('device_token').toString(),
-      },
+      body: FormData.fromMap(body),
       withLoading: withLoading,
-      shouldShowMessage: true,
     );
   }
 
@@ -608,38 +577,124 @@ static bool get isGuestMode {
     );
   }
 
-  static Future<dynamic> forgotPassword({
-    required String email,
+static Future<dynamic> account({
+  bool withLoading = true,
+  bool shouldShowMessage = true,
+}) async {
+  return get(
+    path: '/auth/account',
+    withLoading: withLoading,
+    shouldShowMessage: shouldShowMessage,
+  );
+}
+  static Future<dynamic> verifyOtp({
+    required String id,
+    required String code,
     bool withLoading = true,
+    bool shouldShowMessage = true,
   }) async {
     return await post(
-      path: '/auth/forgot-password',
-      body: {'email': email},
+      path: '/auth/otp/verify_otp/$id',
+      body: FormData.fromMap({'otp_code': code}),
       withLoading: withLoading,
-      shouldShowMessage: true,
+      shouldShowMessage: shouldShowMessage,
     );
   }
 
-  static Future<dynamic> resetPassword({
-    required String email,
-    required String token,
-    required String password,
+  static Future<dynamic> resendOtp({
+    required String id,
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return await post(
+      path: '/auth/otp/resend/$id',
+      body: FormData.fromMap({'otp': 'true'}),
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> sendPasswordResetCode({
+    required String login,
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/password/send_code',
+      body: FormData.fromMap({'identifier': login}),
+      withLoading: withLoading,
+    );
+  }
+
+  static Future<dynamic> resendPasswordResetCode({
+    required String id,
+    bool withLoading = true,
+  }) async {
+    return await post(
+      path: '/auth/otp/resend/$id',
+      body: FormData.fromMap({'otp': 'true'}),
+      withLoading: withLoading,
+    );
+  }
+
+ static Future<dynamic> verifyPasswordResetCode({
+  required String id,
+  required String code,
+  required String newPassword,
+  required String passwordConfirmation,
+  bool withLoading = true,
+  bool shouldShowMessage = true,
+}) async {
+  return await post(
+    path: '/auth/password/verify_code/$id',
+    body: FormData.fromMap({
+      'code': code,
+      'password': newPassword,
+      'password_confirmation': passwordConfirmation,
+    }),
+    withLoading: withLoading,
+    shouldShowMessage: shouldShowMessage,
+  );
+}
+static Future<dynamic> resetPassword({
+  required String id,
+  required String code,
+  required String password,
+  required String passwordConfirmation,
+  bool withLoading = true,
+  bool shouldShowMessage = true,
+}) async {
+  return await verifyPasswordResetCode(
+    id: id,
+    code: code,
+    newPassword: password,
+    passwordConfirmation: passwordConfirmation,
+    withLoading: withLoading,
+    shouldShowMessage: shouldShowMessage,
+  );
+}
+
+  static Future<dynamic> getAccount({
+    bool withLoading = false,
+  }) async {
+    return await get(
+      path: '/auth/account',
+      withLoading: withLoading,
+      shouldShowMessage: false,
+    );
+  }
+  static Future<dynamic> updatePassword({
+    bool withLoading = false,
+    required String newPassword,
     required String passwordConfirmation,
-    bool withLoading = true,
   }) async {
     return await post(
-      path: '/auth/reset-password',
-      body: {
-        'email': email,
-        'token': token,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-      },
+      path: '/auth/account/update_password',
+      body: FormData.fromMap({'password': newPassword, 'password_confirmation': passwordConfirmation}),
+
       withLoading: withLoading,
-      shouldShowMessage: true,
+      shouldShowMessage: false,
     );
   }
-
   static Future<dynamic> verifyEmail({
     required String code,
     bool withLoading = true,
@@ -648,7 +703,6 @@ static bool get isGuestMode {
       path: '/auth/verify-email',
       body: {'code': code},
       withLoading: withLoading,
-      shouldShowMessage: true,
     );
   }
 
@@ -658,7 +712,6 @@ static bool get isGuestMode {
     return await post(
       path: '/auth/resend-verification',
       withLoading: withLoading,
-      shouldShowMessage: true,
     );
   }
 
@@ -759,7 +812,6 @@ static Future<dynamic> getConversationDetails(int conversationId) async {
       path: '/user/profile',
       body: data,
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -776,7 +828,6 @@ static Future<dynamic> getConversationDetails(int conversationId) async {
         'password_confirmation': newPasswordConfirmation,
       },
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -927,7 +978,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
 
     switch (error.response?.statusCode) {
       case 401:
-        // Guest / not-authenticated requests can return 401. Don't force sign-out loops.
         final bool isGuest = (() {
           try {
             return GetStorage().read('is_guest') == true;
@@ -937,7 +987,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         })();
 
         if (isGuest || !ApiHelper.hasAuthToken) {
-          // Just ignore in guest mode.
           return;
         }
 
@@ -954,13 +1003,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         );
         break;
       case 404:
-        // Get.snackbar(
-        //   'غير موجود',
-        //   'المورد المطلوب غير موجود',
-        //   snackPosition: SnackPosition.BOTTOM,
-        //   backgroundColor: Colors.orange,
-        //   colorText: Colors.white,
-        // );
         break;
       case 422:
         break;
@@ -1119,7 +1161,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       path: '/merchants/cities',
       body: data,
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1128,7 +1169,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       path: '/merchants/cities/$id',
       body: data,
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1136,7 +1176,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     return await delete(
       path: '/merchants/cities/$id',
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1164,7 +1203,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       path: '/merchants/districts',
       body: data,
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1176,7 +1214,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       path: '/merchants/districts/$id',
       body: data,
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1184,7 +1221,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     return await delete(
       path: '/merchants/districts/$id',
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1203,7 +1239,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     return await get(
       path: '/merchants/stores/$storeId',
       withLoading: false,
-      shouldShowMessage: true,
     );
   }
 
@@ -1215,7 +1250,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       path: '/merchants/mobile/stores/$storeId',
       body: data,
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 
@@ -1223,7 +1257,6 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
     return await delete(
       path: '/merchants/stores/$storeId',
       withLoading: true,
-      shouldShowMessage: true,
     );
   }
 

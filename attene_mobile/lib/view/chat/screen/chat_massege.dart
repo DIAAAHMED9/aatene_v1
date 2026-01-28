@@ -1,4 +1,3 @@
-
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -24,10 +23,8 @@ class _ChatMassegeState extends State<ChatMassege> {
   final TextEditingController _text = TextEditingController();
   final ScrollController _scroll = ScrollController();
 
-  // Attachments (local) before sending
   final List<XFile> _pendingFiles = [];
 
-  // Audio recording
   final AudioRecorder _recorder = AudioRecorder();
   bool _isRecording = false;
   Duration _recordDuration = Duration.zero;
@@ -54,7 +51,7 @@ class _ChatMassegeState extends State<ChatMassege> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scroll.hasClients) return;
       _scroll.animateTo(
-        0, // because reverse: true
+        0,
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOut,
       );
@@ -62,7 +59,6 @@ class _ChatMassegeState extends State<ChatMassege> {
   }
 
   bool _isMe(ChatMessage m) {
-    // best effort: senderData.type/id matches myOwnerType/myOwnerId OR senderId matches my participant record id
     final conv = widget.conversation;
     final myOwnerType = c.myOwnerType;
     final myOwnerId = c.myOwnerId;
@@ -75,7 +71,6 @@ class _ChatMassegeState extends State<ChatMassege> {
       return true;
     }
 
-    // if senderId equals participant record id of "me"
     ChatParticipant? myParticipant;
     for (final p in conv.participants) {
       final d = p.participantData;
@@ -102,7 +97,6 @@ class _ChatMassegeState extends State<ChatMassege> {
         myOwnerType: c.myOwnerType,
         myOwnerId: c.myOwnerId,
       );
-      // listen to blockedVersion so UI updates immediately after block/unblock
       c.blockedVersion.value;
       final isBlocked = c.isConversationBlocked(conv);
 
@@ -161,7 +155,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                 return ListView.builder(
                   controller: _scroll,
                   reverse: true,
-                  // newest at bottom (like WhatsApp)
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 12,
@@ -169,7 +162,7 @@ class _ChatMassegeState extends State<ChatMassege> {
                   itemCount: msgs.length,
                   itemBuilder: (context, index) {
                     final m =
-                        msgs[msgs.length - 1 - index]; // because reverse:true
+                        msgs[msgs.length - 1 - index];
                     final isMe = _isMe(m);
                     return MessageBubble(
                       message: m,
@@ -259,7 +252,6 @@ class _ChatMassegeState extends State<ChatMassege> {
                   Navigator.pop(context);
                   final reason = await _askReason(title: 'اكتب سبب البلاغ');
                   if (reason == null || reason.trim().isEmpty) return;
-                  // ⚠️ لم يتم تزويدنا بـ API منفصل للبلاغ، لذلك نعرض إشعار فقط.
                   if (mounted) {
                     Get.snackbar('تم', 'تم استلام البلاغ');
                   }
@@ -352,7 +344,6 @@ class _ChatMassegeState extends State<ChatMassege> {
       name: newName,
     );
     if (ok) {
-      // ✅ reflect immediately in AppBar + screen
       if (mounted) setState(() {});
     }
   }
@@ -399,7 +390,6 @@ class _ChatMassegeState extends State<ChatMassege> {
     final paths = result.paths.whereType<String>().toList();
     if (paths.isEmpty) return;
 
-    // max 10 images total in selection
     final toAdd = paths
         .take(10 - _pendingFiles.length)
         .map((p) => XFile(p))
@@ -416,7 +406,6 @@ class _ChatMassegeState extends State<ChatMassege> {
     final paths = result.paths.whereType<String>().toList();
     if (paths.isEmpty) return;
 
-    // max 10 files at once
     final toAdd = paths
         .take(10 - _pendingFiles.length)
         .map((p) => XFile(p))
@@ -432,7 +421,6 @@ class _ChatMassegeState extends State<ChatMassege> {
 
     final convId = widget.conversation.id;
 
-    // Send files first (if any) with optional text
     if (hasFiles) {
       final files = List<XFile>.from(_pendingFiles);
       setState(() => _pendingFiles.clear());
@@ -483,7 +471,6 @@ class _ChatMassegeState extends State<ChatMassege> {
 
       setState(() => _isRecording = true);
     } catch (e) {
-      // ignore: avoid_print
       print('❌ startRecording: $e');
     }
   }
@@ -497,7 +484,6 @@ class _ChatMassegeState extends State<ChatMassege> {
         await _recorder.stop();
       }
 
-      // delete file if exists
       final p = _recordPath;
       if (p != null) {
         final f = XFile(p);
@@ -534,7 +520,6 @@ class _ChatMassegeState extends State<ChatMassege> {
         text: null,
       );
     } catch (e) {
-      // ignore: avoid_print
       print('❌ stopRecordingAndSend: $e');
     } finally {
       setState(() {

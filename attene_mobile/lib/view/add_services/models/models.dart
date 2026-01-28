@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 
-/// =====================
-/// Robust parsing helpers
-/// =====================
 int _toInt(dynamic v, {int defaultValue = 0}) {
   if (v == null) return defaultValue;
   if (v is int) return v;
@@ -44,10 +41,6 @@ bool _toBool(dynamic v, {bool defaultValue = false}) {
   return defaultValue;
 }
 
-/// يقبل:
-/// - List<dynamic> (Strings أو Maps فيها title)
-/// - String JSON Array
-/// - String comma-separated
 List<String> _asStringList(dynamic v) {
   if (v == null) return <String>[];
 
@@ -71,7 +64,6 @@ List<String> _asStringList(dynamic v) {
     final s = v.trim();
     if (s.isEmpty) return <String>[];
 
-    // JSON array?
     if (s.startsWith('[') && s.endsWith(']')) {
       try {
         final decoded = jsonDecode(s);
@@ -79,7 +71,6 @@ List<String> _asStringList(dynamic v) {
       } catch (_) {}
     }
 
-    // comma-separated
     if (s.contains(',')) {
       return s
           .split(',')
@@ -272,10 +263,8 @@ class Service {
 
   final List<Development> extras;
 
-  /// مسارات نسبية غالباً: gallery/... أو images/...
   final List<String> images;
 
-  /// روابط كاملة (من show): images_urls/images_url
   final List<String> imagesUrl;
 
   final String description;
@@ -314,10 +303,8 @@ class Service {
   factory Service.fromApiJson(Map<String, dynamic> json) {
     final imagesList = _asStringList(json['images']);
 
-    // Backend may return images_url OR images_urls
     final imagesUrlList = _asStringList(json['images_urls'] ?? json['images_url']);
 
-    // ✅ tags/specialties: show endpoint returns objects, list endpoint may return strings
     final tags = _asStringList(json['tags']);
     final specialties = _asStringList(json['specialties']);
 

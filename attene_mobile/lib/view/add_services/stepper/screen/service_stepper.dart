@@ -88,9 +88,6 @@ class _ServiceStepperScreenState
       final result = await Get.defaultDialog<bool>(
         title: 'تأكيد',
         middleText: 'هل تريد حفظ التغييرات قبل المغادرة؟',
-        // textConfirm: 'حفظ مؤقت',
-        // textCancel: 'تجاهل والخروج',
-        // confirmTextColor: Colors.white,
         actions: [
           AateneButton(
             onTap: () async {
@@ -112,11 +109,6 @@ class _ServiceStepperScreenState
           ),
         ],
 
-        // onConfirm: () async {
-        //   await _saveProgress();
-        //   Get.back(result: true);
-        // },
-        // onCancel: () => Get.back(result: true),
       );
       return result ?? false;
     }
@@ -280,15 +272,6 @@ class _ServiceStepperScreenState
         ),
       ],
 
-      // textConfirm: 'نعم، إلغاء',
-      // textCancel: 'لا، استمر',
-      // confirmTextColor: Colors.white,
-      // cancelTextColor: AppColors.primary400,
-      // buttonColor: AppColors.primary400,
-      // onConfirm: () {
-
-      // },
-      // onCancel: () => Get.back(result: false),
     );
   }
 
@@ -455,18 +438,14 @@ class _ServiceStepperScreenState
                 textColor: Colors.white,
                 borderColor: AppColors.primary400,
                 onTap: () {
-                  // 1) إغلاق الـ BottomSheet
                   if (Get.isBottomSheetOpen == true) {
                     Get.back();
                   }
 
-                  // 2) تنظيف بيانات الكنترولر
                   if (Get.isRegistered<ServiceController>()) {
                     Get.find<ServiceController>().resetAll();
                   }
 
-                  // 3) الرجوع للشاشة السابقة مع نتيجة نجاح
-                  // حتى تقوم شاشة القائمة بعمل Refresh مثل المنتجات
                   Get.back(result: true);
                 },
               ),
@@ -487,20 +466,6 @@ class _ServiceStepperScreenState
       color: AppColors.primary400,
     );
 
-    //   ElevatedButton(
-    //   onPressed: currentStep > 0 ? previousStep : null,
-    //   style: ElevatedButton.styleFrom(
-    //     padding: const EdgeInsets.symmetric(vertical: 16),
-    //     backgroundColor: Colors.grey[300],
-    //     foregroundColor: Colors.grey[700],
-    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    //     elevation: 1,
-    //   ),
-    //   child: const Padding(
-    //     padding: EdgeInsets.symmetric(horizontal: 24),
-    //     child: Text('السابق'),
-    //   ),
-    // );
   }
 
   @override

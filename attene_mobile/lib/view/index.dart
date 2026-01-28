@@ -1,4 +1,3 @@
-// GENERATED BARREL FILE. DO NOT EDIT MANUALLY.
 export 'add_new_store/index.dart';
 export 'add_services/index.dart';
 export 'control_panel_vendor/index.dart';

@@ -34,11 +34,6 @@ class DistinctProduct extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Image.asset(
-          //   "assets/images/png/background_product.png",
-          //   width: double.infinity,
-          //   height: 200,
-          // ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -48,7 +43,6 @@ class DistinctProduct extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Store Name Badge
                       Row(
                         children: [
                           Text(
@@ -69,7 +63,6 @@ class DistinctProduct extends StatelessWidget {
 
                       const SizedBox(height: 8),
 
-                      // Product Name
                       Text(
                         productName,
                         style: const TextStyle(
@@ -81,7 +74,6 @@ class DistinctProduct extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      // Description
                       Text(
                         description,
                         style: const TextStyle(
@@ -94,7 +86,6 @@ class DistinctProduct extends StatelessWidget {
 
                       const SizedBox(height: 8),
 
-                      // Rating Stars
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -117,7 +108,6 @@ class DistinctProduct extends StatelessWidget {
                           }),
                         ],
                       ),
-                      // Price
                       Row(
                         spacing: 5,
                         children: [
@@ -139,7 +129,6 @@ class DistinctProduct extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // Button
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(

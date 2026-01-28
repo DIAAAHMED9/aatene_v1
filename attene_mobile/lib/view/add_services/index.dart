@@ -1,4 +1,3 @@
-// Barrel exports for Add Services feature
 export 'stepper/controller/service_controller.dart';
 export 'models/models.dart';
 
@@ -17,5 +16,3 @@ export 'widget/development_bottom_sheet.dart';
 export 'widget/faq_bottom_sheet.dart';
 export 'widget/time_unit_bottom_sheet.dart';
 export 'stepper/index.dart';
-// Use the app-wide ResponsiveDimensions
-// export 'responsive_dimensions.dart';

@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class JobAdvertisementCard extends StatefulWidget {
@@ -9,11 +8,9 @@ class JobAdvertisementCard extends StatefulWidget {
 }
 
 class _JobAdvertisementCardState extends State<JobAdvertisementCard> {
-  // bool _isFavorite = false;
 
   @override
   Widget build(BuildContext context) {
-    // الأبعاد المطلوبة: العرض 160، الارتفاع 250
     const double width = double.infinity;
     const double height = 250.0;
 
@@ -34,7 +31,6 @@ class _JobAdvertisementCardState extends State<JobAdvertisementCard> {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            // 1. الصورة الخلفية
             Image.network(
               "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400",
               height: height,
@@ -42,7 +38,6 @@ class _JobAdvertisementCardState extends State<JobAdvertisementCard> {
               fit: BoxFit.cover,
             ),
 
-            // 2. طبقة تعتيم (Gradient Overlay) لجعل النص مقروءاً
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -55,7 +50,6 @@ class _JobAdvertisementCardState extends State<JobAdvertisementCard> {
                 ),
               ),
             ),
-            // 3. المحتوى النصي والأزرار
             Padding(
               padding: const EdgeInsets.all(22.0),
               child: Center(

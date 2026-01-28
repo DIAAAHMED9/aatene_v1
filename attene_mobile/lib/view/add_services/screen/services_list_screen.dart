@@ -160,8 +160,6 @@ class _ServicesListScreenState extends State<ServicesListScreen>
     final confirm = await Get.defaultDialog<bool>(
       title: 'تأكيد الحذف',
       middleText: 'هل أنت متأكد من حذف الخدمة "${service.title}"؟',
-      // textConfirm: 'نعم، احذف',
-      // textCancel: 'إلغاء',
       actions: [
         AateneButton(
           onTap: () async {
@@ -185,15 +183,6 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           borderColor: AppColors.primary400,
         ),
       ],
-      //
-      // confirmTextColor: Colors.white,
-      // onConfirm: () async {
-      //   final result = await _serviceController.deleteService(serviceId);
-      //   if (result?['success'] == true) {
-      //     Get.back(result: true);
-      //     await _refreshServices();
-      //   }
-      // },
     );
   }
 

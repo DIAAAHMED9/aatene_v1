@@ -1,6 +1,3 @@
-
-
-
 import '../../general_index.dart';
 
 extension AppColorScheme on ColorScheme {

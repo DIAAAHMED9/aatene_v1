@@ -1,5 +1,3 @@
-
-
 import '../../general_index.dart';
 
 class DataSyncService extends GetxService {

@@ -2,15 +2,14 @@ import '../../../../general_index.dart';
 import '../../../../utils/responsive/responsive_dimensions.dart';
 
 class SetNewPassword extends StatelessWidget {
-  final SetNewPasswordController controller = Get.put(
-    SetNewPasswordController(),
-  );
+  final SetNewPasswordController controller = Get.put(SetNewPasswordController());
 
   SetNewPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -28,7 +27,6 @@ class SetNewPassword extends StatelessWidget {
           ),
         ),
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -39,24 +37,9 @@ class SetNewPassword extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Align(
-                //   alignment: isRTL ? Alignment.topLeft : Alignment.topRight,
-                //   child:  IconButton(
-                //     onPressed: () => Get.back(),
-                //     icon: Container(
-                //       width: 50,
-                //       height: 50,
-                //       decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(100),
-                //         color: Colors.grey[100],
-                //       ),
-                //       child: Icon(Icons.arrow_back, color: AppColors.neutral100),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
-                  isRTL ? 'أعد ضبط كلمة المرور' : 'Reset Password',
+                  isRTL ? 'إعادة ضبط كلمة المرور' : 'Reset Password',
                   style: getBold(fontSize: ResponsiveDimensions.f(35)),
                   textAlign: TextAlign.center,
                 ),
@@ -66,21 +49,21 @@ class SetNewPassword extends StatelessWidget {
                     vertical: ResponsiveDimensions.h(10),
                   ),
                   child: Text(
-                    isRTL
-                        ? 'قم بإنشاء كلمة مرور جديدة'
-                        : 'Create a new password',
-                    style: TextStyle(
+                    isRTL ? 'قم بإنشاء كلمة مرور جديدة' : 'Create a new password',
+                    style: getRegular(
                       fontSize: ResponsiveDimensions.f(16),
-                      color: Colors.grey[600],
+                      color: Colors.grey[600]!,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
+
                 SizedBox(height: ResponsiveDimensions.h(20)),
+
                 Obx(
                   () => TextFiledAatene(
                     isRTL: isRTL,
-                    hintText: isRTL ? 'كلمة المرور' : 'Password',
+                    hintText: isRTL ? 'كلمة المرور الجديدة' : 'New Password',
                     errorText: controller.passwordError.value,
                     onChanged: controller.updatePassword,
                     obscureText: controller.obscurePassword.value,
@@ -89,7 +72,7 @@ class SetNewPassword extends StatelessWidget {
                         controller.obscurePassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: controller.passwordError.isNotEmpty
+                        color: controller.passwordError.value.isNotEmpty
                             ? Colors.red
                             : Colors.grey,
                       ),
@@ -98,7 +81,9 @@ class SetNewPassword extends StatelessWidget {
                     textInputAction: TextInputAction.next,
                   ),
                 ),
+
                 SizedBox(height: ResponsiveDimensions.h(16)),
+
                 Obx(
                   () => TextFiledAatene(
                     isRTL: isRTL,
@@ -111,7 +96,7 @@ class SetNewPassword extends StatelessWidget {
                         controller.obscureConfirmPassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: controller.confirmPasswordError.isNotEmpty
+                        color: controller.confirmPasswordError.value.isNotEmpty
                             ? Colors.red
                             : Colors.grey,
                       ),
@@ -120,17 +105,22 @@ class SetNewPassword extends StatelessWidget {
                     textInputAction: TextInputAction.done,
                   ),
                 ),
+
                 SizedBox(height: ResponsiveDimensions.h(20)),
+
                 Obx(
                   () => AateneButton(
                     textColor: Colors.white,
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
                     isLoading: controller.isLoading.value,
-                    onTap: controller.isLoading.value ? null : () {},
+                    onTap: controller.isLoading.value
+                        ? null
+                        : controller.submitNewPassword,
                     buttonText: isRTL ? 'تحديث' : 'Update',
                   ),
                 ),
+
                 SizedBox(height: ResponsiveDimensions.h(40)),
               ],
             ),

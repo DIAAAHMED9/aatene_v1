@@ -117,7 +117,6 @@ class _VariationCardState extends State<VariationCard> {
                 Container(
                   width: 40,
                   height: 40,
-                  // padding: EdgeInsets.all(ResponsiveDimensions.f(8)),
                   decoration: BoxDecoration(
                     color: Colors.red[50],
                     borderRadius: BorderRadius.circular(8),

@@ -22,7 +22,7 @@ class ReviewSheet extends StatefulWidget {
 }
 
 class _ReviewSheetState extends State<ReviewSheet> {
-  int _userRating = 0; // التقييم الذي يختاره المستخدم الآن
+  int _userRating = 0;
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -37,15 +37,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // // مقبض السحب
-            // Container(
-            //   width: 40,
-            //   height: 4,
-            //   decoration: BoxDecoration(
-            //     color: Colors.grey[300],
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            // ),
             const SizedBox(height: 15),
             const Text(
               'رد على',
@@ -53,19 +44,16 @@ class _ReviewSheetState extends State<ReviewSheet> {
             ),
             const SizedBox(height: 25),
 
-            // --- الجزء الذي يحتوي على الاسم والتفاصيل ---
             Row(
               spacing: 5,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // الصورة الشخصية
                 const CircleAvatar(
                   radius: 30,
                   backgroundImage: NetworkImage(
                     'https://i.pravatar.cc/150?u=12',
                   ),
                 ),
-                // الاسم والتاريخ والنص (في المنتصف واليمين)
                 Expanded(
                   flex: 4,
                   child: Column(
@@ -102,7 +90,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
                 ),
                 const Spacer(),
 
-                // التقييم الأصلي (على اليسار)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
@@ -123,7 +110,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
             ),
             const SizedBox(height: 25),
 
-            // --- نظام التقييم التفاعلي بالنجوم ---
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -203,7 +189,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
             ),
             const SizedBox(height: 20),
 
-            // --- هوية المعلق الحالي (أبانوب أشرف) ---
             Row(
               spacing: 5,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -222,7 +207,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
             ),
             const SizedBox(height: 10),
 
-            // صندوق النص
             TextField(
               controller: _controller,
               maxLines: 4,
@@ -239,7 +223,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
             ),
             const SizedBox(height: 15),
 
-            // رفع الصور
             Row(
               children: [
                 _buildAddButton(),
@@ -251,7 +234,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
             ),
             const SizedBox(height: 25),
 
-            // زر الإرسال
             SizedBox(
               width: double.infinity,
               height: 55,

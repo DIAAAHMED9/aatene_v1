@@ -3,8 +3,8 @@ import 'dart:async';
 import '../../../general_index.dart';
 
 class BlockEntry {
-  final String type; // "user" | "store"
-  final String id; // participant_id
+  final String type;
+  final String id;
   final String? name;
   final String? slug;
   final String? avatar;
@@ -47,11 +47,9 @@ class BlockController extends GetxController {
 
   final RxBool isLoading = true.obs;
 
-  /// القوائم الأساسية (بدون فلترة)
   final RxList<BlockEntry> blockedUsers = <BlockEntry>[].obs;
   final RxList<BlockEntry> blockedStores = <BlockEntry>[].obs;
 
-  /// القوائم بعد البحث
   final RxList<BlockEntry> filteredUsers = <BlockEntry>[].obs;
   final RxList<BlockEntry> filteredStores = <BlockEntry>[].obs;
 
@@ -123,14 +121,12 @@ class BlockController extends GetxController {
       filteredUsers.assignAll(users);
       filteredStores.assignAll(stores);
     } catch (e) {
-      // ignore: avoid_print
       print('❌ fetchBlocked: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// 🔍 بحث
   void onSearch(String query) {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) {
@@ -146,7 +142,6 @@ class BlockController extends GetxController {
     filteredStores.assignAll(blockedStores.where(match));
   }
 
-  /// ✅ هل هذا الحساب محظور؟
   bool isBlocked({required String type, required String id}) {
     final key = '${type.toLowerCase()}:$id';
     return blockedUsers.any((e) => e.key == key) ||
@@ -175,17 +170,15 @@ class BlockController extends GetxController {
 
       final ok = (res is Map && res['status'] == true);
       if (ok) {
-        await fetchBlocked(); // تحديث القائمة مباشرة
+        await fetchBlocked();
       }
       return ok;
     } catch (e) {
-      // ignore: avoid_print
       print('❌ block: $e');
       return false;
     }
   }
 
-  /// ✅ DELETE /blocks/unblock  (FormData: blocked_type, blocked_id)
   Future<bool> unblockDirect({
     required String blockedType,
     required String blockedId,
@@ -208,7 +201,6 @@ class BlockController extends GetxController {
       }
       return ok;
     } catch (e) {
-      // ignore: avoid_print
       print('❌ unblockDirect: $e');
       return false;
     }

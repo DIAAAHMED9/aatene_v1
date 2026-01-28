@@ -61,13 +61,6 @@ class VariationToggleWidget extends StatelessWidget {
 
           ],
         ),
-        // Text(
-        //   'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
-        //   style: getRegular(
-        //     fontSize: ResponsiveDimensions.f(14),
-        //     color: Colors.grey,
-        //   ),
-        // ),
         GetBuilder<ProductVariationController>(
           id: 'variations',
           builder: (_) {
@@ -159,9 +152,6 @@ class SelectedAttributesWidget extends StatelessWidget {
     return GetBuilder<ProductVariationController>(
       id: 'attributes',
       builder: (_) {
-        // if (controller.selectedAttributes.isEmpty) {
-        //   return _buildNoAttributesSelected();
-        // }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,49 +209,6 @@ class SelectedAttributesWidget extends StatelessWidget {
     );
   }
 
-  // Widget _buildNoAttributesSelected() {
-  //   return Container(
-  //     padding: EdgeInsets.all(ResponsiveDimensions.w(20)),
-  //     margin: EdgeInsets.only(top: ResponsiveDimensions.h(16)),
-  //     decoration: BoxDecoration(
-  //       color: Colors.orange[50],
-  //       borderRadius: BorderRadius.circular(8),
-  //       border: Border.all(color: Colors.orange[200]!),
-  //     ),
-  //     child: Row(
-  //       children: [
-  //         Icon(
-  //           Icons.info_outline,
-  //           color: Colors.orange[600],
-  //           size: ResponsiveDimensions.w(24),
-  //         ),
-  //         SizedBox(width: ResponsiveDimensions.w(12)),
-  //         Expanded(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 'لم يتم اختيار أي سمات بعد',
-  //                 style: getMedium(
-  //                   fontSize: ResponsiveDimensions.f(14),
-  //                   color: Colors.orange,
-  //                 ),
-  //               ),
-  //               SizedBox(height: ResponsiveDimensions.h(4)),
-  //               Text(
-  //                 'انقر على "إدارة السمات والصفات" لبدء إضافة السمات',
-  //                 style: getRegular(
-  //                   fontSize: ResponsiveDimensions.f(12),
-  //                   color: Colors.orange,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 class VariationsListWidget extends StatelessWidget {

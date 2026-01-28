@@ -1,8 +1,5 @@
-
 import '../../../general_index.dart';
 import '../../../utils/responsive/index.dart';
-
-
 
 class ImagesScreen extends StatelessWidget {
   const ImagesScreen({super.key});

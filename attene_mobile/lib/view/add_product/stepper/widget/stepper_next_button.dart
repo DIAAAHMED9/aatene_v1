@@ -31,36 +31,6 @@ class StepperNextButton extends StatelessWidget {
         borderColor: AppColors.primary400,
       );
 
-      // ElevatedButton(
-      //   onPressed: submitting ? null : (isLast ? onFinish : onNext),
-      //   style: ElevatedButton.styleFrom(
-      //     padding: const EdgeInsets.symmetric(vertical: 16),
-      //     backgroundColor: AppColors.primary400,
-      //     foregroundColor: Colors.white,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(12),
-      //     ),
-      //     elevation: 3,
-      //   ),
-      //   child: submitting
-      //       ? const SizedBox(
-      //           height: 20,
-      //           width: 20,
-      //           child: CircularProgressIndicator(
-      //             strokeWidth: 2,
-      //             valueColor: AlwaysStoppedAnimation<Color>(
-      //               AppColors.primary400,
-      //             ),
-      //           ),
-      //         )
-      //       : Padding(
-      //           padding: const EdgeInsets.symmetric(horizontal: 24),
-      //           child: Text(
-      //             isLast ? 'إنهاء وإرسال' : 'التالي',
-      //             style: getMedium(color: Colors.white),
-      //           ),
-      //         ),
-      // );
     });
   }
 }

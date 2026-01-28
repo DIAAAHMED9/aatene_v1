@@ -1,5 +1,3 @@
-
-
 const String postMethod = 'POST';
 const String getMethod = 'GET';
 const String putMethod = 'PUT';

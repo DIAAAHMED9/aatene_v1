@@ -1,5 +1,3 @@
-// GENERATED GENERAL BARREL FILE.
-// Import this file in your classes instead of many internal imports.
 export 'package:flutter/material.dart';
 export 'package:dio/dio.dart';
 export 'package:get_storage/get_storage.dart';

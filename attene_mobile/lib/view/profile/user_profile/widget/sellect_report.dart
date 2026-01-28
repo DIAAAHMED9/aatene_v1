@@ -13,7 +13,6 @@ class SelectionBottomSheet extends StatefulWidget {
 }
 
 class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
-  // متغير لتخزين القيمة المختارة
   String? _selectedReason = 'reason_4';
 
   @override
@@ -29,27 +28,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // شريط السحب العلوي (Handle)
-          // Container(
-          //   width: 50,
-          //   height: 5,
-          //   decoration: BoxDecoration(
-          //     color: Colors.grey[300],
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          // ),
-          // const SizedBox(height: 10),
 
-          // الرقم العلوي
-          // const Align(
-          //   alignment: Alignment.topLeft,
-          //   child: Text(
-          //     '30',
-          //     style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-          //   ),
-          // ),
-
-          // العنوان الرئيسي
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text(
@@ -58,7 +37,6 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
             ),
           ),
 
-          // قائمة الخيارات
           _buildOption(
             id: 'reason_1',
             title: 'محتوى مخالف',
@@ -87,11 +65,9 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
 
           const SizedBox(height: 20),
 
-          // زر التأكيد (إلغاء أو تنفيذ)
           AateneButton(
             onTap: () {
               showModalBottomSheet(
-                // isScrollControlled: true,
                 context: context,
                 builder: (context) => Center(
                   child: Padding(
@@ -100,7 +76,6 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                       spacing: 5,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // العنوان الرئيسي
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
@@ -252,18 +227,15 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
     );
   }
 
-  // بناء عنصر الخيار الواحد
   Widget _buildOption({
     required String id,
     required String title,
     required String subtitle,
   }) {
-    // bool isSelected = _selectedReason == id;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
-        // color: isSelected ? Colors.white : Colors.grey[50],
       ),
       child: RadioListTile<String>(
         value: id,
@@ -271,7 +243,6 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
         activeColor: AppColors.primary400,
         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         controlAffinity: ListTileControlAffinity.leading,
-        // الدائرة على اليسار
         onChanged: (value) {
           setState(() {
             _selectedReason = value;

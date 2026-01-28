@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class ControllerVendor extends StatelessWidget {
   const ControllerVendor({super.key});
 

@@ -26,7 +26,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
-              // 1. الجزء العلوي (صورة الغلاف فقط)
               SliverAppBar(
                 expandedHeight: 180.0,
                 pinned: true,
@@ -78,7 +77,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     style: getMedium(fontSize: 18),
                                   ),
 
-                                  ///ارسال رسالة
                                   GestureDetector(
                                     child: Row(
                                       spacing: 5,
@@ -98,7 +96,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     ),
                                   ),
 
-                                  ///تفعيل الاشعارات
                                   GestureDetector(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -202,7 +199,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     ),
                                   ),
 
-                                  ///مشاركة المتجر
                                   GestureDetector(
                                     onTap: () {
                                       SharePlus.instance.share(
@@ -230,7 +226,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     ),
                                   ),
 
-                                  ///مواعيد العمل
                                   GestureDetector(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -257,7 +252,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     ),
                                   ),
 
-                                  ///عن المتجر
                                   GestureDetector(
                                     child: Row(
                                       spacing: 5,
@@ -275,7 +269,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     ),
                                   ),
 
-                                  ///حظر المتجر
                                   GestureDetector(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -419,7 +412,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                     ),
                                   ),
 
-                                  ///الابلاغ عن المتجر
                                   GestureDetector(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -458,13 +450,12 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Image.asset(
-                    'assets/images/png/background_product.png', // صورة الغلاف
+                    'assets/images/png/background_product.png',
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
 
-              // 2. كرت المتجر
               SliverToBoxAdapter(
                 child: Transform.translate(
                   offset: const Offset(0, 10),
@@ -472,7 +463,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                 ),
               ),
 
-              // 3. التبويبات (ثابتة عند التمرير)
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _SliverAppBarDelegate(
@@ -537,7 +527,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
     );
   }
 
-  // كرت المتجر الرئيسي المعدل بحسب الصورة
   Widget _buildMainStoreCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -552,7 +541,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
       child: Column(
         spacing: 10,
         children: [
-          // الجزء العلوي: الاسم والشعار والتقييم
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             spacing: 5,
@@ -592,7 +580,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
             ],
           ),
 
-          // زر المتابعة وعدد المتابعين
           Row(
             spacing: 5,
             children: [
@@ -628,13 +615,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
               ),
               Column(
                 children: [
-                  // FollowersAvatars(
-                  //   images: [
-                  //     "assets/images/png/placeholder_bag_image_png.png",
-                  //     "assets/images/png/placeholder_bag_image_png.png",
-                  //     "assets/images/png/placeholder_bag_image_png.png",
-                  //   ],
-                  // ),
                   const Text(
                     "350K متابع",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -644,7 +624,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
             ],
           ),
 
-          // الإحصائيات (الطلبات، المفضل، وقت العمل)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -671,7 +650,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
             ],
           ),
 
-          // شريط "هذا المتجر معتمد"
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
             decoration: BoxDecoration(
@@ -703,7 +681,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
           spacing: 3,
           children: [
             icon,
-            // Icon(icon, color: Colors.grey, size: 20),
             Text(label, style: getMedium(color: Colors.grey, fontSize: 12)),
           ],
         ),
@@ -727,7 +704,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
     );
   }
 
-  // باقي عناصر الواجهة (نظرة عامة والمنتجات) تظل كما هي في الكود السابق مع تحسينات طفيفة
   Widget _buildOverviewContent() {
     return ListView(
       padding: const EdgeInsets.all(12),
@@ -736,9 +712,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
         SizedBox(height: 10),
         _bioCard(),
         SizedBox(height: 10),
-        // _buildSectionHeader("منتجات"),
-        // SizedBox(height: 10),
-        // _buildProductGrid(isShrinkWrap: true),
       ],
     );
   }
@@ -765,7 +738,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
     );
   }
 
-  /// دالة بناء شبكة المنتجات (كما في الرد السابق)
   Widget _buildProductGrid({bool isShrinkWrap = false}) {
     return GridView.builder(
       shrinkWrap: isShrinkWrap,
@@ -784,7 +756,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
     );
   }
 
-  /// product card
   Widget _buildProductCard(bool hasDiscount) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

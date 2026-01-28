@@ -1,7 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-
-/// MODEL
 class NotificationModel {
   final String title;
   final String body;
@@ -28,7 +26,6 @@ class NotificationModel {
   }
 }
 
-/// CONTROLLER
 class NotificationController extends GetxController {
   final pageController = PageController();
   final currentIndex = 0.obs;
@@ -104,7 +101,6 @@ class NotificationController extends GetxController {
   }
 }
 
-/// PAGE
 class NotificationPage extends StatelessWidget {
   NotificationPage({super.key});
 
@@ -159,7 +155,6 @@ class NotificationPage extends StatelessWidget {
         ),
         actions: [
           IconButton(onPressed: () {
-            ///NotificationFeed
             Get.to(NotificationFeed());
           },
               icon: SvgPicture.asset(
@@ -195,9 +190,6 @@ class NotificationPage extends StatelessWidget {
   }
 }
 
-/// =======================================================
-/// TAB BUTTON
-/// =======================================================
 class _TabButton extends StatelessWidget {
   final String title;
   final bool active;
@@ -233,7 +225,6 @@ class _TabButton extends StatelessWidget {
   }
 }
 
-/// LIST
 class NotificationList extends StatelessWidget {
   final bool isRead;
 
@@ -263,7 +254,6 @@ class NotificationList extends StatelessWidget {
   }
 }
 
-/// ANIMATED ITEM (Swipe + Scale + Collapse)
 class AnimatedNotificationItem extends StatefulWidget {
   final NotificationModel model;
   final VoidCallback onDelete;
@@ -366,7 +356,6 @@ class _AnimatedNotificationItemState extends State<AnimatedNotificationItem> {
       );
 }
 
-/// ITEM UI
 class _NotificationItem extends StatelessWidget {
   final NotificationModel model;
 
@@ -407,9 +396,6 @@ class _NotificationItem extends StatelessWidget {
   }
 }
 
-/// =======================================================
-/// EMPTY STATE
-/// =======================================================
 class _EmptyState extends StatelessWidget {
   const _EmptyState();
 

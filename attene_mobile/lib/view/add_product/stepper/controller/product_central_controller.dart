@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 import '../../../../utils/sheet_controller.dart';
 
@@ -31,7 +30,6 @@ class ProductCentralController extends GetxController {
   final RxBool isUpdatingSection = false.obs;
   final RxBool isProductReadyForSubmission = false.obs;
 
-  // Edit mode
   final RxBool isEditMode = false.obs;
   final RxInt editingProductId = 0.obs;
   final RxString editingSku = ''.obs;
@@ -366,8 +364,6 @@ class ProductCentralController extends GetxController {
 ''');
   }
 
-  /// Load product details and prefill controllers for editing.
-  /// This enables using the same "Add Product" stepper for update.
   Future<bool> loadProductForEdit(int productId) async {
     try {
       final response = await ApiHelper.get(
@@ -400,7 +396,6 @@ class ProductCentralController extends GetxController {
     }
   }
 
-  /// Apply API product data into stepper controllers (basic info, media, keywords, variations, cross-sells)
   Future<void> applyProductDataForEdit({
     required int productId,
     required Map<String, dynamic> productData,
@@ -410,7 +405,6 @@ class ProductCentralController extends GetxController {
     editingSku(productData['sku']?.toString() ?? '');
 
     productName(productData['name']?.toString() ?? '');
-    // Prefer full HTML description, fallback to short_description
     productDescription(
       (productData['description'] ?? productData['short_description'] ?? '').toString(),
     );
@@ -422,7 +416,6 @@ class ProductCentralController extends GetxController {
     );
     selectedCondition(_toArabicCondition(productData['condition']?.toString()));
 
-    // Section
     final int sectionId = productData['section_id'] is int
         ? productData['section_id']
         : int.tryParse(productData['section_id']?.toString() ?? '') ?? 0;
@@ -434,7 +427,6 @@ class ProductCentralController extends GetxController {
       selectedSection(resolved);
     }
 
-    // Media (cover + gallery)
     final List<String> paths = [];
     final cover = productData['cover']?.toString();
     if (cover != null && cover.trim().isNotEmpty) paths.add(cover);
@@ -446,48 +438,37 @@ class ProductCentralController extends GetxController {
     final uniquePaths = paths.where((p) => p.trim().isNotEmpty).toSet().toList();
     selectedMedia.assignAll(uniquePaths.map(_mediaItemFromRelativePath).toList());
 
-    // Keywords/tags
     if (productData['tags'] is List) {
       keywords.assignAll((productData['tags'] as List).map((e) => e.toString()));
     } else {
       keywords.clear();
     }
 
-    // Sync keyword controller UI if already initialized
     if (Get.isRegistered<KeywordController>()) {
       Get.find<KeywordController>().syncFromProductController();
     }
 
-    // Variations
     if (Get.isRegistered<ProductVariationController>()) {
       final variationController = Get.find<ProductVariationController>();
 
       final rawVars = productData['variations'];
       final bool hasVars = rawVars is List && rawVars.isNotEmpty;
 
-      // بعض المنتجات قد تُرجع type مختلف رغم وجود variations، لذلك نعتمد على وجود القائمة فعلياً.
       if (hasVars) {
-        // Ensure attributes are available for mapping attribute_id/option_id -> names/values
         await variationController.loadAttributesOnOpen();
         await variationController.loadFromProductApi(
           productData: productData,
           isEditMode: true,
         );
       } else {
-        // Only disable if there are truly no variations in API data.
         variationController.toggleHasVariations(false);
       }
     }
 
-    // Cross-sells / related products
-
     if (Get.isRegistered<RelatedProductsController>()) {
-      // Await so the controller can ensure products are loaded (cache/API)
-      // and apply selected ids before the UI builds.
       await Get.find<RelatedProductsController>().loadFromProductApi(productData);
     }
 
-    // Sync basic info text controllers
     if (Get.isRegistered<AddProductController>()) {
       Get.find<AddProductController>().applyCentralToTextFields();
     }
@@ -546,7 +527,6 @@ class ProductCentralController extends GetxController {
     if (p.isEmpty) return '';
     if (p.startsWith('http://') || p.startsWith('https://')) return p;
 
-    // Most media served under /storage
     final base = ApiHelper.getBaseUrl().replaceAll(RegExp(r'/$'), '');
     final cleaned = p.startsWith('/') ? p.substring(1) : p;
     if (cleaned.startsWith('storage/')) {
@@ -603,7 +583,6 @@ class ProductCentralController extends GetxController {
           ? '/merchants/products/${editingProductId.value}'
           : '/merchants/products';
 
-      // NOTE: Backend uses POST for both create and update.
       final response = await ApiHelper.post(
         path: path,
         body: productData,
@@ -626,8 +605,6 @@ class ProductCentralController extends GetxController {
 
         _notifyProductUpdate();
 
-        // In edit mode we keep controllers values (so user can continue) but we
-        // reset edit flag. In add mode we reset completely.
         if (isEditMode.value) {
           isEditMode(false);
           editingProductId(0);
@@ -662,7 +639,6 @@ class ProductCentralController extends GetxController {
     print('selectedSection.value?.id :: ${selectedSection.value?.id}');
     final productData = <String, dynamic>{
       'section_id': selectedSection.value!.id,
-      // Keep existing SKU in edit mode (backend may validate it)
       if (isEditMode.value && editingSku.value.trim().isNotEmpty)
         'sku': editingSku.value.trim(),
       'name': productName.value.trim(),
@@ -671,7 +647,6 @@ class ProductCentralController extends GetxController {
       'category_id': selectedCategoryId.value,
       'condition': formatCondition(selectedCondition.value),
       'short_description': getShortDescription(),
-      // Keep SKU on edit if provided by API
       'sku': (isEditMode.value && editingSku.value.trim().isNotEmpty)
           ? editingSku.value.trim()
           : generateSku(),
@@ -827,12 +802,8 @@ class ProductCentralController extends GetxController {
     return response['message'] ?? 'فشل في إضافة المنتج';
   }
 
-  
-  /// Reset ALL stepper-related data (used before starting add/edit flow)
   void resetAllData() {
-    // reset core product fields + section
     reset(resetSection: true);
-    // reset edit flags
     isEditMode(false);
     editingProductId(0);
     editingSku('');
@@ -870,7 +841,6 @@ void resetAfterSuccess(ProductVariationController variationController) {
     _checkProductReadiness();
   }
 
-
   String _apiConditionToArabic(String? apiCondition) {
     switch ((apiCondition ?? '').toLowerCase()) {
       case 'new':
@@ -898,7 +868,6 @@ void resetAfterSuccess(ProductVariationController variationController) {
       }
     } catch (_) {}
 
-    // Fallback using API object
     try {
       if (sectionObj is Map) {
         selectedSection(Section.fromJson(Map<String, dynamic>.from(sectionObj)));
@@ -953,7 +922,6 @@ void resetAfterSuccess(ProductVariationController variationController) {
     if (p.startsWith('http://') || p.startsWith('https://')) return p;
 
     final base = ApiHelper.getBaseUrl();
-    // Most of backend files are served under /storage/
     if (p.startsWith('storage/')) {
       return '$base/$p';
     }

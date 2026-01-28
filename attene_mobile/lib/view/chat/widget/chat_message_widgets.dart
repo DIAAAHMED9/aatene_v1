@@ -223,7 +223,6 @@ class FakeWaves extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     final v = animation.value;
-    // 12 bars
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(12, (i) {
@@ -299,7 +298,6 @@ class MessageBubble extends StatelessWidget {
                         if (hasAttachments && text.isNotEmpty) const SizedBox(height: 8),
                         if (text.isNotEmpty) Text(text),
                         if (!hasAttachments && _looksLikeAudio(text, urls)) ...[
-                          // if API puts audio as attachment url, handled below
                         ],
                       ],
                     ),
@@ -355,12 +353,11 @@ class AttachmentsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // WhatsApp-like: 1 big, 2 side-by-side, 3/4 grid, >4 grid with "+N"
     final count = urls.length;
 
     if (count == 1) return AttachmentTile(url: urls[0], big: true);
 
-    final show = urls.take(10).toList(); // hard cap
+    final show = urls.take(10).toList();
     final gridCount = show.length.clamp(2, 4);
 
     return SizedBox(
@@ -481,7 +478,6 @@ class AudioTileState extends State<AudioTile> {
 
       setState(() => _ready = true);
     } catch (_) {
-      // ignore
     }
   }
 
@@ -621,8 +617,6 @@ class AddParticipantSheet extends StatelessWidget {
     );
   }
 }
-
-// ---- helpers ----
 
 bool _isImageUrl(String url) {
   final u = url.toLowerCase();

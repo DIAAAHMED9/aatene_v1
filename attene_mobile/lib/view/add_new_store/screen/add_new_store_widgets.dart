@@ -77,7 +77,6 @@ class AddNewStoreForm extends StatelessWidget {
             ),
             _HidePhoneTile(controller: controller),
             const SizedBox(height: 10),
-            // const _LibraryHintBox(),
             const SizedBox(height: 10),
             _CreateButton(controller: controller),
             const SizedBox(height: 20),
@@ -429,13 +428,11 @@ ImageProvider _getImageProvider(
   dynamic media,
 ) {
   if (media is MediaItem) {
-    // from media library
     final url = media.fileUrl;
     if (url != null && url.isNotEmpty) {
       return NetworkImage(url);
     }
   }
-  // fallback: local file path stored as String
   if (media is String && media.trim().isNotEmpty) {
     return localImageProvider(media);
   }
@@ -633,34 +630,6 @@ class _HidePhoneTile extends StatelessWidget {
     );
   }
 }
-
-// class _LibraryHintBox extends StatelessWidget {
-//   const _LibraryHintBox();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.all(12),
-//       decoration: BoxDecoration(
-//         color: Colors.blue[50],
-//         borderRadius: BorderRadius.circular(8),
-//         border: Border.all(color: Colors.blue[200]!),
-//       ),
-//       child: Row(
-//         children: [
-//           const Icon(Icons.info_outline, color: Colors.blue),
-//           const SizedBox(width: 10),
-//           Expanded(
-//             child: Text(
-//               "💡 تأكد من اختيار الصور من 'المكتبة' وليس 'رفع صورة جديدة' لتجنب مشاكل الرفع أثناء إنشاء المتجر",
-//               style: getRegular(color: Colors.blueAccent, fontSize: 12),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class _CreateButton extends StatelessWidget {
   final CreateStoreController controller;

@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
 
-
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});
 

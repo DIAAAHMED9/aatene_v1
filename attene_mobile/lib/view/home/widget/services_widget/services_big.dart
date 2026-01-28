@@ -8,12 +8,10 @@ class ProfileCardSmall extends StatefulWidget {
 }
 
 class _ProfileCardSmallState extends State<ProfileCardSmall> {
-  // حالة المتابعة (تتغير عند الضغط على الزر)
   bool _isFollowed = false;
 
   @override
   Widget build(BuildContext context) {
-    // إعدادات القياسات لتناسب العرض 170
     const double cardWidth = 170.0;
     const double bannerHeight = 100.0;
     const double avatarRadius = 35.0;
@@ -35,10 +33,8 @@ class _ProfileCardSmallState extends State<ProfileCardSmall> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 1. الجزء العلوي (البانر + الأزرار + الصورة الشخصية المتداخلة)
           _buildHeaderStack(bannerHeight, avatarRadius),
 
-          // 2. الجزء السفلي (المعلومات النصية)
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
             child: Column(
@@ -56,7 +52,6 @@ class _ProfileCardSmallState extends State<ProfileCardSmall> {
     );
   }
 
-  //  الصور والأزرار
   Widget _buildHeaderStack(double bannerHeight, double avatarRadius) {
     return SizedBox(
       height: bannerHeight + (avatarRadius * 0.5),
@@ -64,7 +59,6 @@ class _ProfileCardSmallState extends State<ProfileCardSmall> {
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
-          // البانر الخلفي
           Container(
             height: bannerHeight,
             decoration: const BoxDecoration(
@@ -78,13 +72,10 @@ class _ProfileCardSmallState extends State<ProfileCardSmall> {
             ),
           ),
 
-          // زر الإضافة المتفاعل)
           Positioned(top: 8, left: 8, child: _buildAnimatedFollowButton()),
 
-          // شارة إعلان ممول
           Positioned(top: 8, right: 8, child: _buildSponsoredBadge()),
 
-          // الصورة الشخصية
           Positioned(
             top: bannerHeight - avatarRadius,
             child: Container(
@@ -106,7 +97,6 @@ class _ProfileCardSmallState extends State<ProfileCardSmall> {
     );
   }
 
-  // زر المتابعة مع الأنيميشن
   Widget _buildAnimatedFollowButton() {
     return GestureDetector(
       onTap: () => setState(() => _isFollowed = !_isFollowed),

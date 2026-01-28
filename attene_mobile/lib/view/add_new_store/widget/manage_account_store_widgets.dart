@@ -210,7 +210,6 @@ class _AccountsListView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // ✅ زر إضافة متجر جديد
               _AddNewStoreButton(controller: controller),
             ],
           ),
@@ -286,7 +285,6 @@ class _InfoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: const Color(0XFFF0F7FF),
@@ -323,7 +321,6 @@ class _StoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(10),
 
       child: Row(
@@ -355,7 +352,7 @@ class _StoreCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min, // ⭐ المفتاح
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       CircleAvatar(
                         radius: 10,

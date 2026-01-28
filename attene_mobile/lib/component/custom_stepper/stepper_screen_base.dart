@@ -3,7 +3,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../general_index.dart';
 import 'responsive_custom_stepper.dart';
 import 'stepper_step.dart';
-// import 'responsive_custom_stepper.dart';
 
 abstract class StepperScreenBase extends StatefulWidget {
   final String appBarTitle;
@@ -50,10 +49,6 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
 
   Widget buildStepContent(int stepIndex);
 
-  /// Initialize any controllers used by the stepper screen.
-  ///
-  /// Note: This is `Future<void>` to be flexible across screens that need async
-  /// setup. It is called from `initState()` without awaiting.
   Future<void> initializeControllers();
 
   int getInitialStep() => 0;
@@ -198,8 +193,6 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
       currentStep = step;
     });
 
-    // PageController might temporarily have no clients (e.g., when returning from another route
-    // like MediaLibrary). Guard against 'PageController is not attached to a PageView.'
     void go() {
       if (!mounted) return;
       if (!_pageController.hasClients) return;
@@ -274,16 +267,6 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
         color: AppColors.light1000,
         textColor: AppColors.primary400,
       ),
-      // OutlinedButton(
-      //   style: OutlinedButton.styleFrom(
-      //     padding: const EdgeInsets.symmetric(vertical: 16),
-      //     side: BorderSide(color: AppColors.primary400, width: 2),
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(12),
-      //     ),
-      //   ),
-      //   child: Text('رجوع', style: getMedium(color: AppColors.primary400)),
-      // ),
     );
   }
 
@@ -295,22 +278,5 @@ abstract class StepperScreenBaseState<T extends StepperScreenBase>
       borderColor: AppColors.primary400,
       textColor: AppColors.light1000,
     );
-    // ElevatedButton(
-    //   onPressed: nextStep,
-    //   style: ElevatedButton.styleFrom(
-    //     padding: const EdgeInsets.symmetric(vertical: 16),
-    //     backgroundColor: widget.primaryColor,
-    //     foregroundColor: AppColors.primary400,
-    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-    //     elevation: 3,
-    //   ),
-    //   child: Padding(
-    //     padding: const EdgeInsets.symmetric(horizontal: 24),
-    //     child: Text(
-    //       currentStep == steps.length - 1 ? 'إنهاء' : 'التالي',
-    //       style: getMedium(),
-    //     ),
-    //   ),
-    // );
   }
 }

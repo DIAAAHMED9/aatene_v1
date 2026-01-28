@@ -1,5 +1,3 @@
-
-
 import 'package:reorderables/reorderables.dart';
 
 import '../../../general_index.dart';

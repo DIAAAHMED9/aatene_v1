@@ -1,7 +1,5 @@
-
 import '../../general_index.dart';
 import '../../utils/responsive/responsive_dimensions.dart';
-
 
 class AateneButton extends StatelessWidget {
   const AateneButton({

@@ -1,7 +1,4 @@
-
-
 import '../../general_index.dart';
-
 
 class CustomAppBarWithTabs extends StatelessWidget
     implements PreferredSizeWidget {

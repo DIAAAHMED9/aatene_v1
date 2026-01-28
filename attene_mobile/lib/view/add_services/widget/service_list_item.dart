@@ -77,24 +77,6 @@ class ServiceListItem extends StatelessWidget {
 
                       SizedBox(height: ResponsiveDimensions.f(4)),
 
-                      // if (service.sectionId != null && service.sectionId != 0)
-                      //   Row(
-                      //     children: [
-                      //       Icon(
-                      //         Icons.category_outlined,
-                      //         color: Colors.grey[600],
-                      //         size: ResponsiveDimensions.f(14),
-                      //       ),
-                      //       SizedBox(width: ResponsiveDimensions.f(4)),
-                      //       Text(
-                      //         _getSectionName(service.sectionId!),
-                      //         style: getRegular(
-                      //           fontSize: ResponsiveDimensions.f(12),
-                      //           color: Color(0xFF757575),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
                       SizedBox(height: ResponsiveDimensions.f(4)),
                       _buildStatusChip(service.status),
                     ],

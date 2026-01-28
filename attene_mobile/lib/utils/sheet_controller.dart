@@ -824,7 +824,6 @@ class BottomSheetController extends GetxController {
             spacing: 15,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon(Icons.folder_open_rounded, size: 60, color: Colors.grey),
               SizedBox(height: 16),
               Text('لا توجد أقسام', style: getRegular()),
             ],
@@ -884,14 +883,6 @@ class BottomSheetController extends GetxController {
                 ),
               ),
 
-              // IconButton(
-              //   icon: Icon(
-              //     Icons.delete_outline,
-              //     color: Colors.red[400],
-              //     size: 20,
-              //   ),
-              //   onPressed: () => _showDeleteSectionConfirmation(section),
-              // ),
             ],
           ),
         ),
@@ -943,10 +934,6 @@ class BottomSheetController extends GetxController {
         TextFiledAatene(
           heightTextFiled: 50,
           onChanged: (value) => _newSectionName.value = value,
-          // prefixIcon: Icon(
-          //   Icons.create_new_folder_rounded,
-          //   color: Colors.grey[600],
-          // ),
           isRTL: isRTL,
           hintText: 'أدخل اسم القسم الجديد',
           textInputAction: TextInputAction.next, textInputType: TextInputType.name,
@@ -990,15 +977,6 @@ class BottomSheetController extends GetxController {
                   color: AppColors.primary400,
                 ),
 
-                // ElevatedButton(
-                //   onPressed: _newSectionName.isNotEmpty && !isSectionNameExists
-                //       ? _addNewSection
-                //       : null,
-                //   style: ElevatedButton.styleFrom(
-                //     padding: const EdgeInsets.symmetric(vertical: 12),
-                //   ),
-                //   child: const Text('إضافة'),
-                // ),
               ),
             ),
           ],
@@ -1273,22 +1251,6 @@ class BottomSheetController extends GetxController {
           textColor: AppColors.light1000,
           borderColor: AppColors.primary400,
         ),
-        // ElevatedButton(
-        //   onPressed: () {
-        //     if (_currentEditingAttribute.value == null) {
-        //       _currentEditingAttribute.value = _selectedAttributes.first;
-        //     }
-        //     _attributeTabIndex.value = 1;
-        //   },
-        //   style: ElevatedButton.styleFrom(
-        //     backgroundColor: AppColors.primary400,
-        //     minimumSize: const Size(double.infinity, 50),
-        //   ),
-        //   child: Text(
-        //     'الانتقال إلى إضافة الصفات',
-        //     style: getMedium(color: Colors.white),
-        //   ),
-        // ),
       );
     }
     return const SizedBox();
@@ -1549,14 +1511,6 @@ class BottomSheetController extends GetxController {
         borderColor: AppColors.primary400,
       ),
 
-      // ElevatedButton(
-      //   onPressed: _saveAttributesAndClose,
-      //   style: ElevatedButton.styleFrom(
-      //     backgroundColor: AppColors.primary400,
-      //     minimumSize: Size(double.infinity, 50),
-      //   ),
-      //   child: Text('حفظ والتطبيق', style: getMedium(color: Colors.white)),
-      // ),
     );
   }
 

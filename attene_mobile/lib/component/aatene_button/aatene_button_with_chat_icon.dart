@@ -1,4 +1,3 @@
-
 import '../../general_index.dart';
 
 class AateneButtonWithChatIcon extends StatelessWidget {

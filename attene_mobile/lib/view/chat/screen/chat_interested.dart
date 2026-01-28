@@ -1,7 +1,4 @@
-
-
 import '../../../general_index.dart';
-
 
 class ChatInterested extends StatelessWidget {
   const ChatInterested({super.key});

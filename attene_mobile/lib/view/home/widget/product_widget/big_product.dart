@@ -1,8 +1,3 @@
-
-// -----------------------------------------------------------
-// Main Widget: Promotional Card
-// -----------------------------------------------------------
-
 import '../../../../general_index.dart';
 
 class PromotionalCard extends StatelessWidget {
@@ -23,14 +18,12 @@ class PromotionalCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // لجعل البطاقة تأخذ حجم محتواها فقط
+        mainAxisSize: MainAxisSize.min,
         children: const [
-          // 1. Top Section: Video/Ad Header
           VideoAdHeader(),
 
           SizedBox(height: 12),
 
-          // 2. Bottom Section: Product Details
           ProductInfoSection(),
         ],
       ),
@@ -38,9 +31,6 @@ class PromotionalCard extends StatelessWidget {
   }
 }
 
-// -----------------------------------------------------------
-// Widget 1: Video Header (The Top Part)
-// -----------------------------------------------------------
 class VideoAdHeader extends StatelessWidget {
   const VideoAdHeader({super.key});
 
@@ -48,19 +38,16 @@ class VideoAdHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background Image
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           child: Image.network(
             'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            // صورة توضيحية للمنتج (Eucerin)
             height: 220,
             width: double.infinity,
             fit: BoxFit.cover,
           ),
         ),
 
-        // Play Button (Centered)
         Positioned.fill(
           child: Center(
             child: Container(
@@ -79,7 +66,6 @@ class VideoAdHeader extends StatelessWidget {
           ),
         ),
 
-        // Mute Button (Bottom Right)
         Positioned(
           bottom: 12,
           right: 12,
@@ -118,9 +104,6 @@ class VideoAdHeader extends StatelessWidget {
   }
 }
 
-// -----------------------------------------------------------
-// Widget 2: Product Info (The Bottom Part)
-// -----------------------------------------------------------
 class ProductInfoSection extends StatelessWidget {
   const ProductInfoSection({super.key});
 
@@ -132,7 +115,6 @@ class ProductInfoSection extends StatelessWidget {
         spacing: 12,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Right Side: Product Image with Favorite Icon
           Expanded(
             flex: 4,
             child: Stack(
@@ -141,7 +123,6 @@ class ProductInfoSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
                     'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                    // صورة التيشيرت
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -172,14 +153,11 @@ class ProductInfoSection extends StatelessWidget {
               ],
             ),
           ),
-          // Left Side: Text Details
           Expanded(
             flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              // محاذاة لليمين للنص العربي
               children: [
-                // "New" Badge
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -201,7 +179,6 @@ class ProductInfoSection extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // "Sponsored" Label
                 Row(
                   spacing: 5,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -216,7 +193,6 @@ class ProductInfoSection extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // Product Title
                 const Text(
                   "T-Shirt SailingT-Shirt\nSailing",
                   textAlign: TextAlign.right,
@@ -231,7 +207,6 @@ class ProductInfoSection extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // Rating Stars
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: List.generate(
@@ -246,7 +221,6 @@ class ProductInfoSection extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // Price
                 const Text(
                   "10\$",
                   style: TextStyle(

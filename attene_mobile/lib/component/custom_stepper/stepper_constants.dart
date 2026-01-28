@@ -1,8 +1,6 @@
 import '../../utils/colors/index.dart';
 import 'package:flutter/material.dart';
 
-
-
 import '../../utils/colors/app_color.dart';
 
 class StepperConstants {

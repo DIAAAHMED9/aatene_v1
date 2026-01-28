@@ -3,7 +3,6 @@ import '../../../../general_index.dart';
 class StoryItem extends StatelessWidget {
   const StoryItem({super.key});
 
-  // بيانات تجريبية لمحاكاة الصورة المرفقة
   final List<Map<String, String>> stories = const [
     {
       'username': 'johndoe',
@@ -43,7 +42,6 @@ class StoryItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        // لمحاذاة النص العربي لليمين
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -63,7 +61,6 @@ class StoryItem extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      // إطار القصة المتدرج (Gradient Border)
                       Container(
                         padding: const EdgeInsets.all(2.5),
                         decoration: const BoxDecoration(

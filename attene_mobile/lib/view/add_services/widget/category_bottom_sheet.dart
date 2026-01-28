@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utils/responsive/responsive_dimensions.dart';
 
@@ -59,11 +57,6 @@ class CategoryBottomSheet extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // Icon(
-                    //   Icons.,
-                    //   color: AppColors.primary500,
-                    //   size: ResponsiveDimensions.responsiveFontSize(20),
-                    // ),
                     SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
                     Expanded(
                       child: Text(

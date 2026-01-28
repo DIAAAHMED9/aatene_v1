@@ -1,7 +1,10 @@
 import '../general_index.dart';
+import '../view/home/model/home_api_models.dart';
 
 class ProductCard extends StatefulWidget {
-  const ProductCard({super.key});
+  final HomeProductItem? item;
+
+  const ProductCard({super.key, this.item});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -16,6 +19,13 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
+
+    final title = (item?.name.isNotEmpty ?? false) ? item!.name : 'منتج';
+    final imageUrl = item?.imageUrl ??
+        'https://images.unsplash.com/photo-1520975916090-3105956dac38';
+    final priceText = item?.price != null ? '${item!.price!.toStringAsFixed(0)}₪' : '—';
+
     return GestureDetector(
       onTap: () {
         Get.to(ProductDetails());
@@ -41,14 +51,18 @@ class _ProductCardState extends State<ProductCard> {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(14),
-                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
                   child: Image.network(
-                    'https://images.unsplash.com/photo-1520975916090-3105956dac38',
+                    imageUrl,
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 170,
+                      color: Colors.black12,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.broken_image_outlined),
+                    ),
                   ),
                 ),
 
@@ -56,10 +70,7 @@ class _ProductCardState extends State<ProductCard> {
                   top: 10,
                   right: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(12),
@@ -80,17 +91,17 @@ class _ProductCardState extends State<ProductCard> {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
                         color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 8,
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Icon(
-                        size: 18,
                         isLiked ? Icons.favorite : Icons.favorite_border,
                         color: isLiked ? AppColors.primary400 : Colors.grey,
                       ),
@@ -99,73 +110,22 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 7),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                spacing: 5,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      /// adds
-                      Icon(
-                        Icons.stars_rounded,
-                        size: 12,
-                        color: AppColors.primary400,
-                      ),
-                      Text(
-                        'اعلان ممول',
-                        style: getRegular(
-                          fontSize: 10,
-                          color: AppColors.neutral500,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  /// product title
-                  Text(
-                    'T-Shirt Sailing',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-
-                  ///star rating
-                  Row(
-                    spacing: 5,
-                    children: [
-                      Row(
-                        children: List.generate(
-                          5,
-                          (index) => const Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.amber,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "(5)",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-
-                  /// product price
-                  Row(
-                    spacing: 5,
-                    children: [
-                      Text('14\$', style: TextStyle(color: AppColors.error200)),
-                      Text(
-                        '21\$',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              child: Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: getMedium(fontSize: 13),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                priceText,
+                style: getBlack(fontSize: 14, color: AppColors.primary400),
               ),
             ),
           ],

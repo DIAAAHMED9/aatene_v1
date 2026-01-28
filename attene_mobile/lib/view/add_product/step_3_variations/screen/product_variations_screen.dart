@@ -23,7 +23,6 @@ class ProductVariationsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // _buildHeader(),
                         SizedBox(height: ResponsiveDimensions.h(24)),
 
                         VariationToggleWidget(),
@@ -91,29 +90,6 @@ class ProductVariationsScreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildHeader() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         'الاختلافات والكميات',
-  //         style: getBold(
-  //           fontSize: ResponsiveDimensions.f(20),
-  //           color: Colors.black87,
-  //         ),
-  //       ),
-  //       SizedBox(height: ResponsiveDimensions.h(8)),
-  //       Text(
-  //         'إدارة اختلافات المنتج والكميات المتاحة لكل اختلاف',
-  //         style: getRegular(
-  //           fontSize: ResponsiveDimensions.f(14),
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget _buildNoVariationsContent() {
     return Column(
       spacing: 15,
@@ -138,7 +114,6 @@ class ProductVariationsScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // AttributesManagementWidget(),
         SizedBox(height: ResponsiveDimensions.h(20)),
 
         SelectedAttributesWidget(),

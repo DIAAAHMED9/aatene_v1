@@ -1,4 +1,3 @@
-
 import '../../../../general_index.dart';
 
 class ProductVariationController extends GetxController {
@@ -179,13 +178,6 @@ class ProductVariationController extends GetxController {
 
     update([attributesUpdateId, variationsUpdateId]);
 
-    // Get.snackbar(
-    //   value ? 'تم التفعيل' : 'تم التعطيل',
-    //   value ? 'تم تفعيل نظام الاختلافات' : 'تم تعطيل نظام الاختلافات',
-    //   backgroundColor: value ? Colors.green : Colors.orange,
-    //   colorText: Colors.white,
-    //   duration: const Duration(seconds: 3),
-    // );
   }
 
   Future<void> openAttributesManagement() async {
@@ -393,12 +385,6 @@ class ProductVariationController extends GetxController {
   }
 
   bool _allAttributesHaveSelectedValues() {
-    // In edit flows the user may change variation attributes directly from
-    // the variation cards without opening the attributes bottom sheet.
-    // In that case `isSelected` might not reflect the current state.
-    // So we consider an attribute "has selected values" if:
-    // - at least one value isSelected in the UI, OR
-    // - at least one existing variation has a value for this attribute.
     for (final attribute in _selectedAttributes) {
       final hasUiSelection =
           attribute.values.any((value) => value.isSelected.value);
@@ -508,8 +494,6 @@ class ProductVariationController extends GetxController {
           );
         }
       }
-      // SKU is optional for variations (backend doesn't require it).
-      // If provided, we still ensure it isn't duplicated among variations.
       final sku = variation.sku.value.trim();
       if (sku.isNotEmpty) {
         final sameSkuVariations = _variations
@@ -678,21 +662,16 @@ class ProductVariationController extends GetxController {
   List<Map<String, dynamic>> prepareVariationsForApi() {
     final List<Map<String, dynamic>> apiVariations = [];
 
-    /// Backend expects relative paths like: images/xxx.jpg or gallery/xxx.jpg
-    /// This helper converts any stored value (full URL, /storage/..., etc.)
-    /// into a relative path.
     String _toRelativePath(String input) {
       final v = input.trim();
       if (v.isEmpty) return '';
 
-      // Full URL -> keep only after /storage/
       final storageIdx = v.indexOf('/storage/');
       if (storageIdx != -1) {
         final after = v.substring(storageIdx + '/storage/'.length);
         return after.startsWith('/') ? after.substring(1) : after;
       }
 
-      // Leading slash paths
       if (v.startsWith('/')) return v.substring(1);
 
       return v;
@@ -725,17 +704,13 @@ class ProductVariationController extends GetxController {
       }
 
       final variationData = {
-        // If this variation already exists (edit mode), keep its id so backend can update it.
         if (int.tryParse(variation.id) != null) 'id': int.parse(variation.id),
         'price': variation.price.value,
         'attributeOptions': attributeOptions,
-        // Backend uses string status: active / not-active
         'status': variation.isActive.value ? 'active' : 'not-active',
       };
 
       if (variation.images.isNotEmpty) {
-        // API examples show only a single "image" field for variation.
-        // Use the first selected image.
         final img = _toRelativePath(variation.images.first);
         if (img.isNotEmpty) {
           variationData['image'] = img;
@@ -750,18 +725,11 @@ class ProductVariationController extends GetxController {
     return apiVariations;
   }
 
-  /// Prefill variation system from API product response.
-  /// Expected productData['variations'] to be a list with items like:
-  /// {id, price, image, status, attributeOptions:[{attribute_id, option_id}]}
-  ///
-  /// It will map attribute_id/option_id into human readable names/values using
-  /// already loaded attributes (call loadAttributesOnOpen() before this).
   Future<void> loadFromProductApi({
     required Map<String, dynamic> productData,
     bool isEditMode = false,
   }) async {
     try {
-      // The API response may be wrapped (e.g. {status:true, data:{...}}). Unwrap if needed.
       final Map<String, dynamic> p = (productData['data'] is Map)
           ? Map<String, dynamic>.from(productData['data'] as Map)
           : (productData['product'] is Map)
@@ -770,8 +738,6 @@ class ProductVariationController extends GetxController {
 
       final rawVariations = p['variations'];
       if (rawVariations is! List) {
-        // In edit mode, do NOT auto-disable variations just because the payload shape is unexpected.
-        // This avoids the "variations disabled on edit" issue when backend responses differ slightly.
         if (!isEditMode) {
           toggleHasVariations(false);
         }
@@ -780,10 +746,7 @@ class ProductVariationController extends GetxController {
 
       _hasVariations.value = rawVariations.isNotEmpty;
 
-      // Collect used attribute ids to mark selected attributes
       final Set<String> usedAttributeIds = <String>{};
-      // Collect used option ids per attribute id so we can mark selected values
-      // This is critical in edit mode; validation requires at least one selected value per attribute.
       final Map<String, Set<String>> usedOptionIdsByAttrId = <String, Set<String>>{};
       final List<ProductVariation> parsedVariations = [];
 
@@ -819,7 +782,6 @@ class ProductVariationController extends GetxController {
           usedAttributeIds.add(attrId);
           (usedOptionIdsByAttrId[attrId] ??= <String>{}).add(optId);
 
-          // Track used option ids for this attribute
           usedOptionIdsByAttrId.putIfAbsent(attrId, () => <String>{}).add(optId);
 
           final attr = _allAttributes.firstWhereOrNull((a) => a.id == attrId);
@@ -829,7 +791,6 @@ class ProductVariationController extends GetxController {
           attributes[attr.name] = opt.value;
         }
 
-        // Images
         final List<String> images = [];
         if (vm['gallery'] is List) {
           images.addAll((vm['gallery'] as List).map((e) => e.toString()));
@@ -854,24 +815,19 @@ class ProductVariationController extends GetxController {
         );
       }
 
-      // Mark selected attributes in UI
       final selected = _allAttributes
           .where((a) => usedAttributeIds.contains(a.id))
           .toList();
 
       _selectedAttributes.assignAll(selected);
 
-      // IMPORTANT: mark the values as selected so validation passes and the user can
-      // add/edit variations without having to delete/recreate everything.
       for (final attr in _selectedAttributes) {
         final usedOptionIds = usedOptionIdsByAttrId[attr.id] ?? const <String>{};
 
-        // Clear previous selection state
         for (final v in attr.values) {
           v.isSelected.value = false;
         }
 
-        // Select the values that exist in current variations (if any)
         if (usedOptionIds.isNotEmpty) {
           for (final v in attr.values) {
             if (usedOptionIds.contains(v.id)) {
@@ -880,8 +836,6 @@ class ProductVariationController extends GetxController {
           }
         }
 
-        // Fallback (very rare): if no matching option found, select the first value
-        // so the attribute isn't "empty" for validation.
         final hasAnySelected = attr.values.any((v) => v.isSelected.value);
         if (!hasAnySelected && attr.values.isNotEmpty) {
           attr.values.first.isSelected.value = true;

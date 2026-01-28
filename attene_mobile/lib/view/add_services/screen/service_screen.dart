@@ -1,5 +1,3 @@
-
-
 import '../../../general_index.dart';
 import '../../../utils/responsive/index.dart';
 
@@ -344,7 +342,6 @@ class ServiceScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // onConfirm: () => Get.back(),
                 );
               },
               child: Container(
@@ -741,44 +738,6 @@ class ServiceScreen extends StatelessWidget {
                 buttonText: 'التالي: السعر والتطويرات',
               ),
 
-              // ElevatedButton(
-              //   onPressed: () {
-              //     if (controller.validateServiceForm()) {
-              //       controller.goToNextStep();
-              //     } else {
-              //       Get.snackbar(
-              //         'تنبيه',
-              //         'يرجى ملء جميع الحقول المطلوبة',
-              //         backgroundColor: Colors.orange,
-              //         colorText: Colors.white,
-              //       );
-              //     }
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: AppColors.primary400,
-              //     padding: EdgeInsets.symmetric(
-              //       vertical: ResponsiveDimensions.responsiveHeight(16),
-              //     ),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       Text(
-              //         'التالي: السعر والتطويرات',
-              //         style: getMedium(color: Colors.white),
-              //       ),
-              //       SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
-              //       Icon(
-              //         Icons.arrow_forward,
-              //         size: ResponsiveDimensions.responsiveFontSize(20),
-              //         color: Colors.white,
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
             SizedBox(
@@ -794,8 +753,6 @@ class ServiceScreen extends StatelessWidget {
                     Get.defaultDialog(
                       title: 'حفظ مؤقت',
                       content: const Text('هل تريد حفظ البيانات الحالية؟'),
-                      // textConfirm: 'نعم',
-                      // textCancel: 'لا',
                       actions: [
                         AateneButton(
                           onTap: () {
@@ -822,15 +779,6 @@ class ServiceScreen extends StatelessWidget {
                         ),
                       ],
 
-                      // onConfirm: () {
-                      //   Get.back();
-                      //   Get.snackbar(
-                      //     'تم الحفظ',
-                      //     'تم حفظ البيانات بنجاح',
-                      //     backgroundColor: Colors.green,
-                      //     colorText: Colors.white,
-                      //   );
-                      // },
                     );
                   }
                 },
@@ -840,44 +788,6 @@ class ServiceScreen extends StatelessWidget {
                 borderColor: AppColors.primary400,
               ),
 
-              // OutlinedButton(
-              //   onPressed: () {
-              //     if (controller.serviceTitle.value.isNotEmpty ||
-              //         controller.selectedMainCategory.value.isNotEmpty ||
-              //         controller.selectedCategory.value.isNotEmpty ||
-              //         controller.specializations.isNotEmpty ||
-              //         controller.keywords.isNotEmpty) {
-              //       Get.defaultDialog(
-              //         title: 'حفظ مؤقت',
-              //         content: const Text('هل تريد حفظ البيانات الحالية؟'),
-              //         textConfirm: 'نعم',
-              //         textCancel: 'لا',
-              //         onConfirm: () {
-              //           Get.back();
-              //           Get.snackbar(
-              //             'تم الحفظ',
-              //             'تم حفظ البيانات بنجاح',
-              //             backgroundColor: Colors.green,
-              //             colorText: Colors.white,
-              //           );
-              //         },
-              //       );
-              //     }
-              //   },
-              //   style: OutlinedButton.styleFrom(
-              //     padding: EdgeInsets.symmetric(
-              //       vertical: ResponsiveDimensions.responsiveHeight(16),
-              //     ),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //     side: BorderSide(color: Colors.grey[300]!),
-              //   ),
-              //   child: Text(
-              //     'حفظ مؤقت',
-              //     style: getMedium(color: Color(0xFF757575)),
-              //   ),
-              // ),
             ),
           ],
         );
@@ -981,17 +891,6 @@ class ServiceScreen extends StatelessWidget {
                         fontSize: ResponsiveDimensions.responsiveFontSize(14),
                       ),
                     ),
-                    // subtitle: section['status'] != null
-                    //     ? Text(
-                    //         'الحالة: ${section['status']}',
-                    //         style: getRegular(
-                    //           fontSize: ResponsiveDimensions.responsiveFontSize(
-                    //             12,
-                    //           ),
-                    //           color: Color(0xFF757575),
-                    //         ),
-                    //       )
-                    //     : null,
                     trailing: controller.selectedSectionId.value == sectionId
                         ? Icon(Icons.check, color: AppColors.primary400)
                         : null,
@@ -999,13 +898,6 @@ class ServiceScreen extends StatelessWidget {
                       controller.selectMainCategory(sectionName, sectionId);
                       Get.back();
 
-                      // Get.snackbar(
-                      //   'تم الاختيار',
-                      //   'تم اختيار قسم: $sectionName',
-                      //   backgroundColor: Colors.green,
-                      //   colorText: Colors.white,
-                      //   duration: Duration(seconds: 2),
-                      // );
                     },
                   );
                 },
@@ -1022,7 +914,6 @@ class ServiceScreen extends StatelessWidget {
             borderColor: AppColors.primary400,
           ),
 
-          // TextButton(onPressed: () => Get.back(), child: const Text('إلغاء')),
         ],
       ),
     );
