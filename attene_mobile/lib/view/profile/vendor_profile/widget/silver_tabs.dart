@@ -40,6 +40,7 @@ class SilverTabs extends SliverPersistentHeaderDelegate {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     padding: const EdgeInsets.symmetric(vertical: 12),
+                    height: 80,
                     decoration: BoxDecoration(
                       color: isActive
                           ? AppColors.primary50

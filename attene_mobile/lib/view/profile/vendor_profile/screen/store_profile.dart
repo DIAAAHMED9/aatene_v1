@@ -821,7 +821,7 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Bio', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('نبذة شخصية', style: TextStyle(fontWeight: FontWeight.bold)),
               ReadMoreText(
                 'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',
                 trimMode: TrimMode.Line,

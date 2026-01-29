@@ -16,7 +16,7 @@ class ManageAccountStoreHeader extends StatelessWidget {
         bottom: 16,
       ),
       child: Row(
-        children: [Text('إدارة الحسابات', style: getRegular(fontSize: 20))],
+        children: [Text('إدارة الحسابات', style: getMedium(fontSize: 20))],
       ),
     );
   }
@@ -95,7 +95,7 @@ class _ErrorView extends StatelessWidget {
                 child: Text(
                   controller.errorMessage.value,
                   textAlign: TextAlign.center,
-                  style: getRegular(color: Colors.grey),
+                  style: getMedium(color: Colors.grey),
                   ),
         ),
               
@@ -145,7 +145,7 @@ class _EmptyAccountsView extends StatelessWidget {
                 width: 280,
                 child: Text(
                   'يمكنك البدء بإضافة متاجر جديدة لإدارتها بشكل منفصل',
-                  style: getRegular(fontSize: 14, color: AppColors.neutral700),
+                  style: getMedium(fontSize: 14, color: AppColors.neutral700),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -263,7 +263,7 @@ class _SearchBar extends StatelessWidget {
           onChanged: controller.onSearchChanged,
           decoration: InputDecoration(
             hintText: 'ابحث عن متجر...',
-            hintStyle: getRegular(color: Colors.grey),
+            hintStyle: getMedium(color: Colors.grey),
             prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(
@@ -366,7 +366,7 @@ class _StoreCard extends StatelessWidget {
                       const SizedBox(width: 5),
                       Text(
                         store.address,
-                        style: getRegular(fontSize: 12, color: Colors.grey),
+                        style: getMedium(fontSize: 12, color: Colors.grey),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -438,7 +438,7 @@ class _LoginRequiredView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إدارة المتاجر',
-              style: getRegular(fontSize: 16, color: Colors.grey),
+              style: getMedium(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

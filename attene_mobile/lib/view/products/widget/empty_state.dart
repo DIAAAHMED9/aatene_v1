@@ -38,7 +38,7 @@ class EmptyStateWidget extends StatelessWidget {
               width: 280,
               child: Text(
                 description,
-                style: getRegular(fontSize: 14, color: AppColors.neutral700),
+                style: getMedium(fontSize: 14, color: AppColors.neutral700),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -51,7 +51,7 @@ class EmptyStateWidget extends StatelessWidget {
                   backgroundColor: AppColors.primary400,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: Text(buttonText, style: getRegular(color: Colors.white)),
+                child: Text(buttonText, style: getMedium(color: Colors.white)),
               ),
             ),
           ],

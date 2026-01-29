@@ -708,7 +708,7 @@ class CreateStoreController extends GetxController {
                     return ListTile(
                       title: Text(
                         city['name']?.toString() ?? 'مدينة',
-                        style: getRegular(
+                        style: getMedium(
                           color: isSelected
                               ? AppColors.primary400
                               : AppColors.neutral100,
@@ -798,7 +798,7 @@ class CreateStoreController extends GetxController {
                     return ListTile(
                       title: Text(
                         district['name']?.toString() ?? 'حي',
-                        style: getRegular(
+                        style: getMedium(
                           color: isSelected
                               ? AppColors.primary400
                               : AppColors.neutral100,
@@ -807,7 +807,7 @@ class CreateStoreController extends GetxController {
                       subtitle: district['city_name'] != null
                           ? Text(
                               'مدينة: ${district['city_name']}',
-                              style: getRegular(
+                              style: getMedium(
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),
@@ -913,7 +913,7 @@ class CreateStoreController extends GetxController {
                           : null,
                       title: Text(
                         currency['name']?.toString() ?? 'عملة',
-                        style: getRegular(
+                        style: getMedium(
                           color: isSelected
                               ? AppColors.primary400
                               : AppColors.neutral800,
@@ -922,7 +922,7 @@ class CreateStoreController extends GetxController {
                       subtitle: currency['code'] != null
                           ? Text(
                               'الرمز: ${currency['code']}',
-                              style: getRegular(
+                              style: getMedium(
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),

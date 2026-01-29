@@ -34,14 +34,14 @@ class AddNewStoreForm extends StatelessWidget {
             const TextWithStar(text: "شعار المتجر"),
             Text(
               "اختر صورة أساسية للشعار (حد أقصى 5 صور)",
-              style: getRegular(fontSize: 12, color: Colors.grey),
+              style: getMedium(fontSize: 12, color: Colors.grey),
             ),
             _LogoImagesList(controller: controller),
             const SizedBox(height: 10),
             const TextWithStar(text: "صور الغلاف"),
             Text(
               "اختر صورة واحدة على الأقل للغلاف (حد أقصى 10 صور)",
-              style: getRegular(fontSize: 12, color: Colors.grey),
+              style: getMedium(fontSize: 12, color: Colors.grey),
             ),
             _CoverImagesList(controller: controller),
             const SizedBox(height: 10),
@@ -107,7 +107,7 @@ class _StoreTypeBanner extends StatelessWidget {
             Icon(Icons.store, color: AppColors.primary400),
             Text(
               "نوع المتجر: ${controller.storeType.value == 'products' ? 'منتجات' : 'خدمات'}",
-              style: getRegular(fontSize: 14, color: AppColors.primary500),
+              style: getMedium(fontSize: 14, color: AppColors.primary500),
             ),
           ],
         ),
@@ -133,7 +133,7 @@ class _LogoImagesList extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               'الصور المختارة: $logoCount/5',
-              style: getRegular(
+              style: getMedium(
                 fontSize: 12,
                 color: logoCount >= 5 ? Colors.red : Colors.grey,
                 fontWeight: logoCount >= 5
@@ -194,7 +194,7 @@ class _CoverImagesList extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               'الصور المختارة: $coverCount/10',
-              style: getRegular(
+              style: getMedium(
                 fontSize: 12,
                 color: coverCount >= 10 ? Colors.red : Colors.grey,
                 fontWeight: coverCount >= 10
@@ -274,7 +274,7 @@ class _EmptyMediaPicker extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(title, style: getRegular(color: Colors.grey)),
+          Text(title, style: getMedium(color: Colors.grey)),
           const SizedBox(height: 4),
           Text(
             subtitle,
@@ -348,7 +348,7 @@ class _MediaTile extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       title,
-                      style: getRegular(color: Colors.white, fontSize: 12),
+                      style: getMedium(color: Colors.white, fontSize: 12),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -469,7 +469,7 @@ class _CitySelector extends StatelessWidget {
                       final cityName = controller.selectedCityName.value;
                       return Text(
                         cityName,
-                        style: getRegular(
+                        style: getMedium(
                           color: cityName != 'اختر المدينة'
                               ? AppColors.neutral100
                               : Colors.grey,
@@ -519,7 +519,7 @@ class _DistrictSelector extends StatelessWidget {
                           controller.selectedDistrictName.value;
                       return Text(
                         districtName,
-                        style: getRegular(
+                        style: getMedium(
                           color: districtName != 'اختر الحي'
                               ? AppColors.neutral100
                               : Colors.grey,
@@ -569,7 +569,7 @@ class _CurrencySelector extends StatelessWidget {
                           controller.selectedCurrencyName.value;
                       return Text(
                         currencyName,
-                        style: getRegular(
+                        style: getMedium(
                           color: currencyName != 'اختر العملة'
                               ? AppColors.neutral100
                               : Colors.grey,
@@ -621,7 +621,7 @@ class _HidePhoneTile extends StatelessWidget {
             Expanded(
               child: Text(
                 "إخفاء رقم الهاتف على الملف الشخصي",
-                style: getRegular(fontSize: 14, color: AppColors.neutral700),
+                style: getMedium(fontSize: 14, color: AppColors.neutral700),
               ),
             ),
           ],

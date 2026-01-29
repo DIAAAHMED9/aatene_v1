@@ -85,15 +85,15 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 items: [
                   DropdownMenuItem<String>(
                     value: 'ar',
-                    child: Text('العربية', style: getRegular(fontSize: 14)),
+                    child: Text('العربية', style: getMedium(fontSize: 14)),
                   ),
                   DropdownMenuItem<String>(
                     value: 'he',
-                    child: Text('عبري', style: getRegular(fontSize: 14)),
+                    child: Text('عبري', style: getMedium(fontSize: 14)),
                   ),
                   DropdownMenuItem<String>(
                     value: 'en',
-                    child: Text('english', style: getRegular(fontSize: 14)),
+                    child: Text('english', style: getMedium(fontSize: 14)),
                   ),
                 ],
                 onChanged: (value) {

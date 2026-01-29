@@ -1,7 +1,4 @@
-import 'package:attene_mobile/view/favorite/screen/favorites.dart';
-import 'package:attene_mobile/view/notification/screen/notification.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
-import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,11 +8,11 @@ import 'general_index.dart' hide AppLifecycleManager;
 import 'utils/responsive/index.dart';
 import 'utils/services/device_name_service.dart';
 import 'utils/sheet_controller.dart';
-import 'package:attene_mobile/view/add_new_store/screen/manage_account_store_controller.dart';
 import 'package:attene_mobile/services/app_lifecycle_manager.dart';
-import 'package:attene_mobile/api/core/api_helper.dart';
 import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
+import 'package:flutter/material.dart';
+
 
 class AppBindings extends Bindings {
   static bool _initialized = false;
@@ -27,9 +24,12 @@ class AppBindings extends Bindings {
     print('🔄 [APP BINDINGS] تسجيل المتحكمات الأساسية فقط...');
 
     Get.lazyPut(() => GetStorage(), fenix: true);
+    // Keep MyAppController alive for the whole app lifecycle.
+    // It owns auth/session state used by API headers.
     Get.put(MyAppController(), permanent: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
+    // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
     Get.lazyPut(() => DataInitializerService(), fenix: true);
     Get.lazyPut(() => StoreSelectionController(), fenix: true);
     Get.lazyPut<HomeController>(() => HomeController());
@@ -62,12 +62,14 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => KeywordController(), fenix: true);
         Get.lazyPut(() => AddProductController(), fenix: true);
         Get.lazyPut(() => MediaLibraryController(), fenix: true);
+        // Get.lazyPut(() => StoriesController(), fenix: true);
         Get.lazyPut(() => RelatedProductsController(), fenix: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
+        // Get.lazyPut(() => StoriesController(), fenix: true);
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });
@@ -181,7 +183,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
-        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/', page: () => ProfilePage()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -192,11 +194,14 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
+        // GetPage(name: '/story-test', page: () => const StoryTestScreen()),
+        // GetPage(name: '/add-story', page: () => const AddStoryScreen()),
         GetPage(
           name: '/related-products',
           page: () => RelatedProductsScreen(),
           middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
         ),
+        // Services add/edit (same flow as products)
         GetPage(
           name: '/add-service',
           page: () {
@@ -213,10 +218,6 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
-        GetPage(
-  name: '/ResetPassword',
-  page: () => SetNewPassword(),
-),
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
         GetPage(
           name: '/services-Screen',
@@ -228,6 +229,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -235,6 +237,7 @@ void main() async {
 
   await _initializeEssentialServices();
 
+  // ✅ Register lifecycle manager once
   AppLifecycleManager.I.register();
   if (!Get.isRegistered<AppLifecycleManager>()) {
     Get.put<AppLifecycleManager>(AppLifecycleManager.I, permanent: true);
@@ -264,29 +267,36 @@ void _initializeBackgroundServices() {
 
       await PushNotificationService().setupInteractedMessage();
 
+      // ✅ لا تنشئ AppLifecycleManager() — استخدم I فقط
+      // (غالبًا لا تحتاج هذا السطر لأننا سجلناه في main)
       if (!Get.isRegistered<AppLifecycleManager>()) {
         Get.put<AppLifecycleManager>(AppLifecycleManager.I, permanent: true);
       }
 
+      // ✅ Permissions & token
       try {
         await FirebaseMessaging.instance.requestPermission();
       } catch (_) {}
 
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-        if (newToken.trim().isNotEmpty) {
+        if (newToken
+            .trim()
+            .isNotEmpty) {
           storage.write('device_token', newToken);
           print('🔄 FCM Token refreshed: $newToken');
         }
       });
 
       final token = await FirebaseMessaging.instance.getToken();
-      if (token != null && token.trim().isNotEmpty) {
+      if (token != null && token
+          .trim()
+          .isNotEmpty) {
         storage.write('device_token', token);
         print('📱 FCM Token: $token');
       }
 
       final RemoteMessage? initialMessage =
-          await FirebaseMessaging.instance.getInitialMessage();
+      await FirebaseMessaging.instance.getInitialMessage();
       if (initialMessage != null) {
         print('📨 تم تشغيل التطبيق من خلال إشعار');
       }
@@ -298,6 +308,7 @@ void _initializeBackgroundServices() {
   });
 }
 
+
 Future<void> _initializeEssentialServices() async {
   print('🔄 تهيئة الخدمات الأساسية...');
 
@@ -305,3 +316,4 @@ Future<void> _initializeEssentialServices() async {
 
   print('✅ تم تهيئة الخدمات الأساسية');
 }
+

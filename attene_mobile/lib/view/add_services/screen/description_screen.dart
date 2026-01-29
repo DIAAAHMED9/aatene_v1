@@ -90,7 +90,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               children: [
                 Text(
                   'يجب أن يكون الوصف واضحاً ومفصلاً لمساعدة العملاء على فهم الخدمة بشكل أفضل.',
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                     color: Color(0xFF757575),
                   ),
@@ -370,7 +370,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
             child: Text(
               label,
-              style: getRegular(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.responsiveFontSize(14),
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF303030),
@@ -534,7 +534,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
 
           Text(
             'اكتب إجابات للأسئلة الشائعة التي يطرحها عميلك. أضف حتى خمسة أسئلة.',
-            style: getRegular(
+            style: getMedium(
               fontSize: ResponsiveDimensions.responsiveFontSize(10),
               fontWeight: FontWeight.w300,
               color: Colors.grey.shade500,
@@ -798,7 +798,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                       children: [
                         Text(
                           'التالي',
-                          style: getRegular(color: AppColors.light1000),
+                          style: getMedium(color: AppColors.light1000),
                         ),
                         SizedBox(
                           width: ResponsiveDimensions.responsiveWidth(8),
@@ -1076,7 +1076,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
         SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
         Text(
           label,
-          style: getRegular(
+          style: getMedium(
             fontSize: ResponsiveDimensions.responsiveFontSize(14),
             color: Colors.grey,
           ),

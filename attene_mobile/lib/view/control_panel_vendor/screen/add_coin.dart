@@ -200,7 +200,7 @@ class AddCoin extends StatelessWidget {
                               ),
                               Text(
                                 "تمت العملية بنجاح",
-                                style: getBlack(fontSize: 25),
+                                style: getBold(fontSize: 24),
                               ),
                               Text(
                                 "تمت اضافة 1000 عملة ذهبية إلى حسابك",

@@ -90,7 +90,7 @@ class Login extends StatelessWidget {
                     onPressed: controller.forgotPassword,
                     child: Text(
                       isRTL ? 'نسيت كلمة المرور؟' : 'Forgot Password?',
-                      style: getRegular(
+                      style: getMedium(
                         color: AppColors.neutral600,
                         fontSize: ResponsiveDimensions.f(14),
                       ),
@@ -176,7 +176,7 @@ class Login extends StatelessWidget {
                   children: [
                     Text(
                       isRTL ? 'ليس لديك حساب؟ ' : 'Don\'t have an account? ',
-                      style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                      style: getMedium(fontSize: ResponsiveDimensions.f(14)),
                     ),
                     GestureDetector(
                       onTap: controller.createNewAccount,

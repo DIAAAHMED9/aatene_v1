@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/index.dart';
 import 'package:flutter/material.dart';
 import '../theme/story_vendor_theme.dart';
 import 'text_story_screen.dart';
@@ -5,6 +6,7 @@ import 'image_picker_story_screen.dart';
 import 'product_story_screen.dart';
 
 class StoryCreateSheet {
+  /// Opens create sheet and returns `true` if a story was successfully created.
   static Future<bool?> open(BuildContext context) async {
     final String? choice = await showModalBottomSheet<String>(
       context: context,
@@ -17,11 +19,23 @@ class StoryCreateSheet {
 
     switch (choice) {
       case 'text':
-        return await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => const TextStoryScreen())) ?? false;
+        return await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(builder: (_) => const TextStoryScreen()),
+            ) ??
+            false;
       case 'images':
-        return await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => const ImagePickerStoryScreen())) ?? false;
+        return await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(builder: (_) => const ImagePickerStoryScreen()),
+            ) ??
+            false;
       case 'product':
-        await Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductStoryScreen()));
+        // Product story is still demo-only for now.
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProductStoryScreen()),
+        );
         return false;
       default:
         return false;
@@ -39,7 +53,9 @@ class _SheetBody extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: StoryVendorTheme.sheetRadius),
+          borderRadius: BorderRadius.vertical(
+            top: StoryVendorTheme.sheetRadius,
+          ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: SafeArea(
@@ -56,7 +72,10 @@ class _SheetBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('إنشاء قصة', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              const Text(
+                'إنشاء قصة',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
               const SizedBox(height: 18),
               _tile(
                 context,
@@ -102,13 +121,17 @@ class _SheetBody extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Align(
-        alignment: Alignment.centerRight,
-        child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-      ),
+    return
+
+
+
+      ListTile(
       trailing: Icon(icon, size: 26, color: Colors.black),
+      title: Align(
+        // alignment: Alignment.centerRight,
+        child: Text(title, style: getMedium(fontSize: 18)),
+      ),
+
       onTap: onTap,
     );
   }

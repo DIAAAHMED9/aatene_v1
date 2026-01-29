@@ -638,7 +638,7 @@ class ProfilePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Bio', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('نبذة شخصية', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
               ReadMoreText(
                 'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',

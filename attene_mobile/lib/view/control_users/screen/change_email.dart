@@ -65,11 +65,11 @@ class ChangeEmail extends StatelessWidget {
                               ),
                               Text(
                                 "تمت العملية بنجاح",
-                                style: getBlack(fontSize: 25),
+                                style: getBold(fontSize: 24),
                               ),
                               Text(
                                 "تم حفظ التغييرات بنجاح",
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 12,
                                   color: AppColors.neutral400,
                                 ),

@@ -204,7 +204,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               ),
                               Text(
                                 "تمت العملية بنجاح",
-                                style: getBlack(fontSize: 25),
+                                style: getBold(fontSize: 24),
                               ),
                               Text(
                                 "تم حفظ التغييرات بنجاح",

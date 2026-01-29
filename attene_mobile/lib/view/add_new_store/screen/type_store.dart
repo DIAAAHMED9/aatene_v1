@@ -14,7 +14,7 @@ class TypeStore extends GetView<CreateStoreController> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            title: Text('نوع المتجر', style: getRegular()),
+            title: Text('نوع المتجر', style: getMedium()),
             centerTitle: false,
             leading: IconButton(
               onPressed: () => Get.back(),

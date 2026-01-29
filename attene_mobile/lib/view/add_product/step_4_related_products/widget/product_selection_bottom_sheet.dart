@@ -134,7 +134,7 @@ class _ProductSelectionBottomSheetState
               Chip(
                 label: Text('${controller.selectedProductsCount} منتج'),
                 backgroundColor: AppColors.primary400.withOpacity(0.2),
-                labelStyle: getRegular(color: AppColors.primary400),
+                labelStyle: getMedium(color: AppColors.primary400),
               ),
             ],
           ),
@@ -164,7 +164,7 @@ class _ProductSelectionBottomSheetState
                   controller.isSearching
                       ? 'لم يتم العثور على منتجات'
                       : 'لا توجد منتجات',
-                  style: getRegular(color: Colors.grey),
+                  style: getMedium(color: Colors.grey),
                 ),
               ],
             ),
@@ -254,7 +254,7 @@ class _ProductSelectionBottomSheetState
                               const SizedBox(width: 4),
                               Text(
                                 product.sectionName!,
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: ResponsiveDimensions.f(10),
                                   color: Colors.grey,
                                 ),

@@ -51,11 +51,11 @@ class AddProductStepperDialogs {
             children: [
               const Text('يوجد أخطاء في الحقول التالية:'),
               const SizedBox(height: 10),
-              Text(errorMessages, style: getRegular(color: Colors.red)),
+              Text(errorMessages, style: getMedium(color: Colors.red)),
               const SizedBox(height: 20),
               Text(
                 'يرجى تصحيح هذه الأخطاء قبل المتابعة',
-                style: getRegular(fontSize: 12, color: Colors.grey),
+                style: getMedium(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
@@ -101,7 +101,7 @@ class AddProductStepperDialogs {
             if (result['data'] != null && result['data'] is List)
               Text(
                 'رقم المنتج: ${_extractProductSku(result)}',
-                style: getRegular(fontSize: 14, color: Colors.grey),
+                style: getMedium(fontSize: 14, color: Colors.grey),
               ),
           ],
         ),

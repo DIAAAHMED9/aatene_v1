@@ -54,7 +54,7 @@ class ForgetPassword extends StatelessWidget {
                     isRTL
                         ? 'الرجاء إدخال بريدك الإلكتروني لطلب إعادة تعيين كلمة المرور'
                         : 'Please enter your email to request a password reset',
-                    style: getRegular(color: AppColors.colorForgetPassword),
+                    style: getMedium(color: AppColors.colorForgetPassword),
                     textAlign: TextAlign.center,
                   ),
                 ),

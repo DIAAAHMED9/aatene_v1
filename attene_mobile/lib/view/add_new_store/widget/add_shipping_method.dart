@@ -201,7 +201,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
                               "اختر المدينة",
-                              style: getRegular(
+                              style: getMedium(
                                 color: AppColors.neutral400,
                                 fontSize: 15,
                               ),
@@ -215,7 +215,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                               size: 15,
                             ),
                           ),
-                          style: getRegular(fontSize: 15),
+                          style: getMedium(fontSize: 15),
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedNewCity = newValue;
@@ -256,7 +256,7 @@ class _ShippingPricingSettingsState extends State<ShippingPricingSettings> {
                           ),
                           child: Text(
                             "إلغاء",
-                            style: getRegular(
+                            style: getMedium(
                               color: AppColors.neutral600,
                               fontSize: 15,
                             ),

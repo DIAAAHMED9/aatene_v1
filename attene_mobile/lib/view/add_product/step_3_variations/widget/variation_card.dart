@@ -94,7 +94,7 @@ class _VariationCardState extends State<VariationCard> {
                   children: [
                     Text(
                       widget.variation.isActive.value ? 'تفعيل السمة' : 'غير مفعل',
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: ResponsiveDimensions.f(14),
                         fontWeight: FontWeight.w300,
                       ),
@@ -267,7 +267,7 @@ class _VariationCardState extends State<VariationCard> {
       children: [
         Text(
           attribute.name,
-          style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+          style: getMedium(fontSize: ResponsiveDimensions.f(14)),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -293,7 +293,7 @@ class _VariationCardState extends State<VariationCard> {
                   Expanded(
                     child: Text(
                       value.value,
-                      style: getRegular(fontSize: ResponsiveDimensions.f(13)),
+                      style: getMedium(fontSize: ResponsiveDimensions.f(13)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -316,7 +316,7 @@ class _VariationCardState extends State<VariationCard> {
             ),
             border: InputBorder.none,
             hintText: 'اختر ${attribute.name}',
-            hintStyle: getRegular(fontSize: ResponsiveDimensions.f(13)),
+            hintStyle: getMedium(fontSize: ResponsiveDimensions.f(13)),
           ),
           icon: Icon(
             Icons.arrow_drop_down,
@@ -324,7 +324,7 @@ class _VariationCardState extends State<VariationCard> {
             size: ResponsiveDimensions.f(15),
           ),
           isExpanded: true,
-          style: getRegular(fontSize: ResponsiveDimensions.f(13)),
+          style: getMedium(fontSize: ResponsiveDimensions.f(13)),
         ),
       ],
     );
@@ -512,7 +512,7 @@ class _VariationCardState extends State<VariationCard> {
             padding: EdgeInsets.only(top: ResponsiveDimensions.f(8)),
             child: Text(
               'لم يتم إضافة أي صور لهذا الاختلاف',
-              style: getRegular(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.f(12),
                 color: Colors.grey,
                 fontStyle: FontStyle.italic,
@@ -746,7 +746,7 @@ class _VariationCardState extends State<VariationCard> {
         ),
         content: Text(
           'هل أنت متأكد من حذف هذا الاختلاف؟',
-          style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+          style: getMedium(fontSize: ResponsiveDimensions.f(14)),
         ),
         actions: [
           AateneButton(

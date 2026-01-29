@@ -11,7 +11,7 @@ class TitleHome extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: getBold(fontSize: 21)),
+        Text(title, style: getBlack(fontSize: 21)),
         Text(
           subtitle,
           style: getMedium(fontSize: 14, color: AppColors.neutral500),

@@ -150,7 +150,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${filteredAttributes.length} نتيجة',
-                style: getRegular(fontSize: 12, color: Colors.grey),
+                style: getMedium(fontSize: 12, color: Colors.grey),
               ),
             ),
           ),
@@ -312,7 +312,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
           SizedBox(height: 8),
           Text(
             'لم يتم العثور على سمات تطابق "$_attributeSearchQuery"',
-            style: getRegular(fontSize: 14, color: Colors.grey),
+            style: getMedium(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],
@@ -394,7 +394,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${filteredValues.length} نتيجة',
-                style: getRegular(fontSize: 12, color: Colors.grey),
+                style: getMedium(fontSize: 12, color: Colors.grey),
               ),
             ),
           ),
@@ -486,7 +486,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                   SizedBox(width: 8),
                   Text(
                     attribute.name,
-                    style: getRegular(
+                    style: getMedium(
                       color: isSelected ? Colors.white : Colors.grey,
                       fontWeight: isSelected
                           ? FontWeight.bold
@@ -515,7 +515,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
         leading: _buildValueCheckbox(isSelected, value, attribute),
         title: Text(
           value.value,
-          style: getRegular(
+          style: getMedium(
             fontSize: 15,
             fontWeight: FontWeight.normal,
             color: isSelected ? AppColors.primary500 : Colors.black87,
@@ -574,7 +574,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
           SizedBox(height: 8),
           Text(
             'لم يتم العثور على قيم تطابق "$_valueSearchQuery"',
-            style: getRegular(fontSize: 14, color: Colors.grey),
+            style: getMedium(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],

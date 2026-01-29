@@ -114,7 +114,7 @@ class VariationToggleWidget extends StatelessWidget {
             SizedBox(width: ResponsiveDimensions.w(12)),
             Text(
               label,
-              style: getRegular(
+              style: getMedium(
                 color: isSelected ? AppColors.primary400 : Colors.grey,
               ),
             ),
@@ -195,7 +195,7 @@ class SelectedAttributesWidget extends StatelessWidget {
                   deleteIconColor: AppColors.primary400,
                   onDeleted: () =>
                       controller.removeSelectedAttribute(attribute),
-                  labelStyle: getRegular(color: AppColors.primary500),
+                  labelStyle: getMedium(color: AppColors.primary500),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
                     side: BorderSide(color: AppColors.primary300, width: 1.0),
@@ -262,7 +262,7 @@ class VariationsListWidget extends StatelessWidget {
                     onPressed: controller.openAttributesManagement,
                     child: Text(
                       '+ قيمة جديدة',
-                      style: getRegular(color: AppColors.primary400),
+                      style: getMedium(color: AppColors.primary400),
                     ),
                   ),
                 ],
@@ -299,7 +299,7 @@ class VariationsListWidget extends StatelessWidget {
         Image.asset("assets/images/png/backgound_full.png",height: 160,width: 160,fit: BoxFit.cover,),
         Text(
           'لم يتم اضافة اي قيم بعد!',
-          style: getRegular(),
+          style: getMedium(),
         ),
       
       ],

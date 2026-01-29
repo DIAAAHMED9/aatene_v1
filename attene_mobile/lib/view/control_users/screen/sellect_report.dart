@@ -38,7 +38,7 @@ class SellectReport extends StatelessWidget {
             children: [
               Text(
                 "نحن نقدر ملاحظاتك واقتراحاتك ونحن هنا لمساعدتك في حل مشاكلك والاستماع إلى اقتراحاتك",
-                style: getRegular(fontSize: 10, color: AppColors.neutral400),
+                style: getMedium(fontSize: 10, color: AppColors.neutral400),
               ),
               ReportCard(
                 image: Image.asset(
