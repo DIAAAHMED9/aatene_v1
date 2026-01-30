@@ -69,13 +69,8 @@ class HomeControl extends StatelessWidget {
                               child: Center(
                                 child: IconButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                        builder: (context) => Edit_Profile(),
-                                      ),
-                                    );
-                                  },
+                                    Get.to(Edit_Profile());
+                                    },
                                   icon: Icon(
                                     Icons.mode_edit_outline_outlined,
                                     color: AppColors.primary400,

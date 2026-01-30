@@ -1180,7 +1180,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                             width: 24,
                             height: 24,
                           ),
-
                           onPressed: () {},
                           label: Text('دردش', style: getMedium()),
                         ),
@@ -1191,7 +1190,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: AppColors.primary400),
+                        border: Border.all(
+                          color: AppColors.primary400,
+                          width: 2,
+                        ),
                       ),
                       child: IconButton(
                         onPressed: () {},

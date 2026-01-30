@@ -94,7 +94,8 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   width: 24,
                   height: 24,
                 ),
-                textInputAction: TextInputAction.next, textInputType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                textInputType: TextInputType.name,
               ),
               TextWithStar(text: "المدينة"),
               DropdownButtonFormField(
@@ -219,12 +220,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                                 borderColor: AppColors.primary400,
                                 textColor: AppColors.light1000,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => HomeControl(),
-                                    ),
-                                  );
+                                  Get.to(HomeControl());
                                 },
                               ),
                             ],

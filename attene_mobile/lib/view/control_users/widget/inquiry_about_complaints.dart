@@ -86,7 +86,8 @@ class InquiryAboutComplaints extends StatelessWidget {
                           backgroundColor: AppColors.primary400,
                           child: const Icon(Icons.search, color: Colors.white),
                         ),
-                      ), textInputType: TextInputType.name,
+                      ),
+                      textInputType: TextInputType.name,
                     ),
                   ),
                   CircleAvatar(
@@ -194,12 +195,7 @@ class InquiryAboutComplaints extends StatelessWidget {
 
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (context) => ShowReport(),
-                            ),
-                          );
+                          Get.to(ShowReport);
                         },
                         child: Container(
                           width: 140,

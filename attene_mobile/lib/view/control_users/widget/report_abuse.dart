@@ -86,12 +86,7 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
 
                   AateneButton(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => ReportAddAbuse(),
-                        ),
-                      );
+                      Get.to(ReportAddAbuse());
                     },
                     buttonText: "التالي",
                     color: AppColors.primary400,

@@ -80,12 +80,7 @@ class ChangeEmail extends StatelessWidget {
                                 borderColor: AppColors.primary400,
                                 textColor: AppColors.light1000,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => HomeControl(),
-                                    ),
-                                  );
+                                  Get.to(HomeControl());
                                 },
                               ),
                             ],

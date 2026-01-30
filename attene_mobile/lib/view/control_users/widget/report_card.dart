@@ -15,11 +15,7 @@ class ReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(builder: (context) => screen),
-        );
+      onTap: () {Get.to(screen);
       },
       child: Container(
         width: double.infinity,

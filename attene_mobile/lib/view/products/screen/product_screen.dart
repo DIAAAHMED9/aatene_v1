@@ -346,11 +346,17 @@ class ProductScreen extends GetView<ProductController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.inventory_2_outlined,
-            size: ResponsiveDimensions.f(100),
-            color: Colors.grey[300],
+          SvgPicture.asset(
+            "assets/images/svg_images/no_product.svg",
+            width: 300,
+            height: 300,
           ),
+
+          // Icon(
+          //   Icons.inventory_2_outlined,
+          //   size: ResponsiveDimensions.f(100),
+          //   color: Colors.grey[300],
+          // ),
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             _getEmptyMessage(sectionName, tabIndex),

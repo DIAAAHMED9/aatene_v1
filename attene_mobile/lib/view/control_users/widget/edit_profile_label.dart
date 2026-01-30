@@ -25,10 +25,7 @@ class EditProfileLabel extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(builder: (context) => screen),
-          );
+          Get.to(screen);
         },
         child: Padding(
           padding: const EdgeInsets.only(right: 12, left: 12),

@@ -438,10 +438,7 @@ class ProfilePage extends StatelessWidget {
       child: Container(
         width: 40,
         height: 40,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
         child: IconButton(
           onPressed: onTap,
           icon: Icon(icon, color: Colors.black),

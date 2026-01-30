@@ -1,3 +1,5 @@
+import 'package:readmore/readmore.dart';
+
 import '../../general_index.dart';
 import '../../view/support/empty.dart';
 
@@ -268,13 +270,14 @@ class _ServicesDetailState extends State<ServicesDetail> {
 
                     ExpansionTile(
                       maintainState: true,
-                      shape: StadiumBorder(),
+                      // shape: StadiumBorder(),
                       title: Row(
                         spacing: 10,
                         children: [
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -282,9 +285,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.card_giftcard,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/services_deta.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("تفاصيل الخدمة", style: getMedium()),
@@ -308,6 +312,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -315,9 +320,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.add_box_outlined,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/plus.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("تطويرات الخدمة", style: getMedium()),
@@ -366,39 +372,47 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                       width: 1.0,
                                     ),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "هل تواجه موقفًا قانونيًا طارئًا وتحتاج إلى استشارة موثوقة وسريعة",
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 3,
-                                        style: getMedium(fontSize: 14),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            " 50.0 ₪",
-                                            style: getMedium(
-                                              color: AppColors.neutral600,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "هل تواجه موقفًا قانونيًا طارئًا وتحتاج إلى استشارة موثوقة وسريعة",
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: true,
+                                          textDirection: TextDirection.rtl,
+                                          textAlign: TextAlign.right,
+                                          style: getMedium(fontSize: 14),
+                                        ),
+
+                                        const SizedBox(height: 4),
+
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "50.0 ₪",
+                                              style: getMedium(
+                                                color: AppColors.neutral600,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(width: 20),
-                                          Icon(
-                                            Icons.access_time,
-                                            color: AppColors.neutral600,
-                                            size: 24,
-                                          ),
-                                          Text(
-                                            " 5 أيام",
-                                            style: getMedium(
+                                            const SizedBox(width: 20),
+                                            Icon(
+                                              Icons.access_time,
                                               color: AppColors.neutral600,
+                                              size: 24,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            Text(
+                                              " 5 أيام",
+                                              style: getMedium(
+                                                color: AppColors.neutral600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -418,6 +432,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -425,17 +440,17 @@ class _ServicesDetailState extends State<ServicesDetail> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.person_outline_rounded,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/user.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("معلومات عن بائع الخدمة", style: getMedium()),
                         ],
                       ),
                       children: [
-                        MaterialButton(
-                          onPressed: () {},
+                        GestureDetector(
                           child: Container(
                             width: double.infinity,
                             padding: EdgeInsets.all(10),
@@ -451,6 +466,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                               spacing: 10,
                               children: [
                                 Row(
+                                  spacing: 5,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     CircleAvatar(),
@@ -954,7 +970,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                       ],
                                     ),
                                     AateneButton(
-                                      buttonText: "أضف تعليقك",
+                                      buttonText: "إطرح سؤالاً",
                                       borderColor: AppColors.primary400,
                                       textColor: AppColors.primary400,
                                     ),
@@ -974,6 +990,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -981,9 +998,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.contact_support_outlined,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/quastion.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("الأسئلة الشائعة", style: getMedium()),
@@ -1027,6 +1045,7 @@ class _ServicesDetailState extends State<ServicesDetail> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -1034,9 +1053,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.message_outlined,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/Chat.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("أسئلة وأجوبة", style: getMedium()),
@@ -1097,9 +1117,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(
-                                                    Icons.message_outlined,
-                                                    color: AppColors.primary400,
+                                                  SvgPicture.asset(
+                                                    "assets/images/svg_images/Chat.svg",
+                                                    width: 13,
+                                                    height: 13,
                                                   ),
                                                   Text(
                                                     "الاجابة",
@@ -1259,7 +1280,10 @@ class _ServicesDetailState extends State<ServicesDetail> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: AppColors.primary400),
+                        border: Border.all(
+                          color: AppColors.primary400,
+                          width: 2,
+                        ),
                       ),
                       child: IconButton(
                         onPressed: () {},

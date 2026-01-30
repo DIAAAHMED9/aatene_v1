@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
       color: AppColors.primary400,
       theme: ThemeData(
         fontFamily: "PingAR",
-        primaryColor: AppColors.primary500,
+        primaryColor: AppColors.primary400,
         scaffoldBackgroundColor: AppColors.light1000,
         dialogBackgroundColor: AppColors.light1000,
         dialogTheme: DialogThemeData(
@@ -132,7 +132,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary500,
+            backgroundColor: AppColors.primary400,
             foregroundColor: AppColors.light1000,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
@@ -144,7 +144,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: AppColors.primary500),
+          style: TextButton.styleFrom(foregroundColor: AppColors.primary400),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -159,7 +159,7 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: BorderSide(color: AppColors.primary500),
+            borderSide: BorderSide(color: AppColors.primary400),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
@@ -169,7 +169,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: false,
         colorScheme: ColorScheme.light(
-          primary: AppColors.primary500,
+          primary: AppColors.primary400,
           secondary: AppColors.primary200,
           background: AppColors.light1000,
           surface: AppColors.light1000,

@@ -331,7 +331,7 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
-              "assets/images/svg_images/no_massege.svg",
+              "assets/images/svg_images/no_massg.svg",
               width: 250,
               height: 250,
               fit: BoxFit.cover,
@@ -649,7 +649,7 @@ class ModeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? AppColors.primary400 :AppColors.primary50,
+      color: selected ? AppColors.primary400 : AppColors.primary50,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         borderRadius: BorderRadius.circular(999),
@@ -662,7 +662,7 @@ class ModeButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: selected ?AppColors.primary400 : cs.onSurfaceVariant,
+                color: selected ? AppColors.primary400 : cs.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Text(

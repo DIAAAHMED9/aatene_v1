@@ -131,12 +131,7 @@ class ReportAddAbuse extends StatelessWidget {
                   SizedBox(height: 10),
                   AateneButton(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => CompleteAbuse(),
-                        ),
-                      );
+                      Get.to(CompleteAbuse);
                     },
                     buttonText: "ارسال",
                     color: AppColors.primary400,
