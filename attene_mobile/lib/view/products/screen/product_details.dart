@@ -1,4 +1,9 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:attene_mobile/view/profile/vendor_profile/widget/offers.dart';
+import 'package:readmore/readmore.dart';
+
 import '../../../general_index.dart';
+import '../../support/empty.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});
@@ -7,8 +12,12 @@ class ProductDetails extends StatefulWidget {
   State<ProductDetails> createState() => _ProductDetailsState();
 }
 
+const List<String> _listColor = ['ازرق', 'احمر', 'ابيض', 'اصفر'];
+const List<String> _listSize = ['S', 'L', 'X', 'XXl'];
+const List<String> _listCity = ['الناصرة', 'القدس', 'خليل'];
 bool _isChecked = false;
 bool isLiked = false;
+final _formKey = GlobalKey<FormState>();
 
 class _ProductDetailsState extends State<ProductDetails> {
   final isRTL = LanguageUtils.isRTL;
@@ -41,19 +50,22 @@ class _ProductDetailsState extends State<ProductDetails> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
-                        color: Colors.grey.withOpacity(.5),
+                        color: Colors.grey[100],
                       ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.neutral100,
+                      child: IconButton(
+                        onPressed: () => Get.back(),
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: AppColors.neutral100,
+                        ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 320, right: 220),
+                  Positioned(
+                    bottom: 70,
+                    left: 0,
+                    right: 0,
                     child: Container(
-                      width: 60,
-                      height: 30,
                       decoration: BoxDecoration(
                         color: AppColors.light1000,
                         borderRadius: BorderRadius.circular(100),
@@ -138,10 +150,71 @@ class _ProductDetailsState extends State<ProductDetails> {
                         Text("الجليل . فلسطين "),
                       ],
                     ),
-                    Text(
-                      "وصف موجز",
-                      style: TextStyle(color: AppColors.neutral400),
+                    ReadMoreText(
+                      'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',
+                      trimMode: TrimMode.Line,
+                      trimLines: 3,
+                      colorClickableText: AppColors.neutral500,
+                      trimCollapsedText: 'عرض المزيد',
+                      trimExpandedText: 'عرض أقل',
+                      moreStyle: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary400,
+                      ),
                     ),
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Expanded(
+                          child: CustomDropdown<String>.multiSelect(
+                            hintText: 'اختر المقاس',
+                            decoration: CustomDropdownDecoration(
+                              hintStyle: getMedium(fontSize: 12),
+                              closedBorderRadius: BorderRadius.circular(10),
+                              closedBorder: Border.all(
+                                color: AppColors.primary100,
+                              ),
+                              closedSuffixIcon: Icon(
+                                Icons.keyboard_arrow_down_outlined,
+                                color: AppColors.primary100,
+                              ),
+                            ),
+                            items: _listSize,
+                            onListChanged: (value) {
+                              print('changing value to: $value');
+                            },
+                            listValidator: (value) => value.isEmpty
+                                ? "يجب عليك الاختيار للمتابعة"
+                                : null,
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomDropdown<String>.multiSelect(
+                            hintText: 'اختر اللون',
+                            decoration: CustomDropdownDecoration(
+                              hintStyle: getMedium(fontSize: 12),
+                              closedBorderRadius: BorderRadius.circular(10),
+                              closedBorder: Border.all(
+                                color: AppColors.primary100,
+                              ),
+                              closedSuffixIcon: Icon(
+                                Icons.keyboard_arrow_down_outlined,
+                                color: AppColors.primary100,
+                              ),
+                            ),
+                            items: _listColor,
+                            onListChanged: (value) {
+                              print('changing value to: $value');
+                            },
+                            listValidator: (value) => value.isEmpty
+                                ? "يجب عليك الاختيار للمتابعة"
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
+
                     Row(
                       children: [
                         Text(" السعر", style: TextStyle(fontSize: 13)),
@@ -175,110 +248,119 @@ class _ProductDetailsState extends State<ProductDetails> {
                     SizedBox(height: 20),
 
                     Row(
-                      spacing: 20,
+                      spacing: 10,
                       children: [
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: AppColors.primary50,
-                              width: 2,
+                        Expanded(
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.primary50,
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.favorite_border,
-                                size: 30,
-                                color: AppColors.neutral300,
-                              ),
-                              Text(
-                                "اعجبني",
-                                style: TextStyle(color: AppColors.neutral400),
-                              ),
-                            ],
+                            child: Column(
+                              spacing: 10,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.favorite_border,
+                                  size: 30,
+                                  color: AppColors.neutral300,
+                                ),
+                                Text(
+                                  "اعجبني",
+                                  style: TextStyle(color: AppColors.neutral400),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: AppColors.primary50,
-                              width: 2,
+                        Expanded(
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.primary50,
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.share_outlined,
-                                size: 30,
-                                color: AppColors.neutral300,
-                              ),
-                              Text(
-                                "مشاركه",
-                                style: TextStyle(color: AppColors.neutral400),
-                              ),
-                            ],
+                            child: Column(
+                              spacing: 10,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/images/svg_images/share.svg",
+                                  width: 30,
+                                  height: 30,
+                                  color: AppColors.neutral300,
+                                ),
+                                Text(
+                                  "مشاركه",
+                                  style: TextStyle(color: AppColors.neutral400),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: AppColors.primary50,
-                              width: 2,
+                        Expanded(
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.primary50,
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.star_border_rounded,
-                                size: 40,
-                                color: AppColors.neutral300,
-                              ),
-                              Text(
-                                "تقيم",
-                                style: TextStyle(color: AppColors.neutral400),
-                              ),
-                            ],
+                            child: Column(
+                              spacing: 10,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.star_border_rounded,
+                                  size: 40,
+                                  color: AppColors.neutral300,
+                                ),
+                                Text(
+                                  "تقيم",
+                                  style: TextStyle(color: AppColors.neutral400),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: AppColors.primary50,
-                              width: 2,
+                        Expanded(
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.primary50,
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.flag_outlined,
-                                size: 30,
-                                color: AppColors.neutral300,
-                              ),
-                              Text(
-                                "إبلاغ",
-                                style: TextStyle(color: AppColors.neutral400),
-                              ),
-                            ],
+                            child: Column(
+                              spacing: 10,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.flag_outlined,
+                                  size: 30,
+                                  color: AppColors.neutral300,
+                                ),
+                                Text(
+                                  "إبلاغ",
+                                  style: TextStyle(color: AppColors.neutral400),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -291,6 +373,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
+
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -298,9 +382,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.directions_car_outlined,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/car.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("معلومات التوصيل"),
@@ -317,23 +402,24 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 spacing: 20,
                                 children: [
                                   Container(
-                                    width: 50,
-                                    height: 50,
+                                    width: 40,
+                                    height: 40,
+                                    padding: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[100],
                                       borderRadius: BorderRadius.circular(15),
                                     ),
-                                    child: Icon(
-                                      Icons.calendar_month_outlined,
-                                      color: AppColors.neutral500,
+
+                                    child: SvgPicture.asset(
+                                      "assets/images/svg_images/Calendar12.svg",
+                                      width: 22,
+                                      height: 22,
                                     ),
                                   ),
                                   Text(
+                                    overflow: TextOverflow.ellipsis,
                                     "يتم التوصيل خلال 1–4 أيام ",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: getBold(),
                                   ),
                                 ],
                               ),
@@ -350,14 +436,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 child: Row(
                                   spacing: 10,
                                   children: [
-                                    Icon(
-                                      Icons.directions_car_filled_outlined,
+                                    SvgPicture.asset(
+                                      "assets/images/svg_images/car.svg",
+                                      width: 28,
+                                      height: 28,
                                       color: AppColors.neutral500,
                                     ),
+
                                     Text(
                                       "توصيل إلي الناصرة من 2-3 أيام",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -366,6 +455,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       "1200.0 ₪",
                                       style: TextStyle(
                                         color: AppColors.primary400,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ],
@@ -376,15 +466,18 @@ class _ProductDetailsState extends State<ProductDetails> {
                               spacing: 10,
                               children: [
                                 Container(
-                                  width: 50,
-                                  height: 50,
+                                  width: 30,
+                                  height: 30,
+                                  padding: EdgeInsets.all(5),
+
                                   decoration: BoxDecoration(
                                     color: Colors.grey[100],
                                     borderRadius: BorderRadius.circular(15),
                                   ),
-                                  child: Icon(
-                                    Icons.sim_card_outlined,
-                                    color: AppColors.neutral500,
+                                  child: SvgPicture.asset(
+                                    "assets/images/svg_images/delivery-truck-svgrepo-com (1) 1.svg",
+                                    width: 20,
+                                    height: 20,
                                   ),
                                 ),
                                 Text(
@@ -392,6 +485,32 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: CustomDropdown<String>(
+                                    hintText: 'اختر المدينة',
+                                    items: _listCity,
+                                    decoration: CustomDropdownDecoration(
+                                      hintStyle: getMedium(
+                                        fontSize: 12,
+                                        color: AppColors.primary400,
+                                      ),
+                                      closedBorderRadius: BorderRadius.circular(
+                                        10,
+                                      ),
+                                      closedBorder: Border.all(
+                                        color: AppColors.primary100,
+                                      ),
+                                      closedSuffixIcon: Icon(
+                                        Icons.keyboard_arrow_down_outlined,
+                                        color: AppColors.primary400,
+                                      ),
+                                    ),
+                                    initialItem: _listCity[0],
+                                    onChanged: (value) {
+                                      print('changing value to: $value');
+                                    },
                                   ),
                                 ),
                               ],
@@ -409,15 +528,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   spacing: 10,
                                   children: [
                                     Container(
-                                      width: 50,
-                                      height: 50,
+                                      width: 40,
+                                      height: 40,
+                                      padding: EdgeInsets.all(7),
                                       decoration: BoxDecoration(
                                         color: AppColors.primary400,
                                         borderRadius: BorderRadius.circular(15),
                                       ),
-                                      child: Icon(
-                                        Icons.location_city_outlined,
-                                        color: AppColors.light1000,
+                                      child: SvgPicture.asset(
+                                        "assets/images/svg_images/city_delevery.svg",
+                                        width: 24,
+                                        height: 24,
                                       ),
                                     ),
                                     Text(
@@ -444,6 +565,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
+
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -451,76 +574,16 @@ class _ProductDetailsState extends State<ProductDetails> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.local_offer_outlined,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/bag-2.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
                           Text("عروض"),
                         ],
                       ),
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 300,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: AppColors.primary50),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              spacing: 10,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "اسم العرض",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "5 منتجات / وصف العرض",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.neutral400,
-                                  ),
-                                ),
-                                Text(
-                                  "₪ 1200.0",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: AppColors.success300,
-                                  ),
-                                ),
-                                Row(
-                                  spacing: 10,
-                                  children: [
-                                    Text(
-                                      "بدلاَ من",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: AppColors.neutral500,
-                                      ),
-                                    ),
-                                    Text(
-                                      "₪ 1200.0",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.error200,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                      children: [],
                     ),
                     ExpansionTile(
                       maintainState: true,
@@ -530,6 +593,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           Container(
                             width: 60,
                             height: 40,
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(100),
@@ -537,29 +601,29 @@ class _ProductDetailsState extends State<ProductDetails> {
                               ),
                               color: AppColors.primary50,
                             ),
-                            child: Icon(
-                              Icons.person_outline_rounded,
-                              color: AppColors.primary400,
+                            child: SvgPicture.asset(
+                              "assets/images/svg_images/user.svg",
+                              width: 18,
+                              height: 18,
                             ),
                           ),
-                          Text("معلومات عن بائع الخدمة"),
+                          Text("معلومات عن التاجر"),
                         ],
                       ),
                       children: [
-                        MaterialButton(
-                          onPressed: () {},
-                          child: Container(
-                            width: double.infinity,
-                            height: 130,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: AppColors.primary50,
-                                width: 2,
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: GestureDetector(
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppColors.primary50,
+                                  width: 2,
+                                ),
                               ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 spacing: 10,
@@ -630,38 +694,38 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           ),
                                         ),
                                       ),
-                                      MaterialButton(
-                                        onPressed: () {},
-                                        child: Container(
-                                          width: 100,
-                                          height: 25,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.error200,
-                                            borderRadius: BorderRadius.circular(
-                                              50,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            spacing: 5,
-                                            children: [
-                                              Icon(
-                                                Icons.flag_outlined,
-                                                color: AppColors.light1000,
-                                                size: 15,
-                                              ),
-                                              Text(
-                                                "بلغ عن إساءة",
-                                                style: TextStyle(
-                                                  color: AppColors.light1000,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                      // MaterialButton(
+                                      //   onPressed: () {},
+                                      //   child: Container(
+                                      //     width: 100,
+                                      //     height: 25,
+                                      //     decoration: BoxDecoration(
+                                      //       color: AppColors.error200,
+                                      //       borderRadius: BorderRadius.circular(
+                                      //         50,
+                                      //       ),
+                                      //     ),
+                                      //     child: Row(
+                                      //       mainAxisAlignment:
+                                      //       MainAxisAlignment.center,
+                                      //       spacing: 5,
+                                      //       children: [
+                                      //         Icon(
+                                      //           Icons.flag_outlined,
+                                      //           color: AppColors.light1000,
+                                      //           size: 15,
+                                      //         ),
+                                      //         Text(
+                                      //           "بلغ عن إساءة",
+                                      //           style: TextStyle(
+                                      //             color: AppColors.light1000,
+                                      //             fontSize: 12,
+                                      //           ),
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                   Divider(
@@ -671,7 +735,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   Row(
                                     spacing: 5,
                                     children: [
-                                      Icon(Icons.timer_sharp),
+                                      SvgPicture.asset(
+                                        "assets/images/svg_images/timer.svg",
+                                        width: 16,
+                                        height: 16,
+                                      ),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -766,65 +834,19 @@ class _ProductDetailsState extends State<ProductDetails> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 20),
-                            Container(
-                              width: double.infinity,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: AppColors.light1000,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.neutral900.withOpacity(
-                                      0.3,
-                                    ),
-                                    spreadRadius: 2,
-                                    blurRadius: 4,
-                                    offset: Offset(2, 4),
-                                  ),
-                                ],
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "4.5",
-                                      style: TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Column(
-                                      spacing: 10,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Icon(
-                                          Icons.star_sharp,
-                                          color: Colors.orange,
-                                          size: 20,
-                                        ),
-                                        Text(
-                                          "بناءً على 2,372 مراجعة",
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.neutral600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            RatingSummaryWidget(
+                              rating: 4.2,
+                              totalReviews: 1280,
+                              ratingCount: const [20, 15, 5, 4, 2],
                             ),
+
                             Row(
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "عالي",
+                                      "التعليقات",
                                       style: TextStyle(
                                         fontSize: 24,
                                         color: Colors.black,
@@ -1084,9 +1106,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         ),
                                         IconButton(
                                           onPressed: () {},
-                                          icon: Icon(
-                                            Icons.sms_outlined,
-                                            color: AppColors.neutral600,
+                                          icon: SvgPicture.asset(
+                                            "assets/images/svg_images/message-2.svg",
+                                            width: 16,
+                                            height: 16,
                                           ),
                                         ),
                                         Text(
@@ -1165,315 +1188,67 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ),
                       ],
                     ),
-                    Text(
-                      "المتاجر المميزة",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    TitleHome(
+                      title: "المتاجر المميزة",
+                      subtitle:
+                          "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
                     ),
-                    Text(
-                      "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.neutral300,
-                      ),
-                    ),
-                    Container(
-                      width: 170,
-                      height: 270,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 10,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(14),
-                                ),
-                                child: Image.network(
-                                  'https://images.unsplash.com/photo-1520975916090-3105956dac38',
-                                  height: 170,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                    VendorCard(),
 
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Text(
-                                    'جديد',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                    TitleHome(
+                      title: "منتجات تم تخصيصها لك",
+                      subtitle:
+                          "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
+                    ),
+                    ProductCard(),
+                  ],
+                ),
+              ),
 
-                              Positioned(
-                                bottom: -18,
-                                left: 10,
-                                child: GestureDetector(
-                                  onTap: toggleLike,
-                                  child: Container(
-                                    width: 42,
-                                    height: 42,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: isLiked
-                                          ? Colors.red
-                                          : Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.15),
-                                          blurRadius: 8,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Icon(
-                                      size: 15,
-                                      isLiked
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: isLiked
-                                          ? Colors.white
-                                          : Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+              Container(
+                width: double.infinity,
+                height: 100,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: AppColors.primary50),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  spacing: 10,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          icon: SvgPicture.asset(
+                            "assets/images/svg_images/message-butt.svg",
+                            width: 24,
+                            height: 24,
                           ),
-                          const SizedBox(height: 7),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              spacing: 5,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  spacing: 5,
-                                  children: [
-                                    Row(
-                                      children: List.generate(
-                                        5,
-                                        (index) => const Icon(
-                                          Icons.star,
-                                          size: 14,
-                                          color: Colors.amber,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      "(5)",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  'T-Shirt Sailing',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
 
-                                Row(
-                                  spacing: 5,
-                                  children: [
-                                    Text(
-                                      '21\$',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                    Text(
-                                      '14\$',
-                                      style: TextStyle(
-                                        color: AppColors.error200,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      "المتاجر المميزة",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.neutral300,
-                      ),
-                    ),
-                    Container(
-                      width: 162,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.neutral900,
-                          width: 1,
+                          onPressed: () {},
+                          label: const Text('دردش'),
                         ),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(12),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/png/ser1.png',
-                                  height: 100,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 6,
-                                right: 6,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueAccent.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Text(
-                                    'إعلان ممول',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: -15,
-                                left: 10,
-                                child: CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: Colors.blue,
-                                  child: const Icon(
-                                    Icons.person_add_alt,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 26),
-
-                          const Text(
-                            '👑 EtnixByron ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-                          Row(
-                            spacing: 7,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.stars_rounded,
-                                size: 16,
-                                color: Colors.orange,
-                              ),
-                              Text(
-                                '5.0',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.neutral400,
-                                ),
-                              ),
-                              Icon(
-                                Icons.local_shipping_outlined,
-                                size: 16,
-                                color: AppColors.success300,
-                              ),
-                              Icon(
-                                Icons.shield_moon_outlined,
-                                size: 16,
-                                color: Colors.teal,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                        ],
-                      ),
                     ),
-                    SizedBox(height: 200),
                     Container(
-                      width: double.infinity,
-                      height: 100,
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(50),
                         border: Border.all(color: AppColors.primary400),
                       ),
-                      child: Row(
-                        children: [
-                          AateneButton(buttonText: "buttonText"),
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(color: AppColors.primary400),
-                            ),
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.call_outlined,
-                                color: AppColors.primary400,
-                              ),
-                            ),
-                          ),
-                        ],
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.call_outlined,
+                          color: AppColors.primary400,
+                        ),
                       ),
                     ),
                   ],

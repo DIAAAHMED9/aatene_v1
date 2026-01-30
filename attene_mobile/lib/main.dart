@@ -13,7 +13,6 @@ import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
 import 'package:flutter/material.dart';
 
-
 class AppBindings extends Bindings {
   static bool _initialized = false;
 
@@ -183,7 +182,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
-        GetPage(name: '/', page: () => ProfilePage()),
+        GetPage(name: '/', page: () => ProductDetails()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -225,7 +224,7 @@ class MyApp extends StatelessWidget {
           middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
         ),
       ],
-      debugShowCheckedModeBanner: false,
+      // debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -279,24 +278,20 @@ void _initializeBackgroundServices() {
       } catch (_) {}
 
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-        if (newToken
-            .trim()
-            .isNotEmpty) {
+        if (newToken.trim().isNotEmpty) {
           storage.write('device_token', newToken);
           print('🔄 FCM Token refreshed: $newToken');
         }
       });
 
       final token = await FirebaseMessaging.instance.getToken();
-      if (token != null && token
-          .trim()
-          .isNotEmpty) {
+      if (token != null && token.trim().isNotEmpty) {
         storage.write('device_token', token);
         print('📱 FCM Token: $token');
       }
 
-      final RemoteMessage? initialMessage =
-      await FirebaseMessaging.instance.getInitialMessage();
+      final RemoteMessage? initialMessage = await FirebaseMessaging.instance
+          .getInitialMessage();
       if (initialMessage != null) {
         print('📨 تم تشغيل التطبيق من خلال إشعار');
       }
@@ -308,7 +303,6 @@ void _initializeBackgroundServices() {
   });
 }
 
-
 Future<void> _initializeEssentialServices() async {
   print('🔄 تهيئة الخدمات الأساسية...');
 
@@ -316,4 +310,3 @@ Future<void> _initializeEssentialServices() async {
 
   print('✅ تم تهيئة الخدمات الأساسية');
 }
-

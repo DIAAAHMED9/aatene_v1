@@ -17,7 +17,7 @@ class _ServicesCardState extends State<ServicesCard> {
     const double imageHeight = 120.0;
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Get.to(ServicesDetail());
       },
       child: Container(
@@ -107,7 +107,11 @@ class _ServicesCardState extends State<ServicesCard> {
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 14),
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 14,
+                            ),
                             Text(
                               " ( 20 مراجعة )",
                               style: TextStyle(

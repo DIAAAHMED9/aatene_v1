@@ -40,8 +40,14 @@ class AateneDrawer extends StatelessWidget {
                           name: controller.accounts[index].name,
                           avatar: controller.accounts[index].avatar,
                           isSelected:
-                              controller.accounts[index].id == controller.selectedAccountId.value,
-                          onTap: () async { await controller.selectAccount(controller.accounts[index]); Get.back(); },
+                              controller.accounts[index].id ==
+                              controller.selectedAccountId.value,
+                          onTap: () async {
+                            await controller.selectAccount(
+                              controller.accounts[index],
+                            );
+                            Get.back();
+                          },
                         ),
                       ),
                       InkWell(
@@ -79,9 +85,7 @@ class AateneDrawer extends StatelessWidget {
                   color: AppColors.neutral500,
                 ),
                 title: 'تواصل معنا',
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
               DrawerMenuItem(
                 icon: SvgPicture.asset(
@@ -92,8 +96,7 @@ class AateneDrawer extends StatelessWidget {
                 ),
                 title: 'سياسة الخصوصية',
                 onTap: () {
-                  Get.to(PriceScreen());
-
+                  Get.to(PrivacyScreen());
                 },
               ),
               DrawerMenuItem(
@@ -106,7 +109,6 @@ class AateneDrawer extends StatelessWidget {
                 title: 'شروط الخدمة',
                 onTap: () {
                   Get.to(TermsOfUseScreen());
-
                 },
               ),
               DrawerMenuItem(
@@ -117,7 +119,6 @@ class AateneDrawer extends StatelessWidget {
                 title: 'بوابة الشكاوى والاقتراحات',
                 onTap: () {
                   Get.to(SellectReport());
-
                 },
               ),
               DrawerMenuItem(
@@ -130,7 +131,6 @@ class AateneDrawer extends StatelessWidget {
                 title: 'قواعد السلامة',
                 onTap: () {
                   Get.to(SafetyTipsPage());
-
                 },
               ),
               DrawerMenuItem(
@@ -138,7 +138,6 @@ class AateneDrawer extends StatelessWidget {
                 title: 'عن أعطيني',
                 onTap: () {
                   Get.to(AboutUsScreen());
-
                 },
               ),
               DrawerMenuItem(
@@ -151,12 +150,9 @@ class AateneDrawer extends StatelessWidget {
                 title: 'الأسئلة الشائعة',
                 onTap: () {
                   Get.to(FaqPage());
-
                 },
               ),
-              SizedBox(
-                height: 100,
-              ),
+              SizedBox(height: 100),
             ],
           ),
         ),

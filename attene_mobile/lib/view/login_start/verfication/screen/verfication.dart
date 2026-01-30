@@ -155,13 +155,14 @@ class Verification extends StatelessWidget {
                     children: List.generate(5, (index) {
                       return VerificationCodeField(
                         controller: TextEditingController(
-                          text: controller.codes[index],
+                          // text: controller.codes[index],
                         ),
                         focusNode: controller.focusNodes[index],
-                        onChanged: (value) =>
-                            controller.updateCode(index, value),
+                        // onChanged: (value) =>
+                        // controller.updateCode(index, value),
                         hasError: controller.errorMessage.isNotEmpty,
                         autoFocus: index == 0,
+                        onChanged: (String p1) {},
                       );
                     }),
                   ),

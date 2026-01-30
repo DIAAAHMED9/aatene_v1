@@ -1,1 +1,0 @@
-export 'package:attene_mobile/view/control_users/screen/safety_tips.dart';

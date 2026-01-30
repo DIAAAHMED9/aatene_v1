@@ -151,7 +151,8 @@ class _FaqPageState extends State<FaqPage> {
       isRTL: isRTL,
       hintText: 'ابحث من خلال أي كلمة مفتاحية',
       textInputAction: TextInputAction.done,
-      prefixIcon: const Icon(Icons.search), textInputType: TextInputType.name,
+      prefixIcon: const Icon(Icons.search),
+      textInputType: TextInputType.name,
     );
   }
 }

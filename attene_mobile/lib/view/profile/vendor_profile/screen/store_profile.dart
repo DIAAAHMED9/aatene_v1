@@ -731,7 +731,7 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
       margin: const EdgeInsets.all(8),
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.primary200.withOpacity(0.3),
+        color: AppColors.light1000,
         shape: BoxShape.circle,
       ),
       child: icon,

@@ -1,8 +1,12 @@
+import 'package:attene_mobile/view/login_start/set_new_password/screen/success_new_password.dart';
+
 import '../../../../general_index.dart';
 import '../../../../utils/responsive/responsive_dimensions.dart';
 
 class SetNewPassword extends StatelessWidget {
-  final SetNewPasswordController controller = Get.put(SetNewPasswordController());
+  final SetNewPasswordController controller = Get.put(
+    SetNewPasswordController(),
+  );
 
   SetNewPassword({super.key});
 
@@ -49,7 +53,9 @@ class SetNewPassword extends StatelessWidget {
                     vertical: ResponsiveDimensions.h(10),
                   ),
                   child: Text(
-                    isRTL ? 'قم بإنشاء كلمة مرور جديدة' : 'Create a new password',
+                    isRTL
+                        ? 'قم بإنشاء كلمة مرور جديدة'
+                        : 'Create a new password',
                     style: getRegular(
                       fontSize: ResponsiveDimensions.f(16),
                       color: Colors.grey[600]!,
@@ -114,9 +120,12 @@ class SetNewPassword extends StatelessWidget {
                     color: AppColors.primary400,
                     borderColor: AppColors.primary400,
                     isLoading: controller.isLoading.value,
-                    onTap: controller.isLoading.value
-                        ? null
-                        : controller.submitNewPassword,
+                    onTap: () {
+                      controller.isLoading.value
+                          ? null
+                          : controller.submitNewPassword;
+                      Get.to(SuccessNewPassword());
+                    },
                     buttonText: isRTL ? 'تحديث' : 'Update',
                   ),
                 ),

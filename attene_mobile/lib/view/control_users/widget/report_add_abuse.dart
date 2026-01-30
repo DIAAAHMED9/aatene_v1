@@ -1,4 +1,5 @@
 import '../../../general_index.dart';
+import '../../../utils/responsive/responsive_dimensions.dart';
 import 'complete_abuse.dart';
 
 class ReportAddAbuse extends StatelessWidget {
@@ -63,16 +64,69 @@ class ReportAddAbuse extends StatelessWidget {
                   TextFiledAatene(
                     isRTL: isRTL,
                     hintText: "اكتب هنا",
-                    textInputAction: TextInputAction.next, textInputType: TextInputType.name,
+                    textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.name,
                   ),
 
-                  Text('الشكوى/ الأفتراح', style: getRegular(fontSize: 14)),
-                  TextFiledAatene(
-                    isRTL: isRTL,
-                    hintText: "اكتب هنا",
-                    textInputType: TextInputType.multiline,
-                    maxLines: 5,
-                    textInputAction: TextInputAction.done,
+                  Text('الشكوى/ الأقتراح', style: getRegular(fontSize: 14)),
+                  TextFormField(
+                    style: TextStyle(
+                      fontSize: ResponsiveDimensions.f(14),
+                      color: Colors.black87,
+                      fontFamily: "PingAR",
+                    ),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: "اكتب هنا",
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveDimensions.w(50),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.grey[300]!,
+                          width: 1.0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveDimensions.w(10),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.grey[300]!,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveDimensions.w(10),
+                        ),
+                        borderSide: BorderSide(
+                          color: AppColors.primary400,
+                          width: 1,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveDimensions.w(50),
+                        ),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 2.0,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveDimensions.w(50),
+                        ),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 2.0,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[50],
+                    ),
                   ),
                   SizedBox(height: 10),
                   AateneButton(

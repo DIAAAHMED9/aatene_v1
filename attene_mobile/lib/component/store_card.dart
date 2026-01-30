@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../general_index.dart';
 import '../view/home/model/home_api_models.dart';
 import '../view/profile/vendor_profile/screen/store_profile.dart';
@@ -38,9 +37,16 @@ class VendorCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
                   child: isAsset
-                      ? Image.asset(image, height: 100, width: double.infinity, fit: BoxFit.cover)
+                      ? Image.asset(
+                          image,
+                          height: 100,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
                       : Image.network(
                           image,
                           height: 100,
