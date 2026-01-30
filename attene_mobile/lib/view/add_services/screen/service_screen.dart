@@ -338,7 +338,6 @@ class ServiceScreen extends StatelessWidget {
                           textColor: AppColors.light1000,
                           borderColor: AppColors.primary400,
                         ),
-
                       ],
                     ),
                   ),
@@ -398,7 +397,7 @@ class ServiceScreen extends StatelessWidget {
                         margin: EdgeInsets.symmetric(
                           horizontal: ResponsiveDimensions.responsiveWidth(2),
                         ),
-                        padding: EdgeInsets.only(bottom: 2,top: 2),
+                        padding: EdgeInsets.only(bottom: 2, top: 2),
                         width: ResponsiveDimensions.responsiveWidth(45),
                         height: ResponsiveDimensions.responsiveWidth(45),
                         decoration: BoxDecoration(
@@ -545,7 +544,7 @@ class ServiceScreen extends StatelessWidget {
                   suffixIcon: Tooltip(
                     message: controller.keywordTooltip,
                     child: Container(
-                      padding: EdgeInsets.only(bottom: 2,top: 2),
+                      padding: EdgeInsets.only(bottom: 2, top: 2),
                       child: InkWell(
                         onTap: controller.canAddKeyword
                             ? () {
@@ -720,9 +719,7 @@ class ServiceScreen extends StatelessWidget {
           children: [
             SizedBox(
               width: double.infinity,
-              child:
-                  AateneButtonWithIcon(
-
+              child: AateneButtonWithIcon(
                 onTap: () {
                   if (controller.validateServiceForm()) {
                     controller.goToNextStep();
@@ -737,13 +734,11 @@ class ServiceScreen extends StatelessWidget {
                 },
                 buttonText: 'التالي: السعر والتطويرات',
               ),
-
             ),
             SizedBox(height: ResponsiveDimensions.responsiveHeight(12)),
             SizedBox(
               width: double.infinity,
-              child:
-              AateneButton(
+              child: AateneButton(
                 onTap: () {
                   if (controller.serviceTitle.value.isNotEmpty ||
                       controller.selectedMainCategory.value.isNotEmpty ||
@@ -778,7 +773,6 @@ class ServiceScreen extends StatelessWidget {
                           borderColor: AppColors.primary400,
                         ),
                       ],
-
                     );
                   }
                 },
@@ -787,7 +781,6 @@ class ServiceScreen extends StatelessWidget {
                 textColor: AppColors.primary400,
                 borderColor: AppColors.primary400,
               ),
-
             ),
           ],
         );
@@ -897,7 +890,6 @@ class ServiceScreen extends StatelessWidget {
                     onTap: () {
                       controller.selectMainCategory(sectionName, sectionId);
                       Get.back();
-
                     },
                   );
                 },
@@ -913,7 +905,6 @@ class ServiceScreen extends StatelessWidget {
             textColor: AppColors.light1000,
             borderColor: AppColors.primary400,
           ),
-
         ],
       ),
     );

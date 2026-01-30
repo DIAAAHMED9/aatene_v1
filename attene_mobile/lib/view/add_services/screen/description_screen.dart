@@ -1283,7 +1283,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 final newAnswer = answerController.text.trim();
 
                 if (newQuestion.isNotEmpty && newAnswer.isNotEmpty) {
-                  controller.updateFAQ(faq.id??0, newQuestion, newAnswer);
+                  controller.updateFAQ(faq.id ?? 0, newQuestion, newAnswer);
                   Navigator.pop(context);
 
                   Get.snackbar(
@@ -1336,7 +1336,6 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
           borderColor: AppColors.primary400,
         ),
       ],
-
     );
   }
 }

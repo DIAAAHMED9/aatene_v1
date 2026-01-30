@@ -142,8 +142,7 @@ class PolicyScreen extends StatelessWidget {
                           height: ResponsiveDimensions.responsiveHeight(4),
                         ),
                         InkWell(
-                          onTap: () {
-                          },
+                          onTap: () {},
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                               vertical: ResponsiveDimensions.responsiveHeight(

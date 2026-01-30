@@ -1,5 +1,4 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:attene_mobile/view/profile/vendor_profile/widget/offers.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../general_index.dart';
@@ -113,7 +112,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               child: Center(
                                 child: Text(
                                   "منتج",
-                                  style: TextStyle(
+                                  style: getMedium(
                                     fontSize: 14,
                                     color: AppColors.light1000,
                                   ),
@@ -139,27 +138,23 @@ class _ProductDetailsState extends State<ProductDetails> {
                   children: [
                     Text(
                       "Armando نظارة شمس أسيتيت أصلية من أرماندو كافللي",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                      ),
+                      style: getBold(fontWeight: FontWeight.bold, fontSize: 24),
                     ),
                     Row(
                       children: [
                         Icon(Icons.location_on_outlined),
-                        Text("الجليل . فلسطين "),
+                        Text("الجليل . فلسطين ", style: getMedium()),
                       ],
                     ),
                     ReadMoreText(
                       'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',
                       trimMode: TrimMode.Line,
-                      trimLines: 3,
+                      trimLines: 2,
                       colorClickableText: AppColors.neutral500,
                       trimCollapsedText: 'عرض المزيد',
                       trimExpandedText: 'عرض أقل',
-                      moreStyle: TextStyle(
+                      moreStyle: getBold(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
                         color: AppColors.primary400,
                       ),
                     ),
@@ -167,8 +162,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                       spacing: 5,
                       children: [
                         Expanded(
-                          child: CustomDropdown<String>.multiSelect(
+                          child: CustomDropdown<String>(
                             hintText: 'اختر المقاس',
+                            items: _listSize,
                             decoration: CustomDropdownDecoration(
                               hintStyle: getMedium(fontSize: 12),
                               closedBorderRadius: BorderRadius.circular(10),
@@ -180,18 +176,16 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 color: AppColors.primary100,
                               ),
                             ),
-                            items: _listSize,
-                            onListChanged: (value) {
+                            initialItem: _listSize[0],
+                            onChanged: (value) {
                               print('changing value to: $value');
                             },
-                            listValidator: (value) => value.isEmpty
-                                ? "يجب عليك الاختيار للمتابعة"
-                                : null,
                           ),
                         ),
                         Expanded(
-                          child: CustomDropdown<String>.multiSelect(
+                          child: CustomDropdown<String>(
                             hintText: 'اختر اللون',
+                            items: _listColor,
                             decoration: CustomDropdownDecoration(
                               hintStyle: getMedium(fontSize: 12),
                               closedBorderRadius: BorderRadius.circular(10),
@@ -203,13 +197,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 color: AppColors.primary100,
                               ),
                             ),
-                            items: _listColor,
-                            onListChanged: (value) {
+                            initialItem: _listColor[0],
+                            onChanged: (value) {
                               print('changing value to: $value');
                             },
-                            listValidator: (value) => value.isEmpty
-                                ? "يجب عليك الاختيار للمتابعة"
-                                : null,
                           ),
                         ),
                       ],
@@ -217,14 +208,8 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                     Row(
                       children: [
-                        Text(" السعر", style: TextStyle(fontSize: 13)),
-                        Text(
-                          " 190.54 ₪",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        Text(" السعر", style: getMedium(fontSize: 13)),
+                        Text(" 190.54 ₪", style: getBold(fontSize: 24)),
                       ],
                     ),
                     Row(
@@ -272,7 +257,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 Text(
                                   "اعجبني",
-                                  style: TextStyle(color: AppColors.neutral400),
+                                  style: getMedium(color: AppColors.neutral400),
                                 ),
                               ],
                             ),
@@ -301,7 +286,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 Text(
                                   "مشاركه",
-                                  style: TextStyle(color: AppColors.neutral400),
+                                  style: getMedium(color: AppColors.neutral400),
                                 ),
                               ],
                             ),
@@ -329,7 +314,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 Text(
                                   "تقيم",
-                                  style: TextStyle(color: AppColors.neutral400),
+                                  style: getMedium(color: AppColors.neutral400),
                                 ),
                               ],
                             ),
@@ -357,7 +342,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 Text(
                                   "إبلاغ",
-                                  style: TextStyle(color: AppColors.neutral400),
+                                  style: getMedium(color: AppColors.neutral400),
                                 ),
                               ],
                             ),
@@ -388,7 +373,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               height: 18,
                             ),
                           ),
-                          Text("معلومات التوصيل"),
+                          Text("معلومات التوصيل", style: getMedium()),
                         ],
                       ),
                       children: [
@@ -432,7 +417,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(8.0),
                                 child: Row(
                                   spacing: 10,
                                   children: [
@@ -445,15 +430,12 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                                     Text(
                                       "توصيل إلي الناصرة من 2-3 أيام",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: getBold(),
                                     ),
                                     Spacer(),
                                     Text(
                                       "1200.0 ₪",
-                                      style: TextStyle(
+                                      style: getMedium(
                                         color: AppColors.primary400,
                                         fontSize: 14,
                                       ),
@@ -482,10 +464,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 Text(
                                   "التوصيل إلى: ",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: getBold(fontSize: 18),
                                 ),
                                 Expanded(
                                   child: CustomDropdown<String>(
@@ -543,10 +522,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     ),
                                     Text(
                                       "شركة مرسال للتوصيل ",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: getBold(fontSize: 18),
                                     ),
                                   ],
                                 ),
@@ -580,7 +556,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               height: 18,
                             ),
                           ),
-                          Text("عروض"),
+                          Text("عروض", style: getMedium()),
                         ],
                       ),
                       children: [],
@@ -607,7 +583,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               height: 18,
                             ),
                           ),
-                          Text("معلومات عن التاجر"),
+                          Text("معلومات عن التاجر", style: getMedium()),
                         ],
                       ),
                       children: [
@@ -636,12 +612,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "محمد علي",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
+                                          Text("محمد علي", style: getBold()),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -653,7 +624,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               ),
                                               Text(
                                                 "فلسطين, الخليل",
-                                                style: TextStyle(
+                                                style: getMedium(
                                                   color: AppColors.primary400,
                                                 ),
                                               ),
@@ -685,7 +656,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               ),
                                               Text(
                                                 "متابعة",
-                                                style: TextStyle(
+                                                style: getMedium(
                                                   color: AppColors.light1000,
                                                   fontSize: 12,
                                                 ),
@@ -744,8 +715,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text("عضو منذ "),
-                                          Text(" 19-03-2025 "),
+                                          Text("عضو منذ ", style: getMedium()),
+                                          Text(
+                                            " 19-03-2025 ",
+                                            style: getMedium(),
+                                          ),
                                         ],
                                       ),
                                       SizedBox(width: 10),
@@ -754,8 +728,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(" تقيم التاجر"),
-                                          Text("5.0"),
+                                          Text(
+                                            " تقيم التاجر",
+                                            style: getMedium(),
+                                          ),
+                                          Text("5.0", style: getMedium()),
                                         ],
                                       ),
                                     ],
@@ -787,7 +764,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               color: AppColors.primary400,
                             ),
                           ),
-                          Text("مواصفات المنتج"),
+                          Text("مواصفات المنتج", style: getMedium()),
                         ],
                       ),
                       children: [
@@ -796,7 +773,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
                             "وصف موجز: سماعة استريو logitech crystal audio للبيع كالجديدة استخدام بسيط جدا وارد الخارج بنصف الثمن سعرها 8000 بدون فصال نهائي لعدم تضيع الوقت",
-                            style: TextStyle(
+                            style: getMedium(
                               fontSize: 13,
                               color: AppColors.neutral500,
                             ),
@@ -825,7 +802,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               color: AppColors.primary400,
                             ),
                           ),
-                          Text("تقييمات ومراجعات"),
+                          Text("تقييمات ومراجعات", style: getMedium()),
                         ],
                       ),
                       children: [
@@ -847,17 +824,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   children: [
                                     Text(
                                       "التعليقات",
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: getBold(fontSize: 24),
                                     ),
                                     Text(
                                       "سيتم عرض جميع التعليقات هنا",
-                                      style: TextStyle(
+                                      style: getMedium(
                                         fontSize: 14,
-                                        color: Colors.grey,
+                                        color: AppColors.neutral500,
                                       ),
                                     ),
                                   ],
@@ -867,10 +840,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   onPressed: () {},
                                   child: Row(
                                     children: [
-                                      Text(
-                                        "كل التعليقات",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
+                                      Text("كل التعليقات", style: getMedium()),
                                       Icon(Icons.arrow_drop_down),
                                     ],
                                   ),
@@ -899,13 +869,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           children: [
                                             Text(
                                               "لويس فاندسون",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: getBold(),
                                             ),
                                             Text(
                                               "09:00 - 20 أكتوبر 2022",
-                                              style: TextStyle(fontSize: 12),
+                                              style: getMedium(fontSize: 12),
                                             ),
                                           ],
                                         ),
@@ -921,7 +889,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     ),
                                     Text(
                                       "واه ، مشروعك يبدو رائع! . منذ متى وأنت ترميز؟ . ما زلت جديدًا ، لكن أعتقد أنني أريد الغوص في رد الفعل قريبًا أيضًا. ربما يمكنك أن تعطيني نظرة ثاقبة حول المكان الذي يمكنني أن أتعلم فيه رد الفعل؟ . شكرًا!",
-                                      style: TextStyle(
+                                      style: getMedium(
                                         color: AppColors.neutral400,
                                       ),
                                     ),
@@ -930,27 +898,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       children: [
                                         Text(
                                           "الجودة",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: getBold(fontSize: 13),
                                         ),
                                         Icon(Icons.star, color: Colors.orange),
                                         Text("4.2"),
                                         Spacer(),
                                         Text(
                                           "التواصل",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: getBold(fontSize: 13),
                                         ),
                                         Icon(Icons.star, color: Colors.orange),
                                         Text("4.2"),
                                         Spacer(),
                                         Text(
                                           "التسليم ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: getBold(fontSize: 13),
                                         ),
                                         Icon(Icons.star, color: Colors.orange),
                                         Text("4.2"),
@@ -972,7 +934,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             CircleAvatar(),
                                             Text(
                                               "لوريم إيبسوم ألم سيت أميت، كونسيكتيور أديبي سكينج إليت، سيد ديام نونومي نيبه إيسمود تينسيدونت أوت لاوريت دولور ماجن. لوريم إيبسوم ألم سيت أميت، كونسيكتيور أديبي سكينج إليت، سيد ديام نونومي نيبه إيسمود تينسيدونت أوت لاوريت ",
-                                              style: TextStyle(
+                                              style: getMedium(
                                                 color: AppColors.neutral600,
                                               ),
                                             ),
@@ -986,9 +948,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   ),
                                                   Text(
                                                     "بلغ عن إساءة",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                    style: getBold(
                                                       color: AppColors.error200,
                                                     ),
                                                   ),
@@ -1025,13 +985,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           children: [
                                             Text(
                                               "لويس فاندسون",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: getBold(),
                                             ),
                                             Text(
                                               "09:00 - 20 أكتوبر 2022",
-                                              style: TextStyle(fontSize: 12),
+                                              style: getMedium(fontSize: 12),
                                             ),
                                           ],
                                         ),
@@ -1046,8 +1004,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               ),
                                               Text(
                                                 "بلغ عن إساءة",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                                style: getBold(
                                                   color: AppColors.error200,
                                                 ),
                                               ),
@@ -1058,7 +1015,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     ),
                                     Text(
                                       "واه ، مشروعك يبدو رائع! . منذ متى وأنت ترميز؟ . ما زلت جديدًا ، لكن أعتقد أنني أريد الغوص في رد الفعل قريبًا أيضًا. ربما يمكنك أن تعطيني نظرة ثاقبة حول المكان الذي يمكنني أن أتعلم فيه رد الفعل؟ . شكرًا!",
-                                      style: TextStyle(
+                                      style: getMedium(
                                         color: AppColors.neutral400,
                                       ),
                                     ),
@@ -1067,27 +1024,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       children: [
                                         Text(
                                           "الجودة",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: getBold(fontSize: 13),
                                         ),
                                         Icon(Icons.star, color: Colors.orange),
                                         Text("4.2"),
                                         Spacer(),
                                         Text(
                                           "التواصل",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: getBold(fontSize: 13),
                                         ),
                                         Icon(Icons.star, color: Colors.orange),
                                         Text("4.2"),
                                         Spacer(),
                                         Text(
                                           "التسليم ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: getBold(fontSize: 13),
                                         ),
                                         Icon(Icons.star, color: Colors.orange),
                                         Text("4.2"),
@@ -1099,7 +1050,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           onPressed: () {},
                                           child: Text(
                                             " مفيد 5m",
-                                            style: TextStyle(
+                                            style: getMedium(
                                               color: AppColors.primary400,
                                             ),
                                           ),
@@ -1114,9 +1065,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         ),
                                         Text(
                                           "رد",
-                                          style: TextStyle(
+                                          style: getBold(
                                             color: AppColors.neutral600,
-                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ],
@@ -1154,7 +1104,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               color: AppColors.primary400,
                             ),
                           ),
-                          Text("العلامات"),
+                          Text("العلامات", style: getMedium()),
                         ],
                       ),
                       children: [
@@ -1176,7 +1126,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       child: Center(
                                         child: Text(
                                           "Muse",
-                                          style: TextStyle(fontSize: 12),
+                                          style: getMedium(fontSize: 12),
                                         ),
                                       ),
                                     ),
@@ -1232,7 +1182,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),
 
                           onPressed: () {},
-                          label: const Text('دردش'),
+                          label: Text('دردش', style: getMedium()),
                         ),
                       ),
                     ),
