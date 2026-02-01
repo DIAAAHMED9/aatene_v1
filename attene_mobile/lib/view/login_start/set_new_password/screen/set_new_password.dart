@@ -58,7 +58,7 @@ class SetNewPassword extends StatelessWidget {
                         : 'Create a new password',
                     style: getRegular(
                       fontSize: ResponsiveDimensions.f(16),
-                      color: Colors.grey[600],
+                      color: Colors.grey[600]!,
                     ),
                     textAlign: TextAlign.center,
                   ),
