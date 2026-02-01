@@ -47,8 +47,11 @@ class _ChatAllState extends State<ChatAll> {
           child: FloatingActionButton.extended(
             backgroundColor: AppColors.primary400,
             onPressed: _openNewChatSheet,
-            icon: const Icon(Icons.add_comment_rounded,color: AppColors.light1000,),
-            label:  Text('محادثة', style: getMedium(color: AppColors.light1000),),
+            icon: const Icon(
+              Icons.add_comment_rounded,
+              color: AppColors.light1000,
+            ),
+            label: Text('محادثة', style: getMedium(color: AppColors.light1000)),
           ),
         ),
         body: SafeArea(
@@ -69,7 +72,10 @@ class _ChatAllState extends State<ChatAll> {
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
                   ),
                 ),
               ),
@@ -83,16 +89,15 @@ class _ChatAllState extends State<ChatAll> {
                     if (c.isLoading.value && list.isEmpty)
                       const Center(child: CircularProgressIndicator())
                     else if (list.isEmpty)
-                      EmptyState(
-                        onNewChat: _openNewChatSheet,
-                      )
+                      EmptyState(onNewChat: _openNewChatSheet)
                     else
                       RefreshIndicator(
                         onRefresh: () async => c.refreshConversations(),
                         child: ListView.separated(
                           padding: const EdgeInsets.fromLTRB(12, 6, 12, 96),
                           itemCount: list.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
                           itemBuilder: (context, index) => ConversationCard(
                             conversation: list[index],
                             controller: c,
@@ -104,7 +109,10 @@ class _ChatAllState extends State<ChatAll> {
                         left: 0,
                         right: 0,
                         top: 0,
-                        child: LinearProgressIndicator(minHeight: 2, color: cs.primary),
+                        child: LinearProgressIndicator(
+                          minHeight: 2,
+                          color: cs.primary,
+                        ),
                       ),
                   ],
                 ),
@@ -116,17 +124,16 @@ class _ChatAllState extends State<ChatAll> {
     });
   }
 
-Future<void> _openNewChatSheet() async {
-  if (!mounted) return;
+  Future<void> _openNewChatSheet() async {
+    if (!mounted) return;
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (_) => NewChatSheet(controller: c),
-  );
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => NewChatSheet(controller: c),
+    );
 
-  c.loadPreviousParticipants();
-}
-
+    c.loadPreviousParticipants();
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:attene_mobile/view/profile/user_profile/widget/review_sheet.dart';
 import '../../../../general_index.dart';
+import '../../../support/empty.dart';
 
 class RatingProfile extends StatelessWidget {
   const RatingProfile({super.key});
@@ -11,46 +12,10 @@ class RatingProfile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: AppColors.light1000,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.neutral900.withOpacity(0.3),
-                spreadRadius: 2,
-                blurRadius: 4,
-                offset: Offset(2, 4),
-              ),
-            ],
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Text(
-                  "4.5",
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Column(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Icon(Icons.star_sharp, color: Colors.orange, size: 20),
-                    Text(
-                      "بناءً على 2,372 مراجعة",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.neutral600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+        RatingSummaryWidget(
+          rating: 4.2,
+          totalReviews: 1280,
+          ratingCount: const [40, 25, 15, 8, 2],
         ),
         Row(
           children: [

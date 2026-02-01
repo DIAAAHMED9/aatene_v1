@@ -61,7 +61,7 @@ class NotificationController extends GetxController {
     pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeInOutCubic,
     );
   }
 
@@ -84,7 +84,9 @@ class NotificationController extends GetxController {
       mainButton: TextButton(
         onPressed: undoDelete,
         child: const Text(
-            'تراجع', style: TextStyle(color: AppColors.neutral100)),
+          'تراجع',
+          style: TextStyle(color: AppColors.neutral100),
+        ),
       ),
       backgroundColor: AppColors.primary50,
       colorText: AppColors.primary400,
@@ -133,37 +135,39 @@ class NotificationPage extends StatelessWidget {
   }
 
   AppBar _appBar() {
-    return
-      AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "الإشعارات",
-          style: getBold(color: AppColors.neutral100, fontSize: 20),
-        ),
-        centerTitle: false,
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[100],
-            ),
-            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+    return AppBar(
+      backgroundColor: Colors.white,
+      title: Text(
+        "الإشعارات",
+        style: getBold(color: AppColors.neutral100, fontSize: 20),
+      ),
+      centerTitle: false,
+      leading: IconButton(
+        onPressed: () => Get.back(),
+        icon: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            color: Colors.grey[100],
           ),
+          child: Icon(Icons.arrow_back, color: AppColors.neutral100),
         ),
-        actions: [
-          IconButton(onPressed: () {
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
             Get.to(NotificationFeed());
           },
-              icon: SvgPicture.asset(
-                "assets/images/svg_images/setting2.svg", height: 25,
-                width: 25,
-                fit: BoxFit.cover,)),
-
-        ],
-      );
+          icon: SvgPicture.asset(
+            "assets/images/svg_images/setting2.svg",
+            height: 25,
+            width: 25,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _tabs() {
@@ -217,7 +221,8 @@ class _TabButton extends StatelessWidget {
           child: Text(
             title,
             style: getMedium(
-                color: active ? AppColors.light1000 : AppColors.primary400),
+              color: active ? AppColors.light1000 : AppColors.primary400,
+            ),
           ),
         ),
       ),
@@ -281,79 +286,75 @@ class _AnimatedNotificationItemState extends State<AnimatedNotificationItem> {
       curve: Curves.easeInOut,
       child: visible
           ? TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.95, end: 1),
-        duration: const Duration(milliseconds: 300),
-        builder: (_, value, child) {
-          return Transform.scale(scale: value, child: child);
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Dismissible(
-            key: ValueKey(widget.model.hashCode),
-            direction: DismissDirection.horizontal,
-            background: _markReadBg(),
-            secondaryBackground: _deleteBg(),
-            confirmDismiss: (direction) async {
-              if (direction == DismissDirection.startToEnd) {
-                widget.onMarkRead();
-                return false;
-              } else {
-                setState(() => visible = false);
-                Future.delayed(
-                  const Duration(milliseconds: 300),
-                  widget.onDelete,
-                );
-                return true;
-              }
-            },
-            child: _NotificationItem(model: widget.model),
-          ),
-        ),
-      )
+              tween: Tween(begin: 0.95, end: 1),
+              duration: const Duration(milliseconds: 300),
+              builder: (_, value, child) {
+                return Transform.scale(scale: value, child: child);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Dismissible(
+                  key: ValueKey(widget.model.hashCode),
+                  direction: DismissDirection.horizontal,
+                  background: _markReadBg(),
+                  secondaryBackground: _deleteBg(),
+                  confirmDismiss: (direction) async {
+                    if (direction == DismissDirection.startToEnd) {
+                      widget.onMarkRead();
+                      return false;
+                    } else {
+                      setState(() => visible = false);
+                      Future.delayed(
+                        const Duration(milliseconds: 300),
+                        widget.onDelete,
+                      );
+                      return true;
+                    }
+                  },
+                  child: _NotificationItem(model: widget.model),
+                ),
+              ),
+            )
           : const SizedBox.shrink(),
     );
   }
 
-  Widget _deleteBg() =>
-      Container(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 24),
-        decoration: BoxDecoration(
-          color: AppColors.error200,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          spacing: 5,
-          children: [
-            Text("حذف",
-                style: getMedium(color: AppColors.light1000, fontSize: 13)),
-            Icon(Icons.delete, color: AppColors.light1000),
-          ],
-        ),
-      );
+  Widget _deleteBg() => Container(
+    alignment: Alignment.centerLeft,
+    padding: const EdgeInsets.only(left: 24),
+    decoration: BoxDecoration(
+      color: AppColors.error200,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      spacing: 5,
+      children: [
+        Text("حذف", style: getMedium(color: AppColors.light1000, fontSize: 13)),
+        Icon(Icons.delete, color: AppColors.light1000),
+      ],
+    ),
+  );
 
-  Widget _markReadBg() =>
-      Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 24),
-        decoration: BoxDecoration(
-          color: AppColors.primary400,
-          borderRadius: BorderRadius.circular(16),
+  Widget _markReadBg() => Container(
+    alignment: Alignment.centerRight,
+    padding: const EdgeInsets.only(right: 24),
+    decoration: BoxDecoration(
+      color: AppColors.primary400,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Row(
+      spacing: 5,
+      children: [
+        Icon(Icons.remove_red_eye_rounded, color: AppColors.light1000),
+        Text(
+          "تحديد كمقروء",
+          style: getMedium(color: AppColors.light1000, fontSize: 13),
         ),
-        child: Row(
-          spacing: 5,
-          children: [
-            Icon(Icons.remove_red_eye_rounded, color: AppColors.light1000),
-            Text(
-              "تحديد كمقروء",
-              style: getMedium(color: AppColors.light1000, fontSize: 13),
-            ),
-
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
 
 class _NotificationItem extends StatelessWidget {

@@ -1,41 +1,6 @@
 import 'package:attene_mobile/general_index.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-/// ===============================
-/// App Root
-/// ===============================
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen());
-  }
-}
-
-/// ===============================
-/// Home Screen (Example Usage)
-/// ===============================
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: RatingSummaryWidget(
-          rating: 4.2,
-          totalReviews: 1280,
-          ratingCount: const [40, 25, 15, 8, 2],
-        ),
-      ),
-    );
-  }
-}
-
-/// ===============================
-/// Reusable Rating Summary Widget
-/// ===============================
+///  Rating
 class RatingSummaryWidget extends StatefulWidget {
   final double rating;
   final int totalReviews;
