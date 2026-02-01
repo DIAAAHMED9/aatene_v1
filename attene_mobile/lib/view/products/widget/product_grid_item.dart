@@ -153,7 +153,7 @@ class ProductGridItem extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 controller.getSectionName(product.sectionId!),
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 11,
                                   color: Colors.grey,
                                 ),

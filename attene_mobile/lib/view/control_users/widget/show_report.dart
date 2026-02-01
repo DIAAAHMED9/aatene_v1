@@ -125,12 +125,7 @@ class ShowReport extends StatelessWidget {
                     Divider(),
                     AateneButton(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (context) => HomeControl(),
-                          ),
-                        );
+                        Get.to(HomeControl());
                       },
                       buttonText: "إغلاق",
                       color: AppColors.primary400,

@@ -103,7 +103,7 @@ class ProductVariationsScreen extends StatelessWidget {
         ),
         Text(
           'لم يتم اضافة اي اختلافات بعد!',
-          style: getRegular(),
+          style: getMedium(),
           textAlign: TextAlign.center,
         ),
       ],
@@ -156,7 +156,7 @@ class ProductVariationsScreen extends StatelessWidget {
               ),
               child: Text(
                 'رجوع',
-                style: getRegular(
+                style: getMedium(
                   color: Colors.grey,
                   fontSize: ResponsiveDimensions.f(16),
                 ),

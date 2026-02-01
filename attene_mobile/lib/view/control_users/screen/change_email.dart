@@ -65,11 +65,11 @@ class ChangeEmail extends StatelessWidget {
                               ),
                               Text(
                                 "تمت العملية بنجاح",
-                                style: getBlack(fontSize: 25),
+                                style: getBold(fontSize: 24),
                               ),
                               Text(
                                 "تم حفظ التغييرات بنجاح",
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 12,
                                   color: AppColors.neutral400,
                                 ),
@@ -80,12 +80,7 @@ class ChangeEmail extends StatelessWidget {
                                 borderColor: AppColors.primary400,
                                 textColor: AppColors.light1000,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => HomeControl(),
-                                    ),
-                                  );
+                                  Get.to(HomeControl());
                                 },
                               ),
                             ],

@@ -58,7 +58,7 @@ class BlockItem extends StatelessWidget {
               child: Center(
                 child: Text(
                   'إلغاء الحظر',
-                  style: getRegular(color: Colors.white, fontSize: 13),
+                  style: getMedium(color: Colors.white, fontSize: 13),
                 ),
               ),
             ),

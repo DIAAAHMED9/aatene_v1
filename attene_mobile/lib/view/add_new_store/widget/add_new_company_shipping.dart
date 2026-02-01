@@ -139,7 +139,7 @@ class _AddNewShippingCompanyState extends State<AddNewShippingCompany> {
                         size: 15,
                       ),
                       isExpanded: true,
-                      style: getRegular(
+                      style: getMedium(
                         color: AppColors.primary400,
                         fontSize: 15,
                       ),

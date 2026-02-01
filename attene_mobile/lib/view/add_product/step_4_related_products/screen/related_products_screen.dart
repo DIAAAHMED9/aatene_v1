@@ -56,7 +56,7 @@ class RelatedProductsScreen extends StatelessWidget {
           isLinkingMode
               ? 'اختر المنتجات المرتبطة لربطها مع المنتج الرئيسي'
               : 'قم باختيار منتجات لترشيحها في قائمة المنتجات',
-          style: getRegular(color: AppColors.colorRelatedProductsScreen),
+          style: getMedium(color: AppColors.colorRelatedProductsScreen),
         ),
       ],
     );
@@ -108,7 +108,7 @@ class RelatedProductsScreen extends StatelessWidget {
                       children: [
                         Icon(Icons.clear_all, color: Colors.red, size: 16),
                         const SizedBox(width: 4),
-                        Text('مسح الكل', style: getRegular(color: Colors.red)),
+                        Text('مسح الكل', style: getMedium(color: Colors.red)),
                       ],
                     ),
                   ),
@@ -137,7 +137,7 @@ class RelatedProductsScreen extends StatelessWidget {
 
           Text(
             'لم يتم اختيار أي منتجات بعد',
-            style: getRegular(color: Colors.grey),
+            style: getMedium(color: Colors.grey),
           ),
         ],
       ),
@@ -208,7 +208,7 @@ class RelatedProductsScreen extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           product.sectionName!,
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.f(14),
                             color: Colors.grey,
                           ),
@@ -465,7 +465,7 @@ class RelatedProductsScreen extends StatelessWidget {
               Get.find<RelatedProductsController>().removeDiscount(discount);
               Get.back();
             },
-            child: Text('حذف', style: getRegular(color: Colors.red)),
+            child: Text('حذف', style: getMedium(color: Colors.red)),
           ),
         ],
       ),

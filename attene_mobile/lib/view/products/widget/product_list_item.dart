@@ -84,7 +84,7 @@ class ProductListItem extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               controller.getSectionName(product.sectionId!),
-                              style: getRegular(
+                              style: getMedium(
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),

@@ -25,7 +25,7 @@ class _NotificationFeedState extends State<NotificationFeed> {
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           title: Text(title, style: getMedium()),
-          subtitle: Text(subtitle, style: getRegular(fontSize: 13)),
+          subtitle: Text(subtitle, style: getMedium(fontSize: 13)),
           trailing: Switch(
             value: value,
             onChanged: onChanged,

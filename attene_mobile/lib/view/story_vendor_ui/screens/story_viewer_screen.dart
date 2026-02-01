@@ -33,7 +33,10 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
     if (widget.vendors.isEmpty) {
       vendorIndex = 0;
     } else {
-      vendorIndex = widget.initialVendorIndex.clamp(0, widget.vendors.length - 1);
+      vendorIndex = widget.initialVendorIndex.clamp(
+        0,
+        widget.vendors.length - 1,
+      );
     }
 
     _page = PageController(initialPage: vendorIndex);
@@ -135,7 +138,9 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
     Navigator.pop(context);
   }
 
-  ({bool isProduct, String title, String imageUrl}) _parseProductStory(String raw) {
+  ({bool isProduct, String title, String imageUrl}) _parseProductStory(
+    String raw,
+  ) {
     if (!raw.startsWith('product://')) {
       return (isProduct: false, title: '', imageUrl: '');
     }
@@ -158,7 +163,10 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
           child: Center(
             child: Text(
               'لا يوجد قصص',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
@@ -193,18 +201,25 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
             },
             itemBuilder: (_, i) {
               final vendor = widget.vendors[i];
-              final items = vendor.groups.isNotEmpty ? vendor.groups.first.items : <demo.StoryMediaItem>[];
+              final items = vendor.groups.isNotEmpty
+                  ? vendor.groups.first.items
+                  : <demo.StoryMediaItem>[];
 
               final demo.StoryMediaItem item = items.isEmpty
                   ? const demo.StoryMediaItem(url: '')
-                  : items[(i == vendorIndex) ? storyIndex.clamp(0, items.length - 1) : 0];
+                  : items[(i == vendorIndex)
+                        ? storyIndex.clamp(0, items.length - 1)
+                        : 0];
 
               final parsed = _parseProductStory(item.url);
               final bool isProductStory = parsed.isProduct;
-              final bool isApiStoryWithText = !isProductStory && (item.text ?? '').trim().isNotEmpty;
+              final bool isApiStoryWithText =
+                  !isProductStory && (item.text ?? '').trim().isNotEmpty;
 
               final String bgUrl = isProductStory ? parsed.imageUrl : item.url;
-              final Color? storyColor = (item.color == null) ? null : Color(item.color!);
+              final Color? storyColor = (item.color == null)
+                  ? null
+                  : Color(item.color!);
 
               return Stack(
                 children: [
@@ -217,7 +232,10 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                             errorBuilder: (_, __, ___) => Container(
                               color: Colors.black,
                               child: const Center(
-                                child: Icon(Icons.broken_image, color: Colors.white),
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -255,13 +273,15 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                         final double v = (idx < storyIndex)
                             ? 1.0
                             : (idx == storyIndex)
-                                ? progress.clamp(0.0, 1.0)
-                                : 0.0;
+                            ? progress.clamp(0.0, 1.0)
+                            : 0.0;
 
                         return Expanded(
                           child: Container(
                             height: 3,
-                            margin: EdgeInsets.only(right: idx == items.length - 1 ? 0 : 6),
+                            margin: EdgeInsets.only(
+                              right: idx == items.length - 1 ? 0 : 6,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.25),
                               borderRadius: BorderRadius.circular(99),
@@ -285,7 +305,9 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                   if (isApiStoryWithText)
                     Positioned.fill(
                       child: Container(
-                        color: (storyColor ?? Colors.transparent).withOpacity(0.35),
+                        color: (storyColor ?? Colors.transparent).withOpacity(
+                          0.35,
+                        ),
                         alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(horizontal: 22),
                         child: Text(
@@ -318,7 +340,9 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                                 color: Colors.white10,
                                 alignment: Alignment.center,
                                 child: Text(
-                                  vendor.storeName.isNotEmpty ? vendor.storeName.characters.first : 'S',
+                                  vendor.storeName.isNotEmpty
+                                      ? vendor.storeName.characters.first
+                                      : 'S',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w800,
@@ -362,7 +386,9 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.35),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white.withOpacity(0.12)),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.12),
+                              ),
                             ),
                             child: Row(
                               children: [
@@ -376,7 +402,10 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                                       fit: BoxFit.cover,
                                       errorBuilder: (_, __, ___) => Container(
                                         color: Colors.white10,
-                                        child: const Icon(Icons.image, color: Colors.white24),
+                                        child: const Icon(
+                                          Icons.image,
+                                          color: Colors.white24,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -384,7 +413,9 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    parsed.title.isEmpty ? 'منتج' : parsed.title,
+                                    parsed.title.isEmpty
+                                        ? 'منتج'
+                                        : parsed.title,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -402,8 +433,7 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                             width: double.infinity,
                             height: 52,
                             child: ElevatedButton(
-                              onPressed: () {
-                              },
+                              onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white.withOpacity(0.15),
                                 elevation: 0,

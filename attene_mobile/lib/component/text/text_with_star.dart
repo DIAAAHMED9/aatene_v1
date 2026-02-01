@@ -11,7 +11,7 @@ class TextWithStar extends StatelessWidget {
       spacing: 5,
       children: [
         Text(text, style: getMedium()),
-        Text('*', style: getRegular(color: Colors.red)),
+        Text('*', style: getMedium(color: Colors.red)),
       ],
     );
   }

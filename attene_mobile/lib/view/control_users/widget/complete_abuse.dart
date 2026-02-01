@@ -40,12 +40,7 @@ class CompleteAbuse extends StatelessWidget {
               Spacer(),
               AateneButton(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => InquiryAboutComplaints(),
-                    ),
-                  );
+                  Get.to(InquiryAboutComplaints());
                 },
                 buttonText: "استعلام عن الشكاوى",
                 color: AppColors.primary300,
@@ -54,12 +49,7 @@ class CompleteAbuse extends StatelessWidget {
               ),
               AateneButton(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => HomeControl(),
-                    ),
-                  );
+                  Get.to(HomeControl());
                 },
                 buttonText: "العودة للرئيسية",
                 color: AppColors.primary500,

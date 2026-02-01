@@ -34,7 +34,10 @@ class RatingProfile extends StatelessWidget {
                   children: [
                     Text(
                       "4.5",
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Spacer(),
                     Column(
@@ -61,7 +64,7 @@ class RatingProfile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "عالي",
+                      "تعليق",
                       style: TextStyle(
                         fontSize: 24,
                         color: Colors.black,
@@ -79,7 +82,10 @@ class RatingProfile extends StatelessWidget {
                   onPressed: () {},
                   child: Row(
                     children: [
-                      Text("كل التعليقات", style: TextStyle(color: Colors.black)),
+                      Text(
+                        "كل المراجعات",
+                        style: TextStyle(color: Colors.black),
+                      ),
                       Icon(Icons.arrow_drop_down),
                     ],
                   ),

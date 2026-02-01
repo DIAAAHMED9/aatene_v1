@@ -1,8 +1,7 @@
 import 'package:attene_mobile/component/index.dart';
 import 'package:attene_mobile/view/profile/user_profile/screen/user_profile.dart';
-import 'package:flutter/material.dart';
 
-import '../../../../utils/index.dart';
+import '../../../../general_index.dart';
 
 class SelectionBottomSheet extends StatefulWidget {
   const SelectionBottomSheet({super.key});
@@ -27,7 +26,6 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text(
@@ -100,7 +98,8 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                             TextFiledAatene(
                               isRTL: isRTL,
                               hintText: "اكتب هنا",
-                              textInputAction: TextInputAction.next, textInputType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              textInputType: TextInputType.name,
                             ),
                           ],
                         ),
@@ -189,13 +188,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                                           borderColor: AppColors.primary400,
                                           textColor: AppColors.light1000,
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute<void>(
-                                                builder: (context) =>
-                                                    ProfilePage(),
-                                              ),
-                                            );
+                                            Get.to(ProfilePage());
                                           },
                                         ),
                                       ],
@@ -232,11 +225,9 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
     required String title,
     required String subtitle,
   }) {
-
     return Container(
       margin: const EdgeInsets.only(bottom: 5),
-      decoration: BoxDecoration(
-      ),
+      decoration: BoxDecoration(),
       child: RadioListTile<String>(
         value: id,
         groupValue: _selectedReason,

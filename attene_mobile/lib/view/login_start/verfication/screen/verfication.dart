@@ -22,8 +22,8 @@ class VerificationCodeField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: ResponsiveDimensions.w(56),
-      height: ResponsiveDimensions.h(56),
+      width: ResponsiveDimensions.w(60),
+      height: ResponsiveDimensions.h(60),
       child: TextField(
         controller: controller,
         focusNode: focusNode,
@@ -32,8 +32,6 @@ class VerificationCodeField extends StatelessWidget {
           onChanged(value);
           if (value.isNotEmpty) {
             FocusScope.of(context).nextFocus();
-          } else {
-            onDelete?.call();
           }
         },
         onTap: () {
@@ -71,7 +69,7 @@ class VerificationCodeField extends StatelessWidget {
           filled: true,
           fillColor: hasError ? Colors.red.withOpacity(0.05) : Colors.grey[50],
         ),
-        style: getBold(fontSize: ResponsiveDimensions.f(18)),
+        style: getBold(fontSize: ResponsiveDimensions.f(20)),
       ),
     );
   }
@@ -113,6 +111,21 @@ class Verification extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                // Align(
+                //   alignment: isRTL ? Alignment.topLeft : Alignment.topRight,
+                //   child:  IconButton(
+                //     onPressed: () => Get.back(),
+                //     icon: Container(
+                //       width: 50,
+                //       height: 50,
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(100),
+                //         color: Colors.grey[100],
+                //       ),
+                //       child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
                   isRTL ? 'تأكد من رقم الهاتف' : 'Verify Phone Number',
@@ -128,7 +141,7 @@ class Verification extends StatelessWidget {
                     isRTL
                         ? 'لقد ارسلنا رمز التحقق الى +972599084404 اذا لم يتم تسلمها. فانقر فوق اعادة رمز التحقق'
                         : 'We have sent a verification code to +972599084404 If you didn\'t receive it, click Resend',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: ResponsiveDimensions.f(16),
                       color: Colors.grey,
                     ),
@@ -139,20 +152,17 @@ class Verification extends StatelessWidget {
                 Obx(
                   () => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(VerificationController.otpLength,
-                        (index) {
+                    children: List.generate(5, (index) {
                       return VerificationCodeField(
-                        controller: controller.textControllers[index],
+                        controller: TextEditingController(
+                          // text: controller.codes[index],
+                        ),
                         focusNode: controller.focusNodes[index],
-                        onChanged: (value) =>
-                            controller.updateCode(index, value),
+                        // onChanged: (value) =>
+                        // controller.updateCode(index, value),
                         hasError: controller.errorMessage.isNotEmpty,
                         autoFocus: index == 0,
-                        onDelete: () {
-                          if (index > 0) {
-                            FocusScope.of(context).previousFocus();
-                          }
-                        },
+                        onChanged: (String p1) {},
                       );
                     }),
                   ),
@@ -168,7 +178,7 @@ class Verification extends StatelessWidget {
                           ),
                           child: Text(
                             controller.errorMessage.value,
-                            style: getRegular(
+                            style: getMedium(
                               color: Colors.red,
                               fontSize: ResponsiveDimensions.f(14),
                             ),
@@ -184,7 +194,7 @@ class Verification extends StatelessWidget {
                     children: [
                       Text(
                         isRTL ? 'لم تستلم الرمز؟ ' : 'Didn\'t receive code? ',
-                        style: getRegular(
+                        style: getMedium(
                           color: Colors.grey,
                           fontSize: ResponsiveDimensions.f(14),
                         ),
@@ -207,7 +217,7 @@ class Verification extends StatelessWidget {
                           isRTL
                               ? 'إعادة الإرسال خلال ${controller.resendCountdown.value} ثانية'
                               : 'Resend in ${controller.resendCountdown.value}s',
-                          style: getRegular(
+                          style: getMedium(
                             color: Colors.grey,
                             fontSize: ResponsiveDimensions.f(14),
                           ),

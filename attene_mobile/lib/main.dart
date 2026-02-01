@@ -1,7 +1,4 @@
-import 'package:attene_mobile/view/favorite/screen/favorites.dart';
-import 'package:attene_mobile/view/notification/screen/notification.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
-import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,11 +8,10 @@ import 'general_index.dart' hide AppLifecycleManager;
 import 'utils/responsive/index.dart';
 import 'utils/services/device_name_service.dart';
 import 'utils/sheet_controller.dart';
-import 'package:attene_mobile/view/add_new_store/screen/manage_account_store_controller.dart';
 import 'package:attene_mobile/services/app_lifecycle_manager.dart';
-import 'package:attene_mobile/api/core/api_helper.dart';
 import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
+import 'package:flutter/material.dart';
 
 import 'package:attene_mobile/view/products/screen/product_screen.dart';
 import 'package:attene_mobile/view/products/screen/product_details.dart';
@@ -32,9 +28,12 @@ class AppBindings extends Bindings {
     print('🔄 [APP BINDINGS] تسجيل المتحكمات الأساسية فقط...');
 
     Get.lazyPut(() => GetStorage(), fenix: true);
+    // Keep MyAppController alive for the whole app lifecycle.
+    // It owns auth/session state used by API headers.
     Get.put(MyAppController(), permanent: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
+    // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
     Get.lazyPut(() => DataInitializerService(), fenix: true);
     Get.lazyPut(() => StoreSelectionController(), fenix: true);
     Get.lazyPut<HomeController>(() => HomeController());
@@ -67,12 +66,14 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => KeywordController(), fenix: true);
         Get.lazyPut(() => AddProductController(), fenix: true);
         Get.lazyPut(() => MediaLibraryController(), fenix: true);
+        // Get.lazyPut(() => StoriesController(), fenix: true);
         Get.lazyPut(() => RelatedProductsController(), fenix: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
+        // Get.lazyPut(() => StoriesController(), fenix: true);
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });
@@ -98,7 +99,7 @@ class MyApp extends StatelessWidget {
       color: AppColors.primary400,
       theme: ThemeData(
         fontFamily: "PingAR",
-        primaryColor: AppColors.primary500,
+        primaryColor: AppColors.primary400,
         scaffoldBackgroundColor: AppColors.light1000,
         dialogBackgroundColor: AppColors.light1000,
         dialogTheme: DialogThemeData(
@@ -136,7 +137,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary500,
+            backgroundColor: AppColors.primary400,
             foregroundColor: AppColors.light1000,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
@@ -148,7 +149,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: AppColors.primary500),
+          style: TextButton.styleFrom(foregroundColor: AppColors.primary400),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -163,7 +164,7 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: BorderSide(color: AppColors.primary500),
+            borderSide: BorderSide(color: AppColors.primary400),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
@@ -173,7 +174,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: false,
         colorScheme: ColorScheme.light(
-          primary: AppColors.primary500,
+          primary: AppColors.primary400,
           secondary: AppColors.primary200,
           background: AppColors.light1000,
           surface: AppColors.light1000,
@@ -186,7 +187,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
-        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/', page: () => ServicesDetail()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -197,11 +198,14 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
+        // GetPage(name: '/story-test', page: () => const StoryTestScreen()),
+        // GetPage(name: '/add-story', page: () => const AddStoryScreen()),
         GetPage(
           name: '/related-products',
           page: () => RelatedProductsScreen(),
           middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
         ),
+        // Services add/edit (same flow as products)
         GetPage(
           name: '/add-service',
           page: () {
@@ -252,10 +256,11 @@ GetPage(
           middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
         ),
       ],
-      debugShowCheckedModeBanner: false,
+      // debugShowCheckedModeBanner: false,
     );
   }
 }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -263,6 +268,7 @@ void main() async {
 
   await _initializeEssentialServices();
 
+  // ✅ Register lifecycle manager once
   AppLifecycleManager.I.register();
   if (!Get.isRegistered<AppLifecycleManager>()) {
     Get.put<AppLifecycleManager>(AppLifecycleManager.I, permanent: true);
@@ -292,10 +298,13 @@ void _initializeBackgroundServices() {
 
       await PushNotificationService().setupInteractedMessage();
 
+      // ✅ لا تنشئ AppLifecycleManager() — استخدم I فقط
+      // (غالبًا لا تحتاج هذا السطر لأننا سجلناه في main)
       if (!Get.isRegistered<AppLifecycleManager>()) {
         Get.put<AppLifecycleManager>(AppLifecycleManager.I, permanent: true);
       }
 
+      // ✅ Permissions & token
       try {
         await FirebaseMessaging.instance.requestPermission();
       } catch (_) {}
@@ -313,8 +322,8 @@ void _initializeBackgroundServices() {
         print('📱 FCM Token: $token');
       }
 
-      final RemoteMessage? initialMessage =
-          await FirebaseMessaging.instance.getInitialMessage();
+      final RemoteMessage? initialMessage = await FirebaseMessaging.instance
+          .getInitialMessage();
       if (initialMessage != null) {
         print('📨 تم تشغيل التطبيق من خلال إشعار');
       }

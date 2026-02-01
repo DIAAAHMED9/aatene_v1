@@ -68,8 +68,8 @@ class AddProductContent extends StatelessWidget {
 
     if (!Get.isRegistered<ProductCentralController>()) {
       return Scaffold(
-        appBar: AppBar(title: Text('خطأ', style: getRegular())),
-        body: Center(child: Text('لم يتم تهيئة بيانات المنتج', style: getRegular())),
+        appBar: AppBar(title: Text('خطأ', style: getMedium())),
+        body: Center(child: Text('لم يتم تهيئة بيانات المنتج', style: getMedium())),
       );
     }
 
@@ -80,14 +80,14 @@ class AddProductContent extends StatelessWidget {
 
       if (selectedSection == null) {
         return Scaffold(
-          appBar: AppBar(title: Text('تحميل', style: getRegular())),
+          appBar: AppBar(title: Text('تحميل', style: getMedium())),
           body: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 12),
-                Text('جاري تحميل بيانات المنتج...', style: getRegular()),
+                Text('جاري تحميل بيانات المنتج...', style: getMedium()),
               ],
             ),
           ),

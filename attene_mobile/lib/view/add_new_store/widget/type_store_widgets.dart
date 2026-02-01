@@ -44,7 +44,7 @@ class TypeStoreHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'قم باختيار نوع المتجر الذي تريده (تقديم خدمات / بيع منتجات)',
-      style: getRegular(fontSize: 18),
+      style: getMedium(fontSize: 18),
     );
   }
 }
@@ -124,7 +124,7 @@ class StoreTypeCard extends GetView<CreateStoreController> {
             const SizedBox(width: 16),
             Text(
               title,
-              style: getRegular(
+              style: getMedium(
                 fontSize: 18,
                 color: isSelected
                     ? AppColors.primary400
@@ -184,7 +184,7 @@ class LoginRequiredView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'يرجى تسجيل الدخول للوصول إلى إضافة المتاجر',
-              style: getRegular(fontSize: 16, color: Colors.grey),
+              style: getMedium(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

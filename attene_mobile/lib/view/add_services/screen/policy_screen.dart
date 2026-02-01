@@ -40,7 +40,7 @@ class PolicyScreen extends StatelessWidget {
           SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
           Text(
             'يرجى قراءة وموافقة على جميع السياسات التالية قبل نشر الخدمة',
-            style: getRegular(
+            style: getMedium(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
               color: Color(0xFF757575),
             ),
@@ -69,7 +69,7 @@ class PolicyScreen extends StatelessWidget {
 
           Text(
             'بإرسال خدمتك، تُقرّ بملكيتك أو حقوقك في المواد المنشورة، وأن نشر هذه المواد لا ينتهك حقوق أي طرف ثالث. كما تُقرّ بفهمك أن مشروعك سيخضع للمراجعة والتقييم من قِبل المنصة لضمان استيفائه للمتطلبات.',
-            style: getRegular(
+            style: getMedium(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
               color: Color(0xFF424242),
             ),
@@ -98,7 +98,7 @@ class PolicyScreen extends StatelessWidget {
 
           Text(
             'يوافق المستخدم على شروط استخدام المنصة بما في ذلك الالتزام بمعايير الجودة والاستجابة للعملاء في الأوقات المحددة. يحق للمنصة إزالة أي خدمة تنتهك الشروط دون سابق إنذار.',
-            style: getRegular(
+            style: getMedium(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
               color: Color(0xFF424242),
             ),
@@ -142,8 +142,7 @@ class PolicyScreen extends StatelessWidget {
                           height: ResponsiveDimensions.responsiveHeight(4),
                         ),
                         InkWell(
-                          onTap: () {
-                          },
+                          onTap: () {},
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                               vertical: ResponsiveDimensions.responsiveHeight(
@@ -191,7 +190,7 @@ class PolicyScreen extends StatelessWidget {
 
           Text(
             'ستكون الخدمة مرئية للعامة في نتائج البحث. سيتم جمع ومعالجة البيانات المقدمة وفقًا لسياسة الخصوصية. يتحمل المستخدم المسؤولية الكاملة عن أي معلومات شخصية يشاركها في وصف الخدمة.',
-            style: getRegular(
+            style: getMedium(
               fontSize: ResponsiveDimensions.responsiveFontSize(14),
               color: Color(0xFF424242),
             ),

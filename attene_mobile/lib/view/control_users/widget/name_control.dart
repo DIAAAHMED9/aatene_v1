@@ -19,10 +19,7 @@ class NameControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(builder: (context) => screen),
-        );
+        Get.to(screen);
       },
       child: Column(
         spacing: 10,

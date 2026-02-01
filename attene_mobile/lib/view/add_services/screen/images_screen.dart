@@ -42,7 +42,7 @@ class ImagesScreenBody extends StatelessWidget {
                   children: [
                     Text(
                       'الصور',
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: ResponsiveDimensions.responsiveFontSize(18),
                       ),
                     ),
@@ -50,7 +50,7 @@ class ImagesScreenBody extends StatelessWidget {
                 ),
                 Text(
                   'يمكنك إضافة حتى (10) صور و (1) فيديو',
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.responsiveFontSize(9),
                   ),
                 ),
@@ -75,7 +75,7 @@ class ImagesScreenBody extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'يمكنك سحب و افلات الصورة لاعادة ترتيب الصور',
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               13,
                             ),
@@ -107,7 +107,7 @@ class ImagesScreenBody extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '• الأبعاد: الصورة بعرض 800 بكسل وطول 460 بكسل (460x800). \n • الحجم:ألا يتعدى حجم الصورة أو الفيديو 50 ميغابايت.\n• الجودة: أن تكون الصورة عالية الجودة وواضحة. ',
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               13,
                             ),
@@ -171,7 +171,7 @@ class ImagesScreenBody extends StatelessWidget {
                 SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
                 Text(
                   'اضف او اسحب صورة او فيديو',
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.responsiveFontSize(14),
                     color: Color(0xFF757575),
                   ),
@@ -314,7 +314,7 @@ class ImagesScreenBody extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'يجب إضافة صورة واحدة على الأقل',
-                        style: getRegular(
+                        style: getMedium(
                           fontSize: ResponsiveDimensions.responsiveFontSize(12),
                           color: Colors.orange,
                         ),
@@ -328,7 +328,7 @@ class ImagesScreenBody extends StatelessWidget {
               onPressed: () => Get.back(),
               child: Text(
                 'العودة للسعر والتطويرات',
-                style: getRegular(
+                style: getMedium(
                   fontSize: ResponsiveDimensions.responsiveFontSize(14),
                   color: Color(0xFF757575),
                 ),

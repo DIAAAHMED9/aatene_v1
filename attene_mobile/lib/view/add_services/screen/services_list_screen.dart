@@ -166,7 +166,9 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
     String serviceId = service.id.toString();
     _serviceController.setEditMode(serviceId, service.title);
-    Get.to(() => EditServiceStepperScreen(serviceId: serviceId))?.then((result) {
+    Get.to(() => EditServiceStepperScreen(serviceId: serviceId))?.then((
+      result,
+    ) {
       if (result == true) {
         _refreshServices();
       }

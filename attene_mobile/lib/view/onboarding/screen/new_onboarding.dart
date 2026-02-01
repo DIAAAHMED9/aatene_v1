@@ -36,24 +36,26 @@ class OnboardingView extends StatelessWidget {
           children: [
             const CurvedBackground(),
 
+            /// تخطي
             Positioned(
               top: 25,
               right: 10,
-              child: GestureDetector(
-                onTap: () {
-                  Get.to(Onboarding());
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(builder: (context) => Onboarding()),
+                  );
+
                 },
-                child: TextButton(
-                  onPressed: () {
-                  },
-                  child: const Text(
-                    'تخطي',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                child: const Text(
+                  'تخطي',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
 
+            /// الصفحات
             PageView.builder(
               controller: controller.pageController,
               onPageChanged: controller.onPageChanged,
@@ -61,6 +63,7 @@ class OnboardingView extends StatelessWidget {
               itemBuilder: (_, i) => OnboardingPage(data: pages[i]),
             ),
 
+            /// Dots
             Positioned(
               bottom: 100,
               left: 0,
@@ -73,6 +76,7 @@ class OnboardingView extends StatelessWidget {
               }),
             ),
 
+            /// زر التالي
             Positioned(
               bottom: 24,
               left: 24,

@@ -84,7 +84,7 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: getRegular(color: Colors.grey),
+              style: getMedium(color: Colors.grey),
               overflow: TextOverflow.ellipsis,
             ),
           ),

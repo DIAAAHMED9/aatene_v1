@@ -22,9 +22,12 @@ class _ProductCardState extends State<ProductCard> {
     final item = widget.item;
 
     final title = (item?.name.isNotEmpty ?? false) ? item!.name : 'منتج';
-    final imageUrl = item?.imageUrl ??
+    final imageUrl =
+        item?.imageUrl ??
         'https://images.unsplash.com/photo-1520975916090-3105956dac38';
-    final priceText = item?.price != null ? '${item!.price!.toStringAsFixed(0)}₪' : '—';
+    final priceText = item?.price != null
+        ? '${item!.price!.toStringAsFixed(0)}₪'
+        : '—';
 
     return GestureDetector(
       onTap: () {
@@ -58,7 +61,9 @@ class _ProductCardState extends State<ProductCard> {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(14),
+                  ),
                   child: Image.network(
                     imageUrl,
                     height: 170,
@@ -77,7 +82,10 @@ class _ProductCardState extends State<ProductCard> {
                   top: 10,
                   right: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(12),

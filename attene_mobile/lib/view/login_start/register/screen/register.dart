@@ -133,7 +133,7 @@ class Register extends StatelessWidget {
                       isRTL
                           ? 'لديك حساب بالفعل؟ '
                           : 'Already have an account? ',
-                      style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                      style: getMedium(fontSize: ResponsiveDimensions.f(14)),
                     ),
                     GestureDetector(
                       onTap: controller.goToLogin,

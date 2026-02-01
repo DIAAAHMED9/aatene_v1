@@ -33,7 +33,7 @@ class ChangePassword extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("كلمة المرور القديمة", style: getRegular(fontSize: 12)),
+            Text("كلمة المرور القديمة", style: getMedium(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
@@ -43,7 +43,7 @@ class ChangePassword extends StatelessWidget {
             SizedBox(height: 12),
             Divider(),
             SizedBox(height: 12),
-            Text("كلمة المرور الجديدة", style: getRegular(fontSize: 12)),
+            Text("كلمة المرور الجديدة", style: getMedium(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
@@ -51,7 +51,7 @@ class ChangePassword extends StatelessWidget {
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 12),
-            Text("تأكيد كلمة المرور الجديدة", style: getRegular(fontSize: 12)),
+            Text("تأكيد كلمة المرور الجديدة", style: getMedium(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: isRTL ? 'كلمة المرور' : 'Password',
@@ -81,11 +81,11 @@ class ChangePassword extends StatelessWidget {
                               ),
                               Text(
                                 "تمت العملية بنجاح",
-                                style: getBlack(fontSize: 25),
+                                style: getBold(fontSize: 24),
                               ),
                               Text(
                                 "تم اعادة تعيين كلمة المرور بنجاح",
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 12,
                                   color: AppColors.neutral400,
                                 ),
@@ -96,12 +96,8 @@ class ChangePassword extends StatelessWidget {
                                 borderColor: AppColors.primary400,
                                 textColor: AppColors.light1000,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => HomeControl(),
-                                    ),
-                                  );
+                                  Get.to(HomeControl());
+
                                 },
                               ),
                             ],

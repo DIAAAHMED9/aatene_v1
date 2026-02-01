@@ -52,7 +52,7 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
               SizedBox(height: ResponsiveDimensions.f(20)),
               Text(
                 'جاري تحضير البيانات...',
-                style: getRegular(
+                style: getMedium(
                   fontSize: ResponsiveDimensions.f(16),
                   color: Colors.grey,
                 ),
@@ -80,7 +80,7 @@ class _KeywordManagementScreenState extends State<KeywordManagementScreen> {
                 Text(
                   _errorMessage!,
                   textAlign: TextAlign.center,
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.f(16),
                     color: Colors.red,
                   ),

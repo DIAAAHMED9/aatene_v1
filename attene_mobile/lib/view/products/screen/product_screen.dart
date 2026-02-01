@@ -100,7 +100,7 @@ class ProductScreen extends GetView<ProductController> {
                     SizedBox(height: ResponsiveDimensions.f(16)),
                     Text(
                       'جاري تحميل التبويبات...',
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: ResponsiveDimensions.f(14),
                         color: Colors.grey,
                       ),
@@ -297,7 +297,7 @@ class ProductScreen extends GetView<ProductController> {
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'يرجى تسجيل الدخول للوصول إلى إدارة المنتجات والأقسام',
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -313,7 +313,7 @@ class ProductScreen extends GetView<ProductController> {
               icon: Icon(Icons.login_rounded, size: ResponsiveDimensions.f(20)),
               label: Text(
                 'تسجيل الدخول',
-                style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                style: getMedium(fontSize: ResponsiveDimensions.f(14)),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary400,
@@ -346,11 +346,17 @@ class ProductScreen extends GetView<ProductController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.inventory_2_outlined,
-            size: ResponsiveDimensions.f(100),
-            color: Colors.grey[300],
+          SvgPicture.asset(
+            "assets/images/svg_images/no_product.svg",
+            width: 300,
+            height: 300,
           ),
+
+          // Icon(
+          //   Icons.inventory_2_outlined,
+          //   size: ResponsiveDimensions.f(100),
+          //   color: Colors.grey[300],
+          // ),
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             _getEmptyMessage(sectionName, tabIndex),
@@ -387,7 +393,7 @@ class ProductScreen extends GetView<ProductController> {
                 ),
                 child: Text(
                   'إضافة منتج جديد',
-                  style: getRegular(
+                  style: getMedium(
                     color: Colors.white,
                     fontSize: ResponsiveDimensions.f(14),
                   ),
@@ -438,7 +444,7 @@ class ProductScreen extends GetView<ProductController> {
           SizedBox(height: ResponsiveDimensions.h(16)),
           Text(
             'جاري تحميل المنتجات...',
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -474,7 +480,7 @@ class ProductScreen extends GetView<ProductController> {
             () => Text(
               controller.productsErrorMessage,
               textAlign: TextAlign.center,
-              style: getRegular(
+              style: getMedium(
                 fontSize: isSmallScreen
                     ? ResponsiveDimensions.f(12)
                     : ResponsiveDimensions.f(14),
@@ -495,7 +501,7 @@ class ProductScreen extends GetView<ProductController> {
             ),
             child: Text(
               'إعادة المحاولة',
-              style: getRegular(color: Colors.white),
+              style: getMedium(color: Colors.white),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
@@ -517,7 +523,7 @@ class ProductScreen extends GetView<ProductController> {
           icon: Icon(Icons.add, size: ResponsiveDimensions.f(20)),
           label: Text(
             'إضافة منتج',
-            style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+            style: getMedium(fontSize: ResponsiveDimensions.f(14)),
           ),
           backgroundColor: AppColors.primary400,
           foregroundColor: Colors.white,

@@ -101,7 +101,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         children: [
           CircularProgressIndicator(color: AppColors.primary400),
           SizedBox(height: 16),
-          Text('جاري تحميل الصور...', style: getRegular(color: Colors.grey)),
+          Text('جاري تحميل الصور...', style: getMedium(color: Colors.grey)),
         ],
       ),
     );
@@ -126,12 +126,12 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
           SizedBox(height: 16),
           Text(
             'لا توجد ملفات محملة',
-            style: getRegular(fontSize: 18, color: Colors.grey),
+            style: getMedium(fontSize: 18, color: Colors.grey),
           ),
           SizedBox(height: 8),
           Text(
             'انقر على زر "+" لرفع الملفات',
-            style: getRegular(
+            style: getMedium(
               fontSize: 14,
               color: AppColors.colorMediaLibraryScreen,
             ),
@@ -160,7 +160,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                 Expanded(
                   child: Text(
                     'الملفات المرفوعة حديثاً. سيتم رفعها تلقائياً إلى السيرفر.',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: 12,
                       color: AppColors.primary500,
                     ),
@@ -363,7 +363,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                 SizedBox(height: 4),
                 Text(
                   _formatFileSize(media.size),
-                  style: getRegular(fontSize: 12, color: Colors.grey),
+                  style: getMedium(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
@@ -403,7 +403,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
               SizedBox(height: 8),
               Text(
                 'جاري الرفع...',
-                style: getRegular(color: Colors.white, fontSize: 12),
+                style: getMedium(color: Colors.white, fontSize: 12),
               ),
             ],
           ),
@@ -586,7 +586,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
             children: [
               Icon(icon, size: 40, color: AppColors.primary400),
               SizedBox(height: 8),
-              Text(title, style: getRegular(fontSize: 14)),
+              Text(title, style: getMedium(fontSize: 14)),
             ],
           ),
         ),
@@ -603,14 +603,14 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
           SizedBox(height: 16),
           Text(
             'لا توجد ملفات',
-            style: getRegular(fontSize: 18, color: Colors.grey),
+            style: getMedium(fontSize: 18, color: Colors.grey),
           ),
           SizedBox(height: 8),
           Text(
             controller.currentTabIndex.value == 0
                 ? 'انقر على زر "+" لإضافة الملفات الأولى'
                 : 'انقر على زر "تحميل" لإضافة الملفات الأولى',
-            style: getRegular(
+            style: getMedium(
               fontSize: 14,
               color: AppColors.colorMediaLibraryScreen,
             ),
@@ -653,7 +653,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                           SizedBox(height: 16),
                           Text(
                             'عرض الفيديو',
-                            style: getRegular(
+                            style: getMedium(
                               color: Colors.white,
                               fontSize: 16,
                             ),
@@ -703,14 +703,14 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('إلغاء', style: getRegular(color: Colors.grey)),
+            child: Text('إلغاء', style: getMedium(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               controller.deleteMediaItem(media);
             },
-            child: Text('حذف', style: getRegular(color: Colors.red)),
+            child: Text('حذف', style: getMedium(color: Colors.red)),
           ),
         ],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

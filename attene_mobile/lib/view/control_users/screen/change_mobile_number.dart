@@ -41,7 +41,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            Text("ارقم الهاتف", style: getRegular(fontSize: 14)),
+            Text("ارقم الهاتف", style: getMedium(fontSize: 14)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: "01289022985",
@@ -87,11 +87,11 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               ),
                               Text(
                                 "تمت العملية بنجاح",
-                                style: getBlack(fontSize: 25),
+                                style: getBold(fontSize: 24),
                               ),
                               Text(
                                 "تم حفظ التغييرات بنجاح",
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 12,
                                   color: AppColors.neutral400,
                                 ),
@@ -102,12 +102,8 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                 borderColor: AppColors.primary400,
                                 textColor: AppColors.light1000,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => HomeControl(),
-                                    ),
-                                  );
+                                  Get.to(HomeControl());
+
                                 },
                               ),
                             ],

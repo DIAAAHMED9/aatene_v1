@@ -6,7 +6,16 @@ import '../screens/story_create_sheet.dart';
 import '../screens/story_viewer_screen.dart';
 import '../theme/story_vendor_theme.dart';
 
+/// Highlights row (Instagram-like circles)
+///
+/// - (+) opens create sheet
+/// - Other circles open viewer
+///
+/// This widget fetches merchant stories from API:
+/// GET /merchants/stories
+/// and injects them as a single vendor named "قصتي" (multiple frames).
 class StoryHighlightsRow extends StatefulWidget {
+  /// Other vendors (dummy or from another source). We keep this so UI stays as-is.
   final List<demo.StoryVendorDemoModel> vendors;
 
   const StoryHighlightsRow({super.key, required this.vendors});
@@ -41,6 +50,7 @@ class _StoryHighlightsRowState extends State<StoryHighlightsRow> {
       final list = await MerchantStoriesApi.fetchAll();
       setState(() => _myStories = list);
     } catch (_) {
+      // Silent: if API fails, we just show the other vendors.
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -76,74 +86,72 @@ class _StoryHighlightsRowState extends State<StoryHighlightsRow> {
   List<demo.StoryVendorDemoModel> get _allVendors {
     final my = _buildMyVendor();
     if (my == null) return _others;
+    // Put "قصتي" first so it's easy to open.
     return [my, ..._others];
   }
 
   @override
   Widget build(BuildContext context) {
     final vendors = _allVendors;
-
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text(
-                'ابرز القصص و العروض',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text(
+              'ابرز القصص و العروض',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+            ),
+            const Spacer(),
+            if (_loading)
+              const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              const Spacer(),
-              if (_loading)
-                const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 98,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              itemCount: vendors.length + 1,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (_, i) {
-                if (i == 0) {
-                  return _AddCircle(
-                    onTap: () async {
-                      final bool? created = await StoryCreateSheet.open(context);
-                      if (created == true) {
-                        await _loadMyStories();
-                      }
-                    },
-                  );
-                }
-
-                final v = vendors[i - 1];
-                return _StoryCircle(
-                  title: v.storeName,
-                  avatarUrl: v.avatarUrl,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => StoryViewerScreen(
-                          vendors: vendors,
-                          initialVendorIndex: i - 1,
-                        ),
-                      ),
-                    );
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 98,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            reverse: true,
+            itemCount: vendors.length + 1,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (_, i) {
+              // (+)
+              if (i == 0) {
+                return _AddCircle(
+                  onTap: () async {
+                    final bool? created = await StoryCreateSheet.open(context);
+                    if (created == true) {
+                      await _loadMyStories();
+                    }
                   },
                 );
-              },
-            ),
+              }
+
+              final v = vendors[i - 1];
+              return _StoryCircle(
+                title: v.storeName,
+                avatarUrl: v.avatarUrl,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => StoryViewerScreen(
+                        vendors: vendors,
+                        initialVendorIndex: i - 1,
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -158,6 +166,7 @@ class _AddCircle extends StatelessWidget {
       borderRadius: BorderRadius.circular(50),
       onTap: onTap,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 64,

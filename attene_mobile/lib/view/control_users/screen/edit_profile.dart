@@ -92,7 +92,7 @@ class Edit_Profile extends StatelessWidget {
             SizedBox(height: 4),
             Text(
               'فلسطين، الخليل',
-              style: getRegular(fontSize: 14, color: AppColors.neutral200),
+              style: getMedium(fontSize: 14, color: AppColors.neutral200),
             ),
 
             Padding(

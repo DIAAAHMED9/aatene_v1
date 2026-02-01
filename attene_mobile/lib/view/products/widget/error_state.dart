@@ -25,7 +25,7 @@ class ErrorStateWidget extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: getRegular(fontSize: 14, color: Colors.grey),
+              style: getMedium(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(

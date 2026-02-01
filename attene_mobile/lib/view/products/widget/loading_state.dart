@@ -18,7 +18,7 @@ class LoadingStateWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(message, style: getRegular(color: Colors.grey)),
+          Text(message, style: getMedium(color: Colors.grey)),
         ],
       ),
     );

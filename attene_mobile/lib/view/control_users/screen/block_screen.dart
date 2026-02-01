@@ -48,7 +48,8 @@ class BlockScreen extends StatelessWidget {
               isRTL: isRTL,
               hintText: 'بحث',
               textInputAction: TextInputAction.done,
-              onChanged: controller.onSearch, textInputType: TextInputType.name,
+              onChanged: controller.onSearch,
+              textInputType: TextInputType.name,
             ),
             const SizedBox(height: 12),
             Expanded(

@@ -38,7 +38,7 @@ class StartLogin extends StatelessWidget {
                       isRTL
                           ? 'مرحبا بك في تطبيق اعطيني قم بالدخول الى التطبيق عبر الطرق التالية'
                           : 'Welcome to the app — please sign in using one of the following methods',
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: ResponsiveDimensions.f(18),
                         color: AppColors.neutral100,
                       ),

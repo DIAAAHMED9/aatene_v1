@@ -142,7 +142,7 @@ class _ReviewSheetState extends State<ReviewSheet> {
                                     Text(
                                       "تمت العملية بنجاح",
                                       textAlign: TextAlign.center,
-                                      style: getBlack(fontSize: 18),
+                                      style: getBold(fontSize: 24),
                                     ),
                                     Text(
                                       "تم اضافة تعليك بنجاح",

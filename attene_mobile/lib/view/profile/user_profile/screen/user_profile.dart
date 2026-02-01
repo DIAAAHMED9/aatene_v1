@@ -438,10 +438,7 @@ class ProfilePage extends StatelessWidget {
       child: Container(
         width: 40,
         height: 40,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
         child: IconButton(
           onPressed: onTap,
           icon: Icon(icon, color: Colors.black),
@@ -638,7 +635,7 @@ class ProfilePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Bio', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('نبذة شخصية', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
               ReadMoreText(
                 'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',

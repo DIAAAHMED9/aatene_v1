@@ -157,7 +157,7 @@ class AddShippingMethod extends StatelessWidget {
                         SizedBox(width: 6),
                         Text(
                           "إضافة شركة شحن",
-                          style: getRegular(
+                          style: getMedium(
                             color: AppColors.primary400,
                             fontSize: 14,
                           ),
@@ -185,12 +185,12 @@ class AddShippingMethod extends StatelessWidget {
                             SizedBox(height: 16),
                             Text(
                               "لا توجد شركات شحن مضافة",
-                              style: getRegular(color: Colors.grey),
+                              style: getMedium(color: Colors.grey),
                             ),
                             SizedBox(height: 8),
                             Text(
                               "انقر على 'إضافة شركة شحن' لإضافة شركة",
-                              style: getRegular(
+                              style: getMedium(
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),
@@ -268,7 +268,7 @@ class AddShippingMethod extends StatelessWidget {
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: 12,
                       color: AppColors.neutral100,
                     ),
@@ -277,7 +277,7 @@ class AddShippingMethod extends StatelessWidget {
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: 10,
                       color: AppColors.neutral100,
                     ),

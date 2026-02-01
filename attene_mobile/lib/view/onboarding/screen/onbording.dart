@@ -54,7 +54,7 @@ class Onboarding extends StatelessWidget {
       leading: Icon(icon, color: isCurrentLang ? Colors.blue : Colors.grey),
       title: Text(
         title,
-        style: getRegular(
+        style: getMedium(
           fontWeight: isCurrentLang ? FontWeight.bold : FontWeight.normal,
           color: isCurrentLang ? Colors.blue : Colors.black,
         ),
@@ -128,13 +128,13 @@ class Onboarding extends StatelessWidget {
                                     ? 'مزيج من الخدمات المتنوعة متواجدة في مكان '
                                     : 'A mix of diverse services available in one ',
                                 style: getBlack(
-                                  fontSize: ResponsiveDimensions.f(39),
+                                  fontSize: ResponsiveDimensions.f(32),
                                 ),
                                 children: [
                                   TextSpan(
                                     text: isRTL ? 'واحد' : 'place',
                                     style: getBlack(
-                                      fontSize: ResponsiveDimensions.f(35),
+                                      fontSize: ResponsiveDimensions.f(32),
                                       color: AppColors.primary400,
                                     ),
                                   ),
@@ -162,7 +162,7 @@ class Onboarding extends StatelessWidget {
                   isRTL
                       ? 'اعطيني هو أفضل تطبيق تسوق عبر الإنترنت لأزياء رائدة محلياً توفر مجموعة كبيرة ومتنوعة من المنتجات، لحياة أسهل تتماشى مع نمط حياتنا السريع والمتغير وبأسعار بمتناول الجميع.'
                       : 'Atene is the best online shopping app for locally leading fashion, offering a wide and diverse range of products for an easier life that aligns with our fast-paced and changing lifestyle at affordable prices for everyone.',
-                  style: getRegular(
+                  style: getMedium(
                     fontWeight: FontWeight.w300,
                     fontSize: ResponsiveDimensions.f(14),
                     color: Colors.grey,

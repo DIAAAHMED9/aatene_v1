@@ -54,7 +54,7 @@ class HomeControl extends StatelessWidget {
                                 ),
                                 Text(
                                   " فلسطين ، الخليل",
-                                  style: getRegular(fontSize: 18),
+                                  style: getMedium(fontSize: 18),
                                 ),
                               ],
                             ),
@@ -69,13 +69,8 @@ class HomeControl extends StatelessWidget {
                               child: Center(
                                 child: IconButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                        builder: (context) => Edit_Profile(),
-                                      ),
-                                    );
-                                  },
+                                    Get.to(Edit_Profile());
+                                    },
                                   icon: Icon(
                                     Icons.mode_edit_outline_outlined,
                                     color: AppColors.primary400,
@@ -129,7 +124,7 @@ class HomeControl extends StatelessWidget {
                       screen: Edit_Profile(),
                     ),
                     NameControl(
-                      name: "اعدادات التنبيهعات",
+                      name: "اعدادات التنبيهات",
                       icon: SvgPicture.asset(
                         'assets/images/svg_images/Notification.svg',
                         semanticsLabel: 'My SVG Image',

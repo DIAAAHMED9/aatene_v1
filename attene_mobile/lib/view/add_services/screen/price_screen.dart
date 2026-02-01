@@ -177,9 +177,7 @@ class PriceScreen extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.only(
-                          left: 5,right: 5
-                        ),
+                        padding: EdgeInsets.only(left: 5, right: 5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -346,11 +344,10 @@ class PriceScreen extends StatelessWidget {
               borderColor: AppColors.primary400,
             ),
           ],
-
         );
       },
       onDismissed: (direction) {
-        controller.removeDevelopment(development.id??0);
+        controller.removeDevelopment(development.id ?? 0);
       },
       child: Container(
         margin: EdgeInsets.only(

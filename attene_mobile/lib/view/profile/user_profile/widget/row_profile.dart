@@ -30,15 +30,14 @@ class ProfileStatsRow extends StatelessWidget {
         ProfileStatItem(
           title: 'المفضلة',
           value: '30K',
-          icon: Icon(Icons.favorite_border, color: Colors.grey,size: 4,),
+          icon: Icon(Icons.favorite_border, color: Colors.grey, size: 14),
         ),
         VerticalDivider(width: 1),
         ProfileStatItem(
           title: 'تقييم',
           value: '4.5 (2,372) ',
-          icon: Icon(Icons.star_border, color: Colors.grey,size: 14,),
+          icon: Icon(Icons.star_border, color: Colors.grey, size: 14),
         ),
-
       ],
     );
   }
