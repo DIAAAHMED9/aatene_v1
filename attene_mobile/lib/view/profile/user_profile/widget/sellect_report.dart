@@ -28,7 +28,6 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text(
@@ -101,7 +100,8 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                             TextFiledAatene(
                               isRTL: isRTL,
                               hintText: "اكتب هنا",
-                              textInputAction: TextInputAction.next, textInputType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              textInputType: TextInputType.name,
                             ),
                           ],
                         ),
@@ -127,7 +127,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                                 hintText: "اكتب هنا",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(
-                                    ResponsiveDimensions.w(20),
+                                    ResponsiveDimensions.w(10),
                                   ),
                                   borderSide: BorderSide(
                                     color: Colors.grey[300]!,
@@ -145,7 +145,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(
-                                    ResponsiveDimensions.w(50),
+                                    ResponsiveDimensions.w(10),
                                   ),
                                   borderSide: BorderSide(
                                     color: AppColors.primary400,
@@ -232,11 +232,9 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
     required String title,
     required String subtitle,
   }) {
-
     return Container(
       margin: const EdgeInsets.only(bottom: 5),
-      decoration: BoxDecoration(
-      ),
+      decoration: BoxDecoration(),
       child: RadioListTile<String>(
         value: id,
         groupValue: _selectedReason,

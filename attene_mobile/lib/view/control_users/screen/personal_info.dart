@@ -1,11 +1,17 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+
 import '../../../general_index.dart';
 
 class PersonalInfo extends StatefulWidget {
-  PersonalInfo({super.key});
+  const PersonalInfo({super.key});
 
   @override
   State<PersonalInfo> createState() => _PersonalInfoState();
 }
+
+const List<String> _listGeral = ['ذكر', 'انثى'];
+const List<String> _listCity = ['الناصرة ', 'القدس', 'خليل'];
+const List<String> _listCountry = ['الناصرة ', 'القدس', 'خليل'];
 
 class _PersonalInfoState extends State<PersonalInfo> {
   TextEditingController dateController = TextEditingController();
@@ -51,33 +57,24 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 textInputAction: TextInputAction.next,
               ),
               TextWithStar(text: "الجنس"),
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                  fillColor: Colors.grey[50],
-                  isDense: true,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(),
-                    borderRadius: BorderRadius.circular((50)),
+              CustomDropdown<String>(
+                hintText: 'اختر الجنس',
+                decoration: CustomDropdownDecoration(
+                  closedBorder: Border.all(color: Colors.grey),
+                  closedFillColor: Colors.grey[50],
+                  closedBorderRadius: BorderRadius.circular(50),
+                  hintStyle: getMedium(),
+                  closedSuffixIcon: Icon(
+                    Icons.arrow_forward_ios_sharp,
+                    size: 15,
+                    color: AppColors.neutral400,
                   ),
+                  // listItemStyle: getMedium(color: AppColors.primary400),
                 ),
-                dropdownColor: AppColors.primary50,
-                icon: Icon(Icons.arrow_forward_ios, size: 15),
-                value: selectedLanguage,
-                hint: Text("اختر اللغة"),
-                items: [
-                  DropdownMenuItem<String>(
-                    value: 'ar',
-                    child: Text('ذكر', style: getRegular(fontSize: 14)),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'he',
-                    child: Text('انتى', style: getRegular(fontSize: 14)),
-                  ),
-                ],
+                items: _listGeral,
+                initialItem: _listGeral[0],
                 onChanged: (value) {
-                  selectedLanguage = value;
-
-                  Get.updateLocale(Locale(value!));
+                  print('changing value to: $value');
                 },
               ),
               TextWithStar(text: "تاريخ الميلاد"),
@@ -89,72 +86,87 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 },
                 isRTL: isRTL,
                 hintText: "4/11/1998",
-                suffixIcon: Image.asset(
-                  'assets/images/png/Calendar.png',
-                  width: 24,
-                  height: 24,
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(7.0),
+                  child: SvgPicture.asset(
+                    'assets/images/svg_images/Calendar12.svg',
+                    width: 13,
+                    height: 13,
+                  ),
                 ),
                 textInputAction: TextInputAction.next,
                 textInputType: TextInputType.name,
               ),
               TextWithStar(text: "المدينة"),
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                  fillColor: Colors.grey[50],
-                  isDense: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular((50)),
+              CustomDropdown<String>(
+                hintText: 'اختر المدينة',
+                decoration: CustomDropdownDecoration(
+                  closedBorder: Border.all(color: Colors.grey),
+                  closedFillColor: Colors.grey[50],
+                  closedBorderRadius: BorderRadius.circular(50),
+                  hintStyle: getMedium(),
+                  closedSuffixIcon: Icon(
+                    Icons.arrow_forward_ios_sharp,
+                    size: 15,
+                    color: AppColors.neutral400,
                   ),
+                  // listItemStyle: getMedium(color: AppColors.primary400),
                 ),
-                dropdownColor: AppColors.primary50,
-                value: selectedLanguage,
-                icon: Icon(Icons.arrow_forward_ios, size: 15),
-                hint: Text("اختر اللغة"),
-                items: [
-                  DropdownMenuItem<String>(
-                    value: 'ar',
-                    child: Text('الناصرة', style: getRegular(fontSize: 14)),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'he',
-                    child: Text('القدس', style: getRegular(fontSize: 14)),
-                  ),
-                ],
+                items: _listCity,
+                initialItem: _listCity[0],
                 onChanged: (value) {
-                  selectedLanguage = value;
-                  Get.updateLocale(Locale(value!));
+                  print('changing value to: $value');
                 },
               ),
-
               TextWithStar(text: "الحي"),
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                  fillColor: Colors.grey[50],
-                  isDense: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular((50)),
+              CustomDropdown<String>(
+                hintText: 'اختر الحي',
+                decoration: CustomDropdownDecoration(
+                  closedBorder: Border.all(color: Colors.grey),
+                  closedFillColor: Colors.grey[50],
+                  closedBorderRadius: BorderRadius.circular(50),
+                  hintStyle: getMedium(),
+                  closedSuffixIcon: Icon(
+                    Icons.arrow_forward_ios_sharp,
+                    size: 15,
+                    color: AppColors.neutral400,
                   ),
+                  // listItemStyle: getMedium(color: AppColors.primary400),
                 ),
-                dropdownColor: AppColors.primary50,
-                icon: Icon(Icons.arrow_forward_ios, size: 15),
-                value: selectedLanguage,
-                hint: Text("اختر اللغة"),
-                items: [
-                  DropdownMenuItem<String>(
-                    value: 'ar',
-                    child: Text('الناصرة', style: getRegular(fontSize: 14)),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'he',
-                    child: Text('القدس', style: getRegular(fontSize: 14)),
-                  ),
-                ],
+                items: _listCountry,
+                initialItem: _listCountry[0],
                 onChanged: (value) {
-                  selectedLanguage = value;
-
-                  Get.updateLocale(Locale(value!));
+                  print('changing value to: $value');
                 },
               ),
+              // DropdownButtonFormField(
+              //   decoration: InputDecoration(
+              //     fillColor: Colors.grey[50],
+              //     isDense: true,
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular((50)),
+              //     ),
+              //   ),
+              //   dropdownColor: AppColors.primary50,
+              //   icon: Icon(Icons.arrow_forward_ios, size: 15),
+              //   value: selectedLanguage,
+              //   hint: Text("اختر اللغة"),
+              //   items: [
+              //     DropdownMenuItem<String>(
+              //       value: 'ar',
+              //       child: Text('الناصرة', style: getRegular(fontSize: 14)),
+              //     ),
+              //     DropdownMenuItem<String>(
+              //       value: 'he',
+              //       child: Text('القدس', style: getRegular(fontSize: 14)),
+              //     ),
+              //   ],
+              //   onChanged: (value) {
+              //     selectedLanguage = value;
+              //
+              //     Get.updateLocale(Locale(value!));
+              //   },
+              // ),
               Text("النبذة الشخصية", style: getRegular(fontSize: 14)),
               TextField(
                 maxLines: 5,
@@ -174,11 +186,13 @@ class _PersonalInfoState extends State<PersonalInfo> {
                     color: AppColors.primary400,
                     size: 20,
                   ),
-                  Text(
-                    "لا بأس إن تجاوز النص 300 كلمة.يسمح بمرونة في \n عدد الكلمات حسب الحاجة.",
-                    style: getRegular(
-                      fontSize: 10,
-                      color: AppColors.neutral400,
+                  Expanded(
+                    child: Text(
+                      "لا بأس إن تجاوز النص 300 كلمة.يسمح بمرونة في عدد الكلمات حسب الحاجة.",
+                      style: getMedium(
+                        fontSize: 10,
+                        color: AppColors.neutral400,
+                      ),
                     ),
                   ),
                   Text("0/50"),

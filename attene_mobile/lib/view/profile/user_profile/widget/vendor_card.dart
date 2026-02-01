@@ -62,7 +62,8 @@ class VendorCard extends StatelessWidget {
                   ),
                 ),
 
-                textInputAction: TextInputAction.done, textInputType: TextInputType.name,
+                textInputAction: TextInputAction.done,
+                textInputType: TextInputType.name,
               ),
             ),
             Container(

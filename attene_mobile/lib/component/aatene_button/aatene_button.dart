@@ -27,12 +27,15 @@ class AateneButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: ResponsiveDimensions.w(6)),
-        height: ResponsiveDimensions.h(48),
+        height: ResponsiveDimensions.h(50),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(raduis),
-          border: Border.all(color: borderColor ?? AppColors.neutral100, width: 1),
+          border: Border.all(
+            color: borderColor ?? AppColors.neutral100,
+            width: 1,
+          ),
         ),
         child: isLoading
             ? SizedBox(

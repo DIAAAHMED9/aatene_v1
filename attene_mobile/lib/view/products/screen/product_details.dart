@@ -45,10 +45,7 @@ class ProductDetailsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: _Body(
-        initial: initial,
-        productId: id,
-      ),
+      body: _Body(initial: initial, productId: id),
     );
   }
 }
@@ -69,7 +66,6 @@ class _BodyState extends State<_Body> {
   final List<String> _listSize = const ['S', 'L', 'X', 'XXl'];
   final List<String> _listCity = const ['الناصرة', 'القدس', 'خليل'];
 
-  bool _isChecked = false;
   bool isLiked = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -91,7 +87,9 @@ class _BodyState extends State<_Body> {
   }
 
   Future<void> _fetchIfNeeded() async {
-    final hasFull = _product.value != null && (_product.value!.coverUrl?.isNotEmpty ?? false);
+    final hasFull =
+        _product.value != null &&
+        (_product.value!.coverUrl?.isNotEmpty ?? false);
     final id = widget.productId;
     if (hasFull || id == null) return;
 
@@ -142,7 +140,14 @@ class _BodyState extends State<_Body> {
           children: [
             // ضع تصميمك هنا بدون تغيير كبير
             // ...
-            Text(product.name ?? product.slug ?? '', style: getBold(fontSize: 18)),
+            Text(
+              product.name ?? product.slug ?? '',
+              style: getBold(fontSize: 18),
+            ),
+            Text(
+              product.description?? product.slug ?? '',
+              style: getBold(fontSize: 18),
+            ),
           ],
         ),
       );

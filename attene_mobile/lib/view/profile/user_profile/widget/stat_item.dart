@@ -25,17 +25,20 @@ class ProfileStatItem extends StatelessWidget {
             icon,
             Text(
               title,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600] ,fontSize: 12,),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+                fontSize: 12,
+              ),
             ),
           ],
         ),
         Text(
           value,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.primary400),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: AppColors.primary400,
+          ),
         ),
         if (subtitle != null) ...[subtitle!],
       ],

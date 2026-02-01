@@ -130,33 +130,56 @@ class AboutUsScreen extends StatelessWidget {
                   SizedBox(height: 20),
                   SectionItems2(
                     title: "بدون عمولة على المبيعات",
+
                     subtitle:
                         "احتفظ بكامل أرباحك دون اقتطاعات، وركز على تنمية عملك وزيادة دخلك.",
-                    icon: Image.asset('assets/images/png/section1.png'),
+                    icon: SvgPicture.asset(
+                      "assets/images/svg_images/about1.svg",
+                      width: 14,
+                      height: 14,
+                    ),
+
+                    // Image.asset('assets/images/png/section1.png'),
                   ),
                   SectionItems2(
                     title: "سهولة استخدام من جميع الأجهزة",
                     subtitle:
                         "تصفح وبيع واشتري بسهولة من الهاتف أو الكمبيوتر، أينما كنت وفي أي وقت.",
-                    icon: Image.asset('assets/images/png/section2.png'),
+                    icon: SvgPicture.asset(
+                      "assets/images/svg_images/about2.svg",
+                      width: 14,
+                      height: 14,
+                    ),
                   ),
                   SectionItems2(
                     title: "دعم مستمر وتدريب للتجار",
                     subtitle:
                         "نقدم إرشادًا ومتابعة دورية لتطوير مهاراتك وتحقيق أفضل النتائج في تجارتك.",
-                    icon: Image.asset('assets/images/png/section3.png'),
+                    icon: SvgPicture.asset(
+                      "assets/images/svg_images/about3.svg",
+                      width: 14,
+                      height: 14,
+                    ),
                   ),
                   SectionItems2(
                     title: "مجتمع محلي حقيقي",
                     subtitle:
                         "نقدم إرشادًا ومتابعة دورية لتطوير مهاراتك وتحقيق أفضل النتائج في تجارتك.",
-                    icon: Image.asset('assets/images/png/section4.png'),
+                    icon: SvgPicture.asset(
+                      "assets/images/svg_images/about4.svg",
+                      width: 14,
+                      height: 14,
+                    ),
                   ),
                   SectionItems2(
                     title: "خدمات ومنتجات متنوعة بمكان واحد",
                     subtitle:
                         "وفر وقتك وجهدك، وابحث عن كل ما تحتاجه بسهولة في منصة واحدة.",
-                    icon: Image.asset('assets/images/png/section5.png'),
+                    icon: SvgPicture.asset(
+                      "assets/images/svg_images/about5.svg",
+                      width: 14,
+                      height: 14,
+                    ),
                   ),
                   SizedBox(height: 20),
                 ],
@@ -541,14 +564,22 @@ class AboutUsScreen extends StatelessWidget {
                         onPressed: () {
                           UrlHelper.open("https://wa.me/+972526213879");
                         },
-                        child: Text('واتس خدمة العملاء'),
+                        child: Text('واتس خدمة العملاء',style: getMedium(color: AppColors.light1000),),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        UrlHelper.open("https://wa.me/+972559390851");
-                      },
-                      child: Text('واتس لاستعلام عن الخدمات والمنتجات'),
+                    Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary500,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          UrlHelper.open("https://wa.me/+972559390851");
+                        },
+                        child: Text('واتس لاستعلام عن الخدمات والمنتجات',style: getMedium(color: AppColors.light1000),),
+                      ),
                     ),
                   ],
                 ),
