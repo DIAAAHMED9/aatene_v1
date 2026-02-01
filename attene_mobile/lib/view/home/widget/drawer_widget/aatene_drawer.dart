@@ -38,7 +38,7 @@ class AateneDrawer extends StatelessWidget {
                         controller.accounts.length,
                         (index) => DrawerAccountItem(
                           name: controller.accounts[index].name,
-                          avatar: controller.accounts[index].avatar,
+                          avatar: controller.accounts[index].storeType,
                           isSelected:
                               controller.accounts[index].id == controller.selectedAccountId.value,
                           onTap: () async { await controller.selectAccount(controller.accounts[index]); Get.back(); },

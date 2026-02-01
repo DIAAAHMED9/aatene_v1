@@ -251,6 +251,8 @@ class Service {
   final int sectionId;
   final int categoryId;
 
+  final String? sectionName;
+
   final List<String> specialties;
   final List<String> tags;
 
@@ -282,6 +284,7 @@ class Service {
     required this.title,
     required this.sectionId,
     required this.categoryId,
+    this.sectionName,
     required this.specialties,
     required this.tags,
     this.storeId,
@@ -308,12 +311,19 @@ class Service {
     final tags = _asStringList(json['tags']);
     final specialties = _asStringList(json['specialties']);
 
+    String? sectionName;
+    if (json['section'] is Map) {
+      final m = Map<String, dynamic>.from(json['section']);
+      sectionName = m['name']?.toString();
+    }
+
     return Service(
       id: json['id'] == null ? null : _toInt(json['id'], defaultValue: 0),
       slug: _toStr(json['slug']),
       title: _toStr(json['title']),
       sectionId: _toInt(json['section_id'], defaultValue: 0),
       categoryId: _toInt(json['category_id'], defaultValue: 0),
+      sectionName: sectionName,
       specialties: specialties,
       tags: tags,
       storeId: json['store_id']?.toString(),
@@ -332,6 +342,8 @@ class Service {
       acceptedPrivacy: _toBool(json['accepted_privacy'], defaultValue: false),
     );
   }
+
+  factory Service.fromJson(Map<String, dynamic> json) => Service.fromApiJson(json);
 
   Map<String, dynamic> toApiJson({bool forUpdate = false, String? storeIdOverride}) {
     final data = <String, dynamic>{

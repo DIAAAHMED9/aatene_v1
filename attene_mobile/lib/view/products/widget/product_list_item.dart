@@ -97,7 +97,26 @@ class ProductListItem extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
+              if ((product.status ?? '').toString().trim().isNotEmpty)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.light1000,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.neutral900),
+                    ),
+                    child: Text(
+                      'الحالة: ${product.status}',
+                      style: getMedium(fontSize: 12),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 8),
+
               Text('${product.price ?? '0.0'} ₪', style: getBold()),
+
               if (!isSelectionMode)
                 IconButton(
                   onPressed: _showProductOptions,

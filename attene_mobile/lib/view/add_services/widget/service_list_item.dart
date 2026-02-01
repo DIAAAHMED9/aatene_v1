@@ -395,7 +395,19 @@ class ServiceListItem extends StatelessWidget {
   }
 
   void _viewServiceDetails() {
-    Get.toNamed('/service-details', arguments: service);
+    Get.back();
+    if (onTap != null) {
+      onTap!();
+      return;
+    }
+
+    Get.toNamed(
+      '/service-details',
+      arguments: {
+        'service': service,
+        'controller': controller,
+      },
+    );
   }
 
   void _copyService() {

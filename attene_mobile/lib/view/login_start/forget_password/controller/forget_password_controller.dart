@@ -50,7 +50,7 @@ class ForgetPasswordController extends GetxController {
       print('📧 إرسال طلب إعادة تعيين كلمة المرور لـ: ${email.value}');
 
       final response = await ApiHelper.sendPasswordResetCode(
-        login: email.value.trim(),
+        identifier: email.value.trim(),
         withLoading: false,
       );
 

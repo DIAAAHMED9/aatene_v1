@@ -550,8 +550,7 @@ static bool get isGuestMode {
        final  GetStorage storage= GetStorage();
 
     final Map<String, dynamic> body = {
-      'first_name': name,
-      'last_name': name,
+      'name': name,
       'email': email,
       'phone': phone,
       'password': password,
@@ -595,7 +594,7 @@ static Future<dynamic> account({
   }) async {
     return await post(
       path: '/auth/otp/verify_otp/$id',
-      body: FormData.fromMap({'otp_code': code}),
+      body: FormData.fromMap({'code': code}),
       withLoading: withLoading,
       shouldShowMessage: shouldShowMessage,
     );
@@ -615,63 +614,45 @@ static Future<dynamic> account({
   }
 
   static Future<dynamic> sendPasswordResetCode({
-    required String login,
+    required String identifier,
     bool withLoading = true,
+    bool shouldShowMessage = true,
   }) async {
     return await post(
       path: '/auth/password/send_code',
-      body: FormData.fromMap({'identifier': login}),
+      body: FormData.fromMap({'identifier': identifier}),
       withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
     );
   }
 
   static Future<dynamic> resendPasswordResetCode({
     required String id,
     bool withLoading = true,
+    bool shouldShowMessage = true,
   }) async {
     return await post(
       path: '/auth/otp/resend/$id',
       body: FormData.fromMap({'otp': 'true'}),
       withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
     );
   }
 
- static Future<dynamic> verifyPasswordResetCode({
-  required String id,
-  required String code,
-  required String newPassword,
-  required String passwordConfirmation,
-  bool withLoading = true,
-  bool shouldShowMessage = true,
-}) async {
-  return await post(
-    path: '/auth/password/verify_code/$id',
-    body: FormData.fromMap({
-      'code': code,
-      'password': newPassword,
-      'password_confirmation': passwordConfirmation,
-    }),
-    withLoading: withLoading,
-    shouldShowMessage: shouldShowMessage,
-  );
-}
-static Future<dynamic> resetPassword({
-  required String id,
-  required String code,
-  required String password,
-  required String passwordConfirmation,
-  bool withLoading = true,
-  bool shouldShowMessage = true,
-}) async {
-  return await verifyPasswordResetCode(
-    id: id,
-    code: code,
-    newPassword: password,
-    passwordConfirmation: passwordConfirmation,
-    withLoading: withLoading,
-    shouldShowMessage: shouldShowMessage,
-  );
-}
+  static Future<dynamic> verifyPasswordResetCode({
+    required String id,
+    required String code,
+    required String newPassword,
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return await post(
+      path: '/auth/password/verify_code/$id',
+      body: FormData.fromMap({'code': code, 'password': newPassword}),
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
 
   static Future<dynamic> getAccount({
     bool withLoading = false,
@@ -682,36 +663,28 @@ static Future<dynamic> resetPassword({
       shouldShowMessage: false,
     );
   }
-  static Future<dynamic> updatePassword({
-    bool withLoading = false,
-    required String newPassword,
-    required String passwordConfirmation,
-  }) async {
-    return await post(
-      path: '/auth/account/update_password',
-      body: FormData.fromMap({'password': newPassword, 'password_confirmation': passwordConfirmation}),
 
-      withLoading: withLoading,
-      shouldShowMessage: false,
-    );
-  }
   static Future<dynamic> verifyEmail({
     required String code,
     bool withLoading = true,
+    bool shouldShowMessage = true,
   }) async {
     return await post(
       path: '/auth/verify-email',
       body: {'code': code},
       withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
     );
   }
 
   static Future<dynamic> resendVerificationCode({
     bool withLoading = true,
+    bool shouldShowMessage = true,
   }) async {
     return await post(
       path: '/auth/resend-verification',
       withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -1128,8 +1101,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       method: deleteMethod,
       path: '/media-center/delete',
       queryParameters: {'file_name': fileName},
-      withLoading: withLoading,
-      shouldShowMessage: true,
+      withLoading: withLoading, shouldShowMessage: false,
     );
   }
 

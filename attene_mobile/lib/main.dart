@@ -17,6 +17,11 @@ import 'package:attene_mobile/api/core/api_helper.dart';
 import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
 
+import 'package:attene_mobile/view/products/screen/product_screen.dart';
+import 'package:attene_mobile/view/products/screen/product_details.dart';
+import 'package:attene_mobile/view/add_product/stepper/screen/add_product_stepper_screen.dart';
+import 'package:attene_mobile/view/add_product/stepper/screen/edit_product_stepper_screen.dart';
+
 class AppBindings extends Bindings {
   static bool _initialized = false;
 
@@ -213,14 +218,37 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
-        GetPage(
-  name: '/ResetPassword',
-  page: () => SetNewPassword(),
-),
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
+
+GetPage(
+          name: '/products-Screen',
+          page: () => ProductScreen(),
+          middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
+        ),
+        GetPage(name: '/product-details', page: () => const ProductDetailsScreen()),
+
+        GetPage(
+          name: '/AddProductStepperScreen',
+          page: () => DemoStepperScreen(),
+        ),
+        GetPage(
+          name: '/EditProductStepperScreen',
+          page: () {
+            final args = (Get.arguments is Map)
+                ? Map<String, dynamic>.from(Get.arguments)
+                : <String, dynamic>{};
+            final String productId = (args['productId'] ?? args['id'] ?? '').toString();
+            return EditProductStepperScreen(productId:int.parse(productId) );
+          },
+        ),
         GetPage(
           name: '/services-Screen',
           page: () => ServicesListScreen(),
+          middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
+        ),
+        GetPage(
+          name: '/service-details',
+          page: () => const ServiceDetailsScreen(),
           middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
         ),
       ],

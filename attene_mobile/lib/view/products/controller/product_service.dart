@@ -82,11 +82,14 @@ class ProductService extends GetxService {
     }
   }
 
-  Future<Product?> fetchProductById(String productId) async {
+  Future<Product?> fetchProductById({
+    required String productId,
+    bool withLoading = false,
+  }) async {
     try {
       final response = await ApiHelper.get(
         path: '/merchants/products/$productId',
-        withLoading: false,
+        withLoading: withLoading,
       );
 
       if (response != null && response['status'] == true) {

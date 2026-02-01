@@ -1,4 +1,5 @@
 import '../../../general_index.dart';
+import '../../../utils/sheet_controller.dart';
 import '../../auth/screen/login_required_screen.dart';
 import '../../../utils/responsive/index.dart';
 
@@ -116,12 +117,40 @@ class _ServicesListScreenState extends State<ServicesListScreen>
   }
 
   void _navigateToAddService() {
-    _serviceController.setCreateMode();
-    Get.to(() => const AddServiceStepperScreen())?.then((result) {
-      if (result == true) {
-        _refreshServices();
+    final di = Get.find<DataInitializerService>();
+    final sections = di.getSections();
+
+    if (sections.isEmpty) {
+      if (Get.isRegistered<BottomSheetController>()) {
+        Get.find<BottomSheetController>().openAddNewSection();
+      } else {
+        Get.snackbar('تنبيه', 'لا توجد أقسام في هذا المتجر');
       }
-    });
+      return;
+    }
+
+    Get.bottomSheet(
+      _ServiceSelectSectionSheet(
+        sections: sections.map((e) => Map<String, dynamic>.from(e)).toList(),
+        onSelected: (sectionId, sectionName) {
+          _serviceController.setCreateMode();
+          _serviceController.selectedSectionId.value = sectionId;
+          _serviceController.selectedSectionName.value = sectionName;
+
+          Get.back();
+
+          Get.to(
+            () => const AddServiceStepperScreen(),
+          )?.then((result) {
+            if (result == true) {
+              _refreshServices();
+            }
+          });
+        },
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
   }
 
   void _navigateToEditService(Service service) {
@@ -198,173 +227,24 @@ class _ServicesListScreenState extends State<ServicesListScreen>
     _selectedServiceIds.clear();
   }
 
-  void _showServiceDetails(Service service) {
-    Get.bottomSheet(
-      Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(service.title, style: getBold(fontSize: 18)),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Get.back(),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (service.images.isNotEmpty)
-                      SizedBox(
-                        height: 200,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: service.images.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              width: 200,
-                              margin: EdgeInsets.only(
-                                right: index < service.images.length - 1
-                                    ? 8
-                                    : 0,
-                                left: index < service.images.length - 1 ? 8 : 0,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    _serviceController.getFullImageUrl(
-                                      service.images[index],
-                                    ),
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    const SizedBox(height: 16),
+  void _openServiceDetails(Service service) {
+    final serviceId = service.id?.toString() ?? '';
+    if (serviceId.isEmpty) {
+      Get.snackbar(
+        'خطأ',
+        'لا يمكن عرض تفاصيل الخدمة بدون معرف',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
 
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary100,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text('${service.price} ₪', style: getBold()),
-                        ),
-                        const SizedBox(width: 8),
-                        _buildStatusChip(service.status),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    Text(
-                      'مدة التنفيذ: ${service.executeCount} ${_convertTimeUnit(service.executeType)}',
-                      style: getRegular(fontSize: 14, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-
-                    if (service.specialties.isNotEmpty) ...[
-                      Text('التخصصات:', style: getBold()),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: service.specialties
-                            .map(
-                              (specialty) => Chip(
-                                label: Text(specialty),
-                                backgroundColor: AppColors.primary50,
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    if (service.tags.isNotEmpty) ...[
-                      Text('الكلمات المفتاحية:', style: getBold()),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: service.tags
-                            .map(
-                              (tag) => Chip(
-                                label: Text(tag),
-                                backgroundColor: Colors.grey[200],
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    Text('الوصف:', style: getBold()),
-                    Text(
-                      service.description ?? '',
-                      style: getRegular(fontSize: 14),
-                    ),
-                    const SizedBox(height: 16),
-
-                    if (service.extras.isNotEmpty) ...[
-                      Text('التطويرات الإضافية:', style: getBold()),
-                      ...service.extras.map(
-                        (extra) => ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: const Icon(Icons.add, size: 20),
-                          title: Text(extra.title),
-                          subtitle: Text(
-                            '${extra.price} ₪ - ${extra.executionTime} ${extra.timeUnit}',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    if (service.questions.isNotEmpty) ...[
-                      Text('الأسئلة الشائعة:', style: getBold()),
-                      ...service.questions.map(
-                        (faq) => ExpansionTile(
-                          title: Text(faq.question),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Text(faq.answer),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
+    Get.toNamed(
+      '/service-details',
+      arguments: {
+        'serviceId': serviceId,
+        'service': service,
+      },
     );
   }
 
@@ -587,7 +467,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
           return ServiceGridItem(
             service: service,
-            onTap: () => _showServiceDetails(service),
+            onTap: () => _openServiceDetails(service),
             onEdit: () => _navigateToEditService(service),
             onDelete: () => _deleteService(service),
             isSelected: _selectedServiceIds.contains(serviceId),
@@ -639,7 +519,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
             onSelectionChanged: (isSelected) {
               _serviceController.toggleServiceSelection(serviceId);
             },
-            onTap: () => _showServiceDetails(service),
+            onTap: () => _openServiceDetails(service),
           );
         },
       ),
@@ -896,4 +776,92 @@ class _ServicesListScreenState extends State<ServicesListScreen>
   }
 
   void _openSort() {}
+}
+
+class _ServiceSelectSectionSheet extends StatelessWidget {
+  final List<dynamic> sections;
+  final void Function(int id, String name) onSelected;
+
+  const _ServiceSelectSectionSheet({
+    required this.sections,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isRTL = LanguageUtils.isRTL;
+    final safeSections = sections
+        .whereType<Map>()
+        .map((m) => Map<String, dynamic>.from(m))
+        .toList();
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment:
+            isRTL ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                isRTL ? 'اختر القسم' : 'Choose section',
+                style: getBold(fontSize: 16),
+              ),
+              IconButton(
+                onPressed: () => Get.back(),
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Flexible(
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: safeSections.length,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (_, i) {
+                final s = safeSections[i];
+                final id = int.tryParse('${s['id'] ?? ''}') ?? 0;
+                final name = (s['name'] ?? '').toString();
+                final status = (s['status'] ?? '').toString();
+                return ListTile(
+                  title: Text(name.isEmpty ? '-' : name,
+                      style: getMedium(fontSize: 14)),
+                  subtitle: status.trim().isEmpty
+                      ? null
+                      : Text(status, style: getRegular(fontSize: 12)),
+                  onTap: id <= 0
+                      ? null
+                      : () {
+                          Get.back();
+                          onSelected(id, name);
+                        },
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Get.back();
+                if (Get.isRegistered<BottomSheetController>()) {
+                  Get.find<BottomSheetController>().openAddNewSection();
+                }
+              },
+              icon: const Icon(Icons.add),
+              label: Text(isRTL ? 'إضافة قسم جديد' : 'Add new section'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -18,6 +18,8 @@ class DataInitializerService extends GetxService {
 
   RxBool get isDataLoadedRx => _isDataLoaded;
 
+  int? get currentStoreId => _getActiveStoreId();
+
 bool get isMerchantUser {
   final ud = getUserData();
   final user = ud['user'];

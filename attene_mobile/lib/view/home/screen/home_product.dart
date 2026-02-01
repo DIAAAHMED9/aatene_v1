@@ -299,7 +299,7 @@ class _HomeProductsContent extends StatelessWidget {
             ),
 
             TextButton(
-              onPressed: () => Get.to(ProductScreen),
+              onPressed: () => Get.toNamed("/products-Screen"),
               child: Text(
                 "اضافة منتجات (زر مؤقت لاضافة المنتجات)",
                 style: getBlack(fontSize: 24, color: AppColors.primary400),
@@ -498,7 +498,7 @@ class _HomeServicesContent extends StatelessWidget {
             ImageSlider(),
 
             TextButton(
-              onPressed: () => Get.to(ServicesListScreen),
+              onPressed: () => Get.toNamed("/services-Screen"),
               child: Text(
                 "اضافة خدمات (زر مؤقت لاضافة الخدمات)",
                 style: getBlack(fontSize: 24, color: AppColors.primary400),

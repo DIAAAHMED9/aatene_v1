@@ -1,23 +1,22 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../general_index.dart';
 
 class VerificationController extends GetxController {
-  final int otpLength = 4;
+  static const int otpLength = 4;
 
   late final String sessionId;
+
+  final RxList<String> codes = List<String>.filled(otpLength, '').obs;
+
+  late final List<TextEditingController> textControllers;
+  late final List<FocusNode> focusNodes;
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
   final RxInt resendCountdown = 0.obs;
   final RxBool canResend = true.obs;
-
-  late final List<TextEditingController> textControllers;
-  late final List<FocusNode> focusNodes;
-
   Timer? _timer;
 
   @override
@@ -54,67 +53,37 @@ class VerificationController extends GetxController {
     super.onClose();
   }
 
-  void setDigit(int index, String value) {
-    if (index < 0 || index >= otpLength) return;
+  void updateCode(int index, String value) {
+    if (index < 0 || index >= codes.length) return;
 
-    errorMessage.value = '';
+    var v = value;
+    if (v.length > 1) v = v.substring(v.length - 1);
 
-    final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
-
-    if (cleaned.length > 1) {
-      _applyPaste(index, cleaned);
+    if (v.isNotEmpty && !RegExp(r'^\d$').hasMatch(v)) {
+      textControllers[index].text = codes[index];
       return;
     }
 
-    final v = cleaned;
-    textControllers[index].text = v;
-  }
-
-  void _applyPaste(int startIndex, String digits) {
-    var i = startIndex;
-    for (int k = 0; k < digits.length && i < otpLength; k++, i++) {
-      textControllers[i].text = digits[k];
+    codes[index] = v;
+    if (textControllers[index].text != v) {
+      textControllers[index].text = v;
+      textControllers[index].selection = TextSelection.fromPosition(
+        TextPosition(offset: textControllers[index].text.length),
+      );
     }
-  }
-
-  String joinedCode() => textControllers.map((c) => c.text.trim()).join();
-
-  bool isCodeComplete() =>
-      joinedCode().length == otpLength &&
-      textControllers.every((c) => c.text.trim().isNotEmpty);
-
-Future<void> verifyCode() async {
-  final code = joinedCode();
-
-  if (!isCodeComplete()) {
-    errorMessage.value = 'يرجى إدخال رمز التحقق بالكامل';
-    return;
-  }
-  if (sessionId.isEmpty) {
-    errorMessage.value = 'معرّف الجلسة غير موجود. أعد طلب الرمز.';
-    return;
-  }
-
-  try {
-    isLoading.value = true;
     errorMessage.value = '';
-
-    Get.offAllNamed(
-      '/ResetPassword',
-      arguments: {'id': sessionId, 'code': code},
-    );
-  } catch (e) {
-    errorMessage.value = e.toString();
-  } finally {
-    isLoading.value = false;
   }
-}
 
-  Future<void> resendCode() async => resend();
+  String get joinedCode => codes.join();
 
-  Future<void> resend() async {
-    if (!canResend.value) return;
+  bool get isCodeComplete =>
+      joinedCode.length == otpLength && codes.every((c) => c.isNotEmpty);
 
+  Future<void> verifyCode() async {
+    if (!isCodeComplete) {
+      errorMessage.value = 'يرجى إدخال رمز التحقق بالكامل';
+      return;
+    }
     if (sessionId.isEmpty) {
       errorMessage.value = 'معرّف الجلسة غير موجود. أعد طلب الرمز.';
       return;
@@ -124,11 +93,51 @@ Future<void> verifyCode() async {
       isLoading.value = true;
       errorMessage.value = '';
 
-      await Future.delayed(const Duration(milliseconds: 300));
+      final res = await ApiHelper.verifyOtp(
+        id: sessionId,
+        code: joinedCode,
+        withLoading: false,
+        shouldShowMessage: true,
+      );
 
-      for (final c in textControllers) {
-        c.clear();
+      final ok = (res is Map) && ((res['status'] == true) || (res['success'] == true));
+      if (!ok) {
+        errorMessage.value = (res is Map && res['message'] != null)
+            ? '${res['message']}'
+            : 'فشل التحقق';
+        return;
       }
+
+      Get.offAllNamed(
+        '/set_new_password',
+        arguments: {
+          'id': sessionId,
+          'code': joinedCode,
+        },
+      );
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> resendCode() async {
+    if (!canResend.value) return;
+    if (sessionId.isEmpty) {
+      errorMessage.value = 'معرّف الجلسة غير موجود. أعد طلب الرمز.';
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      await ApiHelper.resendOtp(
+        id: sessionId,
+        withLoading: false,
+        shouldShowMessage: true,
+      );
 
       startResendCountdown(seconds: 60);
     } catch (e) {
@@ -152,5 +161,19 @@ Future<void> verifyCode() async {
         t.cancel();
       }
     });
+  }
+
+  void moveNextFocus(BuildContext context, int index) {
+    if (index < otpLength - 1) {
+      FocusScope.of(context).nextFocus();
+    } else {
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  void movePrevFocus(BuildContext context, int index) {
+    if (index > 0) {
+      FocusScope.of(context).previousFocus();
+    }
   }
 }

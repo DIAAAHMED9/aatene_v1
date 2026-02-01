@@ -4,6 +4,7 @@ export 'package:get_storage/get_storage.dart';
 export 'dart:convert';
 export 'package:flutter_svg/flutter_svg.dart';
 export 'view/add_services/stepper/index.dart';
+export 'view/add_services/screen/service_details_screen.dart';
 export 'utils/colors/index.dart';
 export 'api/index.dart';
 export 'controller/index.dart';

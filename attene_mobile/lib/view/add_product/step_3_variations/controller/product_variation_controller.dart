@@ -98,37 +98,27 @@ class ProductVariationController extends GetxController {
       _isLoadingAttributes.value = true;
       _attributesError.value = '';
 
-      print('📡 [VARIATIONS] Fetching attributes from API');
-
-      final response = await ApiHelper.get(
-        path: '/merchants/attributes',
-        withLoading: false,
-        shouldShowMessage: false,
-      );
-
-      if (response != null && response['status'] == true) {
-        final attributesList = List<Map<String, dynamic>>.from(
-          response['data'] ?? [],
-        );
-        final loadedAttributes = attributesList
-            .map(ProductAttribute.fromApiJson)
-            .toList();
-
-        _allAttributes.assignAll(loadedAttributes);
+      final cached = _dataService.getAttributesForVariations();
+      if (cached.isNotEmpty) {
+        _allAttributes.assignAll(cached);
         _lastLoadTime.value = DateTime.now().toIso8601String();
-
-        print(
-          '✅ [VARIATIONS] Loaded ${_allAttributes.length} attributes successfully',
-        );
-
-        await _saveAttributesLocally(attributesList);
-      } else {
-        final errorMessage = response?['message'] ?? 'فشل في تحميل السمات';
-        _attributesError.value = errorMessage;
-        print('❌ [VARIATIONS] Failed to load attributes: $errorMessage');
-
-        await _useCachedDataAsFallback();
+        print('✅ [VARIATIONS] Loaded ${_allAttributes.length} cached attributes');
+        return;
       }
+
+      print('📡 [VARIATIONS] Refreshing attributes (no global loader)');
+      await _dataService.refreshAttributes();
+
+      final refreshed = _dataService.getAttributesForVariations();
+      if (refreshed.isNotEmpty) {
+        _allAttributes.assignAll(refreshed);
+        _lastLoadTime.value = DateTime.now().toIso8601String();
+        print('✅ [VARIATIONS] Loaded ${_allAttributes.length} refreshed attributes');
+        return;
+      }
+
+      _attributesError.value = 'فشل في تحميل السمات';
+      await _useCachedDataAsFallback();
     } catch (e) {
       final error = 'حدث خطأ أثناء تحميل السمات: $e';
       _attributesError.value = error;

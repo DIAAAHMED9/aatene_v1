@@ -96,7 +96,14 @@ class DrawerControllerX extends GetxController {
     userData['active_store_id'] = account.id;
     userData['store_id'] = account.id;
 
-    await _storage.write('user_data', userData);
+    userData['store'] = {
+      'id': account.id,
+      'name': account.name,
+      'type': account.type,
+      'store_type': account.storeType,
+      'mode': account.normalizedMode,
+    };
+await _storage.write('user_data', userData);
     await _storage.write('store_id', account.id);
 
     if (initializeData) {

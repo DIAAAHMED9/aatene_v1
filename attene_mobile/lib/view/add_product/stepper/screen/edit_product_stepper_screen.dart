@@ -80,10 +80,10 @@ class _EditProductStepperScreenState
 
         central.resetAllData();
 
-        await UnifiedLoadingScreen.showWithFuture<bool>(
-          central.loadProductForEdit(widget.productId),
-          message: 'جاري تحميل بيانات المنتج...',
-        );
+        try {
+          await central.loadProductForEdit(widget.productId);
+        } finally {
+        }
 
         if (Get.isRegistered<AddProductController>()) {
           Get.find<AddProductController>().applyCentralToTextFields();

@@ -195,14 +195,11 @@ class ProductCentralController extends GetxController {
     await loadCategories();
   }
 
-  Future<void> loadCategories() async {
-    return UnifiedLoadingScreen.showWithFuture<void>(
-      performLoadCategories(),
-      message: 'جاري تحميل الفئات...',
-    );
+  Future<void> loadCategories({bool forceRefresh = false}) async {
+    await performLoadCategories(forceRefresh: forceRefresh);
   }
 
-  Future<void> performLoadCategories() async {
+  Future<void> performLoadCategories({bool forceRefresh = false}) async {
     try {
       if (!myAppController.isLoggedIn.value) {
         categoriesError('يجب تسجيل الدخول أولاً');
@@ -212,8 +209,19 @@ class ProductCentralController extends GetxController {
 
       isLoadingCategories(true);
       categoriesError('');
-      print('📡 [PRODUCT] جلب الفئات من API');
 
+      if (!forceRefresh) {
+        try {
+          final cached = DataInitializerService.to.getCategories();
+          if (cached.isNotEmpty) {
+            categories.assignAll(List<Map<String, dynamic>>.from(cached));
+            print('✅ [PRODUCT] تم تحميل ${categories.length} فئة من الكاش');
+            return;
+          }
+        } catch (_) {}
+      }
+
+      print('📡 [PRODUCT] جلب الفئات من API');
       final response = await ApiHelper.get(
         path: '/merchants/categories/select',
         withLoading: false,
@@ -241,7 +249,7 @@ class ProductCentralController extends GetxController {
 
   Future<void> reloadCategories() async {
     categories.clear();
-    await loadCategories();
+    await loadCategories(forceRefresh: true);
   }
 
   void updateSelectedStore(Map<String, dynamic> store) {
@@ -536,10 +544,11 @@ class ProductCentralController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> submitProduct() async {
-    return UnifiedLoadingScreen.showWithFuture<Map<String, dynamic>>(
-      performSubmitProduct(),
-      message: isEditMode.value ? 'جاري تحديث المنتج...' : 'جاري إضافة المنتج...',
-    );
+    final msg = isEditMode.value ? 'جاري تحديث المنتج...' : 'جاري إضافة المنتج...';
+    try {
+      return await performSubmitProduct();
+    } finally {
+    }
   }
 
   Future<Map<String, dynamic>> performSubmitProduct() async {

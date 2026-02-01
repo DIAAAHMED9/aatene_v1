@@ -79,12 +79,12 @@ class MainScreen extends StatelessWidget {
               return;
             }
             if (di.currentStoreMode == StoreMode.services) {
-              Get.toNamed('/add-service', arguments: {'isEditMode': false});
+              Get.toNamed('/services-Screen');
             } else {
+              Get.toNamed('/products-Screen');
               try {
                 Get.find<ProductController>().navigateToAddProduct();
               } catch (_) {
-                Get.to(() => ProductScreen());
               }
             }
           },

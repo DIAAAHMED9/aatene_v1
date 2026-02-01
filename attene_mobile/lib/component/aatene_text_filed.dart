@@ -74,7 +74,7 @@ class TextFiledAatene extends StatelessWidget {
       children: [
         TextFormField(
           controller: controller,
-          initialValue: initialValue,
+          initialValue: controller == null ? initialValue : null,
           keyboardType: textInputType,
           obscureText: obscureText ?? false,
           textAlign: isRTL ? TextAlign.right : TextAlign.left,

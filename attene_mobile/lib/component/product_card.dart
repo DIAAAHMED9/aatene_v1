@@ -28,7 +28,14 @@ class _ProductCardState extends State<ProductCard> {
 
     return GestureDetector(
       onTap: () {
-        Get.to(ProductDetails());
+        final args = {
+          "id": item?.id,
+          "slug": item?.slug,
+          "name": item?.name,
+          "cover_url": item?.imageUrl,
+          "price": item?.price?.toString(),
+        };
+        Get.toNamed("/product-details", arguments: args);
       },
       child: Container(
         width: 150,

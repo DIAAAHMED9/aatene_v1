@@ -118,6 +118,7 @@ class ServiceController extends GetxController {
   RxString serviceSlug = ''.obs;
   RxString serviceStatus = 'pending'.obs;
   RxInt selectedSectionId = 0.obs;
+  RxString selectedSectionName = ''.obs;
   RxInt selectedCategoryId = 0.obs;
   RxList<String> uploadedImages = <String>[].obs;
 
@@ -652,6 +653,7 @@ class ServiceController extends GetxController {
 
   void selectMainCategory(String category, int sectionId) {
     selectedMainCategory.value = category;
+    selectedSectionName.value = category;
     selectedSectionId.value = sectionId;
     isMainCategoryError.value = false;
 
@@ -1765,6 +1767,7 @@ class ServiceController extends GetxController {
         orElse: () => {'name': ''},
       );
       selectedMainCategory.value = (section['name'] ?? '').toString();
+      selectedSectionName.value = selectedMainCategory.value;
 
       if (sectionId > 0) {
         await loadCategories(
