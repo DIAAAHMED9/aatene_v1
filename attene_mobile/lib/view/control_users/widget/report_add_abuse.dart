@@ -56,7 +56,7 @@ class ReportAddAbuse extends StatelessWidget {
                 children: [
                   Text('الإبلاغ عن إساءة', style: getBold(fontSize: 18)),
                   Text(
-                    'ما الذي تقدر أن نساعدك به ؟',
+                    'ما الذي نقدر أن نساعدك به ؟',
                     style: getRegular(fontSize: 12, color: Colors.grey),
                   ),
 
@@ -81,7 +81,7 @@ class ReportAddAbuse extends StatelessWidget {
 
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
-                          ResponsiveDimensions.w(50),
+                          ResponsiveDimensions.w(10),
                         ),
                         borderSide: BorderSide(
                           color: Colors.grey[300]!,
@@ -117,7 +117,7 @@ class ReportAddAbuse extends StatelessWidget {
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
-                          ResponsiveDimensions.w(50),
+                          ResponsiveDimensions.w(10),
                         ),
                         borderSide: const BorderSide(
                           color: Colors.red,

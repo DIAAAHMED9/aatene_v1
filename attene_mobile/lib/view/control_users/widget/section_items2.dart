@@ -12,7 +12,7 @@ class SectionItems2 extends StatelessWidget {
 
   final String subtitle;
 
-  final Image icon;
+  final Widget icon;
 
   @override
   Widget build(BuildContext context) {

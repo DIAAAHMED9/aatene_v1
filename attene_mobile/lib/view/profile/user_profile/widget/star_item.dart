@@ -4,7 +4,7 @@ class StarItem extends StatelessWidget {
   final String title;
   final String value;
 
-  const StarItem({required this.title, required this.value});
+  const StarItem({super.key, required this.title, required this.value});
 
   @override
   Widget build(BuildContext context) {

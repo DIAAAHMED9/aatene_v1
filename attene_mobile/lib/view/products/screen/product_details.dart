@@ -19,7 +19,6 @@ class _ProductDetailsState extends State<ProductDetails> {
   final List<String> _listSize = const ['S', 'L', 'X', 'XXl'];
   final List<String> _listCity = const ['الناصرة', 'القدس', 'خليل'];
 
-  bool _isChecked = false;
   bool isLiked = false;
   final _formKey = GlobalKey<FormState>();
 
