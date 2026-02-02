@@ -14,16 +14,14 @@ class MainScreen extends StatelessWidget {
     List<Widget> pages = [
       HomeProduct(),
       SearchScreen(),
-      isGuest
-          ? const AuthRequiredScreen(featureName: 'الدردشة')
-          : ChatScreen(),
+      isGuest ? const AuthRequiredScreen(featureName: 'الدردشة') : ChatScreen(),
       isGuest
           ? const AuthRequiredScreen(featureName: 'الملف الشخصي')
           : ProfilePage(),
     ];
     List<IconData> icons = const [
       Icons.home_filled,
-      Icons.production_quantity_limits,
+      Icons.search,
       Icons.chat_sharp,
       Icons.person_sharp,
     ];
@@ -45,13 +43,17 @@ class MainScreen extends StatelessWidget {
 
       mNames.add('دردشة');
       mPages.add(
-        isGuest ? const AuthRequiredScreen(featureName: 'المحادثات') : ChatScreen(),
+        isGuest
+            ? const AuthRequiredScreen(featureName: 'المحادثات')
+            : ChatScreen(),
       );
       mIcons.add(Icons.chat_sharp);
 
       mNames.add('الحساب');
       mPages.add(
-        isGuest ? const AuthRequiredScreen(featureName: 'الحساب') : ProfilePage(),
+        isGuest
+            ? const AuthRequiredScreen(featureName: 'الحساب')
+            : ProfilePage(),
       );
       mIcons.add(Icons.person_sharp);
 
@@ -75,7 +77,10 @@ class MainScreen extends StatelessWidget {
           onFabTap: () {
             final di = Get.find<DataInitializerService>();
             if (ApiHelper.isGuestMode) {
-              Get.to(() => const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'));
+              Get.to(
+                    () =>
+                const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'),
+              );
               return;
             }
             if (di.currentStoreMode == StoreMode.services) {
@@ -84,12 +89,10 @@ class MainScreen extends StatelessWidget {
               Get.toNamed('/products-Screen');
               try {
                 Get.find<ProductController>().navigateToAddProduct();
-              } catch (_) {
-              }
+              } catch (_) {}
             }
           },
         ),
-
       ],
     );
   }

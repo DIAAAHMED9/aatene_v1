@@ -1,8 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:attene_mobile/view/profile/vendor_profile/widget/offers.dart';
 import 'package:readmore/readmore.dart';
-
+import 'package:share_plus/share_plus.dart';
 import '../../../general_index.dart';
+import '../../profile/user profile/widget/rating_profile_screen.dart';
 import '../../support/empty.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -141,8 +141,9 @@ class _ProductDetailsState extends State<ProductDetails> {
             }
 
             final images = _collectImages(product);
-            final title =
-                (product.name ?? product.slug ?? '').toString().trim();
+            final title = (product.name ?? product.slug ?? '')
+                .toString()
+                .trim();
             final desc = (product.description ?? product.shortDescription ?? '')
                 .toString()
                 .trim();
@@ -216,7 +217,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                             borderRadius: BorderRadius.circular(100),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -273,8 +276,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                 ),
                                 const Spacer(),
-                                const Icon(Icons.star,
-                                    color: Colors.amberAccent),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amberAccent,
+                                ),
                                 const Text("5.0"),
                                 const Text("(00)"),
                               ],
@@ -329,8 +334,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 decoration: CustomDropdownDecoration(
                                   hintStyle: getMedium(fontSize: 12),
                                   closedBorderRadius: BorderRadius.circular(10),
-                                  closedBorder:
-                                      Border.all(color: AppColors.primary100),
+                                  closedBorder: Border.all(
+                                    color: AppColors.primary100,
+                                  ),
                                   closedSuffixIcon: Icon(
                                     Icons.keyboard_arrow_down_outlined,
                                     color: AppColors.primary100,
@@ -349,8 +355,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 decoration: CustomDropdownDecoration(
                                   hintStyle: getMedium(fontSize: 12),
                                   closedBorderRadius: BorderRadius.circular(10),
-                                  closedBorder:
-                                      Border.all(color: AppColors.primary100),
+                                  closedBorder: Border.all(
+                                    color: AppColors.primary100,
+                                  ),
                                   closedSuffixIcon: Icon(
                                     Icons.keyboard_arrow_down_outlined,
                                     color: AppColors.primary100,
@@ -368,8 +375,10 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                         Row(
                           children: [
-                            const Text(" السعر",
-                                style: TextStyle(fontSize: 13)),
+                            const Text(
+                              " السعر",
+                              style: TextStyle(fontSize: 13),
+                            ),
                             Text(
                               price.isNotEmpty ? " $price ₪" : " -",
                               style: const TextStyle(
@@ -399,7 +408,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ],
                         ),
                         const SizedBox(height: 20),
-
                         Row(
                           spacing: 10,
                           children: [
@@ -426,13 +434,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             : Icons.favorite_border,
                                         size: 30,
                                         color: isLiked
-                                            ? AppColors.error200
+                                            ? AppColors.primary400
                                             : AppColors.neutral300,
                                       ),
                                       Text(
                                         "اعجبني",
                                         style: TextStyle(
-                                            color: AppColors.neutral400),
+                                          color: AppColors.neutral400,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -440,32 +449,43 @@ class _ProductDetailsState extends State<ProductDetails> {
                               ),
                             ),
                             Expanded(
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                    color: AppColors.primary50,
-                                    width: 2,
+                              child: GestureDetector(
+                                onTap: () {
+                                  SharePlus.instance.share(
+                                    ShareParams(
+                                      title: 'Check out this app!',
+                                      text: 'Check out this app!',
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color: AppColors.primary50,
+                                      width: 2,
+                                    ),
                                   ),
-                                ),
-                                child: Column(
-                                  spacing: 10,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/images/svg_images/share.svg",
-                                      width: 30,
-                                      height: 30,
-                                      color: AppColors.neutral300,
-                                    ),
-                                    Text(
-                                      "مشاركه",
-                                      style: TextStyle(
-                                          color: AppColors.neutral400),
-                                    ),
-                                  ],
+                                  child: Column(
+                                    spacing: 10,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/images/svg_images/share.svg",
+                                        width: 30,
+                                        height: 30,
+                                        color: AppColors.neutral300,
+                                      ),
+                                      Text(
+                                        "مشاركه",
+                                        style: TextStyle(
+                                          color: AppColors.neutral400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -492,7 +512,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     Text(
                                       "تقيم",
                                       style: TextStyle(
-                                          color: AppColors.neutral400),
+                                        color: AppColors.neutral400,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -521,7 +542,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     Text(
                                       "إبلاغ",
                                       style: TextStyle(
-                                          color: AppColors.neutral400),
+                                        color: AppColors.neutral400,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -571,8 +593,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
                                           color: Colors.grey[100],
-                                          borderRadius:
-                                              BorderRadius.circular(15),
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
                                         ),
                                         child: SvgPicture.asset(
                                           "assets/images/svg_images/Calendar12.svg",
@@ -634,8 +657,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       padding: const EdgeInsets.all(5),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[100],
-                                        borderRadius:
-                                            BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
                                       child: SvgPicture.asset(
                                         "assets/images/svg_images/delivery-truck-svgrepo-com (1) 1.svg",
@@ -665,8 +687,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             color: AppColors.primary100,
                                           ),
                                           closedSuffixIcon: Icon(
-                                            Icons
-                                                .keyboard_arrow_down_outlined,
+                                            Icons.keyboard_arrow_down_outlined,
                                             color: AppColors.primary400,
                                           ),
                                         ),
@@ -681,8 +702,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
-                                    border:
-                                        Border.all(color: AppColors.primary50),
+                                    border: Border.all(
+                                      color: AppColors.primary50,
+                                    ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
@@ -695,8 +717,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           padding: const EdgeInsets.all(7),
                                           decoration: BoxDecoration(
                                             color: AppColors.primary400,
-                                            borderRadius:
-                                                BorderRadius.circular(15),
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
                                           ),
                                           child: SvgPicture.asset(
                                             "assets/images/svg_images/city_delevery.svg",
@@ -928,9 +951,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                             Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Text(
-                                desc.isNotEmpty
-                                    ? desc
-                                    : "لا توجد مواصفات",
+                                desc.isNotEmpty ? desc : "لا توجد مواصفات",
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: AppColors.neutral500,
@@ -970,11 +991,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 20),
-                                RatingSummaryWidget(
-                                  rating: 4.2,
-                                  totalReviews: 1280,
-                                  ratingCount: const [20, 15, 5, 4, 2],
-                                ),
+                                RatingProfile(),
                               ],
                             ),
                           ],
@@ -1015,8 +1032,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       Container(
                                         height: 35,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
                                           color: Colors.grey[100],
                                         ),
                                         child: const Padding(
