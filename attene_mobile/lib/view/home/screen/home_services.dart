@@ -216,7 +216,7 @@ class HomeServices extends GetView<HomeController> {
               ShowAllTitle(title: "الخدمات الأعلى تقيماً"),
               ServicesCard(),
               SizedBox(
-                height: 160, // نفس ارتفاع الإعلان تقريبًا
+                height: 160,
                 child: PageView.builder(
                   itemCount: controller.ads.length,
                   onPageChanged: controller.onPageChanged,
@@ -225,7 +225,6 @@ class HomeServices extends GetView<HomeController> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(22),
-                        // زوايا ناعمة مثل الصورة
                         child: Image.asset(
                           controller.ads[index].image,
                           fit: BoxFit.cover,

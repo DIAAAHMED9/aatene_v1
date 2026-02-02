@@ -270,7 +270,6 @@ class _ServicesDetailState extends State<ServicesDetail> {
 
                     ExpansionTile(
                       maintainState: true,
-                      // shape: StadiumBorder(),
                       title: Row(
                         spacing: 10,
                         children: [

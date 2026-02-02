@@ -28,12 +28,9 @@ class AppBindings extends Bindings {
     print('🔄 [APP BINDINGS] تسجيل المتحكمات الأساسية فقط...');
 
     Get.lazyPut(() => GetStorage(), fenix: true);
-    // Keep MyAppController alive for the whole app lifecycle.
-    // It owns auth/session state used by API headers.
     Get.put(MyAppController(), permanent: true);
     Get.lazyPut(() => ResponsiveService(), fenix: true);
     Get.lazyPut(() => LanguageController(), fenix: true);
-    // نحتاجهما مبكراً (قبل/بعد تسجيل الدخول) لضمان عمل اختيار المتجر والتهيئة
     Get.lazyPut(() => DataInitializerService(), fenix: true);
     Get.lazyPut(() => StoreSelectionController(), fenix: true);
     Get.lazyPut<HomeController>(() => HomeController());
@@ -66,14 +63,12 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => KeywordController(), fenix: true);
         Get.lazyPut(() => AddProductController(), fenix: true);
         Get.lazyPut(() => MediaLibraryController(), fenix: true);
-        // Get.lazyPut(() => StoriesController(), fenix: true);
         Get.lazyPut(() => RelatedProductsController(), fenix: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
-        // Get.lazyPut(() => StoriesController(), fenix: true);
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });
@@ -198,14 +193,11 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/selectStore', page: () => const StoreSelectionScreen()),
         GetPage(name: '/mainScreen', page: () => MainScreen()),
         GetPage(name: '/media_library', page: () => MediaLibraryScreen()),
-        // GetPage(name: '/story-test', page: () => const StoryTestScreen()),
-        // GetPage(name: '/add-story', page: () => const AddStoryScreen()),
         GetPage(
           name: '/related-products',
           page: () => RelatedProductsScreen(),
           middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
         ),
-        // Services add/edit (same flow as products)
         GetPage(
           name: '/add-service',
           page: () {
@@ -229,7 +221,7 @@ GetPage(
           page: () => ProductScreen(),
           middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
         ),
-        GetPage(name: '/product-details', page: () => const ProductDetailsScreen()),
+        GetPage(name: '/product-details', page: () => const ProductDetails()),
 
         GetPage(
           name: '/AddProductStepperScreen',
@@ -256,7 +248,6 @@ GetPage(
           middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
         ),
       ],
-      // debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -268,7 +259,6 @@ void main() async {
 
   await _initializeEssentialServices();
 
-  // ✅ Register lifecycle manager once
   AppLifecycleManager.I.register();
   if (!Get.isRegistered<AppLifecycleManager>()) {
     Get.put<AppLifecycleManager>(AppLifecycleManager.I, permanent: true);
@@ -298,13 +288,10 @@ void _initializeBackgroundServices() {
 
       await PushNotificationService().setupInteractedMessage();
 
-      // ✅ لا تنشئ AppLifecycleManager() — استخدم I فقط
-      // (غالبًا لا تحتاج هذا السطر لأننا سجلناه في main)
       if (!Get.isRegistered<AppLifecycleManager>()) {
         Get.put<AppLifecycleManager>(AppLifecycleManager.I, permanent: true);
       }
 
-      // ✅ Permissions & token
       try {
         await FirebaseMessaging.instance.requestPermission();
       } catch (_) {}

@@ -6,7 +6,6 @@ import 'image_picker_story_screen.dart';
 import 'product_story_screen.dart';
 
 class StoryCreateSheet {
-  /// Opens create sheet and returns `true` if a story was successfully created.
   static Future<bool?> open(BuildContext context) async {
     final String? choice = await showModalBottomSheet<String>(
       context: context,
@@ -31,7 +30,6 @@ class StoryCreateSheet {
             ) ??
             false;
       case 'product':
-        // Product story is still demo-only for now.
         await Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const ProductStoryScreen()),
@@ -123,12 +121,9 @@ class _SheetBody extends StatelessWidget {
   }) {
     return
 
-
-
       ListTile(
       trailing: Icon(icon, size: 26, color: Colors.black),
       title: Align(
-        // alignment: Alignment.centerRight,
         child: Text(title, style: getMedium(fontSize: 18)),
       ),
 

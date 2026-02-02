@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class SearchHistory extends StatefulWidget {
   const SearchHistory({super.key});
 
@@ -86,7 +85,6 @@ class _SearchHistoryState extends State<SearchHistory> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -109,7 +107,6 @@ class _SearchHistoryState extends State<SearchHistory> {
 
                 const SizedBox(height: 16),
 
-                // Chips
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,

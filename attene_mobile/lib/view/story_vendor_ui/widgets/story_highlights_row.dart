@@ -6,16 +6,7 @@ import '../screens/story_create_sheet.dart';
 import '../screens/story_viewer_screen.dart';
 import '../theme/story_vendor_theme.dart';
 
-/// Highlights row (Instagram-like circles)
-///
-/// - (+) opens create sheet
-/// - Other circles open viewer
-///
-/// This widget fetches merchant stories from API:
-/// GET /merchants/stories
-/// and injects them as a single vendor named "قصتي" (multiple frames).
 class StoryHighlightsRow extends StatefulWidget {
-  /// Other vendors (dummy or from another source). We keep this so UI stays as-is.
   final List<demo.StoryVendorDemoModel> vendors;
 
   const StoryHighlightsRow({super.key, required this.vendors});
@@ -50,7 +41,6 @@ class _StoryHighlightsRowState extends State<StoryHighlightsRow> {
       final list = await MerchantStoriesApi.fetchAll();
       setState(() => _myStories = list);
     } catch (_) {
-      // Silent: if API fails, we just show the other vendors.
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -86,7 +76,6 @@ class _StoryHighlightsRowState extends State<StoryHighlightsRow> {
   List<demo.StoryVendorDemoModel> get _allVendors {
     final my = _buildMyVendor();
     if (my == null) return _others;
-    // Put "قصتي" first so it's easy to open.
     return [my, ..._others];
   }
 
@@ -120,7 +109,6 @@ class _StoryHighlightsRowState extends State<StoryHighlightsRow> {
             itemCount: vendors.length + 1,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (_, i) {
-              // (+)
               if (i == 0) {
                 return _AddCircle(
                   onTap: () async {

@@ -198,38 +198,6 @@ class HomeProduct extends GetView<HomeController> {
                 ],
               ),
               ImageSlider(),
-              // Row(
-              //   spacing: 10,
-              //   children: [
-              //     Expanded(
-              //       child: TextFiledAatene(
-              //         isRTL: isRTL,
-              //         hintText: "ابحث عن المنتجات التي تريدها",
-              //         textInputAction: TextInputAction.done,
-              //         suffixIcon: Padding(
-              //           padding: const EdgeInsets.all(5),
-              //           child: CircleAvatar(
-              //             backgroundColor: AppColors.primary400,
-              //             child: const Icon(Icons.search, color: Colors.white),
-              //           ),
-              //         ),
-              //         textInputType: TextInputType.name,
-              //       ),
-              //     ),
-              //     CircleAvatar(
-              //       backgroundColor: AppColors.primary50,
-              //       child: IconButton(
-              //         onPressed: () {},
-              //         icon: SvgPicture.asset(
-              //           'assets/images/svg_images/Filter.svg',
-              //           semanticsLabel: 'My SVG Image',
-              //           height: 18,
-              //           width: 18,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               TextButton(
                 onPressed: () {
                   Get.to(ProductScreen);
@@ -262,7 +230,7 @@ class HomeProduct extends GetView<HomeController> {
               ),
               ProductCard(),
               SizedBox(
-                height: 160, // نفس ارتفاع الإعلان تقريبًا
+                height: 160,
                 child: PageView.builder(
                   itemCount: controller.ads.length,
                   onPageChanged: controller.onPageChanged,
@@ -271,7 +239,6 @@ class HomeProduct extends GetView<HomeController> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(22),
-                        // زوايا ناعمة مثل الصورة
                         child: Image.asset(
                           controller.ads[index].image,
                           fit: BoxFit.cover,
@@ -320,7 +287,6 @@ class HomeProduct extends GetView<HomeController> {
                             ElevatedButton(
                               onPressed: () {
                                 Get.to(ManageAccountStore());
-                                // تنفيذ الإجراء المطلوب عند الضغط على الزر
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary400,
@@ -353,7 +319,6 @@ class HomeProduct extends GetView<HomeController> {
               ProductCardUI(),
               ShowAllTitle(title: "فئات"),
               Container(
-                // The main card container
                 padding: const EdgeInsets.all(12.0),
                 width: 165,
                 height: 210,
@@ -371,7 +336,6 @@ class HomeProduct extends GetView<HomeController> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // The 2x2 Image Grid
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
                       child: Column(
@@ -403,11 +367,9 @@ class HomeProduct extends GetView<HomeController> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // The Bottom Row with Text and Number Badge
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Arabic Text "أحذية"
                         const Text(
                           'أحذية',
                           style: TextStyle(
@@ -415,10 +377,9 @@ class HomeProduct extends GetView<HomeController> {
                             fontWeight: FontWeight.w800,
                             color: Colors.black87,
                             fontFamily:
-                                'PingAR', // Use a font that supports Arabic well
+                                'PingAR',
                           ),
                         ),
-                        // Number Badge "530"
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
@@ -426,13 +387,12 @@ class HomeProduct extends GetView<HomeController> {
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEDF1F7),
-                            // Light grey-blue background
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: const Text(
                             '530',
                             style: TextStyle(
-                              color: Color(0xFF4186F5), // Blue text color
+                              color: Color(0xFF4186F5),
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
@@ -462,7 +422,7 @@ class HomeProduct extends GetView<HomeController> {
                     "متجر إلكتروني متخصص في أحدث صيحات الموضة والأزياء العصرية للشباب والشابات",
                 rating: 5.0,
                 imagePath:
-                    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80", // صورة تعبيرية
+                    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
               ),
             ],
           ),
@@ -474,7 +434,7 @@ class HomeProduct extends GetView<HomeController> {
   Widget _buildImageItem(String imageUrl) {
     return Expanded(
       child: AspectRatio(
-        aspectRatio: 1, // Keeps the images square
+        aspectRatio: 1,
         child: Image.network(
           imageUrl,
           fit: BoxFit.cover,

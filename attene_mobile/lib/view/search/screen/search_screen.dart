@@ -102,7 +102,6 @@ class _SearchScreenState extends State<SearchScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
               Row(
                 children: [
                   const SizedBox(width: 8),
@@ -145,7 +144,6 @@ class _SearchScreenState extends State<SearchScreen>
 
               const SizedBox(height: 24),
 
-              // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -162,7 +160,6 @@ class _SearchScreenState extends State<SearchScreen>
 
               const SizedBox(height: 12),
 
-              // Animated Chips
               Wrap(
                 spacing: 8,
                 runSpacing: 8,

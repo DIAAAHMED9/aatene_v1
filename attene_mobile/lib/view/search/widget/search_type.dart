@@ -1,19 +1,16 @@
 import 'package:attene_mobile/general_index.dart';
 
-/// ================= ENUM =================
 enum SearchType { products, stores, services, users }
 
-/// ================= CONTROLLER =================
 class SearchTypeController extends GetxController {
   final Rx<SearchType> selectedType = SearchType.products.obs;
 
   void selectType(SearchType type) {
     selectedType.value = type;
-    Get.back(result: type); // إغلاق + إرجاع القيمة
+    Get.back(result: type);
   }
 }
 
-/// ================= BOTTOM SHEET =================
 class SearchTypeBottomSheet extends StatelessWidget {
   const SearchTypeBottomSheet({super.key});
 
@@ -32,7 +29,6 @@ class SearchTypeBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /// Indicator
             Container(
               width: 48,
               height: 5,
@@ -44,7 +40,6 @@ class SearchTypeBottomSheet extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            /// Title
             Center(
               child: const Text(
                 textAlign: TextAlign.center,
@@ -66,7 +61,6 @@ class SearchTypeBottomSheet extends StatelessWidget {
   }
 }
 
-/// ================= RADIO ITEM =================
 class _RadioItem extends GetView<SearchTypeController> {
   const _RadioItem({required this.title, required this.value});
 
@@ -100,7 +94,6 @@ class _RadioItem extends GetView<SearchTypeController> {
   }
 }
 
-/// ================= ANIMATION (Fade + Slide) =================
 class _AnimatedSheet extends StatefulWidget {
   const _AnimatedSheet({required this.child});
 

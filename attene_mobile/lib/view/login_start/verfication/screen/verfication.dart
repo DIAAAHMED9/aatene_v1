@@ -111,21 +111,6 @@ class Verification extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Align(
-                //   alignment: isRTL ? Alignment.topLeft : Alignment.topRight,
-                //   child:  IconButton(
-                //     onPressed: () => Get.back(),
-                //     icon: Container(
-                //       width: 50,
-                //       height: 50,
-                //       decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(100),
-                //         color: Colors.grey[100],
-                //       ),
-                //       child: Icon(Icons.arrow_back, color: AppColors.neutral100),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: ResponsiveDimensions.h(60)),
                 Text(
                   isRTL ? 'تأكد من رقم الهاتف' : 'Verify Phone Number',
@@ -155,11 +140,8 @@ class Verification extends StatelessWidget {
                     children: List.generate(5, (index) {
                       return VerificationCodeField(
                         controller: TextEditingController(
-                          // text: controller.codes[index],
                         ),
                         focusNode: controller.focusNodes[index],
-                        // onChanged: (value) =>
-                        // controller.updateCode(index, value),
                         hasError: controller.errorMessage.isNotEmpty,
                         autoFocus: index == 0,
                         onChanged: (String p1) {},

@@ -352,11 +352,6 @@ class ProductScreen extends GetView<ProductController> {
             height: 300,
           ),
 
-          // Icon(
-          //   Icons.inventory_2_outlined,
-          //   size: ResponsiveDimensions.f(100),
-          //   color: Colors.grey[300],
-          // ),
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
             _getEmptyMessage(sectionName, tabIndex),

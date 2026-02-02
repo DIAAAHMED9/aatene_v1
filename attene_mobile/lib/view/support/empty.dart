@@ -1,6 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-///  Rating
 class RatingSummaryWidget extends StatefulWidget {
   final double rating;
   final int totalReviews;
@@ -59,7 +58,6 @@ class _RatingSummaryWidgetState extends State<RatingSummaryWidget>
         spacing: 20,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// ===== Distribution =====
           Expanded(
             child: Column(
               children: List.generate(5, (index) {
@@ -71,7 +69,6 @@ class _RatingSummaryWidgetState extends State<RatingSummaryWidget>
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
                     children: [
-                      /// Count
                       Text(
                         count.toString(),
                         style: const TextStyle(
@@ -81,7 +78,6 @@ class _RatingSummaryWidgetState extends State<RatingSummaryWidget>
                       ),
                       const SizedBox(width: 10),
 
-                      /// Animated Progress Bar
                       Expanded(
                         child: TweenAnimationBuilder<double>(
                           tween: Tween<double>(begin: 0, end: progress),
@@ -105,7 +101,6 @@ class _RatingSummaryWidgetState extends State<RatingSummaryWidget>
 
                       const SizedBox(width: 10),
 
-                      /// Stars
                       Row(
                         children: List.generate(
                           starValue,
@@ -123,7 +118,6 @@ class _RatingSummaryWidgetState extends State<RatingSummaryWidget>
             ),
           ),
 
-          /// ===== Rating Value =====
           Column(
             spacing: 5,
             children: [

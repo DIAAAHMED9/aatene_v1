@@ -1,6 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-
 class FilterBottomSheet extends StatelessWidget {
   const FilterBottomSheet({super.key});
 
