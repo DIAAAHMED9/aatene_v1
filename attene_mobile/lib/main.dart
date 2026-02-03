@@ -1,5 +1,6 @@
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
+import 'package:attene_mobile/view/profile/vendor_profile/screen/catigory_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -182,7 +183,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
-        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/', page: () => CategoriesList()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

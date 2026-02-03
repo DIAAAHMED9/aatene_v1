@@ -1,4 +1,5 @@
 import '../../../general_index.dart';
+import 'package:flutter/material.dart';
 
 class HomeControl extends StatelessWidget {
   const HomeControl({super.key});
@@ -13,6 +14,10 @@ class HomeControl extends StatelessWidget {
               width: double.infinity,
               height: 240,
               decoration: BoxDecoration(
+                image: DecorationImage(                  
+                  image: AssetImage("assets/images/png/bacground_control.jpeg"),
+                  fit: BoxFit.cover,
+                ),
                 color: const Color(0xFFF5F6F8),
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(24),
@@ -70,7 +75,7 @@ class HomeControl extends StatelessWidget {
                                 child: IconButton(
                                   onPressed: () {
                                     Get.to(Edit_Profile());
-                                    },
+                                  },
                                   icon: Icon(
                                     Icons.mode_edit_outline_outlined,
                                     color: AppColors.primary400,

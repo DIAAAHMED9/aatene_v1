@@ -3,7 +3,7 @@ import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../general_index.dart';
 import '../../profile/user profile/widget/rating_profile_screen.dart';
-import '../../support/empty.dart';
+import 'package:flutter/material.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});

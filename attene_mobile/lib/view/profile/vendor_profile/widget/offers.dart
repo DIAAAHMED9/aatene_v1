@@ -1,4 +1,7 @@
 import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/view/profile/vendor_profile/screen/catigory_page.dart';
+import 'package:flutter/material.dart';
+
 
 class OffersTabPage extends StatelessWidget {
   const OffersTabPage({super.key});

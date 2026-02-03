@@ -1,8 +1,6 @@
 import 'package:attene_mobile/general_index.dart';
-
-import '../controller/search_controller.dart';
-import '../widget/big_search_filter.dart';
 import '../widget/search_type.dart';
+import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
