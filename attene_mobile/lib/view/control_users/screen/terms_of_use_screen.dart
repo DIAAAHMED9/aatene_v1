@@ -93,7 +93,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                   ),
                   DropdownMenuItem<String>(
                     value: 'en',
-                    child: Text('english', style: getRegular(fontSize: 14)),
+                    child: Text('english', style: getMedium(fontSize: 14)),
                   ),
                 ],
                 onChanged: (value) {
@@ -143,14 +143,14 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                         backgroundColor: AppColors.primary400,
                         child: Text(
                           '${index + 1}',
-                          style: getRegular(fontSize: 11, color: Colors.white),
+                          style: getMedium(fontSize: 11, color: Colors.white),
                         ),
                       ),
                       title: Row(
                         children: [
                           Text(
                             items[index]['title']!,
-                            style: getRegular(fontSize: 14),
+                            style: getMedium(fontSize: 14),
                           ),
                           const Spacer(),
                           _circleIconPlus(
@@ -164,7 +164,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         child: Text(
                           items[index]['content']!,
-                          style: getRegular(fontSize: 12),
+                          style: getMedium(fontSize: 12),
                         ),
                       ),
                   ],

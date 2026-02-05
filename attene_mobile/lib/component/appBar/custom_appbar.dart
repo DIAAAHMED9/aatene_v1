@@ -16,7 +16,7 @@ class CustomAppBarWithTabs extends StatelessWidget
 
   bool _isTablet(BuildContext context) =>
       MediaQuery.of(context).size.width >= 768 &&
-          MediaQuery.of(context).size.width < 1024;
+      MediaQuery.of(context).size.width < 1024;
 
   bool _isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= 1024;
@@ -118,51 +118,55 @@ class CustomAppBarWithTabs extends StatelessWidget
       borderRadius: _isMobile(context)
           ? BorderRadius.circular(0)
           : BorderRadius.only(
-        bottomLeft: Radius.circular(12),
-        bottomRight: Radius.circular(12),
-      ),
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
     );
   }
 
   Widget _buildTopBar(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (_isMobile(context) && Navigator.of(context).canPop())
+    return SizedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (_isMobile(context) && Navigator.of(context).canPop())
+
           IconButton(
-            icon: Icon(
-              isRTL ? Icons.arrow_forward : Icons.arrow_back,
-              color: Colors.grey[700],
-              size: 24,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _isMobile(context) ? 8 : 0,
-            ),
-            child: Text(
-              config.title,
-              style: TextStyle(
-                fontSize: _getTitleFontSize(context),
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-                fontFamily: "PingAR",
+            onPressed: () => Get.back(),
+            icon: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Colors.grey[100],
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              child: Icon(Icons.arrow_back, color: AppColors.neutral100),
             ),
           ),
-        ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: _isMobile(context) ? 8 : 0,
+              ),
+              child: Text(
+                config.title,
+                style: TextStyle(
+                  fontSize: _getTitleFontSize(context),
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                  fontFamily: "PingAR",
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
 
-        if (config.actionText.isNotEmpty && config.onActionPressed != null)
-          _buildActionButton(context),
-      ],
+          if (config.actionText.isNotEmpty && config.onActionPressed != null)
+            _buildActionButton(context),
+        ],
+      ),
     );
   }
 
@@ -263,9 +267,7 @@ class CustomAppBarWithTabs extends StatelessWidget
                         size: _isMobile(context) ? 20 : 22,
                       ),
                       border: InputBorder.none,
-                      hintText: isRTL
-                          ? 'بحث'
-                          : 'Search products...',
+                      hintText: isRTL ? 'بحث' : 'Search products...',
                       hintStyle: TextStyle(
                         color: Colors.grey[500],
                         fontSize: _isMobile(context) ? 14 : 15,
@@ -358,10 +360,10 @@ class CustomAppBarWithTabs extends StatelessWidget
   }
 
   Widget _buildUniversalImage(
-      String assetPath, {
-        Color? color,
-        double size = 20,
-      }) {
+    String assetPath, {
+    Color? color,
+    double size = 20,
+  }) {
     try {
       Widget imageWidget;
 

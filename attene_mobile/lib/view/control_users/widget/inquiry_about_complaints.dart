@@ -39,7 +39,7 @@ class InquiryAboutComplaints extends StatelessWidget {
               Text('إستعلام عن الشكاوي', style: getBold(fontSize: 18)),
               Text(
                 'ما الذي تقدر أن نساعدك به ؟',
-                style: getRegular(fontSize: 12, color: Colors.grey),
+                style: getMedium(fontSize: 12, color: Colors.grey),
               ),
               Row(
                 spacing: 10,
@@ -138,7 +138,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   "قيد المعالجة",
-                                  style: getRegular(
+                                  style: getMedium(
                                     fontSize: 10,
                                     color: AppColors.customColor03,
                                   ),
@@ -153,22 +153,22 @@ class InquiryAboutComplaints extends StatelessWidget {
                         children: [
                           Text(
                             "رقم الشكوي :",
-                            style: getRegular(fontSize: 10, color: Colors.grey),
+                            style: getMedium(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
                             "C-2020-001",
-                            style: getRegular(
+                            style: getMedium(
                               fontSize: 10,
                               color: AppColors.primary400,
                             ),
                           ),
                           Text(
                             "الفئة :",
-                            style: getRegular(fontSize: 10, color: Colors.grey),
+                            style: getMedium(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
                             "خدمات",
-                            style: getRegular(
+                            style: getMedium(
                               fontSize: 10,
                               color: AppColors.primary400,
                             ),
@@ -181,11 +181,11 @@ class InquiryAboutComplaints extends StatelessWidget {
                         children: [
                           Text(
                             "التاريخ :",
-                            style: getRegular(fontSize: 10, color: Colors.grey),
+                            style: getMedium(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
                             "C-2020-001",
-                            style: getRegular(
+                            style: getMedium(
                               fontSize: 10,
                               color: AppColors.primary400,
                             ),
@@ -215,7 +215,7 @@ class InquiryAboutComplaints extends StatelessWidget {
                                 ),
                                 Text(
                                   "عرض التفاصيل",
-                                  style: getRegular(
+                                  style: getMedium(
                                     fontSize: 10,
                                     color: AppColors.light1000,
                                   ),

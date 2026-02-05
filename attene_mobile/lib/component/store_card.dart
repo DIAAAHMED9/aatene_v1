@@ -1,3 +1,4 @@
+import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/view/profile/vendor_profile/screen/store_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -130,18 +131,14 @@ class VendorCard extends StatelessWidget {
             Row(
               spacing: 7,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.stars_rounded, size: 16, color: Colors.orange),
-                Text(
+              children: [
+                const Icon(Icons.stars_rounded, size: 16, color: Colors.orange),
+                 Text(
                   '5.0',
-                  style: TextStyle(fontSize: 12, color: AppColors.neutral400),
+                  style:getMedium(fontSize: 12, color: AppColors.neutral400),
                 ),
-                Icon(
-                  Icons.local_shipping_outlined,
-                  size: 16,
-                  color: AppColors.success300,
-                ),
-                Icon(Icons.shield_moon_outlined, size: 16, color: Colors.teal),
+                SvgPicture.asset("assets/images/svg_images/bus.svg",width: 16,height: 16, fit: BoxFit.cover,),
+                SvgPicture.asset("assets/images/svg_images/privicy_vendor.svg.svg",width: 16,height: 16, fit: BoxFit.cover,),
               ],
             ),
             const SizedBox(height: 10),

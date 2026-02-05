@@ -97,7 +97,7 @@ class ServiceScreen extends StatelessWidget {
                   if (controller.isServiceTitleError.value)
                     Text(
                       'هذا الحقل مطلوب',
-                      style: getRegular(
+                      style: getMedium(
                         color: Colors.red,
                         fontSize: ResponsiveDimensions.responsiveFontSize(12),
                       ),
@@ -106,7 +106,7 @@ class ServiceScreen extends StatelessWidget {
                     const SizedBox(),
                   Text(
                     '${controller.serviceTitle.value.length}/100',
-                    style: getRegular(
+                    style: getMedium(
                       color: Color(0xFF757575),
                       fontSize: ResponsiveDimensions.responsiveFontSize(12),
                     ),
@@ -156,7 +156,7 @@ class ServiceScreen extends StatelessWidget {
                           controller.selectedMainCategory.value.isEmpty
                               ? 'اختر القسم الرئيسي'
                               : controller.selectedMainCategory.value,
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               10,
                             ),
@@ -184,7 +184,7 @@ class ServiceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: getRegular(
+                  style: getMedium(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -193,7 +193,7 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Text(
               'يجب اختيار قسم رئيسي للخدمة (مثال: تصميم وبرمجة)',
-              style: getRegular(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
                 color: Color(0xFF757575),
               ),
@@ -257,7 +257,7 @@ class ServiceScreen extends StatelessWidget {
                           controller.selectedCategory.value.isEmpty
                               ? 'اختر الفئة الفرعية'
                               : controller.selectedCategory.value,
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               10,
                             ),
@@ -288,7 +288,7 @@ class ServiceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: getRegular(
+                  style: getMedium(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -297,7 +297,7 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Text(
               'اختر فئة فرعية للخدمة (مثال: تصميم مواقع إلكترونية)',
-              style: getRegular(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
                 color: Color(0xFF757575),
               ),
@@ -380,7 +380,7 @@ class ServiceScreen extends StatelessWidget {
                       ? 'تم الوصول للحد الأقصى'
                       : 'أدخل تخصصاً',
                   border: InputBorder.none,
-                  hintStyle: getRegular(
+                  hintStyle: getMedium(
                     color: Color(0xFF757575),
                     fontSize: ResponsiveDimensions.responsiveFontSize(14),
                   ),
@@ -428,7 +428,7 @@ class ServiceScreen extends StatelessWidget {
               children: [
                 Text(
                   'أدخل تخصصاً ثم اضغط زر الإضافة',
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.responsiveFontSize(11),
                     color: Colors.grey,
                   ),
@@ -481,7 +481,7 @@ class ServiceScreen extends StatelessWidget {
                       return Chip(
                         label: Text(
                           controller.specializations[index],
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -490,7 +490,7 @@ class ServiceScreen extends StatelessWidget {
                         backgroundColor: AppColors.primary50,
                         deleteIconColor: AppColors.primary400,
                         onDeleted: () => controller.removeSpecialization(index),
-                        labelStyle: getRegular(color: AppColors.primary500),
+                        labelStyle: getMedium(color: AppColors.primary500),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.0),
                           side: BorderSide(
@@ -537,7 +537,7 @@ class ServiceScreen extends StatelessWidget {
                       ? 'تم الوصول للحد الأقصى'
                       : 'أدخل كلمة مفتاحية',
                   border: InputBorder.none,
-                  hintStyle: getRegular(
+                  hintStyle: getMedium(
                     color: Color(0xFF757575),
                     fontSize: ResponsiveDimensions.responsiveFontSize(14),
                   ),
@@ -587,7 +587,7 @@ class ServiceScreen extends StatelessWidget {
               children: [
                 Text(
                   'أدخل كلمة مفتاحية ثم اضغط زر الإضافة',
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.responsiveFontSize(11),
                     color: Colors.grey,
                   ),
@@ -640,7 +640,7 @@ class ServiceScreen extends StatelessWidget {
                       return Chip(
                         label: Text(
                           controller.keywords[index],
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -649,7 +649,7 @@ class ServiceScreen extends StatelessWidget {
                         backgroundColor: AppColors.primary50,
                         deleteIconColor: AppColors.primary400,
                         onDeleted: () => controller.removeKeyword(index),
-                        labelStyle: getRegular(color: AppColors.primary500),
+                        labelStyle: getMedium(color: AppColors.primary500),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.0),
                           side: BorderSide(
@@ -693,7 +693,7 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Text(
               title,
-              style: getRegular(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.responsiveFontSize(14),
                 color: Colors.grey,
               ),
@@ -701,7 +701,7 @@ class ServiceScreen extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.responsiveHeight(4)),
             Text(
               subtitle,
-              style: getRegular(
+              style: getMedium(
                 fontSize: ResponsiveDimensions.responsiveFontSize(12),
                 color: Color(0xFFBDBDBD),
               ),
@@ -827,14 +827,14 @@ class ServiceScreen extends StatelessWidget {
                     SizedBox(height: 16),
                     Text(
                       'لا توجد أقسام متاحة',
-                      style: getRegular(color: Color(0xFF757575)),
+                      style: getMedium(color: Color(0xFF757575)),
                     ),
 
                     SizedBox(height: 8),
                     if (controller.categoriesError.isNotEmpty)
                       Text(
                         controller.categoriesError.value,
-                        style: getRegular(fontSize: 12, color: Colors.red),
+                        style: getMedium(fontSize: 12, color: Colors.red),
                         textAlign: TextAlign.center,
                       ),
                     SizedBox(height: 16),
@@ -880,7 +880,7 @@ class ServiceScreen extends StatelessWidget {
                     ),
                     title: Text(
                       sectionName,
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: ResponsiveDimensions.responsiveFontSize(14),
                       ),
                     ),

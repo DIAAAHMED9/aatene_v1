@@ -700,7 +700,7 @@ class BottomSheetController extends GetxController {
         children: [
           Text(
             'أضف وعدّل الأقسام الخاصة بمتجرك لترتيب منتجاتك بالطريقة التي تناسبك، هذه الأقسام لا تؤثر على التصنيفات الرئيسية للمنصة، بل تسهل على عملائك تصفح متجرك',
-            style: getRegular(fontSize: 14, color: Colors.grey),
+            style: getMedium(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.right,
           ),
           const SizedBox(height: 20),
@@ -728,7 +728,8 @@ class BottomSheetController extends GetxController {
               prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
               isRTL: isRTL,
               hintText: 'ابحث في الأقسام',
-              textInputAction: TextInputAction.done, textInputType: TextInputType.name,
+              textInputAction: TextInputAction.done,
+              textInputType: TextInputType.name,
             ),
             const SizedBox(height: 20),
 
@@ -802,7 +803,7 @@ class BottomSheetController extends GetxController {
               const SizedBox(height: 16),
               Text(
                 _sectionsErrorMessage.value,
-                style: getRegular(color: Colors.grey),
+                style: getMedium(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -810,7 +811,7 @@ class BottomSheetController extends GetxController {
                 onPressed: loadSections,
                 child: Text(
                   'إعادة المحاولة',
-                  style: getRegular(color: Colors.white),
+                  style: getMedium(color: Colors.white),
                 ),
               ),
             ],
@@ -825,7 +826,7 @@ class BottomSheetController extends GetxController {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 16),
-              Text('لا توجد أقسام', style: getRegular()),
+              Text('لا توجد أقسام', style: getMedium()),
             ],
           ),
         );
@@ -882,7 +883,6 @@ class BottomSheetController extends GetxController {
                   ],
                 ),
               ),
-
             ],
           ),
         ),
@@ -928,7 +928,7 @@ class BottomSheetController extends GetxController {
       children: [
         Text(
           'أضف قسماً جديداً ليسهُل على عملائك تصفح منتجاتك بترتيب أوضح.',
-          style: getRegular(fontSize: 14, color: Colors.grey),
+          style: getMedium(fontSize: 14, color: Colors.grey),
         ),
         const SizedBox(height: 20),
         TextFiledAatene(
@@ -936,7 +936,8 @@ class BottomSheetController extends GetxController {
           onChanged: (value) => _newSectionName.value = value,
           isRTL: isRTL,
           hintText: 'أدخل اسم القسم الجديد',
-          textInputAction: TextInputAction.next, textInputType: TextInputType.name,
+          textInputAction: TextInputAction.next,
+          textInputType: TextInputType.name,
         ),
         const SizedBox(height: 20),
 
@@ -946,7 +947,7 @@ class BottomSheetController extends GetxController {
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(
                 'هذا الاسم مشابه لقسم موجود مسبقاً',
-                style: getRegular(color: Colors.orange, fontSize: 12),
+                style: getMedium(color: Colors.orange, fontSize: 12),
               ),
             );
           }
@@ -976,7 +977,6 @@ class BottomSheetController extends GetxController {
                   borderColor: AppColors.primary400,
                   color: AppColors.primary400,
                 ),
-
               ),
             ),
           ],
@@ -1221,7 +1221,7 @@ class BottomSheetController extends GetxController {
         ),
         title: Text(
           attribute.name,
-          style: getRegular(
+          style: getMedium(
             color: isSelected ? AppColors.primary400 : Colors.black87,
           ),
         ),
@@ -1510,7 +1510,6 @@ class BottomSheetController extends GetxController {
         textColor: AppColors.light1000,
         borderColor: AppColors.primary400,
       ),
-
     );
   }
 
@@ -1526,7 +1525,8 @@ class BottomSheetController extends GetxController {
           onChanged: (value) => _newAttributeName.value = value,
           isRTL: isRTL,
           hintText: 'اسم السمة',
-          textInputAction: TextInputAction.next, textInputType: TextInputType.name,
+          textInputAction: TextInputAction.next,
+          textInputType: TextInputType.name,
         ),
         const SizedBox(height: 20),
         AateneButton(
@@ -1555,7 +1555,8 @@ class BottomSheetController extends GetxController {
           onChanged: (value) => _newAttributeValue.value = value,
           isRTL: isRTL,
           hintText: 'قيمة الصفة',
-          textInputAction: TextInputAction.done, textInputType: TextInputType.name,
+          textInputAction: TextInputAction.done,
+          textInputType: TextInputType.name,
         ),
         const SizedBox(height: 20),
         AateneButton(

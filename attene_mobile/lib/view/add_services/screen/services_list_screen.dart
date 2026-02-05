@@ -287,7 +287,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
-      child: Text(text, style: getRegular(fontSize: 12, color: color)),
+      child: Text(text, style: getMedium(fontSize: 12, color: color)),
     );
   }
 
@@ -559,7 +559,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'يرجى تسجيل الدخول للوصول إلى إدارة الخدمات',
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -575,7 +575,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
               icon: Icon(Icons.login_rounded, size: ResponsiveDimensions.f(20)),
               label: Text(
                 'تسجيل الدخول',
-                style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                style: getMedium(fontSize: ResponsiveDimensions.f(14)),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary400,
@@ -627,7 +627,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           SizedBox(height: ResponsiveDimensions.f(12)),
           Text(
             _getEmptyDescription(sectionName, tabIndex),
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(12)
                   : ResponsiveDimensions.f(14),
@@ -703,7 +703,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'جاري تحميل الخدمات...',
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -747,7 +747,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
             () => Text(
               _errorMessage.value,
               textAlign: TextAlign.center,
-              style: getRegular(
+              style: getMedium(
                 fontSize: isSmallScreen
                     ? ResponsiveDimensions.f(12)
                     : ResponsiveDimensions.f(14),
@@ -768,7 +768,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
             ),
             child: Text(
               'إعادة المحاولة',
-              style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+              style: getMedium(fontSize: ResponsiveDimensions.f(14)),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
@@ -837,7 +837,7 @@ class _ServiceSelectSectionSheet extends StatelessWidget {
                       style: getMedium(fontSize: 14)),
                   subtitle: status.trim().isEmpty
                       ? null
-                      : Text(status, style: getRegular(fontSize: 12)),
+                      : Text(status, style: getMedium(fontSize: 12)),
                   onTap: id <= 0
                       ? null
                       : () {

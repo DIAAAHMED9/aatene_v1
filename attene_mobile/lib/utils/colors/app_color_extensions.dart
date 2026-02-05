@@ -36,12 +36,12 @@ class AppColorThemes {
       onSurface: AppColors.neutral100,
     ),
     textTheme:  TextTheme(
-      displayLarge:getRegular(color: AppColors.neutral100),
-      displayMedium: getRegular(color: AppColors.neutral100),
-      displaySmall:getRegular(color: AppColors.neutral100),
-      bodyLarge: getRegular(color: AppColors.neutral200),
-      bodyMedium: getRegular(color: AppColors.neutral300),
-      bodySmall:getRegular(color: AppColors.neutral400),
+      displayLarge:getMedium(color: AppColors.neutral100),
+      displayMedium: getMedium(color: AppColors.neutral100),
+      displaySmall:getMedium(color: AppColors.neutral100),
+      bodyLarge: getMedium(color: AppColors.neutral200),
+      bodyMedium: getMedium(color: AppColors.neutral300),
+      bodySmall:getMedium(color: AppColors.neutral400),
     ),
   );
 

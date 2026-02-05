@@ -1,10 +1,7 @@
 import '../../general_index.dart';
 
 class AuthRequiredScreen extends StatelessWidget {
-  const AuthRequiredScreen({
-    super.key,
-    this.featureName,
-  });
+  const AuthRequiredScreen({super.key, this.featureName});
 
   final String? featureName;
 
@@ -26,7 +23,12 @@ class AuthRequiredScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.lock_outline, size: 64),
+              SvgPicture.asset(
+                "assets/images/svg_images/user.svg",
+                width: 65,
+                height: 65,
+                fit: BoxFit.cover,
+              ),
               const SizedBox(height: 12),
               Text(
                 'يجب تسجيل الدخول للوصول إلى هذه الشاشة',

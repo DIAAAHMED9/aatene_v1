@@ -28,7 +28,7 @@ class SectionTitle extends StatelessWidget {
             ),
             Text(
               subtitle,
-              style: getRegular(fontSize: 12, color: AppColors.neutral600),
+              style: getMedium(fontSize: 12, color: AppColors.neutral600),
             ),
           ],
         ),

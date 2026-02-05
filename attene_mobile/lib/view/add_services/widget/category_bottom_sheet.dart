@@ -82,7 +82,7 @@ class CategoryBottomSheet extends StatelessWidget {
               onChanged: controller.searchCategories,
               decoration: InputDecoration(
                 hintText: 'ابحث عن فئة...',
-                hintStyle: getRegular(
+                hintStyle: getMedium(
                   fontSize: ResponsiveDimensions.responsiveFontSize(14),
                 ),
                 prefixIcon: Icon(
@@ -117,7 +117,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         ),
                         Text(
                           'يرجى اختيار قسم أولاً',
-                          style: getRegular(color: Colors.grey),
+                          style: getMedium(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -135,7 +135,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         ),
                         Text(
                           'جاري تحميل الفئات...',
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -163,7 +163,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         Text(
                           controller.categoriesError.value,
                           textAlign: TextAlign.center,
-                          style: getRegular(
+                          style: getMedium(
                             fontSize: ResponsiveDimensions.responsiveFontSize(
                               14,
                             ),
@@ -202,7 +202,7 @@ class CategoryBottomSheet extends StatelessWidget {
                         ),
                         Text(
                           'لا توجد فئات',
-                          style: getRegular(color: Colors.grey),
+                          style: getMedium(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -220,7 +220,7 @@ class CategoryBottomSheet extends StatelessWidget {
                     return ListTile(
                       title: Text(
                         categoryName,
-                        style: getRegular(
+                        style: getMedium(
                           fontSize: ResponsiveDimensions.responsiveFontSize(14),
                         ),
                       ),

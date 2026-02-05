@@ -33,11 +33,11 @@ class MembershipCard extends StatelessWidget {
             spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('عضو Basic', style: getRegular(color: Colors.white)),
+              Text('عضو Basic', style: getMedium(color: Colors.white)),
               Obx(
                 () => Text(
                   '${points.value} نقطة',
-                  style: getRegular(color: Colors.white70),
+                  style: getMedium(color: Colors.white70),
                 ),
               ),
             ],

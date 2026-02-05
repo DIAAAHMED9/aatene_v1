@@ -43,7 +43,7 @@ class AboutUsScreen extends StatelessWidget {
                 children: [
                   Text(
                     '"أعطيني" هي منصة إلكترونية وسّطية، تربط بين مزوّدي الخدمات وبائعي المنتجات المحليين مع الزبائن ، عبر واجهة بسيطة وسريعة، نمنح كل شخص عنده خدمة أو منتج فرصة للظهور الرقمي، والوصول لجمهور مهتم بدون عمولات أو تعقيدات.',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: 14,
                       color: AppColors.neutral600,
                     ),
@@ -82,7 +82,7 @@ class AboutUsScreen extends StatelessWidget {
                     ),
                     Text(
                       "نعمل على تمكين المشاريع الصغيرة من التوسع والظهور الرقمي، ونمنح كل مستخدم مساحة ذكية وسهلة للوصول إلى الخدمات والمنتجات المحلية بسرعة وثقة.",
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: 12,
                         color: AppColors.neutral600,
                       ),
@@ -125,7 +125,7 @@ class AboutUsScreen extends StatelessWidget {
                   ),
                   Text(
                     'في "أعطيني"، نؤمن بأن البيع والشراء يجب أن يكون سهلاً، سريعاً، وخالياً من التعقيدات. لذلك نوفر لك منصة موثوقة تربطك مباشرة بأهل منطقتك، بدون عمولات، مع دعم مستمر وتنوع كبير في الخدمات والمنتجات.',
-                    style: getRegular(fontSize: 14, letterSpacin: -0.5),
+                    style: getMedium(fontSize: 14, letterSpacin: -0.5),
                   ),
                   SizedBox(height: 20),
                   SectionItems2(
@@ -200,7 +200,7 @@ class AboutUsScreen extends StatelessWidget {
                     ),
                     Text(
                       "منصة مخصصة لأصحاب المشاريع الصغيرة، الحرفيين، وبائعي المنتجات والخدمات. نوصلك مباشرةً بعملاء منطقتك بطريقة سهلة وسريعة، مع دعم مستمر وأدوات تساعدك على عرض منتجاتك وزيادة مبيعاتك.",
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: 12,
                         color: AppColors.neutral600,
                       ),
@@ -249,7 +249,7 @@ class AboutUsScreen extends StatelessWidget {
                     Text("بدك تشتري من أهل بلدك؟", style: getBold()),
                     Text(
                       "في أعطيني  تلاقي كل احتياجاتك في مكان واحد، من منتجات وخدمات محلية موثوقة. تقدر تتواصل مباشرة مع البائع، تطلب بسهولة، وتستلم بسرعة وبأسعار تناسب ميزانيتك.",
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: 12,
                         color: AppColors.neutral600,
                       ),
@@ -526,7 +526,7 @@ class AboutUsScreen extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintTextDirection: TextDirection.rtl,
-        hintStyle: getRegular(color: AppColors.neutral600, fontSize: 14),
+        hintStyle: getMedium(color: AppColors.neutral600, fontSize: 14),
         border: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.neutral900, width: 2),
         ),

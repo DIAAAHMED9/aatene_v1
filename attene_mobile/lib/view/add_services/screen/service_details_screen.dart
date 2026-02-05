@@ -119,7 +119,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   SizedBox(height: ResponsiveDimensions.f(12)),
                   Text(
                     isRTL ? 'جاري تحميل التفاصيل...' : 'Loading details...',
-                    style: getRegular(fontSize: ResponsiveDimensions.f(13), color: Colors.grey),
+                    style: getMedium(fontSize: ResponsiveDimensions.f(13), color: Colors.grey),
                   ),
                 ],
               ),
@@ -158,7 +158,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: getRegular(fontSize: ResponsiveDimensions.f(12), color: Colors.grey),
+            style: getMedium(fontSize: ResponsiveDimensions.f(12), color: Colors.grey),
           ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           ElevatedButton(
@@ -240,7 +240,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
           Text(isRTL ? 'الوصف' : 'Description', style: getBold(fontSize: ResponsiveDimensions.f(14))),
           SizedBox(height: ResponsiveDimensions.f(6)),
-          Text(service.description, style: getRegular(fontSize: ResponsiveDimensions.f(13))),
+          Text(service.description, style: getMedium(fontSize: ResponsiveDimensions.f(13))),
           SizedBox(height: ResponsiveDimensions.f(14)),
 
           if (service.extras.isNotEmpty) ...[
@@ -279,7 +279,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(q.answer, style: getRegular(fontSize: ResponsiveDimensions.f(13))),
+                      child: Text(q.answer, style: getMedium(fontSize: ResponsiveDimensions.f(13))),
                     ),
                   )
                 ],
@@ -328,7 +328,7 @@ class _InfoRow extends StatelessWidget {
             width: ResponsiveDimensions.f(110),
             child: Text(title, style: getMedium(fontSize: ResponsiveDimensions.f(12), color: Colors.grey[600]!)),
           ),
-          Expanded(child: Text(value, style: getRegular(fontSize: ResponsiveDimensions.f(13)))),
+          Expanded(child: Text(value, style: getMedium(fontSize: ResponsiveDimensions.f(13)))),
         ],
       ),
     );
@@ -378,7 +378,7 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withOpacity(0.25)),
       ),
-      child: Text(text, style: getRegular(fontSize: ResponsiveDimensions.f(12), color: color)),
+      child: Text(text, style: getMedium(fontSize: ResponsiveDimensions.f(12), color: color)),
     );
   }
 }

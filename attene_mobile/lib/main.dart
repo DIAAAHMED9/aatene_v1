@@ -1,3 +1,4 @@
+import 'package:attene_mobile/view/offer/screen/offer_page.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
 import 'package:attene_mobile/view/profile/vendor_profile/screen/catigory_page.dart';
@@ -183,7 +184,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
-        GetPage(name: '/', page: () => CategoriesList()),
+        GetPage(name: '/', page: () => SplashScreen()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),
@@ -217,7 +218,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(name: '/stepper-screen', page: () => DemoStepperScreen()),
 
-GetPage(
+        GetPage(
           name: '/products-Screen',
           page: () => ProductScreen(),
           middlewares: [AuthGuardMiddleware(featureName: 'المنتجات')],
@@ -234,8 +235,9 @@ GetPage(
             final args = (Get.arguments is Map)
                 ? Map<String, dynamic>.from(Get.arguments)
                 : <String, dynamic>{};
-            final String productId = (args['productId'] ?? args['id'] ?? '').toString();
-            return EditProductStepperScreen(productId:int.parse(productId) );
+            final String productId = (args['productId'] ?? args['id'] ?? '')
+                .toString();
+            return EditProductStepperScreen(productId: int.parse(productId));
           },
         ),
         GetPage(

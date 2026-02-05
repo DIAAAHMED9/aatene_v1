@@ -56,7 +56,7 @@ class SetNewPassword extends StatelessWidget {
                     isRTL
                         ? 'قم بإنشاء كلمة مرور جديدة'
                         : 'Create a new password',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: ResponsiveDimensions.f(16),
                       color: Colors.grey[600]!,
                     ),

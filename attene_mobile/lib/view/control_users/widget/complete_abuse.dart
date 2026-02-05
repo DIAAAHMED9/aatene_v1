@@ -35,7 +35,7 @@ class CompleteAbuse extends StatelessWidget {
               Text("شكرا لك", style: getBold(fontSize: 32)),
               Text(
                 "تم ارسال طلبك وهو في الطريق تحقق من بريدك الالكتروني للحصول على التفاصيل",
-                style: getRegular(color: Colors.grey),
+                style: getMedium(color: Colors.grey),
               ),
               Spacer(),
               AateneButton(

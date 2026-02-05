@@ -54,7 +54,7 @@ class ControllerVendor extends StatelessWidget {
                                 ),
                                 Text(
                                   " فلسطين ، الخليل",
-                                  style:getRegular(fontSize: 18) ,
+                                  style:getMedium(fontSize: 18) ,
                                 ),
                               ],
                             ),

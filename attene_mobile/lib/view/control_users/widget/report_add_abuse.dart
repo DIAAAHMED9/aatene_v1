@@ -57,10 +57,10 @@ class ReportAddAbuse extends StatelessWidget {
                   Text('الإبلاغ عن إساءة', style: getBold(fontSize: 18)),
                   Text(
                     'ما الذي نقدر أن نساعدك به ؟',
-                    style: getRegular(fontSize: 12, color: Colors.grey),
+                    style: getMedium(fontSize: 12, color: Colors.grey),
                   ),
 
-                  Text('الموضوع', style: getRegular(fontSize: 14)),
+                  Text('الموضوع', style: getMedium(fontSize: 14)),
                   TextFiledAatene(
                     isRTL: isRTL,
                     hintText: "اكتب هنا",
@@ -68,7 +68,7 @@ class ReportAddAbuse extends StatelessWidget {
                     textInputType: TextInputType.name,
                   ),
 
-                  Text('الشكوى/ الأقتراح', style: getRegular(fontSize: 14)),
+                  Text('الشكوى/ الأقتراح', style: getMedium(fontSize: 14)),
                   TextFormField(
                     style: TextStyle(
                       fontSize: ResponsiveDimensions.f(14),

@@ -265,7 +265,7 @@ class _LoadingDialog extends StatelessWidget {
                   const SizedBox(height: 15),
                   Text(
                     '${(currentProgress * 100).toStringAsFixed(0)}%',
-                    style: getRegular(fontSize: 14, color: Colors.grey),
+                    style: getMedium(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 10),
                   ClipRRect(
@@ -286,7 +286,7 @@ class _LoadingDialog extends StatelessWidget {
                 if (isDismissible)
                   Text(
                     'يمكنك النقر خارج الصندوق للإلغاء',
-                    style: getRegular(fontSize: 12, color: Colors.grey),
+                    style: getMedium(fontSize: 12, color: Colors.grey),
                   ),
               ],
             ),

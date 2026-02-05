@@ -122,7 +122,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                               decoration: InputDecoration(
                                 hintText: "اكتب هنا",
                                 hintTextDirection: TextDirection.rtl,
-                                hintStyle: getRegular(
+                                hintStyle: getMedium(
                                   color: AppColors.neutral600,
                                   fontSize: 14,
                                 ),
@@ -247,7 +247,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
         subtitle: Text(
           subtitle,
           textAlign: TextAlign.right,
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          style:getMedium(fontSize: 12,color: AppColors.neutral600),
         ),
       ),
     );

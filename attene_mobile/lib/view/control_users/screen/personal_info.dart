@@ -48,7 +48,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
             spacing: 10,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("الاسم الكامل", style: getRegular(fontSize: 14)),
+              Text("الاسم الكامل", style: getMedium(fontSize: 14)),
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "الاسم الكامل",
@@ -167,7 +167,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               //     Get.updateLocale(Locale(value!));
               //   },
               // ),
-              Text("النبذة الشخصية", style: getRegular(fontSize: 14)),
+              Text("النبذة الشخصية", style: getMedium(fontSize: 14)),
               TextField(
                 maxLines: 5,
                 decoration: InputDecoration(
@@ -223,7 +223,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               ),
                               Text(
                                 "تم حفظ التغييرات بنجاح",
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 12,
                                   color: AppColors.neutral400,
                                 ),

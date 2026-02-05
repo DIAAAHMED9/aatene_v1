@@ -476,7 +476,7 @@ class _ServiceStepperScreenState
       },
       child: Text(
         'حفظ مؤقت',
-        style: getRegular(fontSize: 14, color: Colors.grey),
+        style: getMedium(fontSize: 14, color: Colors.grey),
       ),
     );
   }

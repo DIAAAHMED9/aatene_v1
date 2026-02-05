@@ -41,7 +41,7 @@ class EditProfileLabel extends StatelessWidget {
                     Text(title, style: getMedium(fontSize: 14)),
                     Text(
                       subtitle,
-                      style: getRegular(
+                      style: getMedium(
                         fontSize: 12,
                         color: AppColors.neutral300,
                       ),

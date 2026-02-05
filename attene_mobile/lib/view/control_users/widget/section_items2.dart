@@ -45,7 +45,7 @@ class SectionItems2 extends StatelessWidget {
             Text(
               subtitle,
               textAlign: TextAlign.start,
-              style: getRegular(fontSize: 12, color: AppColors.neutral600),
+              style: getMedium(fontSize: 12, color: AppColors.neutral600),
             ),
           ],
         ),
