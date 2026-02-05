@@ -108,7 +108,6 @@ class _ServiceStepperScreenState
             borderColor: AppColors.primary400,
           ),
         ],
-
       );
       return result ?? false;
     }
@@ -271,7 +270,6 @@ class _ServiceStepperScreenState
           color: AppColors.light1000,
         ),
       ],
-
     );
   }
 
@@ -465,7 +463,6 @@ class _ServiceStepperScreenState
       borderColor: AppColors.primary400,
       color: AppColors.primary400,
     );
-
   }
 
   @override

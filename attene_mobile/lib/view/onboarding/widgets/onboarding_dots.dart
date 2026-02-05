@@ -4,11 +4,7 @@ class OnboardingDots extends StatelessWidget {
   final int current;
   final int count;
 
-  const OnboardingDots({
-    super.key,
-    required this.current,
-    required this.count,
-  });
+  const OnboardingDots({super.key, required this.current, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +18,7 @@ class OnboardingDots extends StatelessWidget {
           width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: isActive
-                ? AppColors.primary400
-                : Colors.grey.shade300,
+            color: isActive ? AppColors.primary400 : Colors.grey.shade300,
             borderRadius: BorderRadius.circular(20),
           ),
         );

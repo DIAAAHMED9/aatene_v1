@@ -30,7 +30,6 @@ class StepperNextButton extends StatelessWidget {
         textColor: AppColors.light1000,
         borderColor: AppColors.primary400,
       );
-
     });
   }
 }

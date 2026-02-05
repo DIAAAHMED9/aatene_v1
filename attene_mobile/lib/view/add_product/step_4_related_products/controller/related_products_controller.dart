@@ -189,7 +189,8 @@ class RelatedProductsController extends GetxController {
 
       _originalPrice.value = 0.0;
       calculateTotalPrice();
-      final csPriceRaw = productData['cross_sells_price'] ?? productData['crossSells_price'];
+      final csPriceRaw =
+          productData['cross_sells_price'] ?? productData['crossSells_price'];
       final csPrice = (csPriceRaw is num)
           ? csPriceRaw.toDouble()
           : double.tryParse(csPriceRaw?.toString() ?? '') ?? 0.0;
@@ -197,7 +198,10 @@ class RelatedProductsController extends GetxController {
         _discountedPrice.value = csPrice;
       }
 
-      final dueRaw = (productData['cross_sells_due_date'] ?? productData['crossSells_due_date'])?.toString();
+      final dueRaw =
+          (productData['cross_sells_due_date'] ??
+                  productData['crossSells_due_date'])
+              ?.toString();
       if (dueRaw != null && dueRaw.trim().isNotEmpty) {
         final parsed = DateTime.tryParse(dueRaw);
         if (parsed != null) {
@@ -389,9 +393,9 @@ class RelatedProductsController extends GetxController {
 
       final List<int> productIds = _selectedProducts.isNotEmpty
           ? _selectedProducts
-              .where((product) => product.id > 0)
-              .map((product) => product.id)
-              .toList()
+                .where((product) => product.id > 0)
+                .map((product) => product.id)
+                .toList()
           : _selectedIds.where((id) => id > 0).toList();
 
       double crossSellPrice = _discountedPrice.value > 0

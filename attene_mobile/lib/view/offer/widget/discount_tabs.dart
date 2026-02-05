@@ -1,6 +1,4 @@
-// lib/views/flash_sale/components/discount_tabs.dart
 import 'package:attene_mobile/general_index.dart';
-import 'package:flutter/material.dart';
 
 /// تبويبات الخصم القابلة للتمرير
 class DiscountTabs extends StatelessWidget {

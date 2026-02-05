@@ -1,6 +1,4 @@
-// lib/views/flash_sale/components/product_card.dart
 import 'package:attene_mobile/general_index.dart';
-import 'package:flutter/material.dart';
 
 /// بطاقة عرض المنتج في العرض الترويجي
 class ProductCard extends StatelessWidget {

@@ -102,7 +102,9 @@ class ProductVariationController extends GetxController {
       if (cached.isNotEmpty) {
         _allAttributes.assignAll(cached);
         _lastLoadTime.value = DateTime.now().toIso8601String();
-        print('✅ [VARIATIONS] Loaded ${_allAttributes.length} cached attributes');
+        print(
+          '✅ [VARIATIONS] Loaded ${_allAttributes.length} cached attributes',
+        );
         return;
       }
 
@@ -113,7 +115,9 @@ class ProductVariationController extends GetxController {
       if (refreshed.isNotEmpty) {
         _allAttributes.assignAll(refreshed);
         _lastLoadTime.value = DateTime.now().toIso8601String();
-        print('✅ [VARIATIONS] Loaded ${_allAttributes.length} refreshed attributes');
+        print(
+          '✅ [VARIATIONS] Loaded ${_allAttributes.length} refreshed attributes',
+        );
         return;
       }
 
@@ -167,7 +171,6 @@ class ProductVariationController extends GetxController {
     _saveCurrentState();
 
     update([attributesUpdateId, variationsUpdateId]);
-
   }
 
   Future<void> openAttributesManagement() async {
@@ -376,8 +379,9 @@ class ProductVariationController extends GetxController {
 
   bool _allAttributesHaveSelectedValues() {
     for (final attribute in _selectedAttributes) {
-      final hasUiSelection =
-          attribute.values.any((value) => value.isSelected.value);
+      final hasUiSelection = attribute.values.any(
+        (value) => value.isSelected.value,
+      );
       if (hasUiSelection) continue;
 
       final hasAnyInVariations = _variations.any((v) {
@@ -497,7 +501,7 @@ class ProductVariationController extends GetxController {
           );
         }
       }
-}
+    }
 
     return ValidationResult(isValid: true, errorMessage: '');
   }
@@ -668,7 +672,6 @@ class ProductVariationController extends GetxController {
     }
 
     for (final variation in _variations) {
-
       final attributeOptions = <Map<String, dynamic>>[];
 
       for (final attrEntry in variation.attributes.entries) {
@@ -723,8 +726,8 @@ class ProductVariationController extends GetxController {
       final Map<String, dynamic> p = (productData['data'] is Map)
           ? Map<String, dynamic>.from(productData['data'] as Map)
           : (productData['product'] is Map)
-              ? Map<String, dynamic>.from(productData['product'] as Map)
-              : productData;
+          ? Map<String, dynamic>.from(productData['product'] as Map)
+          : productData;
 
       final rawVariations = p['variations'];
       if (rawVariations is! List) {
@@ -737,7 +740,8 @@ class ProductVariationController extends GetxController {
       _hasVariations.value = rawVariations.isNotEmpty;
 
       final Set<String> usedAttributeIds = <String>{};
-      final Map<String, Set<String>> usedOptionIdsByAttrId = <String, Set<String>>{};
+      final Map<String, Set<String>> usedOptionIdsByAttrId =
+          <String, Set<String>>{};
       final List<ProductVariation> parsedVariations = [];
 
       for (final v in rawVariations) {
@@ -759,8 +763,9 @@ class ProductVariationController extends GetxController {
             : (status == 'active' || status == '1' || status == 'true');
 
         final Map<String, String> attributes = {};
-        final List<dynamic> attrOptions =
-            (vm['attributeOptions'] is List) ? (vm['attributeOptions'] as List) : const [];
+        final List<dynamic> attrOptions = (vm['attributeOptions'] is List)
+            ? (vm['attributeOptions'] as List)
+            : const [];
 
         for (final ao in attrOptions) {
           if (ao is! Map) continue;
@@ -772,7 +777,9 @@ class ProductVariationController extends GetxController {
           usedAttributeIds.add(attrId);
           (usedOptionIdsByAttrId[attrId] ??= <String>{}).add(optId);
 
-          usedOptionIdsByAttrId.putIfAbsent(attrId, () => <String>{}).add(optId);
+          usedOptionIdsByAttrId
+              .putIfAbsent(attrId, () => <String>{})
+              .add(optId);
 
           final attr = _allAttributes.firstWhereOrNull((a) => a.id == attrId);
           if (attr == null) continue;
@@ -812,7 +819,8 @@ class ProductVariationController extends GetxController {
       _selectedAttributes.assignAll(selected);
 
       for (final attr in _selectedAttributes) {
-        final usedOptionIds = usedOptionIdsByAttrId[attr.id] ?? const <String>{};
+        final usedOptionIds =
+            usedOptionIdsByAttrId[attr.id] ?? const <String>{};
 
         for (final v in attr.values) {
           v.isSelected.value = false;

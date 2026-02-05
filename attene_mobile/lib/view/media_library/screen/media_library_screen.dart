@@ -160,10 +160,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                 Expanded(
                   child: Text(
                     'الملفات المرفوعة حديثاً. سيتم رفعها تلقائياً إلى السيرفر.',
-                    style: getMedium(
-                      fontSize: 12,
-                      color: AppColors.primary500,
-                    ),
+                    style: getMedium(fontSize: 12, color: AppColors.primary500),
                   ),
                 ),
               ],
@@ -447,10 +444,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
 
   Widget _buildImageWidget(MediaItem media) {
     if (media.isLocal == true) {
-      return buildLocalImage(
-        media.path,
-        fit: BoxFit.cover,
-      );
+      return buildLocalImage(media.path, fit: BoxFit.cover);
     } else {
       final imageUrl = controller.getMediaDisplayUrl(media);
       if (imageUrl.isEmpty)
@@ -653,10 +647,7 @@ class _MediaLibraryScreenState extends State<MediaLibraryScreen> {
                           SizedBox(height: 16),
                           Text(
                             'عرض الفيديو',
-                            style: getMedium(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
+                            style: getMedium(color: Colors.white, fontSize: 16),
                           ),
                         ],
                       ),

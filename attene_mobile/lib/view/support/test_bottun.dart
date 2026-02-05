@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
-
 class MainHome1 extends StatefulWidget {
   const MainHome1({super.key});
 

@@ -268,19 +268,13 @@ class AddShippingMethod extends StatelessWidget {
                 if (company['prices'] != null && company['prices'] is List)
                   Text(
                     'المدن المغطاة: ${(company['prices'] as List).length} مدينة',
-                    style: getMedium(
-                      fontSize: 12,
-                      color: AppColors.neutral100,
-                    ),
+                    style: getMedium(fontSize: 12, color: AppColors.neutral100),
                   ),
 
                 if (company['created_at'] != null)
                   Text(
                     'مضافة بتاريخ: ${company['created_at']}',
-                    style: getMedium(
-                      fontSize: 10,
-                      color: AppColors.neutral100,
-                    ),
+                    style: getMedium(fontSize: 10, color: AppColors.neutral100),
                   ),
               ],
             ),

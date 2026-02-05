@@ -45,7 +45,6 @@ class OnboardingView extends StatelessWidget {
                     context,
                     MaterialPageRoute<void>(builder: (context) => Onboarding()),
                   );
-
                 },
                 child: const Text(
                   'تخطي',

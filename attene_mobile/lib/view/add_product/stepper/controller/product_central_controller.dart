@@ -381,7 +381,9 @@ class ProductCentralController extends GetxController {
       );
 
       if (response == null || response['status'] != true) {
-        print('❌ [EDIT PRODUCT] Failed to fetch product: ${response?['message']}');
+        print(
+          '❌ [EDIT PRODUCT] Failed to fetch product: ${response?['message']}',
+        );
         return false;
       }
 
@@ -396,7 +398,10 @@ class ProductCentralController extends GetxController {
       }
 
       final productData = Map<String, dynamic>.from(data as Map);
-      await applyProductDataForEdit(productId: productId, productData: productData);
+      await applyProductDataForEdit(
+        productId: productId,
+        productData: productData,
+      );
       return true;
     } catch (e) {
       print('❌ [EDIT PRODUCT] Error loading product: $e');
@@ -414,7 +419,8 @@ class ProductCentralController extends GetxController {
 
     productName(productData['name']?.toString() ?? '');
     productDescription(
-      (productData['description'] ?? productData['short_description'] ?? '').toString(),
+      (productData['description'] ?? productData['short_description'] ?? '')
+          .toString(),
     );
     price((productData['price'] ?? '').toString());
     selectedCategoryId(
@@ -443,11 +449,18 @@ class ProductCentralController extends GetxController {
     } else if (productData['gallery'] is List) {
       paths.addAll((productData['gallery'] as List).map((e) => e.toString()));
     }
-    final uniquePaths = paths.where((p) => p.trim().isNotEmpty).toSet().toList();
-    selectedMedia.assignAll(uniquePaths.map(_mediaItemFromRelativePath).toList());
+    final uniquePaths = paths
+        .where((p) => p.trim().isNotEmpty)
+        .toSet()
+        .toList();
+    selectedMedia.assignAll(
+      uniquePaths.map(_mediaItemFromRelativePath).toList(),
+    );
 
     if (productData['tags'] is List) {
-      keywords.assignAll((productData['tags'] as List).map((e) => e.toString()));
+      keywords.assignAll(
+        (productData['tags'] as List).map((e) => e.toString()),
+      );
     } else {
       keywords.clear();
     }
@@ -474,7 +487,9 @@ class ProductCentralController extends GetxController {
     }
 
     if (Get.isRegistered<RelatedProductsController>()) {
-      await Get.find<RelatedProductsController>().loadFromProductApi(productData);
+      await Get.find<RelatedProductsController>().loadFromProductApi(
+        productData,
+      );
     }
 
     if (Get.isRegistered<AddProductController>()) {
@@ -511,7 +526,11 @@ class ProductCentralController extends GetxController {
       print('⚠️ [EDIT PRODUCT] Error resolving section locally: $e');
     }
     if (sectionId <= 0) return null;
-    return Section(id: sectionId, name: sectionName.isNotEmpty ? sectionName : 'قسم #$sectionId', storeId: '');
+    return Section(
+      id: sectionId,
+      name: sectionName.isNotEmpty ? sectionName : 'قسم #$sectionId',
+      storeId: '',
+    );
   }
 
   MediaItem _mediaItemFromRelativePath(String relativePath) {
@@ -544,11 +563,12 @@ class ProductCentralController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> submitProduct() async {
-    final msg = isEditMode.value ? 'جاري تحديث المنتج...' : 'جاري إضافة المنتج...';
+    final msg = isEditMode.value
+        ? 'جاري تحديث المنتج...'
+        : 'جاري إضافة المنتج...';
     try {
       return await performSubmitProduct();
-    } finally {
-    }
+    } finally {}
   }
 
   Future<Map<String, dynamic>> performSubmitProduct() async {
@@ -818,7 +838,7 @@ class ProductCentralController extends GetxController {
     editingSku('');
   }
 
-void resetAfterSuccess(ProductVariationController variationController) {
+  void resetAfterSuccess(ProductVariationController variationController) {
     reset(resetSection: true);
     variationController.toggleHasVariations(false);
     variationController.selectedAttributes.clear();
@@ -879,12 +899,18 @@ void resetAfterSuccess(ProductVariationController variationController) {
 
     try {
       if (sectionObj is Map) {
-        selectedSection(Section.fromJson(Map<String, dynamic>.from(sectionObj)));
+        selectedSection(
+          Section.fromJson(Map<String, dynamic>.from(sectionObj)),
+        );
       } else {
-        selectedSection(Section(id: sectionId, name: 'قسم #$sectionId', storeId: ''));
+        selectedSection(
+          Section(id: sectionId, name: 'قسم #$sectionId', storeId: ''),
+        );
       }
     } catch (_) {
-      selectedSection(Section(id: sectionId, name: 'قسم #$sectionId', storeId: ''));
+      selectedSection(
+        Section(id: sectionId, name: 'قسم #$sectionId', storeId: ''),
+      );
     }
   }
 

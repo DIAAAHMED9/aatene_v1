@@ -1,11 +1,6 @@
 import 'package:get/get.dart';
 
-enum SearchType {
-  products,
-  stores,
-  services,
-  users,
-}
+enum SearchType { products, stores, services, users }
 
 class SearchTypeController extends GetxController {
   final Rx<SearchType> selectedType = SearchType.products.obs;

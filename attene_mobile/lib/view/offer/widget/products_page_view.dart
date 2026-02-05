@@ -1,6 +1,4 @@
-// lib/views/flash_sale/components/products_page_view.dart
 import 'package:attene_mobile/general_index.dart';
-import 'package:flutter/material.dart';
 import 'product_card.dart' hide ProductCard;
 
 /// عرض المنتجات في شكل PageView مع GridView داخلي

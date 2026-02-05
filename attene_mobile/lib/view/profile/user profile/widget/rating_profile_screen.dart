@@ -1,5 +1,5 @@
 import '../../../../general_index.dart';
-import '../../../support/empty.dart';
+import '../../../../component/rating_summary.dart';
 
 class RatingProfile extends StatelessWidget {
   const RatingProfile({super.key});

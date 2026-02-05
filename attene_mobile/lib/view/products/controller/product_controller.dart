@@ -875,5 +875,4 @@ class ProductController extends GetxController
   void notifyProductsUpdated() {
     update();
   }
-
 }

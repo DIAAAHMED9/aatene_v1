@@ -130,9 +130,7 @@ class _EnhancedSplashScreenState extends State<EnhancedSplashScreen>
                 opacity: _fadeAnimation,
                 child: Text(
                   _loadingText,
-                  style: getMedium(
-                    color: AppColors.light1000.withOpacity(0.8),
-                  ),
+                  style: getMedium(color: AppColors.light1000.withOpacity(0.8)),
                 ),
               ),
               const SizedBox(height: 30),

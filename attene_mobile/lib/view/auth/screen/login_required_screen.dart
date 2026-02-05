@@ -2,6 +2,7 @@ import '../../../general_index.dart';
 
 class LoginRequiredScreen extends StatelessWidget {
   final String? message;
+
   const LoginRequiredScreen({super.key, this.message});
 
   @override

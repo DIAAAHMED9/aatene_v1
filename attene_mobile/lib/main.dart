@@ -1,7 +1,5 @@
-import 'package:attene_mobile/view/offer/screen/offer_page.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
-import 'package:attene_mobile/view/profile/vendor_profile/screen/catigory_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,13 +11,6 @@ import 'utils/sheet_controller.dart';
 import 'package:attene_mobile/services/app_lifecycle_manager.dart';
 import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
-import 'package:flutter/material.dart';
-
-import 'package:attene_mobile/view/products/screen/product_screen.dart';
-import 'package:attene_mobile/view/products/screen/product_details.dart';
-import 'package:attene_mobile/view/add_product/stepper/screen/add_product_stepper_screen.dart';
-import 'package:attene_mobile/view/add_product/stepper/screen/edit_product_stepper_screen.dart';
-
 class AppBindings extends Bindings {
   static bool _initialized = false;
 

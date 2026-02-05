@@ -5,16 +5,17 @@ class EditProductStepperScreen extends StepperScreenBase {
   final int productId;
 
   const EditProductStepperScreen({Key? key, required this.productId})
-      : super(
-          key: key,
-          appBarTitle: 'تعديل المنتج',
-          primaryColor: AppColors.light1000,
-          showBackButton: true,
-          isLinear: true,
-        );
+    : super(
+        key: key,
+        appBarTitle: 'تعديل المنتج',
+        primaryColor: AppColors.light1000,
+        showBackButton: true,
+        isLinear: true,
+      );
 
   @override
-  State<EditProductStepperScreen> createState() => _EditProductStepperScreenState();
+  State<EditProductStepperScreen> createState() =>
+      _EditProductStepperScreenState();
 }
 
 class _EditProductStepperScreenState
@@ -37,24 +38,15 @@ class _EditProductStepperScreenState
       }
 
       if (!Get.isRegistered<ProductService>()) {
-        Get.put<ProductService>(
-          ProductService(),
-          permanent: true,
-        );
+        Get.put<ProductService>(ProductService(), permanent: true);
       }
 
       if (!Get.isRegistered<AddProductController>()) {
-        Get.put<AddProductController>(
-          AddProductController(),
-          permanent: true,
-        );
+        Get.put<AddProductController>(AddProductController(), permanent: true);
       }
 
       if (!Get.isRegistered<KeywordController>()) {
-        Get.put<KeywordController>(
-          KeywordController(),
-          permanent: true,
-        );
+        Get.put<KeywordController>(KeywordController(), permanent: true);
       }
 
       if (!Get.isRegistered<ProductVariationController>()) {
@@ -82,8 +74,7 @@ class _EditProductStepperScreenState
 
         try {
           await central.loadProductForEdit(widget.productId);
-        } finally {
-        }
+        } finally {}
 
         if (Get.isRegistered<AddProductController>()) {
           Get.find<AddProductController>().applyCentralToTextFields();
@@ -108,10 +99,7 @@ class _EditProductStepperScreenState
         title: 'الكلمات المفتاحية',
         subtitle: 'إدارة الكلمات المفتاحية',
       ),
-      StepperStep(
-        title: 'المتغيرات',
-        subtitle: 'إدارة السمات والمتغيرات',
-      ),
+      StepperStep(title: 'المتغيرات', subtitle: 'إدارة السمات والمتغيرات'),
       StepperStep(
         title: 'المنتجات المرتبطة',
         subtitle: 'إدارة المنتجات المرتبطة',

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class HomeBanner {
   final String imageUrl;
+
   const HomeBanner({required this.imageUrl});
 
   static List<HomeBanner> fromAny(dynamic raw) {
@@ -19,7 +20,14 @@ class HomeBanner {
   static String? _pickUrl(dynamic it) {
     if (it is String) return it.trim().isEmpty ? null : it.trim();
     if (it is Map) {
-      for (final k in const ['image_url','image','cover_url','cover','url','path']) {
+      for (final k in const [
+        'image_url',
+        'image',
+        'cover_url',
+        'cover',
+        'url',
+        'path',
+      ]) {
         final v = it[k];
         if (v is String && v.trim().isNotEmpty) return v.trim();
       }
@@ -50,15 +58,20 @@ class HomeStoreItem {
       for (final it in raw) {
         if (it is Map) {
           final id = _asInt(it['id']);
-          final name = (it['name'] ?? it['title'] ?? it['slug'] ?? '').toString();
+          final name = (it['name'] ?? it['title'] ?? it['slug'] ?? '')
+              .toString();
           if (id == null || name.trim().isEmpty) continue;
-          out.add(HomeStoreItem(
-            id: id,
-            name: name,
-            slug: (it['slug'] ?? '').toString().trim().isEmpty ? null : it['slug'].toString(),
-            coverUrl: _pickUrl(it),
-            rating: _asDouble(it['rating'] ?? it['rate'] ?? it['avg_rating']),
-          ));
+          out.add(
+            HomeStoreItem(
+              id: id,
+              name: name,
+              slug: (it['slug'] ?? '').toString().trim().isEmpty
+                  ? null
+                  : it['slug'].toString(),
+              coverUrl: _pickUrl(it),
+              rating: _asDouble(it['rating'] ?? it['rate'] ?? it['avg_rating']),
+            ),
+          );
         }
       }
     }
@@ -66,7 +79,16 @@ class HomeStoreItem {
   }
 
   static String? _pickUrl(Map it) {
-    for (final k in const ['cover_url','image_url','avatar_url','logo_url','cover','image','avatar','logo']) {
+    for (final k in const [
+      'cover_url',
+      'image_url',
+      'avatar_url',
+      'logo_url',
+      'cover',
+      'image',
+      'avatar',
+      'logo',
+    ]) {
       final v = it[k];
       if (v is String && v.trim().isNotEmpty) return v.trim();
     }
@@ -96,17 +118,22 @@ class HomeProductItem {
       for (final it in raw) {
         if (it is Map) {
           final id = _asInt(it['id']);
-          final name = (it['name'] ?? it['title'] ?? it['slug'] ?? '').toString();
+          final name = (it['name'] ?? it['title'] ?? it['slug'] ?? '')
+              .toString();
           if (id == null || name.trim().isEmpty) continue;
 
           final img = _pickImage(it);
-          out.add(HomeProductItem(
-            id: id,
-            name: name,
-            slug: (it['slug'] ?? '').toString().trim().isEmpty ? null : it['slug'].toString(),
-            price: _asDouble(it['price']),
-            imageUrl: img,
-          ));
+          out.add(
+            HomeProductItem(
+              id: id,
+              name: name,
+              slug: (it['slug'] ?? '').toString().trim().isEmpty
+                  ? null
+                  : it['slug'].toString(),
+              price: _asDouble(it['price']),
+              imageUrl: img,
+            ),
+          );
         }
       }
     }
@@ -124,7 +151,7 @@ class HomeProductItem {
       final v = images.first;
       if (v is String && v.trim().isNotEmpty) return v.trim();
     }
-    for (final k in const ['cover_url','image_url','cover','image']) {
+    for (final k in const ['cover_url', 'image_url', 'cover', 'image']) {
       final v = it[k];
       if (v is String && v.trim().isNotEmpty) return v.trim();
     }

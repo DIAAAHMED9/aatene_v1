@@ -119,7 +119,11 @@ class FAQ {
 
   FAQ({required this.id, required this.question, required this.answer});
 
-  Map<String, dynamic> toJson() => {'id': id, 'question': question, 'answer': answer};
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'question': question,
+    'answer': answer,
+  };
 
   Map<String, dynamic> toApiJson() => {'question': question, 'answer': answer};
 
@@ -132,7 +136,8 @@ class FAQ {
   }
 
   @override
-  bool operator ==(Object other) => identical(this, other) || (other is FAQ && other.id == id);
+  bool operator ==(Object other) =>
+      identical(this, other) || (other is FAQ && other.id == id);
 
   @override
   int get hashCode => id.hashCode;
@@ -178,7 +183,9 @@ class Development {
       title: _toStr(json['title']),
       price: _toDouble(json['price']),
       executionTime: _toInt(json['execute_count']),
-      timeUnit: _convertTimeUnitFromApi(_toStr(json['execute_type'], defaultValue: 'hour')),
+      timeUnit: _convertTimeUnitFromApi(
+        _toStr(json['execute_type'], defaultValue: 'hour'),
+      ),
     );
   }
 
@@ -306,7 +313,9 @@ class Service {
   factory Service.fromApiJson(Map<String, dynamic> json) {
     final imagesList = _asStringList(json['images']);
 
-    final imagesUrlList = _asStringList(json['images_urls'] ?? json['images_url']);
+    final imagesUrlList = _asStringList(
+      json['images_urls'] ?? json['images_url'],
+    );
 
     final tags = _asStringList(json['tags']);
     final specialties = _asStringList(json['specialties']);
@@ -331,11 +340,15 @@ class Service {
       price: _toDouble(json['price']),
       executeType: _toStr(json['execute_type'], defaultValue: 'hour'),
       executeCount: _toInt(json['execute_count']),
-      extras: _asMapList(json['extras']).map((e) => Development.fromApiJson(e)).toList(),
+      extras: _asMapList(
+        json['extras'],
+      ).map((e) => Development.fromApiJson(e)).toList(),
       images: imagesList,
       imagesUrl: imagesUrlList,
       description: _toStr(json['description']),
-      questions: _asMapList(json['questions']).map((q) => FAQ.fromApiJson(q)).toList(),
+      questions: _asMapList(
+        json['questions'],
+      ).map((q) => FAQ.fromApiJson(q)).toList(),
       createdAt: DateTime.tryParse(_toStr(json['created_at'])),
       updatedAt: DateTime.tryParse(_toStr(json['updated_at'])),
       acceptedTerms: _toBool(json['accepted_terms'], defaultValue: false),
@@ -343,9 +356,13 @@ class Service {
     );
   }
 
-  factory Service.fromJson(Map<String, dynamic> json) => Service.fromApiJson(json);
+  factory Service.fromJson(Map<String, dynamic> json) =>
+      Service.fromApiJson(json);
 
-  Map<String, dynamic> toApiJson({bool forUpdate = false, String? storeIdOverride}) {
+  Map<String, dynamic> toApiJson({
+    bool forUpdate = false,
+    String? storeIdOverride,
+  }) {
     final data = <String, dynamic>{
       'slug': slug,
       'title': title,

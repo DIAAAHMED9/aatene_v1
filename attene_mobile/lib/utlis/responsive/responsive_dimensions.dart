@@ -1,1 +1,0 @@
-export 'package:attene_mobile/utils/responsive/responsive_dimensions.dart';

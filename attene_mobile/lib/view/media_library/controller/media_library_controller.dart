@@ -881,7 +881,8 @@ class MediaLibraryController extends GetxController
       final idx = v.indexOf('/storage/');
       if (idx != -1) return v.substring(idx + '/storage/'.length);
       final uri = Uri.tryParse(v);
-      if (uri != null && uri.pathSegments.isNotEmpty) return uri.pathSegments.join('/');
+      if (uri != null && uri.pathSegments.isNotEmpty)
+        return uri.pathSegments.join('/');
     }
     return v;
   }

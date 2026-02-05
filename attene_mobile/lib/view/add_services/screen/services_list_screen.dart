@@ -139,9 +139,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
           Get.back();
 
-          Get.to(
-            () => const AddServiceStepperScreen(),
-          )?.then((result) {
+          Get.to(() => const AddServiceStepperScreen())?.then((result) {
             if (result == true) {
               _refreshServices();
             }
@@ -243,10 +241,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
     Get.toNamed(
       '/service-details',
-      arguments: {
-        'serviceId': serviceId,
-        'service': service,
-      },
+      arguments: {'serviceId': serviceId, 'service': service},
     );
   }
 
@@ -805,8 +800,9 @@ class _ServiceSelectSectionSheet extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment:
-            isRTL ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isRTL
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -833,8 +829,10 @@ class _ServiceSelectSectionSheet extends StatelessWidget {
                 final name = (s['name'] ?? '').toString();
                 final status = (s['status'] ?? '').toString();
                 return ListTile(
-                  title: Text(name.isEmpty ? '-' : name,
-                      style: getMedium(fontSize: 14)),
+                  title: Text(
+                    name.isEmpty ? '-' : name,
+                    style: getMedium(fontSize: 14),
+                  ),
                   subtitle: status.trim().isEmpty
                       ? null
                       : Text(status, style: getMedium(fontSize: 12)),

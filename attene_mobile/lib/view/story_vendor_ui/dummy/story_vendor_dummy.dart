@@ -16,10 +16,7 @@ class StoryVendorGroupModel {
   final String title;
   final List<StoryMediaItem> items;
 
-  StoryVendorGroupModel({
-    required this.title,
-    required this.items,
-  });
+  StoryVendorGroupModel({required this.title, required this.items});
 
   List<String> get mediaUrls => items.map((e) => e.url).toList(growable: false);
 
@@ -72,11 +69,14 @@ final demoVendors = <StoryVendorDemoModel>[
     storeName: 'متخر خدمات',
     avatarUrl: 'https://aatene.dev/main/user.png',
     groups: [
-      StoryVendorGroupModel.fromUrls(title: 'عروض', mediaUrls: [
-        'https://aatene.dev/storage/images/WxfRb83JUft2Xatgfo4X12eDmAfns9CvE7luImR7.jpg',
-        'https://aatene.dev/storage/images/9L8axgSXbPlZDrXxjbiiWvOtGQR4ctunaNbCxWWx.jpg',
-        'https://aatene.dev/storage/images/22LPvwM8BPzC5CfE6Xv5519baHR6UbeA2u7n82Dt.jpg',
-      ]),
+      StoryVendorGroupModel.fromUrls(
+        title: 'عروض',
+        mediaUrls: [
+          'https://aatene.dev/storage/images/WxfRb83JUft2Xatgfo4X12eDmAfns9CvE7luImR7.jpg',
+          'https://aatene.dev/storage/images/9L8axgSXbPlZDrXxjbiiWvOtGQR4ctunaNbCxWWx.jpg',
+          'https://aatene.dev/storage/images/22LPvwM8BPzC5CfE6Xv5519baHR6UbeA2u7n82Dt.jpg',
+        ],
+      ),
     ],
   ),
   StoryVendorDemoModel(
@@ -84,10 +84,13 @@ final demoVendors = <StoryVendorDemoModel>[
     storeName: 'متجر أعطيني 2',
     avatarUrl: 'https://aatene.dev/main/user.png',
     groups: [
-      StoryVendorGroupModel.fromUrls(title: 'قصص', mediaUrls: [
-        'https://aatene.dev/storage/images/4PBSWhmXUugRbt3ZlDt2182WXW8ZQiZX6TTzGwDC.jpg',
-        'https://aatene.dev/storage/images/WxfRb83JUft2Xatgfo4X12eDmAfns9CvE7luImR7.jpg',
-      ]),
+      StoryVendorGroupModel.fromUrls(
+        title: 'قصص',
+        mediaUrls: [
+          'https://aatene.dev/storage/images/4PBSWhmXUugRbt3ZlDt2182WXW8ZQiZX6TTzGwDC.jpg',
+          'https://aatene.dev/storage/images/WxfRb83JUft2Xatgfo4X12eDmAfns9CvE7luImR7.jpg',
+        ],
+      ),
     ],
   ),
 ];

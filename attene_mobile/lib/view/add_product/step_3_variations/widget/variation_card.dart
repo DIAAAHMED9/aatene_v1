@@ -93,7 +93,9 @@ class _VariationCardState extends State<VariationCard> {
                 Row(
                   children: [
                     Text(
-                      widget.variation.isActive.value ? 'تفعيل السمة' : 'غير مفعل',
+                      widget.variation.isActive.value
+                          ? 'تفعيل السمة'
+                          : 'غير مفعل',
                       style: getMedium(
                         fontSize: ResponsiveDimensions.f(14),
                         fontWeight: FontWeight.w300,
@@ -345,7 +347,6 @@ class _VariationCardState extends State<VariationCard> {
         SizedBox(
           height: 50,
           child: TextField(
-
             controller: _priceController,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
@@ -356,7 +357,9 @@ class _VariationCardState extends State<VariationCard> {
                 borderSide: BorderSide(color: Colors.grey[300]!),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ResponsiveDimensions.w(100)),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveDimensions.w(100),
+                ),
                 borderSide: BorderSide(color: AppColors.primary300, width: 1.0),
               ),
               suffixText: '₪',
@@ -761,9 +764,7 @@ class _VariationCardState extends State<VariationCard> {
             borderColor: AppColors.error200,
           ),
 
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           AateneButton(
             onTap: () => Get.back(),
             buttonText: "إلغاء",

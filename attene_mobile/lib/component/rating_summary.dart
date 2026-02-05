@@ -1,5 +1,4 @@
 import 'package:attene_mobile/general_index.dart';
-import 'package:flutter/material.dart';
 
 class RatingSummaryWidget extends StatefulWidget {
   final double rating;

@@ -127,7 +127,6 @@ class _DemoStepperScreenState
             borderColor: AppColors.primary400,
           ),
         ],
-
       );
       return result ?? false;
     }

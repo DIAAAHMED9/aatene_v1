@@ -48,7 +48,7 @@ class ManageAccountStoreController extends GetxController
     isFetching.value = false;
   }
 
-Future<void> _performLoadStores() async {
+  Future<void> _performLoadStores() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';

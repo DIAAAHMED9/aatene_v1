@@ -59,10 +59,13 @@ class ForgetPasswordController extends GetxController {
       if (response != null &&
           (response['status'] == true || response['success'] == true)) {
         final dynamic data = response['data'];
-        final String? sessionId =
-            (data is Map && data['id'] != null) ? data['id'].toString() :
-            (response['id'] != null) ? response['id'].toString() :
-            (response['reset_id'] != null) ? response['reset_id'].toString() : null;
+        final String? sessionId = (data is Map && data['id'] != null)
+            ? data['id'].toString()
+            : (response['id'] != null)
+            ? response['id'].toString()
+            : (response['reset_id'] != null)
+            ? response['reset_id'].toString()
+            : null;
 
         Get.snackbar(
           'نجاح',

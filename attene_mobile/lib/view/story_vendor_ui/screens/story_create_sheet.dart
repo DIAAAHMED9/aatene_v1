@@ -119,13 +119,9 @@ class _SheetBody extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return
-
-      ListTile(
+    return ListTile(
       trailing: Icon(icon, size: 26, color: Colors.black),
-      title: Align(
-        child: Text(title, style: getMedium(fontSize: 18)),
-      ),
+      title: Align(child: Text(title, style: getMedium(fontSize: 18))),
 
       onTap: onTap,
     );

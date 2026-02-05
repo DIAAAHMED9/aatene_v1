@@ -64,9 +64,9 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
       }
     } else if (data is List) {
       final found = data.cast<dynamic>().firstWhere(
-            (e) => (e is Map) && e['id']?.toString() == serviceId,
-            orElse: () => null,
-          );
+        (e) => (e is Map) && e['id']?.toString() == serviceId,
+        orElse: () => null,
+      );
       if (found is Map) serviceJson = Map<String, dynamic>.from(found);
     }
 
@@ -76,7 +76,15 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
     final normalized = <String, dynamic>{};
     serviceJson.forEach((k, v) {
-      if (v is String && {'id', 'price', 'execute_count', 'section_id', 'category_id', 'store_id'}.contains(k)) {
+      if (v is String &&
+          {
+            'id',
+            'price',
+            'execute_count',
+            'section_id',
+            'category_id',
+            'store_id',
+          }.contains(k)) {
         final n = num.tryParse(v);
         normalized[k] = n ?? v;
       } else {
@@ -119,7 +127,10 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   SizedBox(height: ResponsiveDimensions.f(12)),
                   Text(
                     isRTL ? 'جاري تحميل التفاصيل...' : 'Loading details...',
-                    style: getMedium(fontSize: ResponsiveDimensions.f(13), color: Colors.grey),
+                    style: getMedium(
+                      fontSize: ResponsiveDimensions.f(13),
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
@@ -132,7 +143,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
           final service = snapshot.data;
           if (service == null) {
-            return _errorView(isRTL, isSmallScreen, isRTL ? 'تعذر العثور على الخدمة' : 'Service not found');
+            return _errorView(
+              isRTL,
+              isSmallScreen,
+              isRTL ? 'تعذر العثور على الخدمة' : 'Service not found',
+            );
           }
 
           return _detailsView(service, isRTL, isSmallScreen);
@@ -144,26 +159,41 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
   Widget _errorView(bool isRTL, bool isSmallScreen, String message) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(20) : ResponsiveDimensions.f(28)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(20) : ResponsiveDimensions.f(28),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: ResponsiveDimensions.f(80), color: Colors.red),
+          Icon(
+            Icons.error_outline,
+            size: ResponsiveDimensions.f(80),
+            color: Colors.red,
+          ),
           SizedBox(height: ResponsiveDimensions.f(12)),
           Text(
             isRTL ? 'حدث خطأ' : 'Error',
-            style: getBold(fontSize: ResponsiveDimensions.f(18), color: Colors.red),
+            style: getBold(
+              fontSize: ResponsiveDimensions.f(18),
+              color: Colors.red,
+            ),
           ),
           SizedBox(height: ResponsiveDimensions.f(8)),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: getMedium(fontSize: ResponsiveDimensions.f(12), color: Colors.grey),
+            style: getMedium(
+              fontSize: ResponsiveDimensions.f(12),
+              color: Colors.grey,
+            ),
           ),
           SizedBox(height: ResponsiveDimensions.f(16)),
           ElevatedButton(
             onPressed: () => setState(() => _future = _load()),
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary400, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary400,
+              foregroundColor: Colors.white,
+            ),
             child: Text(isRTL ? 'إعادة المحاولة' : 'Retry'),
           ),
         ],
@@ -175,11 +205,16 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     final images = service.images;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(isSmallScreen ? ResponsiveDimensions.f(16) : ResponsiveDimensions.f(24)),
+      padding: EdgeInsets.all(
+        isSmallScreen ? ResponsiveDimensions.f(16) : ResponsiveDimensions.f(24),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(service.title, style: getBold(fontSize: ResponsiveDimensions.f(18))),
+          Text(
+            service.title,
+            style: getBold(fontSize: ResponsiveDimensions.f(18)),
+          ),
           SizedBox(height: ResponsiveDimensions.f(10)),
 
           if (images.isNotEmpty) ...[
@@ -193,12 +228,18 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primary100,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('${service.price} ₪', style: getBold(fontSize: ResponsiveDimensions.f(14))),
+                child: Text(
+                  '${service.price} ₪',
+                  style: getBold(fontSize: ResponsiveDimensions.f(14)),
+                ),
               ),
               const SizedBox(width: 10),
               _StatusChip(status: service.status),
@@ -208,25 +249,35 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
           _InfoRow(
             title: isRTL ? 'مدة التنفيذ' : 'Execution time',
-            value: '${service.executeCount} ${_convertTimeUnit(service.executeType, isRTL)}',
+            value:
+                '${service.executeCount} ${_convertTimeUnit(service.executeType, isRTL)}',
           ),
           SizedBox(height: ResponsiveDimensions.f(10)),
 
           if (service.specialties.isNotEmpty) ...[
-            Text(isRTL ? 'التخصصات' : 'Specialties', style: getBold(fontSize: ResponsiveDimensions.f(14))),
+            Text(
+              isRTL ? 'التخصصات' : 'Specialties',
+              style: getBold(fontSize: ResponsiveDimensions.f(14)),
+            ),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Wrap(
               spacing: 8,
               runSpacing: 6,
               children: service.specialties.map((s) {
-                return Chip(label: Text(s), backgroundColor: AppColors.primary50);
+                return Chip(
+                  label: Text(s),
+                  backgroundColor: AppColors.primary50,
+                );
               }).toList(),
             ),
             SizedBox(height: ResponsiveDimensions.f(14)),
           ],
 
           if (service.tags.isNotEmpty) ...[
-            Text(isRTL ? 'الكلمات المفتاحية' : 'Tags', style: getBold(fontSize: ResponsiveDimensions.f(14))),
+            Text(
+              isRTL ? 'الكلمات المفتاحية' : 'Tags',
+              style: getBold(fontSize: ResponsiveDimensions.f(14)),
+            ),
             SizedBox(height: ResponsiveDimensions.f(8)),
             Wrap(
               spacing: 8,
@@ -238,13 +289,22 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
             SizedBox(height: ResponsiveDimensions.f(14)),
           ],
 
-          Text(isRTL ? 'الوصف' : 'Description', style: getBold(fontSize: ResponsiveDimensions.f(14))),
+          Text(
+            isRTL ? 'الوصف' : 'Description',
+            style: getBold(fontSize: ResponsiveDimensions.f(14)),
+          ),
           SizedBox(height: ResponsiveDimensions.f(6)),
-          Text(service.description, style: getMedium(fontSize: ResponsiveDimensions.f(13))),
+          Text(
+            service.description,
+            style: getMedium(fontSize: ResponsiveDimensions.f(13)),
+          ),
           SizedBox(height: ResponsiveDimensions.f(14)),
 
           if (service.extras.isNotEmpty) ...[
-            Text(isRTL ? 'التطويرات الإضافية' : 'Extras', style: getBold(fontSize: ResponsiveDimensions.f(14))),
+            Text(
+              isRTL ? 'التطويرات الإضافية' : 'Extras',
+              style: getBold(fontSize: ResponsiveDimensions.f(14)),
+            ),
             SizedBox(height: ResponsiveDimensions.f(8)),
             ...service.extras.map((e) {
               return Container(
@@ -258,8 +318,16 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   children: [
                     const Icon(Icons.add_circle_outline, size: 18),
                     const SizedBox(width: 10),
-                    Expanded(child: Text(e.title, style: getMedium(fontSize: ResponsiveDimensions.f(13)))),
-                    Text('${e.price} ₪', style: getBold(fontSize: ResponsiveDimensions.f(12))),
+                    Expanded(
+                      child: Text(
+                        e.title,
+                        style: getMedium(fontSize: ResponsiveDimensions.f(13)),
+                      ),
+                    ),
+                    Text(
+                      '${e.price} ₪',
+                      style: getBold(fontSize: ResponsiveDimensions.f(12)),
+                    ),
                   ],
                 ),
               );
@@ -268,20 +336,29 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
           ],
 
           if (service.questions.isNotEmpty) ...[
-            Text(isRTL ? 'الأسئلة الشائعة' : 'FAQs', style: getBold(fontSize: ResponsiveDimensions.f(14))),
+            Text(
+              isRTL ? 'الأسئلة الشائعة' : 'FAQs',
+              style: getBold(fontSize: ResponsiveDimensions.f(14)),
+            ),
             SizedBox(height: ResponsiveDimensions.f(8)),
             ...service.questions.map((q) {
               return ExpansionTile(
                 tilePadding: EdgeInsets.zero,
-                title: Text(q.question, style: getMedium(fontSize: ResponsiveDimensions.f(13))),
+                title: Text(
+                  q.question,
+                  style: getMedium(fontSize: ResponsiveDimensions.f(13)),
+                ),
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(q.answer, style: getMedium(fontSize: ResponsiveDimensions.f(13))),
+                      child: Text(
+                        q.answer,
+                        style: getMedium(fontSize: ResponsiveDimensions.f(13)),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               );
             }),
@@ -308,7 +385,8 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
       'month': 'month',
       'year': 'year',
     };
-    return (isRTL ? mappingAr : mappingEn)[apiTimeUnit] ?? (isRTL ? 'ساعة' : 'hour');
+    return (isRTL ? mappingAr : mappingEn)[apiTimeUnit] ??
+        (isRTL ? 'ساعة' : 'hour');
   }
 }
 
@@ -326,9 +404,20 @@ class _InfoRow extends StatelessWidget {
         children: [
           SizedBox(
             width: ResponsiveDimensions.f(110),
-            child: Text(title, style: getMedium(fontSize: ResponsiveDimensions.f(12), color: Colors.grey[600]!)),
+            child: Text(
+              title,
+              style: getMedium(
+                fontSize: ResponsiveDimensions.f(12),
+                color: Colors.grey[600]!,
+              ),
+            ),
           ),
-          Expanded(child: Text(value, style: getMedium(fontSize: ResponsiveDimensions.f(13)))),
+          Expanded(
+            child: Text(
+              value,
+              style: getMedium(fontSize: ResponsiveDimensions.f(13)),
+            ),
+          ),
         ],
       ),
     );
@@ -378,7 +467,10 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withOpacity(0.25)),
       ),
-      child: Text(text, style: getMedium(fontSize: ResponsiveDimensions.f(12), color: color)),
+      child: Text(
+        text,
+        style: getMedium(fontSize: ResponsiveDimensions.f(12), color: color),
+      ),
     );
   }
 }
@@ -426,7 +518,8 @@ class _ImagesCarouselState extends State<_ImagesCarousel> {
                       : Image.network(
                           url,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                          errorBuilder: (_, __, ___) =>
+                              const Center(child: Icon(Icons.broken_image)),
                         ),
                 );
               },
@@ -451,7 +544,7 @@ class _ImagesCarouselState extends State<_ImagesCarousel> {
               );
             }),
           ),
-        ]
+        ],
       ],
     );
   }

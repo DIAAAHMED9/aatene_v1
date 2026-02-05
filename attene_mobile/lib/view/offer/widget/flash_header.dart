@@ -1,6 +1,4 @@
-// lib/views/flash_sale/components/flash_header.dart
 import 'package:attene_mobile/general_index.dart';
-import 'package:flutter/material.dart';
 
 /// رأس صفحة Flash Sale - يعرض التايمر والعنوان
 class FlashHeader extends StatelessWidget {

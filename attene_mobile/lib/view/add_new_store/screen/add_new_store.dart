@@ -1,7 +1,7 @@
 import '../../../general_index.dart';
 
 class AddNewStore extends StatelessWidget {
- const AddNewStore({super.key});
+  const AddNewStore({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,6 @@ class AddNewStore extends StatelessWidget {
             child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
-
       ),
       body: AddNewStoreForm(controller: controller, isRTL: isRTL),
     );

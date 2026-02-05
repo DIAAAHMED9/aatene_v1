@@ -43,7 +43,8 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
     if (_submitting) return;
     setState(() => _submitting = true);
     try {
-      const demoImagePath = 'images/QzuU8cxzP0pgRFit46Dh5LifmCrxSCm8eg49f10v.png';
+      const demoImagePath =
+          'images/QzuU8cxzP0pgRFit46Dh5LifmCrxSCm8eg49f10v.png';
       await MerchantStoriesApi.create(
         image: demoImagePath,
         text: _controller.text.trim(),
@@ -134,7 +135,10 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                       onTap: _submitting ? null : _submitPublish,
                       borderRadius: BorderRadius.circular(999),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 10,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(999),
@@ -143,11 +147,16 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                             ? const SizedBox(
                                 width: 22,
                                 height: 22,
-                                child: CircularProgressIndicator(strokeWidth: 2.2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.2,
+                                ),
                               )
                             : const Text(
                                 'نشر',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                       ),
                     ),
@@ -161,7 +170,11 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                           shape: BoxShape.circle,
                           color: Colors.white.withOpacity(0.12),
                         ),
-                        child: const Icon(Icons.arrow_forward, color: Colors.white, size: 26),
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 26,
+                        ),
                       ),
                     ),
                   ],
@@ -191,7 +204,10 @@ class _TextStoryScreenState extends State<TextStoryScreen> {
                           decoration: BoxDecoration(
                             color: c,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white, width: selected ? 3 : 1.5),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: selected ? 3 : 1.5,
+                            ),
                           ),
                         ),
                       );

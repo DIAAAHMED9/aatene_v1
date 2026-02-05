@@ -58,10 +58,9 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
       _isLoading.value = false;
     }
 
-Future<void> initializeApp() async {
-  await _initializeApp();
-}
-
+    Future<void> initializeApp() async {
+      await _initializeApp();
+    }
   }
 
   Future<void> _startConnectivityMonitoring() async {
@@ -74,24 +73,22 @@ Future<void> initializeApp() async {
         '📶 حالة الاتصال الحالية: ${_isInternetConnect.value ? 'متصل' : 'غير متصل'}',
       );
 
-      _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
-        (List<ConnectivityResult> results) {
-          final bool isConnected = !results.contains(ConnectivityResult.none);
+      _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+        List<ConnectivityResult> results,
+      ) {
+        final bool isConnected = !results.contains(ConnectivityResult.none);
 
-          if (_isInternetConnect.value != isConnected) {
-            _isInternetConnect.value = isConnected;
-            print(
-              '📶 تغير حالة الاتصال: ${isConnected ? 'متصل' : 'غير متصل'}',
-            );
+        if (_isInternetConnect.value != isConnected) {
+          _isInternetConnect.value = isConnected;
+          print('📶 تغير حالة الاتصال: ${isConnected ? 'متصل' : 'غير متصل'}');
 
-            if (isConnected) {
-              _onInternetRestored();
-            } else {
-              _onInternetLost();
-            }
+          if (isConnected) {
+            _onInternetRestored();
+          } else {
+            _onInternetLost();
           }
-        },
-      );
+        }
+      });
 
       print('📡 بدء مراقبة الاتصال بالإنترنت');
     } catch (e) {
@@ -353,8 +350,7 @@ Future<void> initializeApp() async {
         if (storage.read('auth_token') == null) {
           storage.write('auth_token', token);
         }
-      } catch (_) {
-      }
+      } catch (_) {}
 
       final response = await ApiHelper.getAccount(withLoading: false);
 

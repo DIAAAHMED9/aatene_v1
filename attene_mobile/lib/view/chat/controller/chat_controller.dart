@@ -1,10 +1,8 @@
-import 'dart:async';
 import '../../../general_index.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../utils/platform/dio_multipart.dart';
 
-enum ChatTab { all, unread, active, notActive, interested,groub }
+enum ChatTab { all, unread, active, notActive, interested, groub }
 
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
@@ -20,11 +18,14 @@ class ChatController extends GetxController {
 
   final RxList<ChatConversation> allConversations = <ChatConversation>[].obs;
   final RxList<ChatConversation> unreadConversations = <ChatConversation>[].obs;
-  final RxList<ChatConversation> interestedConversations = <ChatConversation>[].obs;
+  final RxList<ChatConversation> interestedConversations =
+      <ChatConversation>[].obs;
   final RxList<ChatConversation> groubConversations = <ChatConversation>[].obs;
-  final RxList<ChatConversation> filteredConversations = <ChatConversation>[].obs;
+  final RxList<ChatConversation> filteredConversations =
+      <ChatConversation>[].obs;
 
-  final RxList<Map<String, dynamic>> previousParticipants = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> previousParticipants =
+      <Map<String, dynamic>>[].obs;
 
   final Rxn<ChatConversation> currentConversation = Rxn<ChatConversation>();
   final RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
@@ -54,10 +55,7 @@ class ChatController extends GetxController {
   }
 
   Future<void> loadInitialData() async {
-    await Future.wait([
-      loadConversations(),
-      loadPreviousParticipants(),
-    ]);
+    await Future.wait([loadConversations(), loadPreviousParticipants()]);
   }
 
   Future<void> refreshBlockedCache({bool silent = false}) async {
@@ -79,7 +77,11 @@ class ChatController extends GetxController {
           final id = (pd['id'] ?? '').toString();
           if (t.isEmpty || id.isEmpty) continue;
 
-          if (myOwnerType != null && myOwnerId != null && t == myOwnerType && id == myOwnerId) continue;
+          if (myOwnerType != null &&
+              myOwnerId != null &&
+              t == myOwnerType &&
+              id == myOwnerId)
+            continue;
 
           next.add('$t:$id');
         }
@@ -108,7 +110,11 @@ class ChatController extends GetxController {
       final t = (d.type ?? '').toString();
       final id = (d.id ?? '').toString();
       if (t.isEmpty || id.isEmpty) continue;
-      if (myOwnerType != null && myOwnerId != null && t == myOwnerType && id == myOwnerId) continue;
+      if (myOwnerType != null &&
+          myOwnerId != null &&
+          t == myOwnerType &&
+          id == myOwnerId)
+        continue;
       return {'type': t, 'id': id};
     }
     return null;
@@ -193,7 +199,8 @@ class ChatController extends GetxController {
           ? Map<String, dynamic>.from(c.userData)
           : <String, dynamic>{};
 
-      final type = (ud['type'] ?? ud['owner_type'] ?? ud['user_type'])?.toString();
+      final type = (ud['type'] ?? ud['owner_type'] ?? ud['user_type'])
+          ?.toString();
 
       if (type == 'store') {
         myOwnerType = 'store';
@@ -223,8 +230,7 @@ class ChatController extends GetxController {
         myOwnerType = 'user';
         myOwnerId = ud['id']?.toString();
       }
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   ChatConversation? _findConversation(int id) {
@@ -237,7 +243,8 @@ class ChatController extends GetxController {
     for (final p in conv.participants) {
       final d = p.participantData;
       if (d == null) continue;
-      final isMe = (myOwnerType != null &&
+      final isMe =
+          (myOwnerType != null &&
           myOwnerId != null &&
           d.type == myOwnerType &&
           d.id == myOwnerId);
@@ -266,7 +273,9 @@ class ChatController extends GetxController {
         if (raw is List) {
           final list = raw
               .whereType<Map>()
-              .map((e) => ChatConversation.fromJson(Map<String, dynamic>.from(e)))
+              .map(
+                (e) => ChatConversation.fromJson(Map<String, dynamic>.from(e)),
+              )
               .toList();
 
           allConversations.assignAll(list);
@@ -276,9 +285,11 @@ class ChatController extends GetxController {
           );
 
           interestedConversations.assignAll(
-            list.where((c) => (c.type == 'direct' || c.type == 'group')).toList(),
+            list
+                .where((c) => (c.type == 'direct' || c.type == 'group'))
+                .toList(),
           );
-groubConversations.assignAll(
+          groubConversations.assignAll(
             list.where((c) => (c.type == 'group')).toList(),
           );
           _applyFilters();
@@ -302,7 +313,7 @@ groubConversations.assignAll(
       case ChatTab.interested:
         base = interestedConversations.toList();
         break;
-           case ChatTab.groub:
+      case ChatTab.groub:
         base = groubConversations.toList();
         break;
       case ChatTab.active:
@@ -319,7 +330,9 @@ groubConversations.assignAll(
 
     if (q.isNotEmpty) {
       base = base.where((c) {
-        final name = c.displayName(myOwnerType: myOwnerType, myOwnerId: myOwnerId).toLowerCase();
+        final name = c
+            .displayName(myOwnerType: myOwnerType, myOwnerId: myOwnerId)
+            .toLowerCase();
         return name.contains(q);
       }).toList();
     }
@@ -388,7 +401,10 @@ groubConversations.assignAll(
     return _findConversation(conversationId);
   }
 
-  Future<void> loadConversationMessages(int conversationId, {bool silent = false}) async {
+  Future<void> loadConversationMessages(
+    int conversationId, {
+    bool silent = false,
+  }) async {
     try {
       if (!silent) isLoadingMessages.value = true;
 
@@ -435,7 +451,11 @@ groubConversations.assignAll(
     String? text,
   }) async {
     final paths = files.map((f) => f.path).toList();
-    return sendMessage(conversationId: conversationId, body: text, filePaths: paths);
+    return sendMessage(
+      conversationId: conversationId,
+      body: text,
+      filePaths: paths,
+    );
   }
 
   Future<ChatMessage?> sendMessage({
@@ -447,7 +467,8 @@ groubConversations.assignAll(
     int? varationId,
   }) async {
     try {
-      final conv = _findConversation(conversationId) ?? currentConversation.value;
+      final conv =
+          _findConversation(conversationId) ?? currentConversation.value;
       if (conv == null) {
         throw 'Conversation not found locally';
       }
@@ -466,9 +487,12 @@ groubConversations.assignAll(
       if (body != null && body.trim().isNotEmpty) {
         form.fields.add(MapEntry('body', body.trim()));
       }
-      if (productId != null) form.fields.add(MapEntry('product_id', productId.toString()));
-      if (serviceId != null) form.fields.add(MapEntry('service_id', serviceId.toString()));
-      if (varationId != null) form.fields.add(MapEntry('varation_id', varationId.toString()));
+      if (productId != null)
+        form.fields.add(MapEntry('product_id', productId.toString()));
+      if (serviceId != null)
+        form.fields.add(MapEntry('service_id', serviceId.toString()));
+      if (varationId != null)
+        form.fields.add(MapEntry('varation_id', varationId.toString()));
 
       if (filePaths != null && filePaths.isNotEmpty) {
         for (final p in filePaths) {
@@ -487,7 +511,9 @@ groubConversations.assignAll(
       );
 
       if (res is Map && res['status'] == true && res['message'] is Map) {
-        final msg = ChatMessage.fromJson(Map<String, dynamic>.from(res['message']));
+        final msg = ChatMessage.fromJson(
+          Map<String, dynamic>.from(res['message']),
+        );
 
         if (currentConversation.value?.id == conversationId) {
           currentMessages.add(msg);
@@ -495,10 +521,14 @@ groubConversations.assignAll(
 
         final convJson = (res['message'] as Map)['conversation'];
         if (convJson is Map) {
-          final updated = ChatConversation.fromJson(Map<String, dynamic>.from(convJson));
+          final updated = ChatConversation.fromJson(
+            Map<String, dynamic>.from(convJson),
+          );
           _upsertConversation(updated);
         } else {
-          final idx = allConversations.indexWhere((c) => c.id == conversationId);
+          final idx = allConversations.indexWhere(
+            (c) => c.id == conversationId,
+          );
           if (idx >= 0) {
             final c0 = allConversations.removeAt(idx);
             allConversations.insert(0, c0);
@@ -567,7 +597,9 @@ groubConversations.assignAll(
       );
 
       if (res is Map && res['status'] == true && res['conversation'] is Map) {
-        final conv = ChatConversation.fromJson(Map<String, dynamic>.from(res['conversation']));
+        final conv = ChatConversation.fromJson(
+          Map<String, dynamic>.from(res['conversation']),
+        );
         _upsertConversation(conv);
         _applyFilters();
         return conv;
@@ -594,7 +626,9 @@ groubConversations.assignAll(
         await loadConversations(silent: true);
 
         if (currentConversation.value?.id == conversationId) {
-          final idx = allConversations.indexWhere((c) => c.id == conversationId);
+          final idx = allConversations.indexWhere(
+            (c) => c.id == conversationId,
+          );
           if (idx >= 0) currentConversation.value = allConversations[idx];
         }
         _applyFilters();
@@ -669,7 +703,8 @@ groubConversations.assignAll(
   }) async {
     try {
       final res = await ApiHelper.delete(
-        path: '/conversations/$conversationId/participants/$participantRecordId',
+        path:
+            '/conversations/$conversationId/participants/$participantRecordId',
         withLoading: true,
         shouldShowMessage: true,
       );

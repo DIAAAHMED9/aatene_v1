@@ -27,9 +27,12 @@ class DashboardStats extends StatelessWidget {
         _statCard(
           title: 'الاضافة للمفضلة',
           value: controller.favoritesCount,
-          icon: Icon(Icons.favorite_border_sharp, color: AppColors.primary400,size: 30,),
+          icon: Icon(
+            Icons.favorite_border_sharp,
+            color: AppColors.primary400,
+            size: 30,
+          ),
           color: AppColors.primary400,
-
         ),
       ],
     );
@@ -54,7 +57,7 @@ class DashboardStats extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             icon,
-            Text(title, style: getBold(fontSize: 18,)),
+            Text(title, style: getBold(fontSize: 18)),
             Spacer(),
             Obx(
               () => Text(

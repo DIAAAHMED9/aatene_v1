@@ -69,7 +69,9 @@ class AddProductContent extends StatelessWidget {
     if (!Get.isRegistered<ProductCentralController>()) {
       return Scaffold(
         appBar: AppBar(title: Text('خطأ', style: getMedium())),
-        body: Center(child: Text('لم يتم تهيئة بيانات المنتج', style: getMedium())),
+        body: Center(
+          child: Text('لم يتم تهيئة بيانات المنتج', style: getMedium()),
+        ),
       );
     }
 

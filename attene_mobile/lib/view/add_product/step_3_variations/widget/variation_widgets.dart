@@ -16,49 +16,50 @@ class VariationToggleWidget extends StatelessWidget {
           children: [
             Text('هل يوجد اختلافات للمنتج؟', style: getMedium(fontSize: 14)),
             SizedBox(width: ResponsiveDimensions.w(8)),
-           GestureDetector(
-             onTap: () {
-               showDialog(
-                 context: context,
-                 builder: (context) => AlertDialog(
-                   title: Text(
-                     'ما هي الاختلافات',
-                     textAlign: TextAlign.center,
-                     style: getBold(fontSize: ResponsiveDimensions.f(18)),
-                   ),
-                   actions: [
-                     AateneButton(
-                       onTap: () => Get.back(),
-                       buttonText: 'الغاء',
-                       color: AppColors.primary400,
-                       textColor: AppColors.light1000,
-                       borderColor: AppColors.primary400,
-                     ),
-
-                   ],
-                   content: Text(
-                     textAlign: TextAlign.center,
-
-                     'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
-                     style: getMedium(),
-                   ),
-                 ),
-               );
-             },
-
-             child: Row(
-               spacing: 5,
-               children: [
-                 Icon(
-                      Icons.help_outline,
-                      color: AppColors.primary300,
-                      size: ResponsiveDimensions.w(20),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'ما هي الاختلافات',
+                      textAlign: TextAlign.center,
+                      style: getBold(fontSize: ResponsiveDimensions.f(18)),
                     ),
-                 Text("ما هي اختلافات المنتج",style: getMedium(fontSize: 12,color: AppColors.primary300),),
-               ],
-             ),
-           ),
+                    actions: [
+                      AateneButton(
+                        onTap: () => Get.back(),
+                        buttonText: 'الغاء',
+                        color: AppColors.primary400,
+                        textColor: AppColors.light1000,
+                        borderColor: AppColors.primary400,
+                      ),
+                    ],
+                    content: Text(
+                      textAlign: TextAlign.center,
 
+                      'الاختلافات هي النسخ المختلفة للمنتج (مثل الألوان، المقاسات، الخ)',
+                      style: getMedium(),
+                    ),
+                  ),
+                );
+              },
+
+              child: Row(
+                spacing: 5,
+                children: [
+                  Icon(
+                    Icons.help_outline,
+                    color: AppColors.primary300,
+                    size: ResponsiveDimensions.w(20),
+                  ),
+                  Text(
+                    "ما هي اختلافات المنتج",
+                    style: getMedium(fontSize: 12, color: AppColors.primary300),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         GetBuilder<ProductVariationController>(
@@ -152,7 +153,6 @@ class SelectedAttributesWidget extends StatelessWidget {
     return GetBuilder<ProductVariationController>(
       id: 'attributes',
       builder: (_) {
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -208,7 +208,6 @@ class SelectedAttributesWidget extends StatelessWidget {
       },
     );
   }
-
 }
 
 class VariationsListWidget extends StatelessWidget {
@@ -296,12 +295,13 @@ class VariationsListWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       spacing: 15,
       children: [
-        Image.asset("assets/images/png/backgound_full.png",height: 160,width: 160,fit: BoxFit.cover,),
-        Text(
-          'لم يتم اضافة اي قيم بعد!',
-          style: getMedium(),
+        Image.asset(
+          "assets/images/png/backgound_full.png",
+          height: 160,
+          width: 160,
+          fit: BoxFit.cover,
         ),
-      
+        Text('لم يتم اضافة اي قيم بعد!', style: getMedium()),
       ],
     );
   }

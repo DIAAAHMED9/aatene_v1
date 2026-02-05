@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -50,7 +51,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1026858119799',
     projectId: 'aatene-36a8c',
     storageBucket: 'aatene-36a8c.firebasestorage.app',
-    androidClientId: '1026858119799-kduiqpgsleht4mraou1q2snbuftjo0q4.apps.googleusercontent.com',
+    androidClientId:
+        '1026858119799-kduiqpgsleht4mraou1q2snbuftjo0q4.apps.googleusercontent.com',
     iosBundleId: 'com.aatene.mobile',
   );
 }
