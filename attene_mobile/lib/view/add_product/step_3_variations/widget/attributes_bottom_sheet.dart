@@ -198,7 +198,6 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
                   borderColor: AppColors.primary400,
                   color: AppColors.primary400,
                 ),
-
               ),
             ],
           ),

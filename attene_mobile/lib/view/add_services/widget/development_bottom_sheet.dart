@@ -177,7 +177,7 @@ class DevelopmentBottomSheet extends StatelessWidget {
                                   children: [
                                     Text(
                                       controller.developmentTimeUnit.value,
-                                      style: getRegular(
+                                      style: getMedium(
                                         fontSize:
                                             ResponsiveDimensions.responsiveFontSize(
                                               12,

@@ -26,7 +26,9 @@ class MerchantStoriesApi {
       if (inner is Map && inner['data'] is List) {
         return (inner['data'] as List)
             .whereType<Map>()
-            .map((e) => MerchantStoryModel.fromJson(Map<String, dynamic>.from(e)))
+            .map(
+              (e) => MerchantStoryModel.fromJson(Map<String, dynamic>.from(e)),
+            )
             .toList();
       }
     }
@@ -44,7 +46,9 @@ class MerchantStoriesApi {
       shouldShowMessage: false,
     );
     if (res is Map && res['record'] is Map) {
-      return MerchantStoryModel.fromJson(Map<String, dynamic>.from(res['record']));
+      return MerchantStoryModel.fromJson(
+        Map<String, dynamic>.from(res['record']),
+      );
     }
     return null;
   }
@@ -68,7 +72,9 @@ class MerchantStoriesApi {
     );
 
     if (res is Map && res['record'] is Map) {
-      return MerchantStoryModel.fromJson(Map<String, dynamic>.from(res['record']));
+      return MerchantStoryModel.fromJson(
+        Map<String, dynamic>.from(res['record']),
+      );
     }
     return null;
   }

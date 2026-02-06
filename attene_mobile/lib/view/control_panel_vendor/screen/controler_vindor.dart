@@ -14,7 +14,7 @@ class ControllerVendor extends StatelessWidget {
               width: double.infinity,
               height: 267,
               decoration: BoxDecoration(
-                color:  AppColors.customControlerVindor,
+                color: AppColors.customControlerVindor,
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(24),
                 ),
@@ -49,12 +49,11 @@ class ControllerVendor extends StatelessWidget {
                               children: [
                                 Text(
                                   "jerusalemlll",
-                                  style:getBold(                                    fontSize: 18,
-                                  ) ,
+                                  style: getBold(fontSize: 18),
                                 ),
                                 Text(
                                   " فلسطين ، الخليل",
-                                  style:getRegular(fontSize: 18) ,
+                                  style: getMedium(fontSize: 18),
                                 ),
                               ],
                             ),

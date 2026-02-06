@@ -229,7 +229,7 @@ class ServiceListItem extends StatelessWidget {
                 color: AppColors.primary400,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text('تعديل الخدمة', style: getRegular()),
+              title: Text('تعديل الخدمة', style: getMedium()),
               onTap: () {
                 Get.back();
                 _editService();
@@ -241,7 +241,7 @@ class ServiceListItem extends StatelessWidget {
                 color: Colors.red,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text('حذف الخدمة', style: getRegular()),
+              title: Text('حذف الخدمة', style: getMedium()),
               onTap: () {
                 Get.back();
                 _confirmDeleteService();
@@ -253,7 +253,7 @@ class ServiceListItem extends StatelessWidget {
                 color: Colors.blue,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text('عرض التفاصيل', style: getRegular()),
+              title: Text('عرض التفاصيل', style: getMedium()),
               onTap: () {
                 Get.back();
                 _viewServiceDetails();
@@ -265,7 +265,7 @@ class ServiceListItem extends StatelessWidget {
                 color: Colors.orange,
                 size: ResponsiveDimensions.f(24),
               ),
-              title: Text('نسخ الخدمة', style: getRegular()),
+              title: Text('نسخ الخدمة', style: getMedium()),
               onTap: () {
                 Get.back();
                 _copyService();

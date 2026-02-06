@@ -99,7 +99,7 @@ class PriceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: getRegular(
+                  style: getMedium(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -184,7 +184,7 @@ class PriceScreen extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 controller.executionTimeUnit.value,
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize:
                                       ResponsiveDimensions.responsiveFontSize(
                                         12,
@@ -213,7 +213,7 @@ class PriceScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'هذا الحقل مطلوب',
-                  style: getRegular(
+                  style: getMedium(
                     color: Colors.red,
                     fontSize: ResponsiveDimensions.responsiveFontSize(12),
                   ),
@@ -238,7 +238,7 @@ class PriceScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 'تطويرات الخدمة اختيارية بالكامل، ولا يجوز إلزام المشتري بطلبها. يُرجى التعرف على كيفية استخدامها بالشكل الصحيح.',
-                style: getRegular(
+                style: getMedium(
                   fontSize: ResponsiveDimensions.responsiveFontSize(11),
                   color: Colors.grey.shade500,
                 ),
@@ -414,7 +414,7 @@ class PriceScreen extends StatelessWidget {
 
                             Text(
                               '${development.executionTime} ${development.timeUnit}',
-                              style: getRegular(
+                              style: getMedium(
                                 fontSize:
                                     ResponsiveDimensions.responsiveFontSize(14),
                               ),

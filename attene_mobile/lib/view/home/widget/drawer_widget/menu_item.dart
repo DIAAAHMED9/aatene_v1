@@ -18,7 +18,7 @@ class DrawerMenuItem extends StatelessWidget {
       leading: icon,
       title: Text(
         title,
-        style: getRegular(fontSize: 14) ,
+        style: getMedium(fontSize: 14) ,
       ),
       onTap: onTap,
     );

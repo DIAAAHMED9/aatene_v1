@@ -202,7 +202,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
             if (text != null)
         Text(
         text,
-        style: getRegular(fontSize: 10,
+        style: getMedium(fontSize: 10,
           color: isSelected ? widget.selectedColor : widget.unselectedColor,)
     )
     else if (isSelected)

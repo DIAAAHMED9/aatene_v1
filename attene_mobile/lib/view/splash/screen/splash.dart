@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _startApp() async {
     if (_isInitializing) return;
-    
+
     setState(() {
       _isInitializing = true;
       _showError = false;
@@ -36,36 +36,39 @@ class _SplashScreenState extends State<SplashScreen> {
       await AppInitializationService.initialize();
       if (mounted) {
         final storage = GetStorage();
-        final bool hasCompletedOnboarding = storage.read('has_completed_onboarding') == true;
+        final bool hasCompletedOnboarding =
+            storage.read('has_completed_onboarding') == true;
 
-			String? _readToken() {
-				final dynamic t = storage.read('auth_token');
-				final String? direct = t is String ? t.trim() : t?.toString().trim();
-				if (direct != null && direct.isNotEmpty) return direct;
+        String? _readToken() {
+          final dynamic t = storage.read('auth_token');
+          final String? direct = t is String ? t.trim() : t?.toString().trim();
+          if (direct != null && direct.isNotEmpty) return direct;
 
-				final dynamic ud = storage.read('user_data');
-				if (ud is Map) {
-					final dynamic ut = ud['token'];
-					final String? fromUserData = ut is String ? ut.trim() : ut?.toString().trim();
-					if (fromUserData != null && fromUserData.isNotEmpty) {
-						storage.write('auth_token', fromUserData);
-						return fromUserData;
-					}
-				}
-				return null;
-			}
+          final dynamic ud = storage.read('user_data');
+          if (ud is Map) {
+            final dynamic ut = ud['token'];
+            final String? fromUserData = ut is String
+                ? ut.trim()
+                : ut?.toString().trim();
+            if (fromUserData != null && fromUserData.isNotEmpty) {
+              storage.write('auth_token', fromUserData);
+              return fromUserData;
+            }
+          }
+          return null;
+        }
 
         bool isAuthenticated = false;
         try {
           if (Get.isRegistered<MyAppController>()) {
             isAuthenticated = Get.find<MyAppController>().isAuthenticated;
           } else {
-					final token = _readToken();
-					isAuthenticated = token != null && token.isNotEmpty;
+            final token = _readToken();
+            isAuthenticated = token != null && token.isNotEmpty;
           }
         } catch (_) {
-				final token = _readToken();
-				isAuthenticated = token != null && token.isNotEmpty;
+          final token = _readToken();
+          isAuthenticated = token != null && token.isNotEmpty;
         }
 
         if (!isAuthenticated && hasCompletedOnboarding) {

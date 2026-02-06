@@ -29,7 +29,7 @@ class MediaSelector extends StatelessWidget {
             SizedBox(height: ResponsiveDimensions.h(4)),
             Text(
               'إضافة صورة',
-              style: getRegular(
+              style: getMedium(
                 color: Colors.grey,
                 fontSize: ResponsiveDimensions.f(10),
               ),

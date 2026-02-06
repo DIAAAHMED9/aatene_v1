@@ -63,7 +63,7 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
 
                   Text(
                     'ما الذي تقدر أن نساعدك به ؟',
-                    style: getRegular(fontSize: 12, color: Colors.grey),
+                    style: getMedium(fontSize: 12, color: Colors.grey),
                   ),
 
                   const SizedBox(height: 24),
@@ -78,7 +78,7 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
                         });
                       },
                       activeColor: AppColors.primary400,
-                      title: Text(options[index], style: getRegular()),
+                      title: Text(options[index], style: getMedium()),
                       contentPadding: EdgeInsets.zero,
                     );
                   }),

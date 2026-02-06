@@ -267,7 +267,8 @@ class KeywordSearchBoxWidget extends StatelessWidget {
         child: GetBuilder<KeywordController>(
           builder: (_) => _buildAddButton(controller),
         ),
-      ), textInputType: TextInputType.name,
+      ),
+      textInputType: TextInputType.name,
     );
   }
 
@@ -342,13 +343,11 @@ class AvailableKeywordsWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          children: [
-          ],
+          children: [],
         );
       },
     );
   }
-
 }
 
 class SelectedKeywordsWidget extends StatelessWidget {

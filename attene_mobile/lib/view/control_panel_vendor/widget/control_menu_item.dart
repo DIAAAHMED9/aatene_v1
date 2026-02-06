@@ -32,7 +32,7 @@ class DashboardMenuItem extends StatelessWidget {
               Text(title, style: getBold()),
               Text(
                 subtitle,
-                style: getRegular(fontSize: 12, color: Colors.grey),
+                style: getMedium(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),

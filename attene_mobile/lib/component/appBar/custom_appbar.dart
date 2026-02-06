@@ -16,7 +16,7 @@ class CustomAppBarWithTabs extends StatefulWidget
 
   bool _isTablet(BuildContext context) =>
       MediaQuery.of(context).size.width >= 768 &&
-          MediaQuery.of(context).size.width < 1024;
+      MediaQuery.of(context).size.width < 1024;
 
   bool _isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= 1024;
@@ -201,18 +201,20 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
       borderRadius: _isMobile(context)
           ? BorderRadius.circular(0)
           : BorderRadius.only(
-        bottomLeft: Radius.circular(12),
-        bottomRight: Radius.circular(12),
-      ),
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
     );
   }
 
   Widget _buildTopBar(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (_isMobile(context) && Navigator.of(context).canPop())
+    return SizedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (_isMobile(context) && Navigator.of(context).canPop())
+
           IconButton(
             icon: Icon(
               widget.isRTL ? Icons.arrow_forward : Icons.arrow_back,
@@ -237,15 +239,12 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
                 color: Colors.black87,
                 fontFamily: "PingAR",
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
-
         if (widget.config.actionText.isNotEmpty && widget.config.onActionPressed != null)
           _buildActionButton(context),
-      ],
+      ],)
     );
   }
 
@@ -441,10 +440,10 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
   }
 
   Widget _buildUniversalImage(
-      String assetPath, {
-        Color? color,
-        double size = 20,
-      }) {
+    String assetPath, {
+    Color? color,
+    double size = 20,
+  }) {
     try {
       Widget imageWidget;
 

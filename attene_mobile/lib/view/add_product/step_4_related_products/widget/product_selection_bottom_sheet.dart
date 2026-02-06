@@ -348,20 +348,18 @@ class _ProductSelectionBottomSheetState
         builder: (controller) {
           return Column(
             children: [
-                   AateneButton(
-                     color: AppColors.primary400,
-                     textColor: AppColors.light1000,
-                     borderColor: AppColors.primary400,
-                     buttonText: controller.hasSelectedProducts
-                         ? 'اضافة'
-                         : 'إغلاق',
-                     onTap: () {
-                       if (controller.hasSelectedProducts) {
-                         controller.calculateTotalPrice();
-                       }
-                       Get.back();
-                     },
-                   ),
+              AateneButton(
+                color: AppColors.primary400,
+                textColor: AppColors.light1000,
+                borderColor: AppColors.primary400,
+                buttonText: controller.hasSelectedProducts ? 'اضافة' : 'إغلاق',
+                onTap: () {
+                  if (controller.hasSelectedProducts) {
+                    controller.calculateTotalPrice();
+                  }
+                  Get.back();
+                },
+              ),
             ],
           );
         },

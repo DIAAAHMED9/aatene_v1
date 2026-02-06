@@ -65,7 +65,7 @@ class TimeUnitBottomSheet extends StatelessWidget {
                       ),
                       title: Text(
                         unit,
-                        style: getRegular(
+                        style: getMedium(
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,

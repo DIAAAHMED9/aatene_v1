@@ -55,7 +55,7 @@ class ShowReport extends StatelessWidget {
                     Text("تفاصيل الشكوي", style: getBold(fontSize: 18)),
                     Row(
                       children: [
-                        Text("رقم الشكوي", style: getRegular()),
+                        Text("رقم الشكوي", style: getMedium()),
                         Spacer(),
                         Text(
                           "C-2020-001",
@@ -79,7 +79,7 @@ class ShowReport extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "قيد المعالجة",
-                                style: getRegular(
+                                style: getMedium(
                                   fontSize: 10,
                                   color: AppColors.customColor03,
                                 ),
@@ -107,8 +107,8 @@ class ShowReport extends StatelessWidget {
                         Spacer(),
                         Text(
                           "شكوي خاصة بالتوصيل",
-                          style: getRegular(color: Colors.grey),
-                        ),
+                          style: getMedium(color: Colors.grey),
+                        )
                       ],
                     ),
                     Divider(),
@@ -118,7 +118,7 @@ class ShowReport extends StatelessWidget {
                         Spacer(),
                         Text(
                           "التوصيل لم يتم في ميعادة",
-                          style: getRegular(color: Colors.grey),
+                          style: getMedium(color: Colors.grey),
                         ),
                       ],
                     ),

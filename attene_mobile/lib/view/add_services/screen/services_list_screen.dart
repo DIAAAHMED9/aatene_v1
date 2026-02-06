@@ -139,9 +139,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
           Get.back();
 
-          Get.to(
-            () => const AddServiceStepperScreen(),
-          )?.then((result) {
+          Get.to(() => const AddServiceStepperScreen())?.then((result) {
             if (result == true) {
               _refreshServices();
             }
@@ -243,10 +241,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
 
     Get.toNamed(
       '/service-details',
-      arguments: {
-        'serviceId': serviceId,
-        'service': service,
-      },
+      arguments: {'serviceId': serviceId, 'service': service},
     );
   }
 
@@ -287,7 +282,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
-      child: Text(text, style: getRegular(fontSize: 12, color: color)),
+      child: Text(text, style: getMedium(fontSize: 12, color: color)),
     );
   }
 
@@ -559,7 +554,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'يرجى تسجيل الدخول للوصول إلى إدارة الخدمات',
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -575,7 +570,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
               icon: Icon(Icons.login_rounded, size: ResponsiveDimensions.f(20)),
               label: Text(
                 'تسجيل الدخول',
-                style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+                style: getMedium(fontSize: ResponsiveDimensions.f(14)),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary400,
@@ -627,7 +622,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           SizedBox(height: ResponsiveDimensions.f(12)),
           Text(
             _getEmptyDescription(sectionName, tabIndex),
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(12)
                   : ResponsiveDimensions.f(14),
@@ -703,7 +698,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
           SizedBox(height: ResponsiveDimensions.f(16)),
           Text(
             'جاري تحميل الخدمات...',
-            style: getRegular(
+            style: getMedium(
               fontSize: isSmallScreen
                   ? ResponsiveDimensions.f(14)
                   : ResponsiveDimensions.f(16),
@@ -747,7 +742,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
             () => Text(
               _errorMessage.value,
               textAlign: TextAlign.center,
-              style: getRegular(
+              style: getMedium(
                 fontSize: isSmallScreen
                     ? ResponsiveDimensions.f(12)
                     : ResponsiveDimensions.f(14),
@@ -768,7 +763,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
             ),
             child: Text(
               'إعادة المحاولة',
-              style: getRegular(fontSize: ResponsiveDimensions.f(14)),
+              style: getMedium(fontSize: ResponsiveDimensions.f(14)),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
@@ -805,8 +800,9 @@ class _ServiceSelectSectionSheet extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment:
-            isRTL ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isRTL
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -833,11 +829,13 @@ class _ServiceSelectSectionSheet extends StatelessWidget {
                 final name = (s['name'] ?? '').toString();
                 final status = (s['status'] ?? '').toString();
                 return ListTile(
-                  title: Text(name.isEmpty ? '-' : name,
-                      style: getMedium(fontSize: 14)),
+                  title: Text(
+                    name.isEmpty ? '-' : name,
+                    style: getMedium(fontSize: 14),
+                  ),
                   subtitle: status.trim().isEmpty
                       ? null
-                      : Text(status, style: getRegular(fontSize: 12)),
+                      : Text(status, style: getMedium(fontSize: 12)),
                   onTap: id <= 0
                       ? null
                       : () {

@@ -341,7 +341,7 @@ class _AnimatedStepCircle extends StatelessWidget {
             if (step.subtitle.isNotEmpty)
             Text(
             step.subtitle,
-            style: getRegular( fontSize: 10,
+            style: getMedium( fontSize: 10,
             color: Colors.grey,)
             ),
             ],

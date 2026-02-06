@@ -146,14 +146,14 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       backgroundColor: AppColors.primary400,
                       child: Text(
                         '${index + 1}',
-                        style: getRegular(fontSize: 11, color: Colors.white),
+                        style: getMedium(fontSize: 11, color: Colors.white),
                       ),
                     ),
                     title: Row(
                       children: [
                         Text(
                           items[index]['title']!,
-                          style: getRegular(fontSize: 14),
+                          style: getMedium(fontSize: 14),
                         ),
                         const Spacer(),
                         _circleIconPlus(isExpanded ? Icons.remove : Icons.add),

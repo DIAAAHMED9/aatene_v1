@@ -46,70 +46,63 @@ class _CategoriesListState extends State<CategoriesList> {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "قسم الملابس",
-                      textAlign: TextAlign.center,
-                      style: getMedium(
-                        fontSize: 12,
-                        color: AppColors.neutral500,
-                      ),
-                    ),
-                    Text(
-                      "فساتين",
-                      textAlign: TextAlign.center,
-
-                      style: getBold(fontSize: 32, color: AppColors.neutral100),
-                    ),
-                    Text(
-                      "271 عنصر",
-                      textAlign: TextAlign.center,
-
-                      style: getMedium(
-                        fontSize: 12,
-                        color: AppColors.neutral500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                spacing: 10,
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: TextFiledAatene(
-                      isRTL: isRTL,
-                      hintText: "اكتب هنا",
-                      textInputAction: TextInputAction.done,
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: CircleAvatar(
-                          backgroundColor: AppColors.primary400,
-                          child: const Icon(Icons.search, color: Colors.white),
-                        ),
-                      ),
-                      textInputType: TextInputType.name,
-                    ),
+                  Text(
+                    "قسم الملابس",
+                    textAlign: TextAlign.center,
+                    style: getMedium(fontSize: 12, color: AppColors.neutral500),
                   ),
-                  CircleAvatar(
-                    backgroundColor: AppColors.primary50,
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset(
-                        'assets/images/svg_images/Filter.svg',
-                        semanticsLabel: 'My SVG Image',
-                        height: 18,
-                        width: 18,
-                      ),
-                    ),
+                  Text(
+                    "فساتين",
+                    textAlign: TextAlign.center,
+
+                    style: getBold(fontSize: 32, color: AppColors.neutral100),
+                  ),
+                  Text(
+                    "271 عنصر",
+                    textAlign: TextAlign.center,
+
+                    style: getMedium(fontSize: 12, color: AppColors.neutral500),
                   ),
                 ],
               ),
-             
+            ),
+            Row(
+              spacing: 10,
+              children: [
+                Expanded(
+                  child: TextFiledAatene(
+                    isRTL: isRTL,
+                    hintText: "اكتب هنا",
+                    textInputAction: TextInputAction.done,
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.primary400,
+                        child: const Icon(Icons.search, color: Colors.white),
+                      ),
+                    ),
+                    textInputType: TextInputType.name,
+                  ),
+                ),
+                CircleAvatar(
+                  backgroundColor: AppColors.primary50,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      'assets/images/svg_images/Filter.svg',
+                      semanticsLabel: 'My SVG Image',
+                      height: 18,
+                      width: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
             SizedBox(
               height: 90,
               child: ListView.builder(

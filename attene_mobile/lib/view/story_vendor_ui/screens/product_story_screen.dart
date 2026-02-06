@@ -87,7 +87,10 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: Colors.black, width: 2),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 2,
+                                  ),
                                   color: Colors.black.withOpacity(0.08),
                                 ),
                               ),
@@ -106,7 +109,11 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                                   shape: BoxShape.circle,
                                   color: Colors.white,
                                 ),
-                                child: const Icon(Icons.check, size: 18, color: Colors.black),
+                                child: const Icon(
+                                  Icons.check,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
@@ -126,7 +133,9 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: StoryVendorTheme.blueBg,
                       disabledBackgroundColor: Colors.black12,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(999),
+                      ),
                     ),
                     onPressed: hasSelection
                         ? () {
@@ -137,7 +146,10 @@ class _ProductStoryScreenState extends State<ProductStoryScreen> {
                         : null,
                     child: const Text(
                       'نشر',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ),

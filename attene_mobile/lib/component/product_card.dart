@@ -118,7 +118,7 @@ class _ProductCardState extends State<ProductCard> {
                       ),
                       Text(
                         'اعلان ممول',
-                        style: getRegular(
+                        style: getMedium(
                           fontSize: 10,
                           color: AppColors.neutral500,
                         ),

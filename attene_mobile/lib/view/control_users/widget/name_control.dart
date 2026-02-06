@@ -28,7 +28,7 @@ class NameControl extends StatelessWidget {
             spacing: 10,
             children: [
               icon,
-              Text(name, style: getRegular()),
+              Text(name, style: getMedium()),
             ],
           ),
           Divider(color: AppColors.neutral800),

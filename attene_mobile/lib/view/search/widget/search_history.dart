@@ -36,10 +36,7 @@ class _SearchHistoryState extends State<SearchHistory> {
           onPressed: () {
             if (_lastRemovedItem != null && _lastRemovedIndex != null) {
               setState(() {
-                _history.insert(
-                  _lastRemovedIndex!,
-                  _lastRemovedItem!,
-                );
+                _history.insert(_lastRemovedIndex!, _lastRemovedItem!);
               });
             }
           },
@@ -112,7 +109,7 @@ class _SearchHistoryState extends State<SearchHistory> {
                   runSpacing: 8,
                   children: List.generate(
                     _history.length,
-                        (index) => Chip(
+                    (index) => Chip(
                       backgroundColor: const Color(0xFFF1F4F8),
                       label: Text(_history[index]),
                       deleteIcon: const Icon(Icons.close, size: 18),

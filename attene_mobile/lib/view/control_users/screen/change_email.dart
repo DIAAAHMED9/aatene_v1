@@ -34,7 +34,7 @@ class ChangeEmail extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            Text("البريد الالكتروني", style: getRegular(fontSize: 14)),
+            Text("البريد الالكتروني", style: getMedium(fontSize: 14)),
             TextFiledAatene(
               isRTL: isRTL,
               hintText: "example@gmail.com",

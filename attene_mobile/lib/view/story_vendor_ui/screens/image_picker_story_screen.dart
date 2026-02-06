@@ -15,7 +15,8 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
 
   final colors = List<Color>.generate(
     24,
-    (i) => Color.lerp(const Color(0xFF1B4965), const Color(0xFFBEE9E8), i / 23)!,
+    (i) =>
+        Color.lerp(const Color(0xFF1B4965), const Color(0xFFBEE9E8), i / 23)!,
   );
 
   @override
@@ -105,7 +106,10 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.black, width: 2),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                             ),
@@ -118,10 +122,16 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                               height: 22,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isSelected ? Colors.white : Colors.white.withOpacity(0.3),
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.white.withOpacity(0.3),
                               ),
                               child: isSelected
-                                  ? const Icon(Icons.check, size: 16, color: Colors.black)
+                                  ? const Icon(
+                                      Icons.check,
+                                      size: 16,
+                                      color: Colors.black,
+                                    )
                                   : const SizedBox.shrink(),
                             ),
                           ),
@@ -147,7 +157,8 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
 
                     onPressed: hasSelection
                         ? () async {
-                            const demoImagePath = 'images/QzuU8cxzP0pgRFit46Dh5LifmCrxSCm8eg49f10v.png';
+                            const demoImagePath =
+                                'images/QzuU8cxzP0pgRFit46Dh5LifmCrxSCm8eg49f10v.png';
 
                             try {
                               await MerchantStoriesApi.create(
@@ -161,14 +172,19 @@ class _ImagePickerStoryScreenState extends State<ImagePickerStoryScreen> {
                             } catch (_) {
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('فشل نشر القصة، حاول مرة أخرى')),
+                                const SnackBar(
+                                  content: Text('فشل نشر القصة، حاول مرة أخرى'),
+                                ),
                               );
                             }
                           }
                         : null,
                     child: const Text(
                       'نشر',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ),

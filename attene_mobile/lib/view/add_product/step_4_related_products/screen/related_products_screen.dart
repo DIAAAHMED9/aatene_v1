@@ -413,14 +413,14 @@ class RelatedProductsScreen extends StatelessWidget {
                       },
                     ),
                   ] else ...[
-                       AateneButton(
+                    AateneButton(
                       borderColor: AppColors.primary400,
                       textColor: AppColors.light1000,
                       color: AppColors.primary400,
                       buttonText: 'التالي',
                       onTap: () => _showSuccessMessage(),
                     ),
-                                        SizedBox(height: ResponsiveDimensions.w(12)),
+                    SizedBox(height: ResponsiveDimensions.w(12)),
 
                     AateneButton(
                       borderColor: AppColors.primary400,
@@ -433,7 +433,6 @@ class RelatedProductsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                 
                   ],
                 ],
               ),

@@ -31,7 +31,9 @@ class DrawerControllerX extends GetxController {
       if (cached is List && cached.isNotEmpty) {
         final list = cached
             .whereType<Map>()
-            .map((m) => DrawerAccount.fromStoreJson(Map<String, dynamic>.from(m)))
+            .map(
+              (m) => DrawerAccount.fromStoreJson(Map<String, dynamic>.from(m)),
+            )
             .where((e) => e.id > 0)
             .toList();
         if (list.isNotEmpty) {
@@ -48,7 +50,11 @@ class DrawerControllerX extends GetxController {
           ? Map<String, dynamic>.from(_storage.read('user_data'))
           : <String, dynamic>{};
 
-      final activeId = int.tryParse('${userData['active_store_id'] ?? userData['store_id'] ?? ''}') ?? 0;
+      final activeId =
+          int.tryParse(
+            '${userData['active_store_id'] ?? userData['store_id'] ?? ''}',
+          ) ??
+          0;
 
       if (activeId > 0) {
         selectedAccountId.value = activeId;
@@ -63,14 +69,16 @@ class DrawerControllerX extends GetxController {
       final isMerchant = ApiHelper.isMerchantUser;
       if (!isMerchant) return;
 
-      final response = await ApiHelper.get(path:'/merchants/stores');
+      final response = await ApiHelper.get(path: '/merchants/stores');
       if (response != null && response['status'] == true) {
         final data = response['data'];
         final List<dynamic> stores = (data is List) ? data : <dynamic>[];
 
         final list = stores
             .whereType<Map>()
-            .map((m) => DrawerAccount.fromStoreJson(Map<String, dynamic>.from(m)))
+            .map(
+              (m) => DrawerAccount.fromStoreJson(Map<String, dynamic>.from(m)),
+            )
             .where((e) => e.id > 0)
             .toList();
 
@@ -80,11 +88,13 @@ class DrawerControllerX extends GetxController {
           _syncSelectedFromUserData();
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
-  Future<void> selectAccount(DrawerAccount account, {bool initializeData = true}) async {
+  Future<void> selectAccount(
+    DrawerAccount account, {
+    bool initializeData = true,
+  }) async {
     if (account.id <= 0) return;
 
     selectedAccountId.value = account.id;
@@ -103,12 +113,15 @@ class DrawerControllerX extends GetxController {
       'store_type': account.storeType,
       'mode': account.normalizedMode,
     };
-await _storage.write('user_data', userData);
+    await _storage.write('user_data', userData);
     await _storage.write('store_id', account.id);
 
     if (initializeData) {
       try {
-        await Get.find<DataInitializerService>().initializeStoreData(storeId: account.id, silent: true);
+        await Get.find<DataInitializerService>().initializeStoreData(
+          storeId: account.id,
+          silent: true,
+        );
       } catch (_) {}
     }
 

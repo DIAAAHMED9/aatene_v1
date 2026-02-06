@@ -57,7 +57,7 @@ TextStyle getBlack({
   );
 }
 
-TextStyle getRegular({
+TextStyle getMedium({
   double fontSize = 16,
   double letterSpacin = 1,
   FontStyle? fontStyle,
@@ -77,21 +77,21 @@ TextStyle getRegular({
     fontFamily: "PingAR",
   );
 }
-
-TextStyle getMedium({
-  double fontSize = 16,
-  FontWeight fontWeight = FontWeightManager.bold,
-  Color color = Colors.black,
-  TextOverflow? overflow,
-  TextDecoration? decoration,
-  FontStyle? fontStyle,
-}) {
-  return TextStyle(
-    fontWeight: fontWeight,
-    color: color,
-    fontSize: fontSize,
-    overflow: overflow,
-    decoration: decoration,
-    fontFamily: "PingAR",
-  );
-}
+//
+// TextStyle getMedium({
+//   double fontSize = 16,
+//   FontWeight fontWeight = FontWeightManager.bold,
+//   Color color = Colors.black,
+//   TextOverflow? overflow,
+//   TextDecoration? decoration,
+//   FontStyle? fontStyle,
+// }) {
+//   return TextStyle(
+//     fontWeight: fontWeight,
+//     color: color,
+//     fontSize: fontSize,
+//     overflow: overflow,
+//     decoration: decoration,
+//     fontFamily: "PingAR",
+//   );
+// }

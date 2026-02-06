@@ -105,7 +105,7 @@ class ServiceGridItem extends StatelessWidget {
                 ),
                 child: Text(
                   'خدمة',
-                  style: getRegular(
+                  style: getMedium(
                     fontSize: ResponsiveDimensions.f(10),
                     color: Colors.white,
                   ),
@@ -215,7 +215,7 @@ class ServiceGridItem extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: getRegular(fontSize: ResponsiveDimensions.f(10), color: color),
+        style: getMedium(fontSize: ResponsiveDimensions.f(10), color: color),
       ),
     );
   }

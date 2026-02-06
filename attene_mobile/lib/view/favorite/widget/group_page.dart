@@ -173,7 +173,8 @@ class _AddGroupButtonSheetState extends State<AddGroupButtonSheet> {
             TextFiledAatene(
               isRTL: isRTL,
               hintText: 'عنوان المجموعة',
-              textInputAction: TextInputAction.done, textInputType: TextInputType.name,
+              textInputAction: TextInputAction.done,
+              textInputType: TextInputType.name,
             ),
 
             Text('الخصوصية', style: getBold(fontSize: 18)),
@@ -336,7 +337,8 @@ class RenameGroupButtonSheet extends StatelessWidget {
               TextFiledAatene(
                 isRTL: isRTL,
                 hintText: "اسم المجموعة الجديد",
-                textInputAction: TextInputAction.done, textInputType: TextInputType.name,
+                textInputAction: TextInputAction.done,
+                textInputType: TextInputType.name,
               ),
               Row(
                 spacing: 10,
@@ -384,7 +386,6 @@ class DetailsGroupButtonSheet extends StatelessWidget {
         spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Row(
             spacing: 5,
             children: [

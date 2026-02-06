@@ -7,7 +7,6 @@ import '../../models/models.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ServiceController extends GetxController {
-
   final RxString editingStoreId = ''.obs;
 
   dynamic _normalizeNumericStrings(dynamic v, {String? key}) {
@@ -50,6 +49,7 @@ class ServiceController extends GetxController {
 
     return v;
   }
+
   static const int maxSpecializations = 20;
   static const int maxKeywords = 25;
   static const int maxImages = 10;
@@ -114,7 +114,7 @@ class ServiceController extends GetxController {
   TextEditingController specializationTextController = TextEditingController();
   TextEditingController keywordTextController = TextEditingController();
 
- static RxString serviceId = ''.obs;
+  static RxString serviceId = ''.obs;
   RxString serviceSlug = ''.obs;
   RxString serviceStatus = 'pending'.obs;
   RxInt selectedSectionId = 0.obs;
@@ -947,7 +947,10 @@ class ServiceController extends GetxController {
     }
   }
 
-  Future<void> loadCategories({int? sectionIdOverride, String? storeIdOverride}) async {
+  Future<void> loadCategories({
+    int? sectionIdOverride,
+    String? storeIdOverride,
+  }) async {
     try {
       final sectionId = sectionIdOverride ?? selectedSectionId.value;
 
@@ -970,7 +973,9 @@ class ServiceController extends GetxController {
       );
 
       if (response != null && response['status'] == true) {
-        final raw = List<Map<String, dynamic>>.from(response['categories'] ?? []);
+        final raw = List<Map<String, dynamic>>.from(
+          response['categories'] ?? [],
+        );
         final normalized = raw.map((e) {
           final m = Map<String, dynamic>.from(e);
           final id = m['id'];
@@ -1472,8 +1477,7 @@ class ServiceController extends GetxController {
                 }
               }
             }
-          } catch (_) {
-          }
+          } catch (_) {}
         }
 
         final normalized = _normalizeNumericStrings(serviceJson);
@@ -1483,7 +1487,10 @@ class ServiceController extends GetxController {
 
         await _updateControllerFromService(service);
 
-        await _loadCategoryAndSectionNames(service.sectionId, service.categoryId);
+        await _loadCategoryAndSectionNames(
+          service.sectionId,
+          service.categoryId,
+        );
 
         isLoading.value = false;
         update();
@@ -1754,8 +1761,9 @@ class ServiceController extends GetxController {
     int categoryId,
   ) async {
     try {
-      final String? storeIdOverride =
-          editingStoreId.value.trim().isNotEmpty ? editingStoreId.value.trim() : null;
+      final String? storeIdOverride = editingStoreId.value.trim().isNotEmpty
+          ? editingStoreId.value.trim()
+          : null;
 
       selectedSectionId.value = sectionId;
       selectedCategoryId.value = categoryId;
@@ -1988,7 +1996,7 @@ class ServiceController extends GetxController {
     resetAll();
   }
 
-  bool  isInEditMode = serviceId.value.isNotEmpty;
+  bool isInEditMode = serviceId.value.isNotEmpty;
 
   String get currentServiceId => serviceId.value;
 

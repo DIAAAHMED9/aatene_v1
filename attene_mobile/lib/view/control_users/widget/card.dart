@@ -45,7 +45,7 @@ class CardWidget extends StatelessWidget {
             ),
             Text(
               subtitle,
-              style: getRegular(fontSize: 12, color: AppColors.neutral400),
+              style: getMedium(fontSize: 12, color: AppColors.neutral400),
               textAlign: TextAlign.center,
             ),
           ],

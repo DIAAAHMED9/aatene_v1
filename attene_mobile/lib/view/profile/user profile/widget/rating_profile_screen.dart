@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import '../../../../general_index.dart';
-import '../../../support/empty.dart';
+import '../../../../component/rating_summary.dart';
 
 /// نفس التصميم السابق تماماً، لكن مع إمكانية ربط التقييمات بالـ API عند تمرير [productSlug].
 ///

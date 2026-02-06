@@ -365,7 +365,7 @@ class PolicyScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'يجب الموافقة على جميع السياسات الثلاثة قبل نشر الخدمة',
-                    style: getRegular(
+                    style: getMedium(
                       fontSize: ResponsiveDimensions.responsiveFontSize(13),
                       color: AppColors.primary500,
                     ),
@@ -390,7 +390,7 @@ class PolicyScreen extends StatelessWidget {
         SizedBox(width: ResponsiveDimensions.responsiveWidth(8)),
         Text(
           title,
-          style: getRegular(
+          style: getMedium(
             fontSize: ResponsiveDimensions.responsiveFontSize(14),
             color: isAccepted ? Colors.green : Colors.grey,
             fontWeight: isAccepted ? FontWeight.w600 : FontWeight.normal,

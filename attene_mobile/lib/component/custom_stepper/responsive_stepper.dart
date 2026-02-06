@@ -268,7 +268,7 @@ class ResponsiveStepper extends StatelessWidget {
                   if (step.subtitle.isNotEmpty)
                     Text(
                       step.subtitle,
-                      style:getRegular(fontSize: 14, color: Colors.grey),
+                      style:getMedium(fontSize: 14, color: Colors.grey),
                     ),
                 ],
               ),

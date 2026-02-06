@@ -108,7 +108,6 @@ class _ServiceStepperScreenState
             borderColor: AppColors.primary400,
           ),
         ],
-
       );
       return result ?? false;
     }
@@ -271,7 +270,6 @@ class _ServiceStepperScreenState
           color: AppColors.light1000,
         ),
       ],
-
     );
   }
 
@@ -465,7 +463,6 @@ class _ServiceStepperScreenState
       borderColor: AppColors.primary400,
       color: AppColors.primary400,
     );
-
   }
 
   @override
@@ -476,7 +473,7 @@ class _ServiceStepperScreenState
       },
       child: Text(
         'حفظ مؤقت',
-        style: getRegular(fontSize: 14, color: Colors.grey),
+        style: getMedium(fontSize: 14, color: Colors.grey),
       ),
     );
   }

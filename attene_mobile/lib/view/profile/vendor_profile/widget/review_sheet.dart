@@ -1,6 +1,4 @@
 import 'package:attene_mobile/general_index.dart';
-import 'package:attene_mobile/view/profile/user_profile/screen/user_profile.dart';
-import 'package:flutter/material.dart';
 
 class ReviewSheet extends StatefulWidget {
   final String userName;
@@ -89,7 +87,6 @@ class _ReviewSheetState extends State<ReviewSheet> {
                   ),
                 ),
                 const Spacer(),
-
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
