@@ -63,6 +63,7 @@ class AddCoin extends StatelessWidget {
                 ),
               ),
               Row(
+                spacing: 5,
                 children: [
                   Expanded(
                     child: Column(
@@ -88,7 +89,7 @@ class AddCoin extends StatelessWidget {
                           isRTL: isRTL,
                           hintText: "000",
                           textInputType: TextInputType.number,
-                          textInputAction: TextInputAction.done,
+                          textInputAction: TextInputAction.next,
                         ),
                       ],
                     ),

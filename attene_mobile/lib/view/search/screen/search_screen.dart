@@ -110,31 +110,32 @@ class _SearchScreenState extends State<SearchScreen>
                       textInputAction: TextInputAction.done,
                       controller: _searchController,
                       onSubmitted: (_) => _addSearch(),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: Container(
-                          width: 65,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary400,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: IconButton(
-                            icon: Row(
-                              spacing: 7,
-                              children: [
-                                Icon(Icons.search, color: Colors.white),
-                                Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                            onPressed: () {
-                              SearchTypeBottomSheet();
-                            },
-                          ),
-                        ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    width: 85,
+                    padding: EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary400,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: IconButton(
+                      icon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.search, color: Colors.white),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                        ],
                       ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => SearchTypeBottomSheet(),
+                        );
+                      },
                     ),
                   ),
                 ],

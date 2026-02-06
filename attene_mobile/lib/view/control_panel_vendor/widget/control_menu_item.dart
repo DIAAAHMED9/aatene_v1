@@ -4,47 +4,51 @@ class DashboardMenuItem extends StatelessWidget {
   final String title;
   final String subtitle;
   final Widget icon;
+  final VoidCallback? onTap;
 
   const DashboardMenuItem({
     super.key,
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.icon, this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        spacing: 10,
-        children: [
-          icon,
-          Column(
-            spacing: 5,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: getBold()),
-              Text(
-                subtitle,
-                style: getMedium(fontSize: 12, color: Colors.grey),
-              ),
-            ],
-          ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            icon,
+            Column(
+              spacing: 5,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: getBold()),
+                Text(
+                  subtitle,
+                  style: getMedium(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
 
-          const Spacer(),
-          const Icon(
-            Icons.arrow_forward_ios,
-            size: 20,
-            color: AppColors.neutral50,
-            weight: 10,
-          ),
-        ],
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+              color: AppColors.neutral50,
+              weight: 10,
+            ),
+          ],
+        ),
       ),
     );
   }

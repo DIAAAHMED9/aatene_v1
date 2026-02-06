@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/control_panel_vendor/screen/add_coin.dart';
+
 import '../../../general_index.dart';
 import '../controller/vendor_controller.dart';
 import '../widget/control_menu_item.dart';
@@ -7,7 +9,7 @@ import '../widget/membership_card.dart';
 class DashboardView extends StatelessWidget {
   DashboardView({super.key});
 
-  final controller = Get.put(DashboardController());
+  final controller = Get.put(DashboardController(),permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -41,34 +43,37 @@ class DashboardView extends StatelessWidget {
               child: Image.asset('assets/images/png/aatene_logo_horiz.png'),
             ),
             MembershipCard(points: controller.points),
-            Container(
-              padding: EdgeInsets.only(right: 10, left: 7),
-              width: double.infinity,
-              height: 70,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: AppColors.primary50, width: 2),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    "ابحث عن المستخدمين والتجار والخدمات",
-                    style: getMedium(fontSize: 12, color: Colors.grey),
-                  ),
-                  Spacer(),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary400,
-                      borderRadius: BorderRadius.circular(50),
+            GestureDetector(
+              onTap: () => Get.to(SearchScreen()),
+              child: Container(
+                padding: EdgeInsets.only(right: 10, left: 7),
+                width: double.infinity,
+                height: 70,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(color: AppColors.primary50, width: 2),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      "ابحث عن المستخدمين والتجار والخدمات",
+                      style: getMedium(fontSize: 12, color: Colors.grey),
                     ),
-                    child: Icon(
-                      Icons.search_rounded,
-                      color: AppColors.light1000,
+                    Spacer(),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary400,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.search_rounded,
+                        color: AppColors.light1000,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Row(
@@ -122,6 +127,7 @@ class DashboardView extends StatelessWidget {
               ),
             ),
             DashboardMenuItem(
+              onTap: () => Get.to(AddCoin()),
               title: 'شراء عملات ذهبية',
               subtitle: 'قم بشراء عملات ذهبية',
               icon: Image.asset(

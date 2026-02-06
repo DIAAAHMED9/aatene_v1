@@ -1,12 +1,53 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
-enum SearchType { products, stores, services, users }
+class UserAccountTypeWidget extends StatefulWidget {
+  const UserAccountTypeWidget({super.key});
 
-class SearchTypeController extends GetxController {
-  final Rx<SearchType> selectedType = SearchType.products.obs;
+  @override
+  State<UserAccountTypeWidget> createState() => _UserAccountTypeWidgetState();
+}
 
-  void selectType(SearchType type) {
-    selectedType.value = type;
-    Get.back(result: type);
+class _UserAccountTypeWidgetState extends State<UserAccountTypeWidget> {
+  bool isVerified = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Title
+          Text(
+            'حساب المستخدم',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          /// Radio Item
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'حساب موثّق',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Radio<bool>(
+                value: true,
+                groupValue: isVerified,
+                activeColor: Colors.blue,
+                onChanged: (value) {
+                  setState(() {
+                    isVerified = value!;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
