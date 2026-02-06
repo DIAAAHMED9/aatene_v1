@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../model/product_variation_model.dart';
+import '../model/product_attribute_model.dart';
 
 class VariationResponsive {
   static bool isMobile(BuildContext context) =>

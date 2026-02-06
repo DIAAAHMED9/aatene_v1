@@ -429,6 +429,17 @@ static bool get isGuestMode {
 
       final baseHeaders = await _getBaseHeaders();
       final requestHeaders = {...baseHeaders, ...?headers};
+      // 🔑 Chat API requires storeId header (even for non-merchant users).
+      // If caller didn't provide it and it's available locally, add it automatically
+      // for chat-related endpoints only.
+      if ((path.startsWith('/conversations') || path.startsWith('/messages')) &&
+          !requestHeaders.containsKey('storeId')) {
+        final sid = getStoreIdOrNull();
+        if (sid != null && sid.trim().isNotEmpty) {
+          requestHeaders['storeId'] = sid.trim();
+        }
+      }
+
 
       if (body is FormData) {
         requestHeaders.removeWhere((k, _) => k.toLowerCase() == 'content-type');

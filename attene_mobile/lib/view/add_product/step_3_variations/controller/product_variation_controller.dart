@@ -1,4 +1,6 @@
-import '../../../../general_index.dart';
+import '../../../../general_index.dart' hide ProductAttribute, AttributeValue, ProductVariation;
+import '../model/product_attribute_model.dart';
+import '../model/product_variation_model.dart';
 
 class ProductVariationController extends GetxController {
   late DataInitializerService _dataService;
@@ -681,7 +683,7 @@ class ProductVariationController extends GetxController {
           final value = attribute.values.firstWhere(
             (v) => v.value == attrEntry.value,
             orElse: () =>
-                AttributeValue(id: '', value: '', isSelected: false.obs),
+                AttributeValue(id: '', value: '', isSelected: false),
           );
 
           if (value.id.isNotEmpty) {

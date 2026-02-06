@@ -1618,7 +1618,7 @@ class BottomSheetController extends GetxController {
     } else {
       final newAttribute = attribute.copyWith(
         values: attribute.values
-            .map((value) => value.copyWith(isSelected: true.obs))
+            .map((value) => value.copyWith(isSelected: true))
             .toList(),
       );
       _selectedAttributes.add(newAttribute);
@@ -1680,7 +1680,7 @@ class BottomSheetController extends GetxController {
     final newValue = AttributeValue(
       id: '${attribute.id}-${DateTime.now().millisecondsSinceEpoch}',
       value: valueText,
-      isSelected: true.obs,
+      isSelected: true,
     );
 
     attribute.values.add(newValue);

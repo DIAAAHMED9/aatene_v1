@@ -1,6 +1,7 @@
 import '../../general_index.dart';
 import '../../services/screen/auth_required_screen.dart';
 import '../../api/core/api_helper.dart';
+import '../../view/home/screen/home_page.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -12,7 +13,7 @@ class MainScreen extends StatelessWidget {
 
     List<String> names = ['الرئسية', 'منتجات', 'دردشة', 'USER'];
     List<Widget> pages = [
-      HomeProduct(),
+      HomePageWithTab(),
       SearchScreen(),
       isGuest ? const AuthRequiredScreen(featureName: 'الدردشة') : ChatScreen(),
       isGuest
@@ -34,7 +35,7 @@ class MainScreen extends StatelessWidget {
       final List<IconData> mIcons = [];
 
       mNames.add('الرئسية');
-      mPages.add(isGuest ? SearchScreen() : HomeProduct());
+      mPages.add(isGuest ? SearchScreen() : HomePageWithTab());
       mIcons.add(Icons.home_filled);
 
       mNames.add('بحث');

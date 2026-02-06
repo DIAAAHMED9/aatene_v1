@@ -1,9 +1,13 @@
+import 'package:get/get.dart';
+
 import '../../../general_index.dart';
 
 class HomeController extends GetxController {
-  final PageController pageController = PageController();
-  final RxInt currentIndex = 0.obs;
-  final RxInt indexForAdds = 0.obs;
+  final RxInt currentPage = 0.obs;
+  late PageController pageController; // للتبديل بين المنتجات والخدمات
+  
+  final RxInt imageSliderCurrentIndex = 0.obs;
+  final RxInt adsCurrentIndex = 0.obs;
 
   final List<String> images = [
     "assets/images/png/closed-store.png",
@@ -21,30 +25,40 @@ class HomeController extends GetxController {
     AdModel(image: "assets/images/png/closed-store.png"),
   ].obs;
 
-  Timer? _timer;
-
+  Timer? _imageSliderTimer;
+  Timer? _adsTimer;
+  
   @override
   void onInit() {
     super.onInit();
-    _startAutoSlide();
+    pageController = PageController(initialPage: currentPage.value);
+    _startImageSliderAutoSlide();
+    _startAdsAutoSlide();
   }
 
-  void onPageChanged(int index) {
-    currentIndex.value = index;
-    indexForAdds.value = index;
+  void onAdsPageChanged(int index) {
+    adsCurrentIndex.value = index;
   }
 
-  void _startAutoSlide() {
-    _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+  void onImageSliderPageChanged(int index) {
+    imageSliderCurrentIndex.value = index;
+  }
+
+  void _startImageSliderAutoSlide() {
+    _imageSliderTimer = Timer.periodic(const Duration(seconds: 4), (_) {
       if (images.isEmpty) return;
-      if (!pageController.hasClients) return;
 
-      final nextPage = (currentIndex.value + 1) % images.length;
-      pageController.animateToPage(
-        nextPage,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOut,
-      );
+      final nextPage = (imageSliderCurrentIndex.value + 1) % images.length;
+      imageSliderCurrentIndex.value = nextPage;
+    });
+  }
+
+  void _startAdsAutoSlide() {
+    _adsTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (ads.isEmpty) return;
+
+      final nextPage = (adsCurrentIndex.value + 1) % ads.length;
+      adsCurrentIndex.value = nextPage;
     });
   }
 
@@ -59,7 +73,7 @@ class HomeController extends GetxController {
   ];
 
   void openVideo(PromoVideoModel model) {
-    Get.toNamed(AppRoutes.video, arguments: model);
+    // Get.toNamed(AppRoutes.video, arguments: model);
   }
 
   final service = ServiceModel(name: 'EtnixByron', rating: 5.0).obs;
@@ -72,12 +86,9 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    _timer?.cancel();
+    _imageSliderTimer?.cancel();
+    _adsTimer?.cancel();
     pageController.dispose();
     super.onClose();
   }
-}
-
-class AppRoutes {
-  static const video = '/video';
 }

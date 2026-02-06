@@ -1,5 +1,7 @@
-import '../../../../general_index.dart';
+import '../../../../general_index.dart' hide ProductAttribute, AttributeValue, ProductVariation;
 import '../../../../utils/responsive/index.dart';
+import '../model/product_attribute_model.dart';
+import '../model/product_variation_model.dart';
 
 class VariationCard extends StatefulWidget {
   final dynamic variation;

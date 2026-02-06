@@ -1,6 +1,6 @@
 import '../../general_index.dart';
 
-class CustomAppBarWithTabs extends StatelessWidget
+class CustomAppBarWithTabs extends StatefulWidget
     implements PreferredSizeWidget {
   final AppBarConfig config;
   final bool isRTL;
@@ -21,8 +21,17 @@ class CustomAppBarWithTabs extends StatelessWidget
   bool _isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= 1024;
 
-  @override
-  Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
+  double _getTabBarHeight(BuildContext context) {
+    if (_isMobile(context)) return 44;
+    if (_isTablet(context)) return 48;
+    return 52;
+  }
+
+  double _getSearchFieldHeight(BuildContext context) {
+    if (_isMobile(context)) return 44;
+    if (_isTablet(context)) return 48;
+    return 52;
+  }
 
   double _calculateHeight(BuildContext context) {
     double baseHeight;
@@ -40,6 +49,80 @@ class CustomAppBarWithTabs extends StatelessWidget
     }
 
     if (config.showSearch) {
+      baseHeight += _getSearchFieldHeight(context) + 16;
+    }
+
+    return baseHeight;
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
+
+
+
+  @override
+  State<CustomAppBarWithTabs> createState() => _CustomAppBarWithTabsState();
+}
+
+class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Always keep an internal controller to avoid using a disposed external controller.
+    _searchController = TextEditingController(
+      text: widget.config.searchController?.text ?? '',
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomAppBarWithTabs oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync text if the external controller changed (or if its text changed).
+    final external = widget.config.searchController;
+    final newText = external?.text ?? '';
+    if (_searchController.text != newText) {
+      _searchController.value = _searchController.value.copyWith(
+        text: newText,
+        selection: TextSelection.collapsed(offset: newText.length),
+        composing: TextRange.empty,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  bool _isMobile(BuildContext context) =>
+      MediaQuery.of(context).size.width < 768;
+
+  bool _isTablet(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 768 &&
+          MediaQuery.of(context).size.width < 1024;
+
+  bool _isDesktop(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 1024;
+
+  double _calculateHeight(BuildContext context) {
+    double baseHeight;
+
+    if (_isMobile(context)) {
+      baseHeight = 140;
+    } else if (_isTablet(context)) {
+      baseHeight = 160;
+    } else {
+      baseHeight = 180;
+    }
+
+    if (widget.config.showTabs && (widget.config.tabs?.isNotEmpty ?? false)) {
+      baseHeight += _getTabBarHeight(context);
+    }
+
+    if (widget.config.showSearch) {
       baseHeight += _getSearchFieldHeight(context) + 16;
     }
 
@@ -79,14 +162,14 @@ class CustomAppBarWithTabs extends StatelessWidget
       const SizedBox(height: 12),
     ];
 
-    if (config.showTabs &&
-        (config.tabs?.isNotEmpty ?? false) &&
-        config.tabController != null) {
+    if (widget.config.showTabs &&
+        (widget.config.tabs?.isNotEmpty ?? false) &&
+        widget.config.tabController != null) {
       children.add(_buildTabBar(context));
       children.add(const SizedBox(height: 12));
     }
 
-    if (config.showSearch) {
+    if (widget.config.showSearch) {
       children.add(
         Padding(
           padding: EdgeInsets.symmetric(
@@ -132,7 +215,7 @@ class CustomAppBarWithTabs extends StatelessWidget
         if (_isMobile(context) && Navigator.of(context).canPop())
           IconButton(
             icon: Icon(
-              isRTL ? Icons.arrow_forward : Icons.arrow_back,
+              widget.isRTL ? Icons.arrow_forward : Icons.arrow_back,
               color: Colors.grey[700],
               size: 24,
             ),
@@ -147,7 +230,7 @@ class CustomAppBarWithTabs extends StatelessWidget
               horizontal: _isMobile(context) ? 8 : 0,
             ),
             child: Text(
-              config.title,
+              widget.config.title,
               style: TextStyle(
                 fontSize: _getTitleFontSize(context),
                 fontWeight: FontWeight.w700,
@@ -160,7 +243,7 @@ class CustomAppBarWithTabs extends StatelessWidget
           ),
         ),
 
-        if (config.actionText.isNotEmpty && config.onActionPressed != null)
+        if (widget.config.actionText.isNotEmpty && widget.config.onActionPressed != null)
           _buildActionButton(context),
       ],
     );
@@ -172,13 +255,13 @@ class CustomAppBarWithTabs extends StatelessWidget
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: config.onActionPressed,
+        onTap: widget.config.onActionPressed,
         borderRadius: BorderRadius.circular(8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              config.actionText,
+              widget.config.actionText,
               style: TextStyle(
                 color: AppColors.primary400,
                 fontSize: _isMobile(context) ? 17 : 19,
@@ -193,9 +276,9 @@ class CustomAppBarWithTabs extends StatelessWidget
   }
 
   Widget _buildTabBar(BuildContext context) {
-    if (config.tabController == null ||
-        config.tabs == null ||
-        config.tabs!.isEmpty) {
+    if (widget.config.tabController == null ||
+        widget.config.tabs == null ||
+        widget.config.tabs!.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -204,10 +287,10 @@ class CustomAppBarWithTabs extends StatelessWidget
       padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
       child: _TabBarWithFullLabels(
-        controller: config.tabController!,
-        tabs: config.tabs!,
-        onTap: config.onTabChanged,
-        isRTL: isRTL,
+        controller: widget.config.tabController!,
+        tabs: widget.config.tabs!,
+        onTap: widget.config.onTabChanged,
+        isRTL: widget.isRTL,
         isMobile: _isMobile(context),
         isTablet: _isTablet(context),
         isDesktop: _isDesktop(context),
@@ -230,12 +313,12 @@ class CustomAppBarWithTabs extends StatelessWidget
   Widget _buildSearchBox(BuildContext context) {
     return Row(
       children: [
-        if (config.onFilterPressed != null)
+        if (widget.config.onFilterPressed != null)
           Padding(
             padding: EdgeInsets.only(right: _isMobile(context) ? 8 : 12),
             child: _buildIconButton(
               icon: Icons.filter_list_rounded,
-              onTap: config.onFilterPressed!,
+              onTap: widget.config.onFilterPressed!,
               context: context,
               tooltip: 'تصفية',
             ),
@@ -253,8 +336,8 @@ class CustomAppBarWithTabs extends StatelessWidget
               children: [
                 Expanded(
                   child: TextField(
-                    controller: config.searchController,
-                    onChanged: config.onSearchChanged,
+                    controller: _searchController,
+                    onChanged: widget.config.onSearchChanged,
 
                     decoration: InputDecoration(
                       prefixIcon: Icon(
@@ -263,7 +346,7 @@ class CustomAppBarWithTabs extends StatelessWidget
                         size: _isMobile(context) ? 20 : 22,
                       ),
                       border: InputBorder.none,
-                      hintText: isRTL
+                      hintText: widget.isRTL
                           ? 'بحث'
                           : 'Search products...',
                       hintStyle: TextStyle(
@@ -279,15 +362,15 @@ class CustomAppBarWithTabs extends StatelessWidget
                     ),
                   ),
                 ),
-                if (config.searchController?.text.isNotEmpty ?? false)
+                if (widget.config.searchController?.text.isNotEmpty ?? false)
                   Padding(
                     padding: EdgeInsets.only(
                       right: _isMobile(context) ? 8 : 12,
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        config.searchController?.clear();
-                        config.onSearchChanged?.call('');
+                        widget.config.searchController?.clear();
+                        widget.config.onSearchChanged?.call('');
                       },
                       child: Icon(
                         Icons.close,
@@ -301,12 +384,12 @@ class CustomAppBarWithTabs extends StatelessWidget
           ),
         ),
         SizedBox(width: 5),
-        if (config.onSortPressed != null)
+        if (widget.config.onSortPressed != null)
           Padding(
             padding: EdgeInsets.only(left: _isMobile(context) ? 8 : 12),
             child: _buildIconButton(
               icon: Icons.sort_rounded,
-              onTap: config.onSortPressed!,
+              onTap: widget.config.onSortPressed!,
               context: context,
               tooltip: 'ترتيب',
             ),
@@ -444,6 +527,11 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
 
   @override
   Widget build(BuildContext context) {
+    // If the controller was disposed, its animation becomes null; avoid building TabBar in that case.
+    if (widget.controller.animation == null) {
+      return const SizedBox.shrink();
+    }
+
     return TabBar(
       controller: widget.controller,
       isScrollable: true,

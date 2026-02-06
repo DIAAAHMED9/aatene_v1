@@ -1,6 +1,6 @@
 import '../../../general_index.dart';
 
-class ProductService extends GetxService {
+class ProductService extends GetxController {
   static ProductService get to => Get.find();
   final GetStorage _storage = GetStorage();
 
@@ -11,7 +11,7 @@ class ProductService extends GetxService {
   final RxBool _productsUpdated = false.obs;
 
   bool get productsUpdated => _productsUpdated.value;
-
+Map<String ,dynamic> productData={};
   void notifyProductsUpdated() {
     print('📢 [PRODUCT SERVICE] Notifying products update');
     _productsUpdated.value = !_productsUpdated.value;
@@ -82,8 +82,8 @@ class ProductService extends GetxService {
     }
   }
 
-  Future<Product?> fetchProductById({
-    required String productId,
+   fetchProductById({
+    required int productId,
     bool withLoading = false,
   }) async {
     try {
@@ -93,7 +93,9 @@ class ProductService extends GetxService {
       );
 
       if (response != null && response['status'] == true) {
-        return Product.fromJson(response['data']);
+        productData =response['data'];
+        update();
+        // return Product.fromJson(response['data']);
       }
       return null;
     } catch (e) {

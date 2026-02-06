@@ -18,7 +18,8 @@ class ProfilePage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return GetBuilder<ProfileController>(
-      builder: (controller) {
+      init: ProfileController(),
+      builder: (ProfileController controller) {
         return Scaffold(
           body: CustomScrollView(
             slivers: [
@@ -368,12 +369,14 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 14,
-                              backgroundImage: AssetImage(
-                                'assets/images/png/open-store.png',
-                              ),
+                              backgroundImage:NetworkImage( 
+                                controller.profileData['avatar'] ??
+                                    'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png',
+                                
+                              )
                             ),
-                            Text(
-                              'Cody Fisher',
+                         Text(
+                              controller.profileData['fullname'] ?? 'اسم المستخدم',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
@@ -461,22 +464,25 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 36,
-                    backgroundImage: const AssetImage(
-                      'assets/images/png/open-store.png',
-                    ),
+                    backgroundImage:NetworkImage( 
+                      controller.profileData['avatar'] ??
+                          'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png',
+                      
+                    )
                   ),
+          
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Cody Fisher',
+                        controller.profileData['fullname'] ?? 'اسم المستخدم',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Text(
-                        'username1128',
+                       Text(
+                        'username${controller.profileData['id'] ?? '0'}',
                         style: TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                       Container(
@@ -498,7 +504,7 @@ class ProfilePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "فلسطين - الخليل",
+                              controller.profileData['city'] ?? 'العنوان',
                               style: TextStyle(fontSize: 10),
                             ),
                           ],
@@ -605,7 +611,7 @@ class ProfilePage extends StatelessWidget {
     return Obx(() {
       switch (controller.currentTab.value) {
         case 0:
-          return _bioCard();
+          return _bioCard(controller);
         case 1:
           return RatingProfile();
         case 2:
@@ -623,7 +629,7 @@ class ProfilePage extends StatelessWidget {
     });
   }
 
-  Widget _bioCard() {
+  Widget _bioCard(ProfileController controller) {
     return Column(
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,8 +642,8 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text('نبذة شخصية', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              ReadMoreText(
-                'A paragraph is a unit of text that consists of a group of sentences related to a central topic or idea. It serves as a container for expressing a complete thought or developing a specific aspect of an argument.',
+              ReadMoreText( 
+                controller.profileData['bio'] ?? 'you can\'t edit your bio from settings',
                 trimMode: TrimMode.Line,
                 trimLines: 3,
                 colorClickableText: AppColors.neutral500,

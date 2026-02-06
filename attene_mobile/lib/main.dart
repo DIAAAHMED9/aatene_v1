@@ -183,7 +183,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/auth_required', page: () => const AuthRequiredScreen()),
-        GetPage(name: '/', page: () => CategoriesList()),
+        GetPage(name: '/', page: () => SplashScreen()),
         GetPage(name: '/onboarding', page: () => OnboardingView()),
         GetPage(name: '/start_login', page: () => const StartLogin()),
         GetPage(name: '/login', page: () => Login()),

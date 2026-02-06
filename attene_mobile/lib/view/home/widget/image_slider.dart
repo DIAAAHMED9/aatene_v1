@@ -3,33 +3,40 @@ import 'package:get/get.dart';
 import '../controller/home_controller.dart';
 import 'dot.dart';
 
-class ImageSlider extends GetView<HomeController> {
+class ImageSlider extends StatelessWidget {
   const ImageSlider({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<HomeController>();
+    
     return SizedBox(
       height: 240,
       width: double.infinity,
       child: Stack(
         children: [
+          // PageView بدون PageController (لتجنب المشاكل)
           PageView.builder(
-            controller: controller.pageController,
             itemCount: controller.images.length,
-            onPageChanged: controller.onPageChanged,
+            onPageChanged: controller.onImageSliderPageChanged,
             itemBuilder: (context, index) {
-              return Hero(
-                tag: controller.images[index],
-                child: Image.network(
-                  controller.images[index],
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: 240,
+              return Obx(() => AnimatedOpacity(
+                opacity: controller.imageSliderCurrentIndex.value == index ? 1.0 : 0.5,
+                duration: const Duration(milliseconds: 300),
+                child: Hero(
+                  tag: controller.images[index],
+                  child: Image.asset(
+                    controller.images[index],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 240,
+                  ),
                 ),
-              );
+              ));
             },
           ),
 
+          // النقاط الإرشادية
           Positioned(
             bottom: 16,
             left: 0,
@@ -39,8 +46,7 @@ class ImageSlider extends GetView<HomeController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   controller.images.length,
-                  (index) =>
-                      Dot(active: index == controller.currentIndex.value),
+                  (index) => Dot(active: index == controller.imageSliderCurrentIndex.value),
                 ),
               ),
             ),

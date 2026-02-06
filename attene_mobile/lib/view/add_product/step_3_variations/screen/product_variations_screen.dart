@@ -1,5 +1,6 @@
-import '../../../../general_index.dart';
+import '../../../../general_index.dart' hide ProductVariation, ProductAttribute, AttributeValue;
 import '../../../../utils/responsive/index.dart';
+import '../model/product_attribute_model.dart';
 
 class ProductVariationsScreen extends StatelessWidget {
   const ProductVariationsScreen({super.key});

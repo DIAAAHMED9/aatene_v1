@@ -1,4 +1,5 @@
-import '../../general_index.dart';
+import '../../general_index.dart' hide ProductAttribute, AttributeValue;
+import '../../view/add_product/step_3_variations/model/product_attribute_model.dart';
 enum StoreMode { products, services, mixed }
 
 class DataInitializerService extends GetxService {

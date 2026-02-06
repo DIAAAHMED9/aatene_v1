@@ -541,6 +541,8 @@ groubConversations.assignAll(
     required String type,
     String? name,
     required List<Map<String, dynamic>> participants,
+    String? storeId,
+    Map<String, dynamic>? headers,
   }) async {
     try {
       for (final p in participants) {
@@ -559,9 +561,15 @@ groubConversations.assignAll(
         'participants': participants,
       };
 
+      final _headers = <String, dynamic>{
+        ...?headers,
+        if (storeId != null && storeId.trim().isNotEmpty) 'storeId': storeId.trim(),
+      };
+
       final res = await ApiHelper.post(
         path: '/conversations',
         body: body,
+        headers: _headers.isEmpty ? null : _headers,
         withLoading: true,
         shouldShowMessage: true,
       );

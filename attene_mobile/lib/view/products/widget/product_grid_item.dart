@@ -1,5 +1,4 @@
 import '../../../general_index.dart';
-import '../../add_product/stepper/screen/edit_product_stepper_screen.dart';
 
 class ProductGridItem extends StatelessWidget {
   final Product product;

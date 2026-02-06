@@ -1,5 +1,4 @@
 import '../../../general_index.dart';
-import '../../add_product/stepper/screen/edit_product_stepper_screen.dart';
 
 class ProductListItem extends StatelessWidget {
   final Product product;
@@ -261,7 +260,7 @@ class ProductListItem extends StatelessWidget {
   }
 
   void _viewProductDetails() {
-    Get.toNamed('/product-details', arguments: product);
+    Get.toNamed('/product-details', arguments: product.toJson());
   }
 
   void _copyProduct() {

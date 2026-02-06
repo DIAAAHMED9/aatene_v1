@@ -1,5 +1,7 @@
-import '../../../../general_index.dart';
+import '../../../../general_index.dart' hide ProductAttribute, AttributeValue, ProductVariation;
 import '../../../../utils/responsive/index.dart';
+import '../model/product_attribute_model.dart';
+import '../model/product_variation_model.dart';
 
 class AttributesBottomSheet extends StatefulWidget {
   final List<ProductAttribute> allAttributes;
@@ -48,7 +50,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               id: value.id,
               value: value.value,
               colorCode: value.colorCode,
-              isSelected: false.obs,
+              isSelected: false,
             );
           }).toList(),
         );
@@ -287,7 +289,7 @@ class _AttributesBottomSheetState extends State<AttributesBottomSheet> {
               id: value.id,
               value: value.value,
               colorCode: value.colorCode,
-              isSelected: false.obs,
+              isSelected: false,
             );
           }).toList(),
         );

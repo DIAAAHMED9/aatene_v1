@@ -1,5 +1,7 @@
-import '../../../../general_index.dart';
+import '../../../../general_index.dart' hide ProductVariation, ProductAttribute, AttributeValue;
 import '../../../../utils/responsive/responsive_dimensions.dart';
+import '../model/product_variation_model.dart';
+import '../model/product_attribute_model.dart';
 
 class VariationToggleWidget extends StatelessWidget {
   const VariationToggleWidget({super.key});

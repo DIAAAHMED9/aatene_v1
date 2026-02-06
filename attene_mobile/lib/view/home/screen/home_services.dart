@@ -1,245 +1,112 @@
 import '../../../general_index.dart';
 import '../widget/services_widget/big_services_card.dart';
 
-class HomeServices extends GetView<HomeController> {
-  const HomeServices({super.key});
+class ServicesSection extends GetView<HomeController> {
+  const ServicesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isRTL = LanguageUtils.isRTL;
-    return Scaffold(
-      drawer: AateneDrawer(),
-      appBar: AppBar(
-        actions: [
-          Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: 5.0, left: 5.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  border: Border.all(color: AppColors.primary50),
-                ),
-                child: IconButton(
-                  icon: SvgPicture.asset(
-                    'assets/images/svg_images/Heart.svg',
-                    semanticsLabel: 'My SVG Image',
-                    height: 22,
-                    width: 22,
-                  ),
-                  onPressed: () {
-                    Get.to(FavoritesScreen());
-                  },
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 5.0, left: 10.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  border: Border.all(color: AppColors.primary50),
-                ),
-                child: IconButton(
-                  icon: SvgPicture.asset(
-                    'assets/images/svg_images/Notification.svg',
-                    semanticsLabel: 'My SVG Image',
-                    height: 22,
-                    width: 22,
-                  ),
-                  onPressed: () {
-                    Get.to(NotificationPage());
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-        title: Column(
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 10,
           children: [
-            Text('أهلاً, 👋', style: getMedium(fontSize: 14)),
-            Text('اسم المستخدم', style: getMedium()),
+            const SizedBox(height: 15),
+            _buildImageSlider(),
+            const SizedBox(height: 15),
+            TextButton(
+              onPressed: () {
+                Get.to(ServicesListScreen);
+              },
+              child: Text(
+                "اضافة خدمات (زر مؤقت لاضافة الخدمات)",
+                style: getBlack(fontSize: 24, color: AppColors.primary400),
+              ),
+            ),
+
+            Text("قصص", style: getBold(fontSize: 21)),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  PromoVideoCard(
+                    model: controller.videos.first,
+                    onTap: controller.openVideo,
+                  ),
+                ],
+              ),
+            ),
+            TitleHome(
+              title: "مقدمي الخدمات المميزين",
+              subtitle: "أفضل البائعين موثوق بهم | ممول",
+            ),
+            ProfileCardSmall(),
+            ShowAllTitle(title: "الخدمات الأعلى تقيماً"),
+            ServicesCard(),
+            _buildAdsSlider(),
+            JobAdvertisementCard(),
+            BigServicesCard(),
+            const SizedBox(height: 20),
           ],
         ),
-        centerTitle: false,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            spacing: 10,
-            children: [
-              Row(
-                spacing: 5,
-                children: [
-                  Container(
-                    width: 90,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: AppColors.primary400),
-                    ),
-                    child: Center(
-                      child: Row(
-                        spacing: 3,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "كل المدن",
-                            style: getMedium(
-                              color: AppColors.primary400,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppColors.secondary400,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(SearchScreen());
-                      },
-                      child: Container(
-                        height: 50,
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: AppColors.neutral700),
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              'ابحث عن المتاجر أو الخدمات التي تريدها',
-                              style: getMedium(
-                                fontSize: 12,
-                                color: AppColors.neutral300,
-                              ),
-                            ),
-                            Spacer(),
-                            CircleAvatar(
-                              backgroundColor: AppColors.primary400,
-                              child: const Icon(
-                                Icons.search,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: MaterialButton(
-                      onPressed: () {
-                        Get.to(HomeProduct());
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primary50,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        height: 30,
-                        child: Center(
-                          child: Text(
-                            'منتجات',
-                            style: getMedium(
-                              fontSize: 12,
-                              color: AppColors.primary400,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: MaterialButton(
-                      onPressed: () {
-                        Get.to(HomeServices());
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primary400,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        height: 30,
-                        child: Center(
-                          child: Text(
-                            'خدمات',
-                            style: getBlack(
-                              fontSize: 14,
-                              color: AppColors.light1000,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              ImageSlider(),
-              TextButton(
-                onPressed: () {
-                  Get.to(ServicesListScreen);
-                },
-                child: Text(
-                  "اضافة خدمات (زر مؤقت لاضافة الخدمات)",
-                  style: getBlack(fontSize: 24, color: AppColors.primary400),
-                ),
-              ),
+    );
+  }
 
-              Text("قصص", style: getBold(fontSize: 21)),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    PromoVideoCard(
-                      model: controller.videos.first,
-                      onTap: controller.openVideo,
-                    ),
-                  ],
+  Widget _buildImageSlider() {
+    return SizedBox(
+      height: 200,
+      child: PageView.builder(
+        itemCount: controller.images.length,
+        onPageChanged: controller.onImageSliderPageChanged,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Obx(() => AnimatedOpacity(
+                opacity: controller.imageSliderCurrentIndex.value == index ? 1.0 : 0.5,
+                duration: const Duration(milliseconds: 300),
+                child: Image.asset(
+                  controller.images[index],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
-              ),
-              TitleHome(
-                title: "مقدمي الخدمات المميزين",
-                subtitle: "أفضل البائعين موثوق بهم | ممول",
-              ),
-              ProfileCardSmall(),
-              ShowAllTitle(title: "الخدمات الأعلى تقيماً"),
-              ServicesCard(),
-              SizedBox(
-                height: 160,
-                child: PageView.builder(
-                  itemCount: controller.ads.length,
-                  onPageChanged: controller.onPageChanged,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(22),
-                        child: Image.asset(
-                          controller.ads[index].image,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      ),
-                    );
-                  },
+              )),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildAdsSlider() {
+    return SizedBox(
+      height: 160,
+      child: PageView.builder(
+        itemCount: controller.ads.length,
+        onPageChanged: controller.onAdsPageChanged,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Obx(() => AnimatedOpacity(
+                opacity: controller.adsCurrentIndex.value == index ? 1.0 : 0.5,
+                duration: const Duration(milliseconds: 300),
+                child: Image.asset(
+                  controller.ads[index].image,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
-              ),
-              JobAdvertisementCard(),
-              BigServicesCard(),
-            ],
-          ),
-        ),
+              )),
+            ),
+          );
+        },
       ),
     );
   }
