@@ -7,8 +7,8 @@ plugins {
 
 android {
     namespace = "com.attene.mobile"
-    //noinspection GradleDependency,GradleDependency
-    compileSdk = 36
+    // Using SDK 35 (Android 15) for better stability with current plugins.
+    compileSdk = 35
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -18,21 +18,19 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.attene.mobile"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        
+        // Use properties from the flutter extension, with fallbacks
         minSdk = flutter.minSdkVersion
-        targetSdk = 36
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        multiDexEnabled= true
+        
+        multiDexEnabled = true
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -47,9 +45,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 flutter {
     source = "../.."
 }
+
 dependencies {
-    // ⬇️ هذا dependency يلزم لـ core library desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
-    // أضف أيضاً dependency لـ multidex إذا كان minSdk أقل من 21
     implementation("androidx.multidex:multidex:2.0.1")
 }
