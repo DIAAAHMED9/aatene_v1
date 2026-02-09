@@ -13,6 +13,10 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
 
   final RxBool _isLoggedIn = false.obs;
   final RxMap<String, dynamic> _userData = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> _productData = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> _servicesData = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> _usersSearchDate = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> _storeSearchDate = <String, dynamic>{}.obs;
   final RxBool _isLoading = false.obs;
 
   final RxBool _isAppInitialized = false.obs;
@@ -127,6 +131,10 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
   RxBool get isInternetConnect => _isInternetConnect;
 
   Map<String, dynamic> get userData => _userData;
+  Map<String, dynamic> get productDate => _productData;
+  Map<String, dynamic> get servicesDate => _servicesData;
+  Map<String, dynamic> get userSearchDate => _usersSearchDate;
+  Map<String, dynamic> get storeSearchDate => _storeSearchDate;
 
   bool get isLoading => _isLoading.value;
 
@@ -139,6 +147,51 @@ class MyAppController extends GetxController with WidgetsBindingObserver {
     final Map<String, dynamic> mergedData = Map.from(_userData)
       ..addAll(newData);
     _userData.value = mergedData;
+    _isLoggedIn.value = true;
+
+    _saveUserData();
+
+    print('✅ تم تحديث بيانات المستخدم');
+    print('📊 البيانات: ${newData.keys.join(', ')}');
+  }
+
+  void updateProductData(Map<String, dynamic> newData) {
+    final Map<String, dynamic> mergedData = Map.from(_productData)
+      ..addAll(newData);
+    _productData.value = mergedData;
+    _isLoggedIn.value = true;
+
+    _saveUserData();
+
+    print('✅ تم تحديث بيانات المستخدم');
+    print('📊 البيانات: ${newData.keys.join(', ')}');
+  }
+  void updateServicesData(Map<String, dynamic> newData) {
+    final Map<String, dynamic> mergedData = Map.from(_servicesData)
+      ..addAll(newData);
+    _servicesData.value = mergedData;
+    _isLoggedIn.value = true;
+
+    _saveUserData();
+
+    print('✅ تم تحديث بيانات المستخدم');
+    print('📊 البيانات: ${newData.keys.join(', ')}');
+  }
+  void updateUserSearchData(Map<String, dynamic> newData) {
+    final Map<String, dynamic> mergedData = Map.from(_usersSearchDate)
+      ..addAll(newData);
+    _usersSearchDate.value = mergedData;
+    _isLoggedIn.value = true;
+
+    _saveUserData();
+
+    print('✅ تم تحديث بيانات المستخدم');
+    print('📊 البيانات: ${newData.keys.join(', ')}');
+  }
+  void updateStoreSearchData(Map<String, dynamic> newData) {
+    final Map<String, dynamic> mergedData = Map.from(_storeSearchDate)
+      ..addAll(newData);
+    _storeSearchDate.value = mergedData;
     _isLoggedIn.value = true;
 
     _saveUserData();

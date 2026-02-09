@@ -10,7 +10,7 @@ class HomePageWithTab extends GetView<HomeController> {
     if (ApiHelper.isGuestMode) {
       return const AuthRequiredScreen(featureName: 'الرئيسية');
     }
-    
+
     return Scaffold(
       drawer: AateneDrawer(),
       appBar: _buildAppBar(),
@@ -34,10 +34,7 @@ class HomePageWithTab extends GetView<HomeController> {
               onPageChanged: (index) {
                 controller.currentPage.value = index;
               },
-              children: const [
-                ProductsSection(),
-                ServicesSection(),
-              ],
+              children: const [ProductsSection(), ServicesSection()],
             ),
           ),
         ],
@@ -114,10 +111,7 @@ class HomePageWithTab extends GetView<HomeController> {
               children: [
                 Text(
                   "كل المدن",
-                  style: getMedium(
-                    color: AppColors.primary400,
-                    fontSize: 12,
-                  ),
+                  style: getMedium(color: AppColors.primary400, fontSize: 12),
                 ),
                 const SizedBox(width: 3),
                 Icon(
@@ -144,22 +138,21 @@ class HomePageWithTab extends GetView<HomeController> {
               ),
               child: Row(
                 children: [
-                  Obx(() => Text(
-                    controller.currentPage.value == 0
-                        ? 'ابحث عن المتاجر أو المنتجات التي تريدها'
-                        : 'ابحث عن المتاجر أو الخدمات التي تريدها',
-                    style: getMedium(
-                      fontSize: 12,
-                      color: AppColors.neutral300,
+                  Obx(
+                    () => Text(
+                      controller.currentPage.value == 0
+                          ? 'ابحث عن المتاجر أو المنتجات'
+                          : 'ابحث عن المتاجر أو الخدمات',
+                      style: getMedium(
+                        fontSize: 12,
+                        color: AppColors.neutral300,
+                      ),
                     ),
-                  )),
+                  ),
                   const Spacer(),
                   CircleAvatar(
                     backgroundColor: AppColors.primary400,
-                    child: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                    ),
+                    child: const Icon(Icons.search, color: Colors.white),
                   ),
                 ],
               ),
@@ -174,76 +167,68 @@ class HomePageWithTab extends GetView<HomeController> {
     return Row(
       children: [
         Expanded(
-          child: Obx(() => MaterialButton(
-            onPressed: () {
-              if (controller.currentPage.value != 0) {
-                controller.pageController.animateToPage(
-                  0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: controller.currentPage.value == 0
-                    ? AppColors.primary400
-                    : AppColors.primary50,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              height: 30,
-              child: Center(
-                child: Text(
-                  'منتجات',
-                  style: controller.currentPage.value == 0
-                      ? getBlack(
-                          fontSize: 14,
-                          color: AppColors.light1000,
-                        )
-                      : getMedium(
-                          fontSize: 12,
-                          color: AppColors.primary400,
-                        ),
+          child: Obx(
+            () => MaterialButton(
+              onPressed: () {
+                if (controller.currentPage.value != 0) {
+                  controller.pageController.animateToPage(
+                    0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: controller.currentPage.value == 0
+                      ? AppColors.primary400
+                      : AppColors.primary50,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                height: 30,
+                child: Center(
+                  child: Text(
+                    'منتجات',
+                    style: controller.currentPage.value == 0
+                        ? getBlack(fontSize: 14, color: AppColors.light1000)
+                        : getMedium(fontSize: 12, color: AppColors.primary400),
+                  ),
                 ),
               ),
             ),
-          )),
+          ),
         ),
         Expanded(
-          child: Obx(() => MaterialButton(
-            onPressed: () {
-              if (controller.currentPage.value != 1) {
-                controller.pageController.animateToPage(
-                  1,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: controller.currentPage.value == 1
-                    ? AppColors.primary400
-                    : AppColors.primary50,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              height: 30,
-              child: Center(
-                child: Text(
-                  'خدمات',
-                  style: controller.currentPage.value == 1
-                      ? getBlack(
-                          fontSize: 14,
-                          color: AppColors.light1000,
-                        )
-                      : getMedium(
-                          fontSize: 12,
-                          color: AppColors.primary400,
-                        ),
+          child: Obx(
+            () => MaterialButton(
+              onPressed: () {
+                if (controller.currentPage.value != 1) {
+                  controller.pageController.animateToPage(
+                    1,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: controller.currentPage.value == 1
+                      ? AppColors.primary400
+                      : AppColors.primary50,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                height: 30,
+                child: Center(
+                  child: Text(
+                    'خدمات',
+                    style: controller.currentPage.value == 1
+                        ? getBlack(fontSize: 14, color: AppColors.light1000)
+                        : getMedium(fontSize: 12, color: AppColors.primary400),
+                  ),
                 ),
               ),
             ),
-          )),
+          ),
         ),
       ],
     );

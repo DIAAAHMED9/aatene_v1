@@ -11,6 +11,9 @@ import 'utils/sheet_controller.dart';
 import 'package:attene_mobile/services/app_lifecycle_manager.dart';
 import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
+
+import 'view/search/controller/search_controller.dart';
+
 class AppBindings extends Bindings {
   static bool _initialized = false;
 
@@ -62,6 +65,12 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
+        Get.lazyPut(() => SearchScreenController(), fenix: true);
+        final OnboardingController controller = Get.put(
+          OnboardingController(),
+          permanent: true,
+        );
+
         print('✅ [APP BINDINGS] تم تسجيل جميع المتحكمات');
       });
     });

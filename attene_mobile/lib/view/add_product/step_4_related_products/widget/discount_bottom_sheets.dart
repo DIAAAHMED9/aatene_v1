@@ -220,11 +220,14 @@ class AddDiscountBottomSheet extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
+                            child: AateneButton(
+                              buttonText: 'مسح الحقول',
+                              onTap: () {
                                 controller.clearDiscountFields();
                               },
-                              child: const Text('مسح الحقول'),
+                              borderColor: AppColors.primary400,
+                              textColor: AppColors.primary400,
+                              color: AppColors.light1000,
                             ),
                           ),
                           SizedBox(width: ResponsiveDimensions.w(12)),
@@ -235,6 +238,9 @@ class AddDiscountBottomSheet extends StatelessWidget {
                                 controller.addDiscount();
                                 Get.back();
                               },
+                              borderColor: AppColors.primary400,
+                              textColor: AppColors.light1000,
+                              color: AppColors.primary400,
                             ),
                           ),
                         ],
@@ -252,76 +258,117 @@ class AddDiscountBottomSheet extends StatelessWidget {
   }
 
   Widget _buildPriceInput() {
-    return TextField(
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: 'السعر بعد التخفيض',
-        hintText: 'أدخل السعر بعد التخفيض',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-        suffixText: '₪',
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      ),
-      onChanged: (value) {
-        final price = double.tryParse(value) ?? 0.0;
-        controller.setDiscountedPrice(price);
-      },
+    final isRTL = LanguageUtils.isRTL;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('السعر بعد التخفيض', style: getMedium(fontSize: 14)),
+
+        TextFiledAatene(
+          isRTL: isRTL,
+          hintText: 'أدخل السعر بعد التخفيض',
+          textInputAction: TextInputAction.next,
+          onChanged: (value) {
+            final price = double.tryParse(value) ?? 0.0;
+            controller.setDiscountedPrice(price);
+          },
+        ),
+      ],
     );
+
+    // TextField(
+    //     keyboardType: TextInputType.number,
+    //     decoration: InputDecoration(
+    //         labelText: 'السعر بعد التخفيض',
+    //         hintText:
+    //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+    // suffixText: '₪',
+    // contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    // ),
+    // onChanged: (value) {
+    // final price = double.tryParse(value) ?? 0.0;
+    // controller.setDiscountedPrice(price);
+    // },
+    // );
   }
 
   Widget _buildNoteInput() {
-    return TextField(
-      maxLines: 3,
-      minLines: 2,
-      decoration: InputDecoration(
-        labelText: 'ملاحظات (اختياري)',
-        hintText: 'أدخل ملاحظات عن التخفيض',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      ),
-      onChanged: controller.setDiscountNote,
+    final isRTL = LanguageUtils.isRTL;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('ملاحظات (اختياري)', style: getMedium(fontSize: 14)),
+        TextFiledAatene(
+          isRTL: isRTL,
+          hintText: 'أدخل ملاحظات عن التخفيض',
+          textInputAction: TextInputAction.next,
+          onChanged: controller.setDiscountNote,
+        ),
+      ],
     );
+
+    // TextField(
+    //   maxLines: 3,
+    //   minLines: 2,
+    //   decoration: InputDecoration(
+    //     labelText: 'ملاحظات (اختياري)',
+    //     hintText: 'أدخل ملاحظات عن التخفيض',
+    //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+    //     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    //   ),
+    //   onChanged: controller.setDiscountNote,
+    // );
   }
 
   Widget _buildDatePicker() {
-    return TextField(
-      controller: controller.dateController,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: 'تاريخ التخفيض',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-        suffixIcon: Icon(Icons.calendar_today),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      ),
-      onTap: () async {
-        final selectedDate = await showDatePicker(
-          context: Get.context!,
-          initialDate: controller.discountDate,
-          firstDate: DateTime.now().subtract(const Duration(days: 365)),
-          lastDate: DateTime.now().add(const Duration(days: 365)),
-        );
-        if (selectedDate != null) {
-          final selectedTime = await showTimePicker(
-            context: Get.context!,
-            initialTime: TimeOfDay.fromDateTime(controller.discountDate),
-          );
-          if (selectedTime != null) {
-            final dateTime = DateTime(
-              selectedDate.year,
-              selectedDate.month,
-              selectedDate.day,
-              selectedTime.hour,
-              selectedTime.minute,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("تاريخ التخفيض", style: getMedium(fontSize: 14)),
+        TextField(
+          controller: controller.dateController,
+          readOnly: true,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+            ),
+            suffixIcon: Icon(Icons.calendar_month),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          ),
+          onTap: () async {
+            final selectedDate = await showDatePicker(
+              context: Get.context!,
+              initialDate: controller.discountDate,
+              firstDate: DateTime.now().subtract(const Duration(days: 365)),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
             );
-            controller.setDiscountDate(dateTime);
-          }
-        }
-      },
+            if (selectedDate != null) {
+              final selectedTime = await showTimePicker(
+                context: Get.context!,
+                initialTime: TimeOfDay.fromDateTime(controller.discountDate),
+              );
+              if (selectedTime != null) {
+                final dateTime = DateTime(
+                  selectedDate.year,
+                  selectedDate.month,
+                  selectedDate.day,
+                  selectedTime.hour,
+                  selectedTime.minute,
+                );
+                controller.setDiscountDate(dateTime);
+              }
+            }
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildSummary() {
     return Card(
-      color: Colors.blue[50],
+      color: AppColors.primary50,
       child: Padding(
         padding: EdgeInsets.all(ResponsiveDimensions.w(12)),
         child: Column(
@@ -329,7 +376,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Flexible(child: Text('السعر الأصلي:')),
+                Flexible(child: Text('السعر الأصلي:', style: getMedium())),
                 Flexible(
                   child: Text(
                     '${controller.originalPrice.toStringAsFixed(2)} ₪',
@@ -342,7 +389,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Flexible(child: Text('السعر بعد الخصم:')),
+                Flexible(child: Text('السعر بعد الخصم:', style: getMedium())),
                 Flexible(
                   child: Text(
                     '${controller.discountedPrice.toStringAsFixed(2)} ₪',
@@ -356,7 +403,7 @@ class AddDiscountBottomSheet extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Flexible(child: Text('قيمة التخفيض:')),
+                  Flexible(child: Text('قيمة التخفيض:', style: getMedium())),
                   Flexible(
                     child: Text(
                       '${(controller.originalPrice - controller.discountedPrice).toStringAsFixed(2)} ₪',

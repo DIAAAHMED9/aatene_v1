@@ -79,8 +79,7 @@ class MainScreen extends StatelessWidget {
             final di = Get.find<DataInitializerService>();
             if (ApiHelper.isGuestMode) {
               Get.to(
-                    () =>
-                const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'),
+                () => const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'),
               );
               return;
             }

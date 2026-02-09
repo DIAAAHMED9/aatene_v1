@@ -603,10 +603,11 @@ class _ServicesListScreenState extends State<ServicesListScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.work_outline,
-            size: ResponsiveDimensions.f(100),
-            color: Colors.grey[300],
+          Image.asset(
+            "assets/images/png/N0_services.png",
+            width: 340,
+            height: 230,
+            fit: BoxFit.cover,
           ),
           SizedBox(height: ResponsiveDimensions.f(24)),
           Text(
@@ -847,18 +848,17 @@ class _ServiceSelectSectionSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                Get.back();
-                if (Get.isRegistered<BottomSheetController>()) {
-                  Get.find<BottomSheetController>().openAddNewSection();
-                }
-              },
-              icon: const Icon(Icons.add),
-              label: Text(isRTL ? 'إضافة قسم جديد' : 'Add new section'),
-            ),
+          AateneButton(
+            buttonText: isRTL ? 'إضافة قسم جديد' : 'Add new section',
+            color: AppColors.primary400,
+            textColor: AppColors.light1000,
+            borderColor: AppColors.primary400,
+            onTap: () {
+              Get.back();
+              if (Get.isRegistered<BottomSheetController>()) {
+                Get.find<BottomSheetController>().openAddNewSection();
+              }
+            },
           ),
         ],
       ),

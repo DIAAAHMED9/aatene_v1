@@ -1,7 +1,4 @@
-import 'package:attene_mobile/view/onboarding/screen/onbording.dart';
-
 import '../../../general_index.dart';
-import 'package:flutter/material.dart';
 
 class OnboardingView extends StatelessWidget {
   OnboardingView({super.key});
@@ -40,12 +37,8 @@ class OnboardingView extends StatelessWidget {
               top: 25,
               right: 10,
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(builder: (context) => Onboarding()),
-                  );
-                },
+                onPressed: () => controller.finish(),
+                // onPressed: () => Get.to(() => Onboarding()),
                 child: const Text(
                   'تخطي',
                   style: TextStyle(color: Colors.white),

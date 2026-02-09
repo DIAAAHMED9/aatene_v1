@@ -99,13 +99,7 @@ class _FaqPageState extends State<FaqPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Row(
-        children: [
-          _tabItem('الخدمات', 0),
-          _tabItem('المنتجات', 1),
-          _tabItem('المنتجات المستعملة', 2),
-        ],
-      ),
+      child: Row(children: [_tabItem('الخدمات', 0), _tabItem('المنتجات', 1)]),
     );
   }
 

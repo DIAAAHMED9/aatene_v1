@@ -15,15 +15,6 @@ class ProductsSection extends GetView<HomeController> {
             const SizedBox(height: 15),
             _buildImageSlider(),
             const SizedBox(height: 15),
-            TextButton(
-              onPressed: () {
-                Get.to(ProductScreen);
-              },
-              child: Text(
-                "اضافة منتجات (زر مؤقت لاضافة المنتجات)",
-                style: getBlack(fontSize: 24, color: AppColors.primary400),
-              ),
-            ),
             Text("قصص", style: getBold(fontSize: 21)),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -266,15 +257,19 @@ class ProductsSection extends GetView<HomeController> {
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Obx(() => AnimatedOpacity(
-                opacity: controller.imageSliderCurrentIndex.value == index ? 1.0 : 0.5,
-                duration: const Duration(milliseconds: 300),
-                child: Image.asset(
-                  controller.images[index],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
+              child: Obx(
+                () => AnimatedOpacity(
+                  opacity: controller.imageSliderCurrentIndex.value == index
+                      ? 1.0
+                      : 0.5,
+                  duration: const Duration(milliseconds: 300),
+                  child: Image.asset(
+                    controller.images[index],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
                 ),
-              )),
+              ),
             ),
           );
         },
@@ -293,15 +288,19 @@ class ProductsSection extends GetView<HomeController> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(22),
-              child: Obx(() => AnimatedOpacity(
-                opacity: controller.adsCurrentIndex.value == index ? 1.0 : 0.5,
-                duration: const Duration(milliseconds: 300),
-                child: Image.asset(
-                  controller.ads[index].image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
+              child: Obx(
+                () => AnimatedOpacity(
+                  opacity: controller.adsCurrentIndex.value == index
+                      ? 1.0
+                      : 0.5,
+                  duration: const Duration(milliseconds: 300),
+                  child: Image.asset(
+                    controller.ads[index].image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
                 ),
-              )),
+              ),
             ),
           );
         },

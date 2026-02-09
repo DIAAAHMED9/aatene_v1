@@ -1,6 +1,6 @@
 import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/view/search/controller/search_controller.dart';
 import '../widget/search_type.dart';
-import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -93,97 +93,123 @@ class _SearchScreenState extends State<SearchScreen>
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+    return GetBuilder<SearchScreenController>(
+      builder: (SearchScreenController controller) {
+        return Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextFiledAatene(
-                      isRTL: isRTL,
-                      hintText: "ابحث عن اي شيء في اعطيني",
-                      textInputAction: TextInputAction.done,
-                      controller: _searchController,
-                      onSubmitted: (_) => _addSearch(),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 85,
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary400,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: IconButton(
-                      icon: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.search, color: Colors.white),
-                          Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                        ],
+                  Row(
+                    children: [
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextFiledAatene(
+                          isRTL: isRTL,
+                          hintText: "ابحث عن اي شيء في اعطيني",
+                          textInputAction: TextInputAction.done,
+                          controller: _searchController,
+                          onSubmitted: (_) => _addSearch(),
+                        ),
                       ),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => SearchTypeBottomSheet(),
-                        );
-                      },
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 85,
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary400,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: IconButton(
+                          icon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.search, color: Colors.white),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => SearchTypeBottomSheet(),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('البحث الأخير', style: getBold(fontSize: 18)),
+                      TextButton(
+                        onPressed: _history.isEmpty ? null : _clearAll,
+                        child: Text(
+                          'امسح الكل',
+                          style: getMedium(
+                            fontSize: 12,
+                            color: AppColors.error200,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(
+                      _history.length,
+                      (index) => AnimatedScale(
+                        scale: 1,
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedOpacity(
+                          opacity: 1,
+                          duration: const Duration(milliseconds: 300),
+                          child: Chip(
+                            backgroundColor: AppColors.primary50,
+                            label: Text(_history[index]),
+                            deleteIcon: const Icon(Icons.close, size: 15),
+                            onDeleted: () => _removeItem(index),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
+
+                  ProductCard(product: controller.ProductDate),
+                  // GridView.builder(
+                  //   shrinkWrap: true,
+                  //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,crossAxisSpacing: 5,childAspectRatio: 1/3,),
+                  //
+                  //   itemBuilder: (BuildContext context, int index) {
+                  //     return Column(
+                  //       children: [
+                  //         ProductCard(
+                  //           product: controller.ProductDate,
+                  //         ),
+                  //       ],
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
-
-              const SizedBox(height: 24),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('البحث الأخير', style: getBold(fontSize: 18)),
-                  TextButton(
-                    onPressed: _history.isEmpty ? null : _clearAll,
-                    child: Text(
-                      'امسح الكل',
-                      style: getMedium(fontSize: 12, color: AppColors.error200),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: List.generate(
-                  _history.length,
-                  (index) => AnimatedScale(
-                    scale: 1,
-                    duration: const Duration(milliseconds: 300),
-                    child: AnimatedOpacity(
-                      opacity: 1,
-                      duration: const Duration(milliseconds: 300),
-                      child: Chip(
-                        backgroundColor: AppColors.primary50,
-                        label: Text(_history[index]),
-                        deleteIcon: const Icon(Icons.close, size: 15),
-                        onDeleted: () => _removeItem(index),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

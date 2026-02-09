@@ -7,6 +7,8 @@ class SearchTypeController extends GetxController {
   // متغير لتخزين context الرئيسي
   BuildContext? _mainContext;
 
+  Map<String, dynamic>? get ProductDate => null;
+
   void setMainContext(BuildContext context) {
     _mainContext = context;
   }

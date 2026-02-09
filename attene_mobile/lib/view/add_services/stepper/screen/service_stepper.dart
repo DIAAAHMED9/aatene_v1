@@ -252,10 +252,7 @@ class _ServiceStepperScreenState
       middleText: 'هل أنت متأكد من إلغاء عملية إضافة/تعديل الخدمة؟',
       actions: [
         AateneButton(
-          onTap: () {
-            Get.back(result: true);
-            Get.back();
-          },
+          onTap: () => Get.back(result: false),
           buttonText: "لا، استمر",
           textColor: AppColors.light1000,
           borderColor: AppColors.primary400,
@@ -263,7 +260,11 @@ class _ServiceStepperScreenState
         ),
         SizedBox(height: 10),
         AateneButton(
-          onTap: () => Get.back(result: false),
+          onTap: () {
+            Get.back(result: true);
+            Get.back();
+          },
+
           buttonText: "نعم، إلغاء",
           textColor: AppColors.primary400,
           borderColor: AppColors.primary400,

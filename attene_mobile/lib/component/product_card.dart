@@ -1,9 +1,10 @@
 import '../general_index.dart';
 import 'package:flutter/material.dart';
 
-
 class ProductCard extends StatefulWidget {
-  const ProductCard({super.key});
+  final Map<String, dynamic>? product;
+
+  const ProductCard({super.key, this.product});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -47,13 +48,14 @@ class _ProductCardState extends State<ProductCard> {
                     top: Radius.circular(14),
                   ),
                   child: Image.network(
-                    'https://images.unsplash.com/photo-1520975916090-3105956dac38',
+                    widget.product!['cover'] ??
+                        'https://images.unsplash.com/photo-1520975916090-3105956dac38',
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
                 ),
-      
+
                 Positioned(
                   top: 10,
                   right: 10,
@@ -72,7 +74,7 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                   ),
                 ),
-      
+
                 Positioned(
                   bottom: 0,
                   left: 5,
@@ -125,20 +127,20 @@ class _ProductCardState extends State<ProductCard> {
                       ),
                     ],
                   ),
-      
+
                   /// product title
                   Text(
-                    'T-Shirt Sailing',
+                    widget.product?['name'] ?? 'T-Shirt Sailing',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
-      
+
                   ///star rating
                   Row(
                     spacing: 5,
                     children: [
                       Row(
                         children: List.generate(
-                          5,
+                          widget.product?['review_rate'] ?? 5,
                           (index) => const Icon(
                             Icons.star,
                             size: 14,
@@ -147,19 +149,22 @@ class _ProductCardState extends State<ProductCard> {
                         ),
                       ),
                       Text(
-                        "(5)",
+                        widget.product!['review_count'] ?? "(5)",
                         style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),
-      
+
                   /// product price
                   Row(
                     spacing: 5,
                     children: [
-                      Text('14\$', style: TextStyle(color: AppColors.error200)),
                       Text(
-                        '21\$',
+                        widget.product!['price'] ?? '14\$',
+                        style: TextStyle(color: AppColors.error200),
+                      ),
+                      Text(
+                        widget.product!['price'] ?? '21\$',
                         style: TextStyle(
                           color: Colors.grey,
                           decoration: TextDecoration.lineThrough,

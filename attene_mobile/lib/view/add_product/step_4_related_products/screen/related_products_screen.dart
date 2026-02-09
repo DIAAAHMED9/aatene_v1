@@ -413,25 +413,35 @@ class RelatedProductsScreen extends StatelessWidget {
                       },
                     ),
                   ] else ...[
-                    AateneButton(
-                      borderColor: AppColors.primary400,
-                      textColor: AppColors.light1000,
-                      color: AppColors.primary400,
-                      buttonText: 'التالي',
-                      onTap: () => _showSuccessMessage(),
-                    ),
-                    SizedBox(height: ResponsiveDimensions.w(12)),
-
-                    AateneButton(
-                      borderColor: AppColors.primary400,
-                      textColor: AppColors.primary400,
-                      color: AppColors.light1000,
-                      buttonText: 'تخفيض علي المنتجات المختارة',
-                      onTap: () => Get.bottomSheet(
-                        AddDiscountBottomSheet(
-                          controller: Get.find<RelatedProductsController>(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AateneButton(
+                            borderColor: AppColors.primary400,
+                            textColor: AppColors.primary400,
+                            color: AppColors.light1000,
+                            // buttonText: 'تخفيض علي المنتجات المختارة',
+                            buttonText: 'تخفيض',
+                            onTap: () => Get.bottomSheet(
+                              AddDiscountBottomSheet(
+                                controller:
+                                    Get.find<RelatedProductsController>(),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+
+                        SizedBox(height: ResponsiveDimensions.w(8)),
+                        Expanded(
+                          child: AateneButton(
+                            borderColor: AppColors.primary400,
+                            textColor: AppColors.light1000,
+                            color: AppColors.primary400,
+                            buttonText: 'التالي',
+                            onTap: () => _showSuccessMessage(),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ],
