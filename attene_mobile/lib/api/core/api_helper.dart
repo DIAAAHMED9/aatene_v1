@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:image_picker/image_picker.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../general_index.dart';
 
-export 'package:get/get.dart' hide FormData, MultipartFile,Response;
+export 'package:get/get.dart' hide FormData, MultipartFile, Response;
 
 class ApiHelper {
   static bool get isMerchantUser {
@@ -16,10 +12,18 @@ class ApiHelper {
       final Map<String, dynamic> user = (raw is Map)
           ? Map<String, dynamic>.from(raw as Map)
           : <String, dynamic>{};
-      final role = (user['role'] ?? user['type'] ?? user['guard'] ?? user['user_type'] ?? '')
-          .toString()
-          .toLowerCase();
-      if (role.contains('merchant') || role.contains('vendor') || role == 'store') return true;
+      final role =
+          (user['role'] ??
+                  user['type'] ??
+                  user['guard'] ??
+                  user['user_type'] ??
+                  '')
+              .toString()
+              .toLowerCase();
+      if (role.contains('merchant') ||
+          role.contains('vendor') ||
+          role == 'store')
+        return true;
       final isMerchant = user['is_merchant'];
       if (isMerchant is bool) return isMerchant;
       if (isMerchant is num) return isMerchant == 1;
@@ -42,16 +46,16 @@ class ApiHelper {
     } catch (_) {
       return false;
     }
-    }
-
-static bool get isGuestMode {
-  try {
-    return GetStorage().read('is_guest') == true;
-  } catch (_) {
-    return false;
   }
-}
-  
+
+  static bool get isGuestMode {
+    try {
+      return GetStorage().read('is_guest') == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static bool _isProtectedPath(String path) {
     final p = path.trim();
 
@@ -70,7 +74,9 @@ static bool get isGuestMode {
   static Future<Map<String, dynamic>> _getBaseHeaders() async {
     try {
       final bool hasMyApp = Get.isRegistered<MyAppController>();
-      final MyAppController? myAppController = hasMyApp ? Get.find<MyAppController>() : null;
+      final MyAppController? myAppController = hasMyApp
+          ? Get.find<MyAppController>()
+          : null;
 
       final String lang = Get.isRegistered<LanguageController>()
           ? Get.find<LanguageController>().appLocale.value
@@ -99,7 +105,10 @@ static bool get isGuestMode {
       if (token.isEmpty) {
         try {
           final box = GetStorage();
-          final dynamic ud = box.read('user_data') ?? box.read('user') ?? box.read('auth_user');
+          final dynamic ud =
+              box.read('user_data') ??
+              box.read('user') ??
+              box.read('auth_user');
           if (ud is Map && ud['token'] != null) {
             token = ud['token'].toString();
           } else if (ud is String && ud.trim().isNotEmpty) {
@@ -133,7 +142,9 @@ static bool get isGuestMode {
           final t = (user['user_type'] ?? '').toString().toLowerCase();
           isMerchant = t == 'merchant';
         } else {
-          final t2 = (ud['user_type'] ?? ud['role'] ?? ud['type'] ?? '').toString().toLowerCase();
+          final t2 = (ud['user_type'] ?? ud['role'] ?? ud['type'] ?? '')
+              .toString()
+              .toLowerCase();
           isMerchant = t2 == 'merchant';
         }
       } catch (_) {}
@@ -145,7 +156,8 @@ static bool get isGuestMode {
               ? Map<String, dynamic>.from(myAppController!.userData)
               : <String, dynamic>{};
 
-          final v = ud['active_store_id'] ??
+          final v =
+              ud['active_store_id'] ??
               ud['store_id'] ??
               ud['storeId'] ??
               (ud['store'] is Map ? ud['store']['id'] : null);
@@ -157,7 +169,8 @@ static bool get isGuestMode {
             final s = Get.find<GetStorage>();
             final userData = s.read('user_data');
             if (userData is Map) {
-              final vv = userData['active_store_id'] ??
+              final vv =
+                  userData['active_store_id'] ??
                   userData['store_id'] ??
                   userData['storeId'] ??
                   (userData['store'] is Map ? userData['store']['id'] : null);
@@ -180,7 +193,8 @@ static bool get isGuestMode {
         'Accept': 'application/json',
         'Device-Type': 'MOBILE',
         'Accept-Language': lang,
-        if (isMerchant && storeId != null && storeId!.isNotEmpty) 'storeId': storeId!,
+        if (isMerchant && storeId != null && storeId!.isNotEmpty)
+          'storeId': storeId!,
       };
     } catch (e) {
       print('❌ [API] Headers error: $e');
@@ -197,14 +211,19 @@ static bool get isGuestMode {
     try {
       if (Get.isRegistered<MyAppController>()) {
         final c = Get.find<MyAppController>();
-        final ud = (c.userData is Map) ? Map<String, dynamic>.from(c.userData) : <String, dynamic>{};
+        final ud = (c.userData is Map)
+            ? Map<String, dynamic>.from(c.userData)
+            : <String, dynamic>{};
         final v = (ud['store_id'] ?? ud['storeId'] ?? ud['store']?['id']);
         if (v != null) return v.toString();
       }
 
       try {
         final box = GetStorage();
-        final v = box.read('storeId') ?? box.read('store_id') ?? box.read('selected_store_id');
+        final v =
+            box.read('storeId') ??
+            box.read('store_id') ??
+            box.read('selected_store_id');
         if (v != null) return v.toString();
       } catch (_) {}
 
@@ -440,7 +459,6 @@ static bool get isGuestMode {
         }
       }
 
-
       if (body is FormData) {
         requestHeaders.removeWhere((k, _) => k.toLowerCase() == 'content-type');
       }
@@ -522,15 +540,13 @@ static bool get isGuestMode {
     required String password,
     bool withLoading = true,
   }) async {
-   final  GetStorage storage= GetStorage();
+    final GetStorage storage = GetStorage();
     final bool isEmail = email.contains('@');
 
-    final Map<String, dynamic> body = {
-      'login': email,
-      'password': password,
-    };
+    final Map<String, dynamic> body = {'login': email, 'password': password};
     final dynamic storedToken = storage.read('device_token');
-    final String deviceToken = (storedToken == null || storedToken.toString().trim().isEmpty)
+    final String deviceToken =
+        (storedToken == null || storedToken.toString().trim().isEmpty)
         ? 'temp_${DateTime.now().millisecondsSinceEpoch}'
         : storedToken.toString();
 
@@ -558,7 +574,7 @@ static bool get isGuestMode {
     required String passwordConfirmation,
     bool withLoading = true,
   }) async {
-       final  GetStorage storage= GetStorage();
+    final GetStorage storage = GetStorage();
 
     final Map<String, dynamic> body = {
       'name': name,
@@ -567,7 +583,9 @@ static bool get isGuestMode {
       'password': password,
       'password_confirmation': passwordConfirmation,
       'device_name': storage.read('device_name'),
-      'device_token': (storage.read('device_token') == null || storage.read('device_token').toString().trim().isEmpty)
+      'device_token':
+          (storage.read('device_token') == null ||
+              storage.read('device_token').toString().trim().isEmpty)
           ? 'temp_${DateTime.now().millisecondsSinceEpoch}'
           : storage.read('device_token').toString(),
     };
@@ -587,16 +605,17 @@ static bool get isGuestMode {
     );
   }
 
-static Future<dynamic> account({
-  bool withLoading = true,
-  bool shouldShowMessage = true,
-}) async {
-  return get(
-    path: '/auth/account',
-    withLoading: withLoading,
-    shouldShowMessage: shouldShowMessage,
-  );
-}
+  static Future<dynamic> account({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/auth/account',
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
   static Future<dynamic> verifyOtp({
     required String id,
     required String code,
@@ -665,9 +684,7 @@ static Future<dynamic> account({
     );
   }
 
-  static Future<dynamic> getAccount({
-    bool withLoading = false,
-  }) async {
+  static Future<dynamic> getAccount({bool withLoading = false}) async {
     return await get(
       path: '/auth/account',
       withLoading: withLoading,
@@ -724,79 +741,78 @@ static Future<dynamic> account({
       shouldShowMessage: false,
     );
   }
-static Future<dynamic> getChatConversations({
-  int? lastMessageId,
-  int? limit = 50,
-}) async {
-  Map<String, dynamic> queryParams = {};
-  if (lastMessageId != null) {
-    queryParams['last_message_id'] = lastMessageId;
-  }
-  if (limit != null) {
-    queryParams['limit'] = limit;
-  }
-  
-  return await get(
-    path: '/conversations',
-    queryParameters: queryParams,
-    withLoading: false,
-    shouldShowMessage: false,
-  );
-}
 
-static Future<dynamic> getConversationMessages(
-  int conversationId, {
-  int? lastMessageId,
-  int? page,
-  int? perPage,
-}) async {
-  Map<String, dynamic> queryParams = {};
-  if (lastMessageId != null) {
-    queryParams['last_message_id'] = lastMessageId;
-  }
-  if (page != null) {
-    queryParams['page'] = page;
-  }
-  if (perPage != null) {
-    queryParams['per_page'] = perPage;
-  }
-  
-  return await get(
-    path: '/conversations/$conversationId/messages',
-    queryParameters: queryParams,
-    withLoading: false,
-    shouldShowMessage: false,
-  );
-}
-static Future<dynamic> markMessageAsSeen(int messageId) async {
-  return await post(
-    path: '/messages/$messageId/seen',
-    withLoading: false,
-    shouldShowMessage: false,
-  );
-}
+  static Future<dynamic> getChatConversations({
+    int? lastMessageId,
+    int? limit = 50,
+  }) async {
+    Map<String, dynamic> queryParams = {};
+    if (lastMessageId != null) {
+      queryParams['last_message_id'] = lastMessageId;
+    }
+    if (limit != null) {
+      queryParams['limit'] = limit;
+    }
 
-static Future<dynamic> getUnreadCounts() async {
-  return await get(
-    path: '/conversations/unread-counts',
-    withLoading: false,
-    shouldShowMessage: false,
-  );
-}
-
-static Future<dynamic> getConversationDetails(int conversationId) async {
-  return await get(
-    path: '/conversations/$conversationId',
-    withLoading: false,
-    shouldShowMessage: false,
-  );
-}
-  static Future<dynamic> updateUserProfile(Map<String, dynamic> data) async {
-    return await put(
-      path: '/user/profile',
-      body: data,
-      withLoading: true,
+    return await get(
+      path: '/conversations',
+      queryParameters: queryParams,
+      withLoading: false,
+      shouldShowMessage: false,
     );
+  }
+
+  static Future<dynamic> getConversationMessages(
+    int conversationId, {
+    int? lastMessageId,
+    int? page,
+    int? perPage,
+  }) async {
+    Map<String, dynamic> queryParams = {};
+    if (lastMessageId != null) {
+      queryParams['last_message_id'] = lastMessageId;
+    }
+    if (page != null) {
+      queryParams['page'] = page;
+    }
+    if (perPage != null) {
+      queryParams['per_page'] = perPage;
+    }
+
+    return await get(
+      path: '/conversations/$conversationId/messages',
+      queryParameters: queryParams,
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> markMessageAsSeen(int messageId) async {
+    return await post(
+      path: '/messages/$messageId/seen',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> getUnreadCounts() async {
+    return await get(
+      path: '/conversations/unread-counts',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> getConversationDetails(int conversationId) async {
+    return await get(
+      path: '/conversations/$conversationId',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> updateUserProfile(Map<String, dynamic> data) async {
+    return await put(path: '/user/profile', body: data, withLoading: true);
   }
 
   static Future<dynamic> changePassword({
@@ -1036,10 +1052,15 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
         _startLoading();
       }
 
-      final String fileName = (file.name.isNotEmpty) ? file.name : file.path.split('/').last;
+      final String fileName = (file.name.isNotEmpty)
+          ? file.name
+          : file.path.split('/').last;
       final FormData formData = FormData.fromMap({
         'type': type,
-        'file': MultipartFile.fromBytes(await file.readAsBytes(), filename: fileName),
+        'file': MultipartFile.fromBytes(
+          await file.readAsBytes(),
+          filename: fileName,
+        ),
       });
 
       final requestHeaders = await _getBaseHeaders();
@@ -1112,7 +1133,8 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
       method: deleteMethod,
       path: '/media-center/delete',
       queryParameters: {'file_name': fileName},
-      withLoading: withLoading, shouldShowMessage: false,
+      withLoading: withLoading,
+      shouldShowMessage: false,
     );
   }
 
@@ -1140,11 +1162,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }
 
   static Future<dynamic> createCity(Map<String, dynamic> data) async {
-    return await post(
-      path: '/merchants/cities',
-      body: data,
-      withLoading: true,
-    );
+    return await post(path: '/merchants/cities', body: data, withLoading: true);
   }
 
   static Future<dynamic> updateCity(int id, Map<String, dynamic> data) async {
@@ -1156,10 +1174,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }
 
   static Future<dynamic> deleteCity(int id) async {
-    return await delete(
-      path: '/merchants/cities/$id',
-      withLoading: true,
-    );
+    return await delete(path: '/merchants/cities/$id', withLoading: true);
   }
 
   static Future<dynamic> getDistricts({
@@ -1201,10 +1216,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }
 
   static Future<dynamic> deleteDistrict(int id) async {
-    return await delete(
-      path: '/merchants/districts/$id',
-      withLoading: true,
-    );
+    return await delete(path: '/merchants/districts/$id', withLoading: true);
   }
 
   static Future<dynamic> getCurrencies({
@@ -1219,10 +1231,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }
 
   static Future<dynamic> getStoreDetails(int storeId) async {
-    return await get(
-      path: '/merchants/stores/$storeId',
-      withLoading: false,
-    );
+    return await get(path: '/merchants/stores/$storeId', withLoading: false);
   }
 
   static Future<dynamic> updateStore(
@@ -1237,10 +1246,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }
 
   static Future<dynamic> deleteStore(int storeId) async {
-    return await delete(
-      path: '/merchants/stores/$storeId',
-      withLoading: true,
-    );
+    return await delete(path: '/merchants/stores/$storeId', withLoading: true);
   }
 
   static Future<dynamic> getProducts({

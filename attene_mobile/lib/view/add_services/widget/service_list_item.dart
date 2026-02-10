@@ -225,30 +225,6 @@ class ServiceListItem extends StatelessWidget {
           children: [
             ListTile(
               leading: Icon(
-                Icons.edit,
-                color: AppColors.primary400,
-                size: ResponsiveDimensions.f(24),
-              ),
-              title: Text('تعديل الخدمة', style: getMedium()),
-              onTap: () {
-                Get.back();
-                _editService();
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.delete,
-                color: Colors.red,
-                size: ResponsiveDimensions.f(24),
-              ),
-              title: Text('حذف الخدمة', style: getMedium()),
-              onTap: () {
-                Get.back();
-                _confirmDeleteService();
-              },
-            ),
-            ListTile(
-              leading: Icon(
                 Icons.visibility,
                 color: Colors.blue,
                 size: ResponsiveDimensions.f(24),
@@ -295,7 +271,7 @@ class ServiceListItem extends StatelessWidget {
                             color: AppColors.primary500,
                           ),
                           Text(
-                            'تعديل السؤال',
+                            'تعديل الخدمة',
                             style: getMedium(
                               fontSize: 14,
                               color: AppColors.primary500,
@@ -330,7 +306,7 @@ class ServiceListItem extends StatelessWidget {
                             color: AppColors.error300,
                           ),
                           Text(
-                            'حذف السؤال',
+                            'حذف الخدمة',
                             style: getMedium(
                               fontSize: 14,
                               color: AppColors.error300,
@@ -403,10 +379,7 @@ class ServiceListItem extends StatelessWidget {
 
     Get.toNamed(
       '/service-details',
-      arguments: {
-        'service': service,
-        'controller': controller,
-      },
+      arguments: {'service': service, 'controller': controller},
     );
   }
 

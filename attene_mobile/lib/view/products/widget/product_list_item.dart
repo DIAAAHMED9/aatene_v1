@@ -100,7 +100,10 @@ class ProductListItem extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.light1000,
                       borderRadius: BorderRadius.circular(20),
@@ -188,22 +191,6 @@ class ProductListItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.edit, color: AppColors.primary400),
-              title: const Text('تعديل المنتج'),
-              onTap: () {
-                Get.back();
-                _editProduct();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('حذف المنتج'),
-              onTap: () {
-                Get.back();
-                _confirmDeleteProduct();
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.visibility, color: Colors.blue),
               title: const Text('عرض التفاصيل'),
               onTap: () {
@@ -218,6 +205,85 @@ class ProductListItem extends StatelessWidget {
                 Get.back();
                 _copyProduct();
               },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      child: Container(
+                        width: double.infinity,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary500.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 10,
+                          children: [
+                            SizedBox(height: 15),
+                            Icon(
+                              Icons.edit,
+                              size: ResponsiveDimensions.responsiveFontSize(32),
+                              color: AppColors.primary500,
+                            ),
+                            Text(
+                              'تعديل الخدمة',
+                              style: getMedium(
+                                fontSize: 14,
+                                color: AppColors.primary500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Get.back();
+                        _editProduct();
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Container(
+                        width: double.infinity,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: AppColors.error300.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 10,
+                          children: [
+                            SizedBox(height: 15),
+                            Icon(
+                              Icons.delete_outline,
+                              size: ResponsiveDimensions.responsiveFontSize(32),
+                              color: AppColors.error300,
+                            ),
+                            Text(
+                              'حذف الخدمة',
+                              style: getMedium(
+                                fontSize: 14,
+                                color: AppColors.error300,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Get.back();
+                        _confirmDeleteProduct();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

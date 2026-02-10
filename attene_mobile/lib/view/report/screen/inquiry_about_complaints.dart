@@ -1,5 +1,5 @@
 import '../../../general_index.dart';
-import 'complaints_card.dart';
+import '../widget/complaints_card.dart';
 import 'show_report.dart';
 
 class InquiryAboutComplaints extends StatelessWidget {

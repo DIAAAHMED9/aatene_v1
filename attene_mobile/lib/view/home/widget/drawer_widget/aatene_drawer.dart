@@ -118,7 +118,7 @@ class AateneDrawer extends StatelessWidget {
                 ),
                 title: 'بوابة الشكاوى والاقتراحات',
                 onTap: () {
-                  Get.to(SellectReport());
+                  Get.to(SelectReport());
                 },
               ),
               DrawerMenuItem(

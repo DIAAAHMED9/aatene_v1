@@ -67,7 +67,13 @@ class DiscountDetailsBottomSheet extends StatelessWidget {
               if (discount.products != null && discount.products!.isNotEmpty)
                 _buildProductsList(),
               SizedBox(height: ResponsiveDimensions.h(16)),
-              AateneButton(buttonText: 'إغلاق', onTap: Get.back),
+              AateneButton(
+                buttonText: 'إغلاق',
+                onTap: Get.back,
+                borderColor: AppColors.primary400,
+                color: AppColors.primary400,
+                textColor: AppColors.light1000,
+              ),
             ],
           ),
         ),

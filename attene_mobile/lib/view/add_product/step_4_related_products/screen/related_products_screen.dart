@@ -468,13 +468,24 @@ class RelatedProductsScreen extends StatelessWidget {
         title: const Text('تأكيد الحذف'),
         content: const Text('هل أنت متأكد من حذف هذا التخفيض؟'),
         actions: [
-          TextButton(onPressed: Get.back, child: const Text('إلغاء')),
-          TextButton(
-            onPressed: () {
+          AateneButton(
+            textColor: AppColors.light1000,
+            color: AppColors.primary400,
+            borderColor: AppColors.primary400,
+            buttonText: 'حذف',
+            onTap: () {
+              Get.back();
               Get.find<RelatedProductsController>().removeDiscount(discount);
+            },
+          ),
+          AateneButton(
+            textColor: AppColors.primary400,
+            color: AppColors.light1000,
+            borderColor: AppColors.primary400,
+            buttonText: 'إلغاء',
+            onTap: () {
               Get.back();
             },
-            child: Text('حذف', style: getMedium(color: Colors.red)),
           ),
         ],
       ),

@@ -190,7 +190,7 @@ class HomeControl extends StatelessWidget {
                             color: AppColors.primary400,
                             size: 22,
                           ),
-                          screen: SellectReport(),
+                          screen: SelectReport(),
                         ),
                         NameControl(
                           name: "عن أعطيني",

@@ -11,7 +11,8 @@ class ProductService extends GetxController {
   final RxBool _productsUpdated = false.obs;
 
   bool get productsUpdated => _productsUpdated.value;
-Map<String ,dynamic> productData={};
+  Map<String, dynamic> productData = {};
+
   void notifyProductsUpdated() {
     print('📢 [PRODUCT SERVICE] Notifying products update');
     _productsUpdated.value = !_productsUpdated.value;
@@ -82,10 +83,7 @@ Map<String ,dynamic> productData={};
     }
   }
 
-   fetchProductById({
-    required int productId,
-    bool withLoading = false,
-  }) async {
+  fetchProductById({required int productId, bool withLoading = false}) async {
     try {
       final response = await ApiHelper.get(
         path: '/merchants/products/$productId',
@@ -93,7 +91,7 @@ Map<String ,dynamic> productData={};
       );
 
       if (response != null && response['status'] == true) {
-        productData =response['data'];
+        productData = response['data'];
         update();
         // return Product.fromJson(response['data']);
       }

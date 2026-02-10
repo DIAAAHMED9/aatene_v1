@@ -108,7 +108,7 @@ class ShowReport extends StatelessWidget {
                         Text(
                           "شكوي خاصة بالتوصيل",
                           style: getMedium(color: Colors.grey),
-                        )
+                        ),
                       ],
                     ),
                     Divider(),

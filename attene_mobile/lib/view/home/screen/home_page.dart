@@ -1,5 +1,6 @@
+import 'package:attene_mobile/view/notification/screen/notification_page.dart';
+
 import '../../../general_index.dart';
-import '../../../api/core/api_helper.dart';
 import '../../../services/screen/auth_required_screen.dart';
 
 class HomePageWithTab extends GetView<HomeController> {

@@ -58,8 +58,6 @@ class CustomAppBarWithTabs extends StatefulWidget
   @override
   Size get preferredSize => Size.fromHeight(_calculateHeight(Get.context!));
 
-
-
   @override
   State<CustomAppBarWithTabs> createState() => _CustomAppBarWithTabsState();
 }
@@ -102,7 +100,7 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
 
   bool _isTablet(BuildContext context) =>
       MediaQuery.of(context).size.width >= 768 &&
-          MediaQuery.of(context).size.width < 1024;
+      MediaQuery.of(context).size.width < 1024;
 
   bool _isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= 1024;
@@ -214,37 +212,39 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (_isMobile(context) && Navigator.of(context).canPop())
-
-          IconButton(
-            icon: Icon(
-              widget.isRTL ? Icons.arrow_forward : Icons.arrow_back,
-              color: Colors.grey[700],
-              size: 24,
+            IconButton(
+              onPressed: () => Get.back(),
+              icon: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.grey[100],
+                ),
+                child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+              ),
             ),
-            onPressed: () => Navigator.of(context).pop(),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _isMobile(context) ? 8 : 0,
-            ),
-            child: Text(
-              widget.config.title,
-              style: TextStyle(
-                fontSize: _getTitleFontSize(context),
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-                fontFamily: "PingAR",
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: _isMobile(context) ? 8 : 0,
+              ),
+              child: Text(
+                widget.config.title,
+                style: TextStyle(
+                  fontSize: _getTitleFontSize(context),
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                  fontFamily: "PingAR",
+                ),
               ),
             ),
           ),
-        ),
-        if (widget.config.actionText.isNotEmpty && widget.config.onActionPressed != null)
-          _buildActionButton(context),
-      ],)
+          if (widget.config.actionText.isNotEmpty &&
+              widget.config.onActionPressed != null)
+            _buildActionButton(context),
+        ],
+      ),
     );
   }
 
@@ -345,9 +345,7 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
                         size: _isMobile(context) ? 20 : 22,
                       ),
                       border: InputBorder.none,
-                      hintText: widget.isRTL
-                          ? 'بحث'
-                          : 'Search products...',
+                      hintText: widget.isRTL ? 'بحث' : 'Search products...',
                       hintStyle: TextStyle(
                         color: Colors.grey[500],
                         fontSize: _isMobile(context) ? 14 : 15,

@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/notification/controller/notification_controller.dart';
+import 'package:attene_mobile/view/notification/services/notification_service.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -66,6 +68,8 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
         Get.lazyPut(() => SearchScreenController(), fenix: true);
+        Get.lazyPut(() => NotificationService());
+        Get.lazyPut(() => NotificationController());
         final OnboardingController controller = Get.put(
           OnboardingController(),
           permanent: true,

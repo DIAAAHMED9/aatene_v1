@@ -1,10 +1,10 @@
 import '../../../general_index.dart';
-import '../widget/inquiry_about_complaints.dart';
-import '../widget/report_abuse.dart';
+import 'inquiry_about_complaints.dart';
+import 'type_report.dart';
 import '../widget/report_card.dart';
 
-class SellectReport extends StatelessWidget {
-  const SellectReport({super.key});
+class SelectReport extends StatelessWidget {
+  const SelectReport({super.key});
 
   @override
   Widget build(BuildContext context) {

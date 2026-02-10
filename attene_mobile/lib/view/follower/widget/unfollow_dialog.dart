@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../component/aatene_button/aatene_button.dart';
 import '../controller/followers_controller.dart';
-import '../models/follower_model.dart';
+import '../model/follower_model.dart';
 
 class UnfollowDialog extends StatelessWidget {
   final FollowerModel model;

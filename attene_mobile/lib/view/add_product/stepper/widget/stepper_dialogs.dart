@@ -8,10 +8,8 @@ class AddProductStepperDialogs {
 
       actions: [
         AateneButton(
-          onTap: () {
-            Get.back(result: true);
-            Get.back();
-          },
+          onTap: () => Get.back(result: false),
+
           buttonText: "لا،استمر",
           color: AppColors.primary400,
           textColor: AppColors.light1000,
@@ -19,7 +17,10 @@ class AddProductStepperDialogs {
         ),
         SizedBox(height: 10),
         AateneButton(
-          onTap: () => Get.back(result: false),
+          onTap: () {
+            Get.back(result: true);
+            Get.back();
+          },
           buttonText: "نعم،إلغاء",
           color: AppColors.light1000,
           textColor: AppColors.primary400,

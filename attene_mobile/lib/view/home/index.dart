@@ -20,4 +20,3 @@ export 'package:attene_mobile/view/home/model/account_model.dart';
 export 'dart:async';
 export 'package:attene_mobile/view/home/model/adds_model.dart';
 export 'package:attene_mobile/view/favorite/screen/favorites.dart';
-export 'package:attene_mobile/view/notification/screen/notification.dart';

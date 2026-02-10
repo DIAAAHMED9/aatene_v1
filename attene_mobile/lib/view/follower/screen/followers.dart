@@ -1,4 +1,4 @@
-import 'package:attene_mobile/view/control_users/screen/you_follow.dart';
+import 'package:attene_mobile/view/follower/screen/you_follow.dart';
 
 import '../../../general_index.dart';
 import 'followers_list.dart';
