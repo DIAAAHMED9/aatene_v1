@@ -533,7 +533,7 @@ class FilterBottomSheet extends StatelessWidget {
               Text("حساب المستخدم", style: getMedium()),
               Row(
                 children: [
-                  Radio(value: true, activeColor: AppColors.primary400),
+                  // Radio(value: true, activeColor: AppColors.primary400),
 
                   Text('حساب موثق', style: getMedium()),
                 ],
