@@ -23,31 +23,33 @@ class _ProductCardState extends State<ProductCard> {
 
     final p = widget.product!;
 
-    final String coverImage = p['cover'] ??
+    final String coverImage =
+        p['cover'] ??
         'https://images.unsplash.com/photo-1520975916090-3105956dac38';
-    
+
     final String productName = p['name']?.toString() ?? 'منتج';
-    
+
     int reviewRate = 0;
     if (p['review_rate'] != null) {
       reviewRate = int.tryParse(p['review_rate'].toString()) ?? 0;
     }
-    
+
     int reviewCount = 0;
     if (p['review_count'] != null) {
       reviewCount = int.tryParse(p['review_count'].toString()) ?? 0;
     }
-    
+
     double price = 0.0;
     if (p['price'] != null) {
       price = double.tryParse(p['price'].toString()) ?? 0.0;
     }
-    
+
     double priceAfterDiscount = price;
     if (p['price_after_discount'] != null) {
-      priceAfterDiscount = double.tryParse(p['price_after_discount'].toString()) ?? price;
+      priceAfterDiscount =
+          double.tryParse(p['price_after_discount'].toString()) ?? price;
     }
-    
+
     final bool hasDiscount = priceAfterDiscount < price;
     final String displayPrice = hasDiscount
         ? '${priceAfterDiscount.toStringAsFixed(0)}₪'
@@ -94,7 +96,8 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                   ),
                 ),
-                if ((p['discount_present'] ?? 0) > 0 || (p['condition'] == 'new'))
+                if ((p['discount_present'] ?? 0) > 0 ||
+                    (p['condition'] == 'new'))
                   Positioned(
                     top: 10,
                     right: 10,
@@ -109,7 +112,10 @@ class _ProductCardState extends State<ProductCard> {
                       ),
                       child: Text(
                         'جديد',
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -170,7 +176,10 @@ class _ProductCardState extends State<ProductCard> {
                     productName,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   Row(
                     spacing: 5,
@@ -188,7 +197,10 @@ class _ProductCardState extends State<ProductCard> {
                       if (reviewCount > 0)
                         Text(
                           '($reviewCount)',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                     ],
                   ),
