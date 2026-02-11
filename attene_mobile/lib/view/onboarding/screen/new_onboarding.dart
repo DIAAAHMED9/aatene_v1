@@ -1,16 +1,16 @@
 import '../../../general_index.dart';
 
 class OnboardingView extends StatelessWidget {
-  OnboardingView({super.key});
+  const OnboardingView({super.key});
 
-  final controller = Get.put(OnboardingController());
+  // final controller = Get.put(OnboardingController());
 
   final pages = const [
     OnboardingModel(
       gif: 'assets/images/png/onboarding1.png',
       title: 'تسوق كل اللي تحتاجه بسهولة',
       description:
-          'اكتشف منتجات متنوعة، قارن الأسعار وعاين التفاصيل قبل الشراء.',
+      'اكتشف منتجات متنوعة، قارن الأسعار وعاين التفاصيل قبل الشراء.',
     ),
     OnboardingModel(
       gif: 'assets/images/png/onboarding2.png',
@@ -26,9 +26,8 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return GetBuilder<OnboardingController>(builder: (OnboardingController controller) {
+      return Scaffold(
         body: Stack(
           children: [
             const CurvedBackground(),
@@ -40,9 +39,7 @@ class OnboardingView extends StatelessWidget {
                 onPressed: () => controller.finish(),
                 // onPressed: () => Get.to(() => Onboarding()),
                 child: const Text(
-                  'تخطي',
-                  style: TextStyle(color: Colors.white),
-                ),
+                    'تخطي', style: TextStyle(color: Colors.white)),
               ),
             ),
 
@@ -70,8 +67,8 @@ class OnboardingView extends StatelessWidget {
               left: 24,
               right: 24,
               child: Obx(() {
-                final isLast =
-                    controller.currentIndex.value == pages.length - 1;
+                final isLast = controller.currentIndex.value ==
+                    pages.length - 1;
                 return AateneButton(
                   onTap: controller.next,
                   buttonText: isLast ? 'التالي' : 'التالي',
@@ -83,7 +80,7 @@ class OnboardingView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

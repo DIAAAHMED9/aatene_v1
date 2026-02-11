@@ -1,6 +1,6 @@
 import '../../../general_index.dart';
 
-class FavoriteController extends GetxController {
+class ReportController extends GetxController {
   Map<String, dynamic> ProductDate = {};
   RxBool isLoading = RxBool(true);
   RxBool hasError = RxBool(false);
