@@ -9,7 +9,6 @@ class ProfileController extends BaseProfileController {
   RxBool hasError = RxBool(false);
   String errorMessage = '';
   
-
   final MyAppController myAppController = Get.find<MyAppController>();
 
   @override
@@ -33,8 +32,6 @@ class ProfileController extends BaseProfileController {
         print('Account data fetched successfully');
         profileData = res['user'] ?? {};
         
-        
-        // Update shared data if needed
         if (Get.isRegistered<MyAppController>()) {
           final myAppController = Get.find<MyAppController>();
           myAppController.updateUserData(profileData);
@@ -55,7 +52,6 @@ class ProfileController extends BaseProfileController {
   }
 
   void toggleFollow() {
-    // Your follow logic
     update();
   }
 }

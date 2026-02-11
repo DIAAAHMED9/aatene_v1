@@ -69,7 +69,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
                     size: 15,
                     color: AppColors.neutral400,
                   ),
-                  // listItemStyle: getMedium(color: AppColors.primary400),
                 ),
                 items: _listGeral,
                 initialItem: _listGeral[0],
@@ -110,7 +109,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
                     size: 15,
                     color: AppColors.neutral400,
                   ),
-                  // listItemStyle: getMedium(color: AppColors.primary400),
                 ),
                 items: _listCity,
                 initialItem: _listCity[0],
@@ -131,7 +129,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
                     size: 15,
                     color: AppColors.neutral400,
                   ),
-                  // listItemStyle: getMedium(color: AppColors.primary400),
                 ),
                 items: _listCountry,
                 initialItem: _listCountry[0],
@@ -139,34 +136,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   print('changing value to: $value');
                 },
               ),
-              // DropdownButtonFormField(
-              //   decoration: InputDecoration(
-              //     fillColor: Colors.grey[50],
-              //     isDense: true,
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular((50)),
-              //     ),
-              //   ),
-              //   dropdownColor: AppColors.primary50,
-              //   icon: Icon(Icons.arrow_forward_ios, size: 15),
-              //   value: selectedLanguage,
-              //   hint: Text("اختر اللغة"),
-              //   items: [
-              //     DropdownMenuItem<String>(
-              //       value: 'ar',
-              //       child: Text('الناصرة', style: getRegular(fontSize: 14)),
-              //     ),
-              //     DropdownMenuItem<String>(
-              //       value: 'he',
-              //       child: Text('القدس', style: getRegular(fontSize: 14)),
-              //     ),
-              //   ],
-              //   onChanged: (value) {
-              //     selectedLanguage = value;
-              //
-              //     Get.updateLocale(Locale(value!));
-              //   },
-              // ),
               Text("النبذة الشخصية", style: getMedium(fontSize: 14)),
               TextField(
                 maxLines: 5,

@@ -17,7 +17,6 @@ class HomePageWithTab extends GetView<HomeController> {
       appBar: _buildAppBar(),
       body: Column(
         children: [
-          // الجزء العلوي الثابت
           Container(
             padding: const EdgeInsets.all(15.0),
             child: Column(
@@ -28,7 +27,6 @@ class HomePageWithTab extends GetView<HomeController> {
               ],
             ),
           ),
-          // منطقة PageView الرئيسية
           Expanded(
             child: PageView(
               controller: controller.pageController,
@@ -98,7 +96,6 @@ class HomePageWithTab extends GetView<HomeController> {
   Widget _buildLocationAndSearch() {
     return Row(
       children: [
-        // زر المدينة
         Container(
           width: 90,
           height: 50,
@@ -124,7 +121,6 @@ class HomePageWithTab extends GetView<HomeController> {
           ),
         ),
         const SizedBox(width: 5),
-        // حقل البحث
         Expanded(
           child: GestureDetector(
             onTap: () {

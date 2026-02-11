@@ -31,7 +31,7 @@ class ProductsSection extends GetView<HomeController> {
               title: "المتاجر المميزة",
               subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
             ),
-            VendorCard(),
+            VendorCard(store: {},),
             TitleHome(
               title: "منتجات تم تخصيصها لك",
               subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",

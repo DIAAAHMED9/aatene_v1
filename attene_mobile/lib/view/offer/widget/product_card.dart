@@ -1,6 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-/// بطاقة عرض المنتج في العرض الترويجي
 class ProductCard extends StatelessWidget {
   const ProductCard({super.key});
 
@@ -17,7 +16,6 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // صورة المنتج مع بادج الخصم
           Expanded(
             child: Stack(
               children: [
@@ -36,7 +34,6 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
-          // معلومات المنتج
           const Padding(
             padding: EdgeInsets.all(12),
             child: Column(
@@ -75,7 +72,6 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-/// بادج عرض نسبة الخصم
 class _DiscountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

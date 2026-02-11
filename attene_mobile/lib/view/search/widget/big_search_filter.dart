@@ -1,617 +1,88 @@
 import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/view/search/controller/search_controller.dart' as app;
+import 'package:attene_mobile/view/search/controller/search_filter_controller.dart';
 
-enum SearchType { products, stores, services, users }
+import '../controller/search_controller.dart';
 
 class FilterBottomSheet extends StatelessWidget {
-  final SearchType searchType;
+  final app.SearchType searchType;
 
   const FilterBottomSheet({super.key, required this.searchType});
 
   @override
   Widget build(BuildContext context) {
-    final bool isVerified = true;
-    return GetBuilder<FilterController>(
-      init: FilterController(),
-      builder: (controller) {
-        return Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+    final filterController = Get.put(SearchFilterController(), permanent: false);
+    final searchController = Get.find<app.SearchController>();
 
-                const SizedBox(height: 20),
-
-                // عرض نوع البحث المختار
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        _getIconForSearchType(searchType),
-                        color: AppColors.primary400,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _getTitleForSearchType(searchType),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primary400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // عرض المحتوى حسب نوع البحث
-                _buildContentBySearchType(controller, searchType),
-
-                const SizedBox(height: 24),
-
-                AateneButton(
-                  onTap: () {
-                    // تطبيق الفلتر
-                    _applyFilters(controller, searchType);
-                    Get.back();
-                  },
-                  buttonText: "تطبيق الفلتر",
-                  color: AppColors.primary400,
-                  borderColor: AppColors.primary400,
-                  textColor: AppColors.light1000,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // بناء المحتوى حسب نوع البحث
-  Widget _buildContentBySearchType(
-    FilterController controller,
-    SearchType type,
-  ) {
-    switch (type) {
-      case SearchType.products:
-        return _buildProductsContent(controller);
-      case SearchType.stores:
-        return _buildStoresContent(controller);
-      case SearchType.services:
-        return _buildServicesContent(controller);
-      case SearchType.users:
-        return _buildUsersContent(controller);
-    }
-  }
-
-  // محتوى فلتر المنتجات
-  Widget _buildProductsContent(FilterController controller) {
-    return Column(
-      children: [
-        // فلاتر المنتجات الأساسية
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              _buildFilterItem(
-                'فئات',
-                'assets/images/svg_images/Category.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'التصنيفات',
-                'assets/images/svg_images/filtter.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'العلامات',
-                'assets/images/svg_images/tags.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'المدينة',
-                'assets/images/svg_images/location.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'الألوان',
-                'assets/images/svg_images/color.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'المقاسات',
-                'assets/images/svg_images/size.svg',
-                () {},
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // خيارات التبديل للمنتجات
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('عرض منتجات جديدة', style: TextStyle(fontSize: 14)),
-                      Text(
-                        '127 منتج',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  Switch(
-                    value: controller.newProducts,
-                    activeColor: AppColors.primary300,
-                    onChanged: controller.toggleNew,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'عرض المنتجات للبيع',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        '68 منتجات',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  Switch(
-                    value: controller.forSale,
-                    activeColor: AppColors.primary300,
-                    onChanged: controller.toggleSale,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // النطاق السعري للمنتجات
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.category_outlined),
-                  const SizedBox(width: 5),
-                  Text('النطاق السعري', style: getMedium()),
-                ],
-              ),
-              RangeSlider(
-                min: 0,
-                max: 300,
-                values: controller.priceRange,
-                activeColor: AppColors.primary300,
-                onChanged: controller.changePrice,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '\$${controller.priceRange.start.toInt()}',
-                    style: getMedium(color: AppColors.primary400, fontSize: 14),
-                  ),
-                  Text(
-                    '\$${controller.priceRange.end.toInt()}',
-                    style: getMedium(color: AppColors.primary400, fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // محتوى فلتر المتاجر
-  Widget _buildStoresContent(FilterController controller) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              _buildFilterItem(
-                'فئات',
-                'assets/images/svg_images/Category.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'المدينة',
-                'assets/images/svg_images/location.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'التقييم',
-                'assets/images/svg_images/Star.svg',
-                () {},
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-        //
-        // // خيارات إضافية للمتاجر
-        // Container(
-        //   padding: const EdgeInsets.all(16),
-        //   decoration: BoxDecoration(
-        //     color: const Color(0xFFF6F6F6),
-        //     borderRadius: BorderRadius.circular(16),
-        //   ),
-        //   child: Column(
-        //     children: [
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         children: [
-        //           Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: const [
-        //               Text(
-        //                 'عرض المتاجر النشطة',
-        //                 style: TextStyle(fontSize: 14),
-        //               ),
-        //               Text(
-        //                 '45 متجر',
-        //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-        //               ),
-        //             ],
-        //           ),
-        //           Switch(
-        //             value: controller.activeStores,
-        //             activeColor: AppColors.primary300,
-        //             onChanged: controller.toggleActiveStores,
-        //           ),
-        //         ],
-        //       ),
-        //       const SizedBox(height: 12),
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         children: [
-        //           Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: const [
-        //               Text('المتاجر المميزة', style: TextStyle(fontSize: 14)),
-        //               Text(
-        //                 '12 متجر',
-        //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-        //               ),
-        //             ],
-        //           ),
-        //           Switch(
-        //             value: controller.featuredStores,
-        //             activeColor: AppColors.primary300,
-        //             onChanged: controller.toggleFeaturedStores,
-        //           ),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
-      ],
-    );
-  }
-
-  // محتوى فلتر الخدمات
-  Widget _buildServicesContent(FilterController controller) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              _buildFilterItem(
-                'التصنيف',
-                'assets/images/svg_images/filtter.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'المدينة',
-                'assets/images/svg_images/location.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'التقييم',
-                'assets/images/svg_images/Star.svg',
-                () {},
-              ),
-
-              _buildFilterItem(
-                'المراجعات',
-                'assets/images/svg_images/Chat9.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'مستوى البائع',
-                'assets/images/svg_images/Profile.svg',
-                () {},
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // // خيارات إضافية للخدمات
-        // Container(
-        //   padding: const EdgeInsets.all(16),
-        //   decoration: BoxDecoration(
-        //     color: const Color(0xFFF6F6F6),
-        //     borderRadius: BorderRadius.circular(16),
-        //   ),
-        //   child: Column(
-        //     children: [
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         children: [
-        //           Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: const [
-        //               Text(
-        //                 'الخدمات المتاحة الآن',
-        //                 style: TextStyle(fontSize: 14),
-        //               ),
-        //               Text(
-        //                 '89 خدمة',
-        //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-        //               ),
-        //             ],
-        //           ),
-        //           Switch(
-        //             value: controller.availableServices,
-        //             activeColor: AppColors.primary300,
-        //             onChanged: controller.toggleAvailableServices,
-        //           ),
-        //         ],
-        //       ),
-        //       const SizedBox(height: 12),
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         children: [
-        //           Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: const [
-        //               Text('خدمات تحت الطلب', style: TextStyle(fontSize: 14)),
-        //               Text(
-        //                 '34 خدمة',
-        //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-        //               ),
-        //             ],
-        //           ),
-        //           Switch(
-        //             value: controller.onDemandServices,
-        //             activeColor: AppColors.primary300,
-        //             onChanged: controller.toggleOnDemandServices,
-        //           ),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        //
-        // const SizedBox(height: 16),
-
-        // النطاق السعري للخدمات
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.category_outlined),
-                  const SizedBox(width: 5),
-                  Text('النطاق السعري', style: getMedium()),
-                ],
-              ),
-              RangeSlider(
-                min: 0,
-                max: 300,
-                values: controller.priceRange,
-                activeColor: AppColors.primary300,
-                onChanged: controller.changePrice,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '\$${controller.priceRange.start.toInt()}',
-                    style: getMedium(color: AppColors.primary400, fontSize: 14),
-                  ),
-                  Text(
-                    '\$${controller.priceRange.end.toInt()}',
-                    style: getMedium(color: AppColors.primary400, fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // محتوى فلتر المستخدمين
-  Widget _buildUsersContent(FilterController controller) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              _buildFilterItem(
-                'المدينة',
-                'assets/images/svg_images/location.svg',
-                () {},
-              ),
-              _buildFilterItem(
-                'التقييم',
-                'assets/images/svg_images/Star.svg',
-                () {},
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // خيارات إضافية للمستخدمين
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              Text("حساب المستخدم", style: getMedium()),
-              Row(
-                children: [
-                  // Radio(value: true, activeColor: AppColors.primary400),
-
-                  Text('حساب موثق', style: getMedium()),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // نطاق العمر للمستخدمين
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.category_outlined),
-                  const SizedBox(width: 5),
-                  Text('النطاق السعري', style: getMedium()),
-                ],
-              ),
-              RangeSlider(
-                min: 0,
-                max: 300,
-                values: controller.priceRange,
-                activeColor: AppColors.primary300,
-                onChanged: controller.changePrice,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '\$${controller.priceRange.start.toInt()}',
-                    style: getMedium(color: AppColors.primary400, fontSize: 14),
-                  ),
-                  Text(
-                    '\$${controller.priceRange.end.toInt()}',
-                    style: getMedium(color: AppColors.primary400, fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // عنصر فلتر عام
-  Widget _buildFilterItem(String title, String iconPath, Function() onTap) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
           children: [
+            Container(
+              width: 48,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(_getIconForSearchType(searchType), color: AppColors.primary400),
+                  const SizedBox(width: 8),
+                  Text(
+                    _getTitleForSearchType(searchType),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primary400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            _buildFilterContent(searchType, filterController),
+
+            const SizedBox(height: 24),
+
             Row(
               children: [
-                SvgPicture.asset(
-                  iconPath,
-                  width: 20,
-                  height: 20,
-                  fit: BoxFit.cover,
+                Expanded(
+                  child: AateneButton(
+                    onTap: () {
+                      filterController.resetFilters(searchType);
+                    },
+                    buttonText: "إعادة تعيين",
+                    color: AppColors.neutral100,
+                    textColor: AppColors.neutral700,
+                    borderColor: AppColors.neutral300,
+                  ),
                 ),
-                const SizedBox(width: 5),
-                Text(title, style: getMedium()),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AateneButton(
+                    onTap: () {
+                      _applyFiltersAndClose(context, searchController, filterController, searchType);
+                    },
+                    buttonText: "تطبيق الفلتر",
+                    color: AppColors.primary400,
+                    borderColor: AppColors.primary400,
+                    textColor: AppColors.light1000,
+                  ),
+                ),
               ],
-            ),
-            Text(
-              'الكل',
-              style: getMedium(color: AppColors.neutral500, fontSize: 13),
             ),
           ],
         ),
@@ -619,163 +90,433 @@ class FilterBottomSheet extends StatelessWidget {
     );
   }
 
-  // الحصول على الأيقونة المناسبة حسب نوع البحث
-  IconData _getIconForSearchType(SearchType type) {
+  void _applyFiltersAndClose(
+    BuildContext context,
+    app.SearchController searchController,
+    SearchFilterController filterController,
+    app.SearchType searchType,
+  ) {
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+
+    final filters = filterController.buildFilterQuery(searchType);
+
+    if (searchController.searchQuery.value.isEmpty) {
+      Get.snackbar(
+        'تنبيه',
+        'الرجاء كتابة كلمة البحث أولاً',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.warning100,
+        colorText: AppColors.neutral900,
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    searchController.applyFilters(filters);
+  }
+
+  Widget _buildFilterContent(SearchType type, SearchFilterController controller) {
     switch (type) {
       case SearchType.products:
-        return Icons.shopping_bag;
+        return _buildProductsFilter(controller);
       case SearchType.stores:
-        return Icons.store;
+        return _buildStoresFilter(controller);
       case SearchType.services:
-        return Icons.handyman;
+        return _buildServicesFilter(controller);
       case SearchType.users:
+        return _buildUsersFilter(controller);
+    }
+  }
+
+  Widget _buildProductsFilter(SearchFilterController controller) {
+    return GetBuilder<SearchFilterController>(
+      builder: (_) {
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildFilterItem('فئات', 'assets/images/svg_images/Category.svg'),
+                  _buildFilterItem('التصنيفات', 'assets/images/svg_images/filtter.svg'),
+                  _buildFilterItem('العلامات', 'assets/images/svg_images/tags.svg'),
+                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
+                  _buildFilterItem('الألوان', 'assets/images/svg_images/color.svg'),
+                  _buildFilterItem('المقاسات', 'assets/images/svg_images/size.svg'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildSwitchRow(
+                    title: 'عرض منتجات جديدة',
+                    subtitle: '127 منتج',
+                    value: controller.newProducts,
+                    onChanged: controller.toggleNew,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSwitchRow(
+                    title: 'عرض المنتجات للبيع',
+                    subtitle: '68 منتجات',
+                    value: controller.forSale,
+                    onChanged: controller.toggleSale,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.attach_money),
+                      const SizedBox(width: 5),
+                      Text('النطاق السعري', style: getMedium()),
+                    ],
+                  ),
+                  RangeSlider(
+                    min: 0,
+                    max: 300,
+                    values: controller.priceRange,
+                    activeColor: AppColors.primary300,
+                    onChanged: controller.changePrice,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('\$${controller.priceRange.start.toInt()}',
+                          style: getMedium(color: AppColors.primary400, fontSize: 14)),
+                      Text('\$${controller.priceRange.end.toInt()}',
+                          style: getMedium(color: AppColors.primary400, fontSize: 14)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildStoresFilter(SearchFilterController controller) {
+    return GetBuilder<SearchFilterController>(
+      builder: (_) {
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildFilterItem('فئات', 'assets/images/svg_images/Category.svg'),
+                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
+                  _buildFilterItem('التقييم', 'assets/images/svg_images/Star.svg'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildSwitchRow(
+                    title: 'عرض المتاجر النشطة',
+                    subtitle: '45 متجر',
+                    value: controller.activeStores,
+                    onChanged: controller.toggleActiveStores,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSwitchRow(
+                    title: 'المتاجر المميزة',
+                    subtitle: '12 متجر',
+                    value: controller.featuredStores,
+                    onChanged: controller.toggleFeaturedStores,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildServicesFilter(SearchFilterController controller) {
+    return GetBuilder<SearchFilterController>(
+      builder: (_) {
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildFilterItem('التصنيف', 'assets/images/svg_images/filtter.svg'),
+                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
+                  _buildFilterItem('التقييم', 'assets/images/svg_images/Star.svg'),
+                  _buildFilterItem('المراجعات', 'assets/images/svg_images/Chat9.svg'),
+                  _buildFilterItem('مستوى البائع', 'assets/images/svg_images/Profile.svg'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildSwitchRow(
+                    title: 'الخدمات المتاحة الآن',
+                    subtitle: '89 خدمة',
+                    value: controller.availableServices,
+                    onChanged: controller.toggleAvailableServices,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSwitchRow(
+                    title: 'خدمات تحت الطلب',
+                    subtitle: '34 خدمة',
+                    value: controller.onDemandServices,
+                    onChanged: controller.toggleOnDemandServices,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.attach_money),
+                      const SizedBox(width: 5),
+                      Text('النطاق السعري', style: getMedium()),
+                    ],
+                  ),
+                  RangeSlider(
+                    min: 0,
+                    max: 300,
+                    values: controller.servicePriceRange,
+                    activeColor: AppColors.primary300,
+                    onChanged: controller.changeServicePrice,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('\$${controller.servicePriceRange.start.toInt()}',
+                          style: getMedium(color: AppColors.primary400, fontSize: 14)),
+                      Text('\$${controller.servicePriceRange.end.toInt()}',
+                          style: getMedium(color: AppColors.primary400, fontSize: 14)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildUsersFilter(SearchFilterController controller) {
+    return GetBuilder<SearchFilterController>(
+      builder: (_) {
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
+                  _buildFilterItem('التقييم', 'assets/images/svg_images/Star.svg'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildSwitchRow(
+                    title: 'حساب موثق',
+                    subtitle: '',
+                    value: controller.activeUsers,
+                    onChanged: controller.toggleActiveUsers,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSwitchRow(
+                    title: 'مستخدمين مميزين',
+                    subtitle: '',
+                    value: controller.featuredUsers,
+                    onChanged: controller.toggleFeaturedUsers,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSwitchRow(
+                    title: 'متصل الآن',
+                    subtitle: '',
+                    value: controller.onlineUsers,
+                    onChanged: controller.toggleOnlineUsers,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_month),
+                      const SizedBox(width: 5),
+                      Text('نطاق العمر', style: getMedium()),
+                    ],
+                  ),
+                  RangeSlider(
+                    min: 18,
+                    max: 80,
+                    values: controller.ageRange,
+                    activeColor: AppColors.primary300,
+                    onChanged: controller.changeAgeRange,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${controller.ageRange.start.toInt()} سنة',
+                          style: getMedium(color: AppColors.primary400, fontSize: 14)),
+                      Text('${controller.ageRange.end.toInt()} سنة',
+                          style: getMedium(color: AppColors.primary400, fontSize: 14)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterItem(String title, String iconPath) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(iconPath, width: 20, height: 20, fit: BoxFit.cover),
+              const SizedBox(width: 5),
+              Text(title, style: getMedium()),
+            ],
+          ),
+          Text('الكل', style: getMedium(color: AppColors.neutral500, fontSize: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSwitchRow({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 14)),
+            if (subtitle.isNotEmpty)
+              Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          ],
+        ),
+        Switch(
+          value: value,
+          activeColor: AppColors.primary300,
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  IconData _getIconForSearchType(app.SearchType type) {
+    switch (type) {
+      case app.SearchType.products:
+        return Icons.shopping_bag;
+      case app.SearchType.stores:
+        return Icons.store;
+      case app.SearchType.services:
+        return Icons.handyman;
+      case app.SearchType.users:
         return Icons.people;
     }
   }
 
-  // الحصول على العنوان المناسب حسب نوع البحث
-  String _getTitleForSearchType(SearchType type) {
+  String _getTitleForSearchType(app.SearchType type) {
     switch (type) {
-      case SearchType.products:
+      case app.SearchType.products:
         return 'منتجات';
-      case SearchType.stores:
+      case app.SearchType.stores:
         return 'متاجر';
-      case SearchType.services:
+      case app.SearchType.services:
         return 'خدمات';
-      case SearchType.users:
+      case app.SearchType.users:
         return 'مستخدمين';
     }
   }
-
-  void _applyFilters(FilterController controller, SearchType searchType) {
-    // تطبيق الفلتر حسب نوع البحث
-    switch (searchType) {
-      case SearchType.products:
-        Get.snackbar(
-          'تم تطبيق فلتر المنتجات',
-          'تم تطبيق الفلتر بنجاح',
-          backgroundColor: AppColors.primary400,
-          colorText: AppColors.light1000,
-        );
-        break;
-      case SearchType.stores:
-        Get.snackbar(
-          'تم تطبيق فلتر المتاجر',
-          'تم تطبيق الفلتر بنجاح',
-          backgroundColor: AppColors.primary400,
-          colorText: AppColors.light1000,
-        );
-        break;
-      case SearchType.services:
-        Get.snackbar(
-          'تم تطبيق فلتر الخدمات',
-          'تم تطبيق الفلتر بنجاح',
-          backgroundColor: AppColors.primary400,
-          colorText: AppColors.light1000,
-        );
-        break;
-      case SearchType.users:
-        Get.snackbar(
-          'تم تطبيق فلتر المستخدمين',
-          'تم تطبيق الفلتر بنجاح',
-          backgroundColor: AppColors.primary400,
-          colorText: AppColors.light1000,
-        );
-        break;
-    }
-  }
-}
-
-// Controller للفلاتر
-class FilterController extends GetxController {
-  // فلتر المنتجات
-  bool newProducts = true;
-  bool forSale = true;
-  RangeValues priceRange = const RangeValues(0, 150);
-
-  // فلتر المتاجر
-  bool activeStores = true;
-  bool featuredStores = false;
-
-  // فلتر الخدمات
-  bool availableServices = true;
-  bool onDemandServices = false;
-  RangeValues servicePriceRange = const RangeValues(100, 300);
-
-  // فلتر المستخدمين
-  bool activeUsers = true;
-  bool featuredUsers = false;
-  bool onlineUsers = false;
-  RangeValues ageRange = const RangeValues(20, 40);
-
-  // دوال التحكم بالمنتجات
-  void toggleNew(bool value) {
-    newProducts = value;
-    update();
-  }
-
-  void toggleSale(bool value) {
-    forSale = value;
-    update();
-  }
-
-  void changePrice(RangeValues values) {
-    priceRange = values;
-    update();
-  }
-
-  // دوال التحكم بالمتاجر
-  void toggleActiveStores(bool value) {
-    activeStores = value;
-    update();
-  }
-
-  void toggleFeaturedStores(bool value) {
-    featuredStores = value;
-    update();
-  }
-
-  // دوال التحكم بالخدمات
-  void toggleAvailableServices(bool value) {
-    availableServices = value;
-    update();
-  }
-
-  void toggleOnDemandServices(bool value) {
-    onDemandServices = value;
-    update();
-  }
-
-  void changeServicePrice(RangeValues values) {
-    servicePriceRange = values;
-    update();
-  }
-
-  // دوال التحكم بالمستخدمين
-  void toggleActiveUsers(bool value) {
-    activeUsers = value;
-    update();
-  }
-
-  void toggleFeaturedUsers(bool value) {
-    featuredUsers = value;
-    update();
-  }
-
-  void toggleOnlineUsers(bool value) {
-    onlineUsers = value;
-    update();
-  }
-
-  void changeAgeRange(RangeValues values) {
-    ageRange = values;
-    update();
-  }
-}
-
-class FilterItem {
-  final String title;
-  final String svgAssetPath;
-
-  const FilterItem(this.title, this.svgAssetPath);
 }

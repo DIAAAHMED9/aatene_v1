@@ -283,20 +283,6 @@ class AddDiscountBottomSheet extends StatelessWidget {
       ],
     );
 
-    // TextField(
-    //     keyboardType: TextInputType.number,
-    //     decoration: InputDecoration(
-    //         labelText: 'السعر بعد التخفيض',
-    //         hintText:
-    //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-    // suffixText: '₪',
-    // contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-    // ),
-    // onChanged: (value) {
-    // final price = double.tryParse(value) ?? 0.0;
-    // controller.setDiscountedPrice(price);
-    // },
-    // );
   }
 
   Widget _buildNoteInput() {
@@ -315,17 +301,6 @@ class AddDiscountBottomSheet extends StatelessWidget {
       ],
     );
 
-    // TextField(
-    //   maxLines: 3,
-    //   minLines: 2,
-    //   decoration: InputDecoration(
-    //     labelText: 'ملاحظات (اختياري)',
-    //     hintText: 'أدخل ملاحظات عن التخفيض',
-    //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-    //     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-    //   ),
-    //   onChanged: controller.setDiscountNote,
-    // );
   }
 
   Widget _buildDatePicker() {

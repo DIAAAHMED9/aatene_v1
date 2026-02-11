@@ -32,7 +32,6 @@ class FavoriteController extends GetxController {
         print('Product data fetched successfully');
         ProductDate = res['products'] ?? {};
 
-        // Update shared data if needed
         if (Get.isRegistered<MyAppController>()) {
           final myAppController = Get.find<MyAppController>();
           myAppController.updateProductData(ProductDate);
@@ -51,6 +50,5 @@ class FavoriteController extends GetxController {
       update();
     }
   }
-
 
 }

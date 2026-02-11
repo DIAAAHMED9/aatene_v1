@@ -12,19 +12,16 @@ class _MainHome1State extends State<MainHome1> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
 
-  // قائمة الصفحات
   final List<Widget> _pages = [
     const HomePage(),
     const SearchPage(),
     const StudyPage(),
-    Container(), // صفحة فارغة لأن الزر الفعلي هو زر الزائد
+    Container(),
   ];
 
-  // العناوين العربية
   final List<String> _pageTitles = ['الرئيسية', 'البحث', 'دراسة', ''];
 
   void _onItemTapped(int index) {
-    // إذا كان المؤشر على زر الزائد (الموقع 3)، لا تفعل شيئاً
     if (index == 3) return;
 
     setState(() {
@@ -38,14 +35,12 @@ class _MainHome1State extends State<MainHome1> {
     return Scaffold(
       body: Stack(
         children: [
-          // محتوى الصفحات
           PageView(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
             children: _pages,
           ),
 
-          // Custom Bottom Navigation Bar
           Positioned(
             left: 0,
             right: 0,
@@ -91,35 +86,29 @@ class CustomBottomNavigation extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // عناصر التنقل
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // عنصر الرئيسية
               _buildNavItem(
                 index: 0,
                 icon: 'assets/images/svg_images/home-2.svg',
                 label: 'الرئيسية',
               ),
 
-              // عنصر البحث
               _buildNavItem(
                 index: 1,
                 icon: 'assets/images/svg_images/Calendar12.svg',
                 label: 'البحث',
               ),
 
-              // مسافة لزر الزائد
               const SizedBox(width: 80),
 
-              // عنصر الدراسة
               _buildNavItem(
                 index: 2,
                 icon: 'assets/images/svg_images/massages.svg',
                 label: 'دراسة',
               ),
 
-              // عنصر المستخدم
               _buildNavItem(
                 index: 3,
                 icon: 'assets/images/svg_images/about4.svg',
@@ -128,13 +117,11 @@ class CustomBottomNavigation extends StatelessWidget {
             ],
           ),
 
-          // زر الزائد العائم في المنتصف
           Positioned(
             left: MediaQuery.of(context).size.width / 2 - 35,
             bottom: 25,
             child: GestureDetector(
               onTap: () {
-                // يمكن إضافة وظيفة لزر الزائد هنا
                 print('زر الزائد تم النقر عليه');
               },
               child: Container(
@@ -174,7 +161,6 @@ class CustomBottomNavigation extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // أيقونة SVG مع تأثير التحديد
           Container(
             width: 50,
             height: 50,
@@ -195,7 +181,6 @@ class CustomBottomNavigation extends StatelessWidget {
 
           const SizedBox(height: 4),
 
-          // نص العنصر
           Text(
             label,
             style: TextStyle(
@@ -210,7 +195,6 @@ class CustomBottomNavigation extends StatelessWidget {
   }
 }
 
-// صفحات التطبيق
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

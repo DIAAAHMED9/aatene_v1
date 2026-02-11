@@ -1,9 +1,9 @@
 import '../../../general_index.dart';
 
 class OnboardingView extends StatelessWidget {
-  const OnboardingView({super.key});
+   OnboardingView({super.key});
 
-  // final controller = Get.put(OnboardingController());
+  final controller = Get.put(OnboardingController());
 
   final pages = const [
     OnboardingModel(
@@ -26,7 +26,6 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<OnboardingController>(builder: (OnboardingController controller) {
       return Scaffold(
         body: Stack(
           children: [
@@ -37,7 +36,6 @@ class OnboardingView extends StatelessWidget {
               right: 10,
               child: TextButton(
                 onPressed: () => controller.finish(),
-                // onPressed: () => Get.to(() => Onboarding()),
                 child: const Text(
                     'تخطي', style: TextStyle(color: Colors.white)),
               ),
@@ -81,6 +79,5 @@ class OnboardingView extends StatelessWidget {
           ],
         ),
       );
-    });
   }
 }

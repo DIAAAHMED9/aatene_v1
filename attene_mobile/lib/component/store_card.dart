@@ -10,7 +10,7 @@ import '../utils/colors/app_color.dart';
 import '../view/home/controller/home_controller.dart';
 
 class VendorCard extends StatelessWidget {
-  const VendorCard({super.key});
+  const VendorCard({super.key, required Map<String, dynamic> store});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,6 @@ class VendorCard extends StatelessWidget {
                         width: 42,
                         height: 42,
                         decoration: BoxDecoration(
-                          /// تغيير اللون حسب الحالة
                           color: isFollowed
                               ? AppColors.primary100
                               : AppColors.primary400,
@@ -95,7 +94,6 @@ class VendorCard extends StatelessWidget {
                           ],
                         ),
       
-                        /// تغيير الأيقونة حسب الحالة
                         child: Icon(
                           isFollowed ? Icons.arrow_forward : Icons.person_add_alt,
                           color: isFollowed ? AppColors.primary400 : Colors.white,
@@ -106,20 +104,6 @@ class VendorCard extends StatelessWidget {
                   }),
                 ),
       
-                // Positioned(
-                //   bottom: -15,
-                //   left: 10,
-                //   // top: 2,
-                //   child: CircleAvatar(
-                //     radius: 18,
-                //     backgroundColor: AppColors.primary400,
-                //     child: const Icon(
-                //       Icons.person_add_alt,
-                //       color: Colors.white,
-                //       size: 22,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
             const SizedBox(height: 26),

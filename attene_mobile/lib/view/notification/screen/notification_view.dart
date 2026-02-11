@@ -1,4 +1,3 @@
-// views/notification_view.dart
 import 'package:attene_mobile/view/notification/controller/notification_controller.dart';
 import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/view/notification/widget/notification_list_page.dart';

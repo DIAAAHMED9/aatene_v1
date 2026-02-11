@@ -369,7 +369,7 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 14,
-                              backgroundImage:NetworkImage( 
+                              backgroundImage:NetworkImage(
                                 controller.profileData['avatar'] ??
                                     'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png',
                                 
@@ -464,7 +464,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 36,
-                    backgroundImage:NetworkImage( 
+                    backgroundImage:NetworkImage(
                       controller.profileData['avatar'] ??
                           'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png',
                       
@@ -642,7 +642,7 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text('نبذة شخصية', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              ReadMoreText( 
+              ReadMoreText(
                 controller.profileData['bio'] ?? 'you can\'t edit your bio from settings',
                 trimMode: TrimMode.Line,
                 trimLines: 3,

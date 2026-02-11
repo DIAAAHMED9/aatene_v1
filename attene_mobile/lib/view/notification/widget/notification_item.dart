@@ -1,4 +1,3 @@
-// widgets/notification_item.dart
 import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/view/notification/model/notification_model.dart';
 

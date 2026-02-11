@@ -139,7 +139,6 @@ class AboutUsScreen extends StatelessWidget {
                       height: 14,
                     ),
 
-                    // Image.asset('assets/images/png/section1.png'),
                   ),
                   SectionItems2(
                     title: "سهولة استخدام من جميع الأجهزة",

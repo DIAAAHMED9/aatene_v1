@@ -1,4 +1,4 @@
-import '../general_index.dart';
+import 'package:attene_mobile/general_index.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
@@ -13,15 +13,50 @@ class ProductCard extends StatefulWidget {
 class _ProductCardState extends State<ProductCard> {
   bool isLiked = false;
 
-  void toggleLike() {
-    setState(() => isLiked = !isLiked);
-  }
+  void toggleLike() => setState(() => isLiked = !isLiked);
 
   @override
   Widget build(BuildContext context) {
+    if (widget.product == null || widget.product!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final p = widget.product!;
+
+    final String coverImage = p['cover'] ??
+        'https://images.unsplash.com/photo-1520975916090-3105956dac38';
+    
+    final String productName = p['name']?.toString() ?? 'منتج';
+    
+    int reviewRate = 0;
+    if (p['review_rate'] != null) {
+      reviewRate = int.tryParse(p['review_rate'].toString()) ?? 0;
+    }
+    
+    int reviewCount = 0;
+    if (p['review_count'] != null) {
+      reviewCount = int.tryParse(p['review_count'].toString()) ?? 0;
+    }
+    
+    double price = 0.0;
+    if (p['price'] != null) {
+      price = double.tryParse(p['price'].toString()) ?? 0.0;
+    }
+    
+    double priceAfterDiscount = price;
+    if (p['price_after_discount'] != null) {
+      priceAfterDiscount = double.tryParse(p['price_after_discount'].toString()) ?? price;
+    }
+    
+    final bool hasDiscount = priceAfterDiscount < price;
+    final String displayPrice = hasDiscount
+        ? '${priceAfterDiscount.toStringAsFixed(0)}₪'
+        : '${price.toStringAsFixed(0)}₪';
+    final String oldPrice = hasDiscount ? '${price.toStringAsFixed(0)}₪' : '';
+
     return GestureDetector(
       onTap: () {
-        Get.to(ProductDetails());
+        Get.toNamed('/product-details', arguments: {'productId': p['id']});
       },
       child: Container(
         width: 170,
@@ -48,33 +83,36 @@ class _ProductCardState extends State<ProductCard> {
                     top: Radius.circular(14),
                   ),
                   child: Image.network(
-                    widget.product!['cover'] ??
-                        'https://images.unsplash.com/photo-1520975916090-3105956dac38',
+                    coverImage,
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                  ),
-                ),
-
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      'جديد',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 170,
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.broken_image, size: 50),
                     ),
                   ),
                 ),
-
+                if ((p['discount_present'] ?? 0) > 0 || (p['condition'] == 'new'))
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'جديد',
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
                 Positioned(
                   bottom: 0,
                   left: 5,
@@ -110,66 +148,68 @@ class _ProductCardState extends State<ProductCard> {
                 spacing: 5,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      /// adds
-                      Icon(
-                        Icons.stars_rounded,
-                        size: 12,
-                        color: AppColors.primary400,
-                      ),
-                      Text(
-                        'اعلان ممول',
-                        style: getMedium(
-                          fontSize: 10,
-                          color: AppColors.neutral500,
+                  if (p['is_featured'] == true || p['shown'] == true)
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.stars_rounded,
+                          size: 12,
+                          color: AppColors.primary400,
                         ),
-                      ),
-                    ],
-                  ),
-
-                  /// product title
+                        const SizedBox(width: 4),
+                        Text(
+                          'اعلان ممول',
+                          style: getMedium(
+                            fontSize: 10,
+                            color: AppColors.neutral500,
+                          ),
+                        ),
+                      ],
+                    ),
                   Text(
-                    widget.product?['name'] ?? 'T-Shirt Sailing',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    productName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
-
-                  ///star rating
                   Row(
                     spacing: 5,
                     children: [
                       Row(
                         children: List.generate(
-                          widget.product?['review_rate'] ?? 5,
-                          (index) => const Icon(
-                            Icons.star,
+                          5,
+                          (index) => Icon(
+                            index < reviewRate ? Icons.star : Icons.star_border,
                             size: 14,
                             color: Colors.amber,
                           ),
                         ),
                       ),
-                      Text(
-                        widget.product!['review_count'] ?? "(5)",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
+                      if (reviewCount > 0)
+                        Text(
+                          '($reviewCount)',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
                     ],
                   ),
-
-                  /// product price
                   Row(
                     spacing: 5,
                     children: [
                       Text(
-                        widget.product!['price'] ?? '14\$',
-                        style: TextStyle(color: AppColors.error200),
-                      ),
-                      Text(
-                        widget.product!['price'] ?? '21\$',
+                        displayPrice,
                         style: TextStyle(
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough,
+                          color: AppColors.error200,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      if (hasDiscount)
+                        Text(
+                          oldPrice,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
                     ],
                   ),
                 ],

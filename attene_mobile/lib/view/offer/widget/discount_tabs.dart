@@ -1,6 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-/// تبويبات الخصم القابلة للتمرير
 class DiscountTabs extends StatelessWidget {
   final List<String> tabs;
   final int selectedIndex;

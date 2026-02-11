@@ -420,7 +420,6 @@ class RelatedProductsScreen extends StatelessWidget {
                             borderColor: AppColors.primary400,
                             textColor: AppColors.primary400,
                             color: AppColors.light1000,
-                            // buttonText: 'تخفيض علي المنتجات المختارة',
                             buttonText: 'تخفيض',
                             onTap: () => Get.bottomSheet(
                               AddDiscountBottomSheet(

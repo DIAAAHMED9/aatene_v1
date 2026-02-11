@@ -2,19 +2,17 @@ import 'package:attene_mobile/general_index.dart';
 import 'package:flutter/material.dart';
 
 class ServicesCard extends StatefulWidget {
-  const ServicesCard({super.key});
+  const ServicesCard({super.key, required Map<String, dynamic> service});
 
   @override
   State<ServicesCard> createState() => _ServicesCardState();
 }
 
 class _ServicesCardState extends State<ServicesCard> {
-  // حالة المفضلة
   bool _isFavorite = false;
 
   @override
   Widget build(BuildContext context) {
-    // المقاسات المحددة من قبلك
     const double cardWidth = 160.0;
     const double cardHeight = 250.0;
     const double imageHeight = 120.0;
@@ -42,7 +40,6 @@ class _ServicesCardState extends State<ServicesCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. الجزء العلوي: الصورة وزر المفضلة
             Stack(
               children: [
                 ClipRRect(
@@ -51,13 +48,11 @@ class _ServicesCardState extends State<ServicesCard> {
                   ),
                   child: Image.network(
                     "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400",
-                    // صورة تعبيرية لفني كهرباء
                     height: imageHeight,
                     width: cardWidth,
                     fit: BoxFit.cover,
                   ),
                 ),
-                // زر المفضلة التفاعلي
                 Positioned(
                   top: 8,
                   left: 8,
@@ -84,14 +79,12 @@ class _ServicesCardState extends State<ServicesCard> {
               ],
             ),
 
-            // 2. الجزء السفلي: البيانات
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // العنوان
                     const Text(
                       "خدمات كهربائية احترافية - تركيب وصيانة",
                       maxLines: 2,
@@ -103,7 +96,6 @@ class _ServicesCardState extends State<ServicesCard> {
                       ),
                     ),
                     const Spacer(),
-                    // السعر والتقييم
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -134,7 +126,6 @@ class _ServicesCardState extends State<ServicesCard> {
                       ],
                     ),
                     const Divider(height: 16),
-                    // معلومات الفني
                     Row(
                       children: [
                         const CircleAvatar(

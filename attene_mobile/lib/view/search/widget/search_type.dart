@@ -1,57 +1,13 @@
-import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/general_index.dart' hide SearchController;
+import 'package:attene_mobile/view/search/controller/search_controller.dart';
 import 'package:attene_mobile/view/search/widget/big_search_filter.dart';
-
-class SearchTypeController extends GetxController {
-  final Rx<SearchType> selectedType = SearchType.products.obs;
-
-  // متغير لتخزين context الرئيسي
-  BuildContext? _mainContext;
-
-  Map<String, dynamic>? get ProductDate => null;
-
-  void setMainContext(BuildContext context) {
-    _mainContext = context;
-  }
-
-  void selectType(SearchType type) {
-    selectedType.value = type;
-
-    // إغلاق الـ bottom sheet الحالي
-    Get.back();
-
-    // التحقق من وجود context
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_mainContext != null && _mainContext!.mounted) {
-        _showFilterBottomSheet(type);
-      } else if (Get.context != null && Get.context!.mounted) {
-        _showFilterBottomSheet(type);
-      }
-    });
-  }
-
-  void _showFilterBottomSheet(SearchType type) {
-    final contextToUse = _mainContext ?? Get.context;
-
-    if (contextToUse != null && contextToUse.mounted) {
-      showModalBottomSheet(
-        context: contextToUse,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => FilterBottomSheet(searchType: type),
-      );
-    }
-  }
-}
 
 class SearchTypeBottomSheet extends StatelessWidget {
   const SearchTypeBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SearchTypeController(), permanent: false);
-
-    // تعيين context الرئيسي
-    controller.setMainContext(context);
+    final searchController = Get.find<SearchController>();
 
     return _AnimatedSheet(
       child: Container(
@@ -78,74 +34,100 @@ class SearchTypeBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            _RadioItem(
+            _buildRadioTile(
               title: 'منتجات',
               value: SearchType.products,
-              controller: controller,
+              groupValue: searchController.selectedType.value,
+              onChanged: (type) {
+                if (type != null) {
+                  searchController.changeSearchType(type);
+                  Get.back();
+                  _showFilterBottomSheet(context, type);
+                }
+              },
             ),
-            _RadioItem(
+            _buildRadioTile(
               title: 'متاجر',
               value: SearchType.stores,
-              controller: controller,
+              groupValue: searchController.selectedType.value,
+              onChanged: (type) {
+                if (type != null) {
+                  searchController.changeSearchType(type);
+                  Get.back();
+                  _showFilterBottomSheet(context, type);
+                }
+              },
             ),
-            _RadioItem(
+            _buildRadioTile(
               title: 'خدمات',
               value: SearchType.services,
-              controller: controller,
+              groupValue: searchController.selectedType.value,
+              onChanged: (type) {
+                if (type != null) {
+                  searchController.changeSearchType(type);
+                  Get.back();
+                  _showFilterBottomSheet(context, type);
+                }
+              },
             ),
-            _RadioItem(
+            _buildRadioTile(
               title: 'مستخدمين',
               value: SearchType.users,
-              controller: controller,
+              groupValue: searchController.selectedType.value,
+              onChanged: (type) {
+                if (type != null) {
+                  searchController.changeSearchType(type);
+                  Get.back();
+                  _showFilterBottomSheet(context, type);
+                }
+              },
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class _RadioItem extends StatelessWidget {
-  const _RadioItem({
-    required this.title,
-    required this.value,
-    required this.controller,
-  });
-
-  final String title;
-  final SearchType value;
-  final SearchTypeController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      return InkWell(
-        onTap: () => controller.selectType(value),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Radio<SearchType>(
-                value: value,
-                groupValue: controller.selectedType.value,
-                onChanged: (_) => controller.selectType(value),
-                activeColor: AppColors.primary400,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              Text(title, style: getBold(fontSize: 14)),
-              const Spacer(),
-            ],
-          ),
+  Widget _buildRadioTile({
+    required String title,
+    required SearchType value,
+    required SearchType groupValue,
+    required void Function(SearchType?) onChanged,
+  }) {
+    return InkWell(
+      onTap: () => onChanged(value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Radio<SearchType>(
+              value: value,
+              groupValue: groupValue,
+              onChanged: onChanged,
+              activeColor: AppColors.primary400,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            Text(title, style: getBold(fontSize: 14)),
+            const Spacer(),
+          ],
         ),
-      );
-    });
+      ),
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context, SearchType type) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FilterBottomSheet(searchType: type),
+    );
   }
 }
 
 class _AnimatedSheet extends StatefulWidget {
   const _AnimatedSheet({required this.child});
-
   final Widget child;
 
   @override
@@ -165,14 +147,11 @@ class _AnimatedSheetState extends State<_AnimatedSheet>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-
     _slide = Tween<Offset>(
       begin: const Offset(0, 0.15),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
-
     _controller.forward();
   }
 

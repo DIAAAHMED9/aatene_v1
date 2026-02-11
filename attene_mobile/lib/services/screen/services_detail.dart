@@ -1,8 +1,6 @@
-
 import '../../general_index.dart';
 import '../../view/profile/user profile/widget/rating_profile_screen.dart';
 import 'package:flutter/material.dart';
-
 
 class ServicesDetail extends StatefulWidget {
   const ServicesDetail({super.key});

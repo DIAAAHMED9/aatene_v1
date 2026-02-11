@@ -5,23 +5,6 @@ class FontWeightManager {
   static const FontWeight black = FontWeight.w800;
   static const FontWeight bold1 = FontWeight.w700;
 }
-//
-// TextStyle getCustomTextStyle({
-//   double fontSize = 16,
-//   FontWeight fontWeight = FontWeightManager.medium,
-//   Color color = Colors.black,
-//   TextOverflow? overflow,
-//   TextDecoration? decoration,
-// }) {
-//   return TextStyle(
-//     fontSize: fontSize,
-//     fontWeight: fontWeight,
-//     color: color,
-//     overflow: overflow,
-//     decoration: decoration,
-//     fontFamily: "PingAR",
-//   );
-// }
 
 TextStyle getBold({
   double fontSize = 16,
@@ -77,23 +60,3 @@ TextStyle getMedium({
     fontFamily: "PingAR",
   );
 }
-
-//
-// TextStyle getMedium({
-//
-//   double fontSize = 16,
-//   FontWeight fontWeight = FontWeightManager.bold,
-//   Color color = Colors.black,
-//   TextOverflow? overflow,
-//   TextDecoration? decoration,
-//   FontStyle? fontStyle,
-// }) {
-//   return TextStyle(
-//     fontWeight: fontWeight,
-//     color: color,
-//     fontSize: fontSize,
-//     overflow: overflow,
-//     decoration: decoration,
-//     fontFamily: "PingAR",
-//   );
-// }

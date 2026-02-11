@@ -36,7 +36,7 @@ class ServicesSection extends GetView<HomeController> {
             ),
             ProfileCardSmall(),
             ShowAllTitle(title: "الخدمات الأعلى تقيماً"),
-            ServicesCard(),
+            ServicesCard(service: {},),
             _buildAdsSlider(),
             JobAdvertisementCard(),
             BigServicesCard(),

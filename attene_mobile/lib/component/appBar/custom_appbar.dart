@@ -68,7 +68,6 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
   @override
   void initState() {
     super.initState();
-    // Always keep an internal controller to avoid using a disposed external controller.
     _searchController = TextEditingController(
       text: widget.config.searchController?.text ?? '',
     );
@@ -77,7 +76,6 @@ class _CustomAppBarWithTabsState extends State<CustomAppBarWithTabs> {
   @override
   void didUpdateWidget(covariant CustomAppBarWithTabs oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Sync text if the external controller changed (or if its text changed).
     final external = widget.config.searchController;
     final newText = external?.text ?? '';
     if (_searchController.text != newText) {
@@ -524,7 +522,6 @@ class __TabBarWithFullLabelsState extends State<_TabBarWithFullLabels> {
 
   @override
   Widget build(BuildContext context) {
-    // If the controller was disposed, its animation becomes null; avoid building TabBar in that case.
     if (widget.controller.animation == null) {
       return const SizedBox.shrink();
     }

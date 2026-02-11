@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'general_index.dart' hide AppLifecycleManager;
+import 'general_index.dart' hide AppLifecycleManager, SearchController;
 import 'utils/responsive/index.dart';
 import 'utils/services/device_name_service.dart';
 import 'utils/sheet_controller.dart';
@@ -67,7 +67,7 @@ class AppBindings extends Bindings {
         Get.lazyPut(() => SectionController(), fenix: true);
         Get.lazyPut(() => ServiceController(), fenix: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
-        Get.lazyPut(() => SearchScreenController(), fenix: true);
+        Get.lazyPut(() => SearchController(), fenix: true);
         Get.lazyPut(() => NotificationService());
         Get.lazyPut(() => NotificationController());
         final OnboardingController controller = Get.put(

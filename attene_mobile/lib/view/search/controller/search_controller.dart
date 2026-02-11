@@ -1,331 +1,276 @@
 import '../../../../general_index.dart';
 
-class SearchScreenController extends GetxController {
-  Map<String, dynamic> ProductDate = {};
-  Map<String, dynamic> FilterProductDate = {};
-  Map<String, dynamic> FilterServicesDate = {};
-  Map<String, dynamic> ServicesDate = {};
-  Map<String, dynamic> FilterUserDate = {};
-  Map<String, dynamic> UserDate = {};
-  Map<String, dynamic> FilterStoreDate = {};
-  Map<String, dynamic> StorDate = {};
-  RxBool isLoading = RxBool(true);
-  RxBool hasError = RxBool(false);
+enum SearchType { products, services, stores, users }
+
+class SearchController extends GetxController {
+  final Rx<SearchType> selectedType = SearchType.products.obs;
+  final RxString searchQuery = ''.obs;
+  final RxInt currentPage = 1.obs;
+  final RxBool isLoading = false.obs;
+  final RxBool hasError = false.obs;
+  final RxBool hasMore = true.obs;
   String errorMessage = '';
 
-  final MyAppController myAppController = Get.find<MyAppController>();
+  final RxList<Map<String, dynamic>> products = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> services = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> stores = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> users = <Map<String, dynamic>>[].obs;
+
+  final RxMap<String, dynamic> productFilters = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> serviceFilters = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> storeFilters = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> userFilters = <String, dynamic>{}.obs;
+
+  Timer? _debounce;
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchProductDate();
-      fetchServicestDate();
-      fetchUserSearchDate();
-      fetchStoreSearchDate();
-      fetchProductFilterDate();
-      fetchServicestFilterDate();
-      fetchUserSearchFilterDate();
-      fetchStoreSearchFilterDate();
+      loadInitialData();
     });
   }
 
-  /// Search Date
-  /// Product
-  Future<void> fetchProductDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
+  @override
+  void onClose() {
+    _debounce?.cancel();
+    super.onClose();
+  }
 
-      print('fetchProductDate called');
-      final res = await ApiHelper.get(
-        path: "/products/search",
-        withLoading: isLoading.value,
-      );
-      print('response product data: $res');
+  Future<void> loadInitialData() async {
+    searchQuery.value = '';
+    await resetAndSearch(force: true);
+  }
 
-      if (res != null && res['status'] == true) {
-        print('Product data fetched successfully');
-        ProductDate = res['products'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateProductData(ProductDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Product data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchProductData: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+  void changeSearchType(SearchType type) {
+    if (selectedType.value == type) return;
+    selectedType.value = type;
+    if (searchQuery.value.isEmpty) {
+      resetAndSearch(force: true);
+    } else {
+      resetAndSearch();
     }
   }
 
-  /// Services
-  Future<void> fetchServicestDate() async {
+  void updateSearchQuery(String query) {
+    searchQuery.value = query.trim();
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      resetAndSearch();
+    });
+  }
+
+  void clearResults() {
+    products.clear();
+    services.clear();
+    stores.clear();
+    users.clear();
+    hasMore.value = true;
+    currentPage.value = 1;
+  }
+
+  Future<void> resetAndSearch({bool force = false}) async {
+    clearResults();
+    await performSearch(force: force);
+  }
+
+  Future<void> performSearch({bool force = false}) async {
+    if (!force && searchQuery.value.isEmpty) {
+      print('⏸️ [Search] Query empty, skipping search');
+      return;
+    }
+
     try {
       isLoading.value = true;
       hasError.value = false;
 
-      print('fetchServicestDate called');
+      final basePath = _getSearchPath(selectedType.value);
+      final params = <String, dynamic>{
+        'page': currentPage.value,
+        'per_page': 10,
+        ..._getCurrentFilters(),
+      };
+
+      if (searchQuery.value.isNotEmpty) {
+        params['search'] = searchQuery.value;
+      }
+
+      final queryString = params.entries
+          .where((e) => e.value != null && e.value.toString().isNotEmpty)
+          .map((e) => '${e.key}=${Uri.encodeComponent(e.value.toString())}')
+          .join('&');
+
+      final fullUrl = queryString.isEmpty ? basePath : '$basePath?$queryString';
+      print('🌐 [Search] Request: $fullUrl');
+
       final res = await ApiHelper.get(
-        path: "/services/search",
+        path: fullUrl,
         withLoading: isLoading.value,
       );
-      print('response services data: $res');
+
+      print('📦 [Search] Response: ${res?['status']}');
 
       if (res != null && res['status'] == true) {
-        print('Product data fetched successfully');
-        ServicesDate = res['services'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateServicesData(ServicesDate);
-        }
+        _handleSearchResponse(res);
       } else {
         hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Services data';
-        print('Error: $errorMessage');
+        errorMessage = res?['message'] ?? 'فشل في تحميل البيانات';
+        print('❌ [Search] Error: $errorMessage');
       }
     } catch (e, stack) {
       hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchServicesData: $e\n$stack');
+      errorMessage = 'خطأ في الشبكة: ${e.toString()}';
+      print('🔥 [Search] Exception: $e\n$stack');
     } finally {
       isLoading.value = false;
-      update();
     }
   }
 
-  /// User
-  Future<void> fetchUserSearchDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
+  Future<void> loadMore() async {
+    if (!hasMore.value || isLoading.value) return;
+    if (searchQuery.value.isEmpty && currentPage.value == 1) {
+    }
+    currentPage.value++;
+    await performSearch(force: searchQuery.value.isNotEmpty);
+  }
 
-      print('fetchUserSearchDate called');
-      final res = await ApiHelper.get(
-        path: "/users/search",
-        withLoading: isLoading.value,
-      );
-      print('response User Search data: $res');
+  void applyFilters(Map<String, dynamic> filters) {
+    switch (selectedType.value) {
+      case SearchType.products:
+        productFilters.assignAll(filters);
+        break;
+      case SearchType.services:
+        serviceFilters.assignAll(filters);
+        break;
+      case SearchType.stores:
+        storeFilters.assignAll(filters);
+        break;
+      case SearchType.users:
+        userFilters.assignAll(filters);
+        break;
+    }
 
-      if (res != null && res['status'] == true) {
-        print('User Search data fetched successfully');
-        ServicesDate = res['users'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateUserSearchData(UserDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load User Search data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchUserSearchData: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+    if (searchQuery.value.isNotEmpty) {
+      resetAndSearch();
+    } else {
+      resetAndSearch(force: true);
     }
   }
 
-  /// Store
-  Future<void> fetchStoreSearchDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-
-      print('fetchStoreSearchDate called');
-      final res = await ApiHelper.get(
-        path: "/stores/search",
-        withLoading: isLoading.value,
-      );
-      print('response services data: $res');
-
-      if (res != null && res['status'] == true) {
-        print('Product data fetched successfully');
-        ServicesDate = res['stores'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateStoreSearchData(StorDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Store Search data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchStoreSearch: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+  void clearFilters() {
+    switch (selectedType.value) {
+      case SearchType.products:
+        productFilters.clear();
+        break;
+      case SearchType.services:
+        serviceFilters.clear();
+        break;
+      case SearchType.stores:
+        storeFilters.clear();
+        break;
+      case SearchType.users:
+        userFilters.clear();
+        break;
+    }
+    if (searchQuery.value.isNotEmpty) {
+      resetAndSearch();
+    } else {
+      resetAndSearch(force: true);
     }
   }
 
-  /// Filter Date
-  /// Product
-  ///  لم يتم تغيير path الموجود في الاعلى
-  Future<void> fetchProductFilterDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-
-      print('fetchProductFilterDate called');
-      final res = await ApiHelper.get(
-        path: "/products/search-page",
-        withLoading: isLoading.value,
-      );
-      print('response product filter data: $res');
-
-      if (res != null && res['status'] == true) {
-        print('Product Filter data fetched successfully');
-        ProductDate = res['products'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateProductData(FilterProductDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Product Filter data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchProductFilterData: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+  List<Map<String, dynamic>> get currentResults {
+    switch (selectedType.value) {
+      case SearchType.products:
+        return products;
+      case SearchType.services:
+        return services;
+      case SearchType.stores:
+        return stores;
+      case SearchType.users:
+        return users;
     }
   }
 
-  /// Services
-  Future<void> fetchServicestFilterDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-
-      print('fetchServicestFilterDate called');
-      final res = await ApiHelper.get(
-        path: "/services/search-page",
-        withLoading: isLoading.value,
-      );
-      print('response services filter data: $res');
-
-      if (res != null && res['status'] == true) {
-        print('Services Filter data fetched successfully');
-        ServicesDate = res['services'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateServicesData(FilterServicesDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Services Filter data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchServicesFilterData: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+  String _getSearchPath(SearchType type) {
+    switch (type) {
+      case SearchType.products:
+        return '/products/search';
+      case SearchType.services:
+        return '/services/search';
+      case SearchType.stores:
+        return '/stores/search';
+      case SearchType.users:
+        return '/users/search';
     }
   }
 
-  /// User
-  Future<void> fetchUserSearchFilterDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-
-      print('fetchUserSearchFilterDate called');
-      final res = await ApiHelper.get(
-        path: "/users/search-page",
-        withLoading: isLoading.value,
-      );
-      print('response User Search Filter data: $res');
-
-      if (res != null && res['status'] == true) {
-        print('User Search Filter data fetched successfully');
-        ServicesDate = res['users'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateUserSearchData(FilterUserDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load User Filter data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchUserFilterData: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+  Map<String, dynamic> _getCurrentFilters() {
+    switch (selectedType.value) {
+      case SearchType.products:
+        return productFilters;
+      case SearchType.services:
+        return serviceFilters;
+      case SearchType.stores:
+        return storeFilters;
+      case SearchType.users:
+        return userFilters;
     }
   }
 
-  /// Store
-  Future<void> fetchStoreSearchFilterDate() async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
+  void _handleSearchResponse(Map<String, dynamic> response) {
+    final String dataKey = _getDataKey(selectedType.value);
+    final List<dynamic> items = response[dataKey] ?? [];
+    final pagination = response['pagination'] ?? {};
 
-      print('fetchStoreFilterDate called');
-      final res = await ApiHelper.get(
-        path: "/stores/search-page",
-        withLoading: isLoading.value,
-      );
-      print('response Store Filter data: $res');
+    final current = pagination['current_page'] ?? 1;
+    final last = pagination['last_page'] ?? 1;
+    hasMore.value = current < last;
 
-      if (res != null && res['status'] == true) {
-        print('Store Filter data fetched successfully');
-        ServicesDate = res['stores'] ?? {};
-
-        // Update shared data if needed
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateStoreSearchData(FilterStoreDate);
+    switch (selectedType.value) {
+      case SearchType.products:
+        if (currentPage.value == 1) {
+          products.assignAll(items.cast<Map<String, dynamic>>());
+        } else {
+          products.addAll(items.cast<Map<String, dynamic>>());
         }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Store Search data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchStoreSearch: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+        break;
+      case SearchType.services:
+        if (currentPage.value == 1) {
+          services.assignAll(items.cast<Map<String, dynamic>>());
+        } else {
+          services.addAll(items.cast<Map<String, dynamic>>());
+        }
+        break;
+      case SearchType.stores:
+        if (currentPage.value == 1) {
+          stores.assignAll(items.cast<Map<String, dynamic>>());
+        } else {
+          stores.addAll(items.cast<Map<String, dynamic>>());
+        }
+        break;
+      case SearchType.users:
+        if (currentPage.value == 1) {
+          users.assignAll(items.cast<Map<String, dynamic>>());
+        } else {
+          users.addAll(items.cast<Map<String, dynamic>>());
+        }
+        break;
+    }
+
+    update();
+  }
+
+  String _getDataKey(SearchType type) {
+    switch (type) {
+      case SearchType.products:
+        return 'products';
+      case SearchType.services:
+        return 'services';
+      case SearchType.stores:
+        return 'stores';
+      case SearchType.users:
+        return 'users';
     }
   }
 }

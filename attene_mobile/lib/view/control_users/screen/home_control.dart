@@ -14,7 +14,7 @@ class HomeControl extends StatelessWidget {
               width: double.infinity,
               height: 240,
               decoration: BoxDecoration(
-                image: DecorationImage(                  
+                image: DecorationImage(
                   image: AssetImage("assets/images/png/bacground_control.jpeg"),
                   fit: BoxFit.cover,
                 ),

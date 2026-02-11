@@ -1,6 +1,6 @@
-import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/general_index.dart' hide SearchController;
 import 'package:attene_mobile/view/search/controller/search_controller.dart';
-import '../widget/search_type.dart';
+import 'package:attene_mobile/view/search/widget/search_type.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,21 +12,42 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
-
   final List<String> _history = ['ملابس أطفال', 'براند', 'ديكور منزلي'];
-
   String? _removedItem;
   int? _removedIndex;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final controller = Get.find<SearchController>();
+      if (controller.hasMore.value && !controller.isLoading.value) {
+        controller.loadMore();
+      }
+    }
+  }
 
   void _addSearch() {
     final text = _searchController.text.trim();
     if (text.isEmpty) return;
+    setState(() => _history.insert(0, text));
 
-    setState(() {
-      _history.insert(0, text);
-    });
-
-    _searchController.clear();
+    final controller = Get.find<SearchController>();
+    controller.updateSearchQuery(text);
   }
 
   void _removeItem(int index) {
@@ -35,7 +56,6 @@ class _SearchScreenState extends State<SearchScreen>
       _removedIndex = index;
       _history.removeAt(index);
     });
-
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -76,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen>
             textColor: AppColors.light1000,
             borderColor: AppColors.primary400,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           AateneButton(
             onTap: () => Get.back(),
             buttonText: 'الغاء',
@@ -93,8 +113,8 @@ class _SearchScreenState extends State<SearchScreen>
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
 
-    return GetBuilder<SearchScreenController>(
-      builder: (SearchScreenController controller) {
+    return GetBuilder<SearchController>(
+      builder: (controller) {
         return Scaffold(
           body: SafeArea(
             child: Padding(
@@ -111,13 +131,14 @@ class _SearchScreenState extends State<SearchScreen>
                           hintText: "ابحث عن اي شيء في اعطيني",
                           textInputAction: TextInputAction.done,
                           controller: _searchController,
+                          onChanged: controller.updateSearchQuery,
                           onSubmitted: (_) => _addSearch(),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Container(
                         width: 85,
-                        padding: EdgeInsets.all(6),
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: AppColors.primary400,
                           borderRadius: BorderRadius.circular(100),
@@ -125,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen>
                         child: IconButton(
                           icon: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
+                            children: const [
                               Icon(Icons.search, color: Colors.white),
                               Icon(
                                 Icons.keyboard_arrow_down,
@@ -138,7 +159,8 @@ class _SearchScreenState extends State<SearchScreen>
                               context: context,
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
-                              builder: (context) => SearchTypeBottomSheet(),
+                              builder: (context) =>
+                                  const SearchTypeBottomSheet(),
                             );
                           },
                         ),
@@ -164,7 +186,6 @@ class _SearchScreenState extends State<SearchScreen>
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 12),
 
                   Wrap(
@@ -172,38 +193,28 @@ class _SearchScreenState extends State<SearchScreen>
                     runSpacing: 8,
                     children: List.generate(
                       _history.length,
-                      (index) => AnimatedScale(
-                        scale: 1,
-                        duration: const Duration(milliseconds: 300),
-                        child: AnimatedOpacity(
-                          opacity: 1,
-                          duration: const Duration(milliseconds: 300),
-                          child: Chip(
-                            backgroundColor: AppColors.primary50,
-                            label: Text(_history[index]),
-                            deleteIcon: const Icon(Icons.close, size: 15),
-                            onDeleted: () => _removeItem(index),
-                          ),
-                        ),
+                      (index) => Chip(
+                        backgroundColor: AppColors.primary50,
+                        label: Text(_history[index]),
+                        deleteIcon: const Icon(Icons.close, size: 15),
+                        onDeleted: () => _removeItem(index),
                       ),
                     ),
                   ),
 
-                  ProductCard(product: controller.ProductDate),
-                  // GridView.builder(
-                  //   shrinkWrap: true,
-                  //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,crossAxisSpacing: 5,childAspectRatio: 1/3,),
-                  //
-                  //   itemBuilder: (BuildContext context, int index) {
-                  //     return Column(
-                  //       children: [
-                  //         ProductCard(
-                  //           product: controller.ProductDate,
-                  //         ),
-                  //       ],
-                  //     );
-                  //   },
-                  // ),
+                  const SizedBox(height: 16),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      _getSectionTitle(controller.selectedType.value),
+                      style: getBold(fontSize: 16),
+                    ),
+                  ),
+
+                  Expanded(
+                    child: _buildResultsGrid(controller),
+                  ),
                 ],
               ),
             ),
@@ -211,5 +222,93 @@ class _SearchScreenState extends State<SearchScreen>
         );
       },
     );
+  }
+
+  String _getSectionTitle(SearchType type) {
+    switch (type) {
+      case SearchType.products:
+        return 'المنتجات';
+      case SearchType.services:
+        return 'الخدمات';
+      case SearchType.stores:
+        return 'المتاجر';
+      case SearchType.users:
+        return 'المستخدمين';
+    }
+  }
+
+  Widget _buildResultsGrid(SearchController controller) {
+    if (controller.isLoading.value && controller.currentResults.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (controller.hasError.value && controller.currentResults.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(controller.errorMessage),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => controller.loadInitialData(),
+              child: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (controller.currentResults.isEmpty) {
+      return Center(
+        child: Text(
+          controller.searchQuery.value.isEmpty
+              ? 'لا توجد بيانات لعرضها'
+              : 'لا توجد نتائج',
+          style: getMedium(fontSize: 16),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => controller.loadInitialData(),
+      child: GridView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.only(top: 8, bottom: 16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.7,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: controller.currentResults.length +
+            (controller.hasMore.value ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == controller.currentResults.length) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          final item = controller.currentResults[index];
+          return _buildResultCard(controller.selectedType.value, item);
+        },
+      ),
+    );
+  }
+
+  Widget _buildResultCard(SearchType type, Map<String, dynamic> data) {
+    print('dataProduct = $data');
+    switch (type) {
+      case SearchType.products:
+        return ProductCard(product: data);
+      case SearchType.services:
+        return ServicesCard(service: data);
+      case SearchType.stores:
+        return VendorCard(store: data);
+      case SearchType.users:
+        return VendorCard(store: data);
+    }
   }
 }

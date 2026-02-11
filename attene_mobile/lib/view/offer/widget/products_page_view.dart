@@ -1,7 +1,6 @@
 import 'package:attene_mobile/general_index.dart';
 import 'product_card.dart' hide ProductCard;
 
-/// عرض المنتجات في شكل PageView مع GridView داخلي
 class ProductsPageView extends StatelessWidget {
   final PageController controller;
   final ValueChanged<int> onPageChanged;
@@ -17,9 +16,8 @@ class ProductsPageView extends StatelessWidget {
     return PageView.builder(
       controller: controller,
       onPageChanged: onPageChanged,
-      itemCount: 6, // عدد التبويبات
+      itemCount: 6,
       itemBuilder: (context, pageIndex) {
-        // TODO: استبدال الـ 6 بعدد المنتجات الفعلي من الـ Controller
         return GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -28,7 +26,7 @@ class ProductsPageView extends StatelessWidget {
             crossAxisSpacing: 16,
             childAspectRatio: 0.62,
           ),
-          itemCount: 6, // عدد المنتجات لكل تبويب
+          itemCount: 6,
           itemBuilder: (context, index) => const ProductCard(),
         );
       },

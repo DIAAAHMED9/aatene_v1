@@ -4,7 +4,7 @@ import '../../../general_index.dart';
 
 class HomeController extends GetxController {
   final RxInt currentPage = 0.obs;
-  late PageController pageController; // للتبديل بين المنتجات والخدمات
+  late PageController pageController;
   
   final RxInt imageSliderCurrentIndex = 0.obs;
   final RxInt adsCurrentIndex = 0.obs;
@@ -73,7 +73,6 @@ class HomeController extends GetxController {
   ];
 
   void openVideo(PromoVideoModel model) {
-    // Get.toNamed(AppRoutes.video, arguments: model);
   }
 
   final service = ServiceModel(name: 'EtnixByron', rating: 5.0).obs;

@@ -1,18 +1,11 @@
 import 'package:get/get.dart';
 
-/// Unified variation models used across the app.
-///
-/// We keep these models in a single place to prevent class-name conflicts
-/// between `lib/models/product_model.dart` and the stepper variation module.
-
 class AttributeValue {
   final String id;
   final String value;
 
-  /// Optional extra data for UI (e.g. hex color string "#RRGGBB").
   final String? colorCode;
 
-  /// Used by UI (chips selection, etc.).
   final RxBool isSelected;
 
   AttributeValue({
@@ -37,11 +30,9 @@ class AttributeValue {
   }
 
   factory AttributeValue.fromJson(Map<String, dynamic> json) {
-    // accept: {id,title} OR {id,value}
     final rawId = json['id'];
     final rawValue = json['value'] ?? json['title'] ?? '';
 
-    // some APIs store extra option data under `data` or `color_code`
     String? color;
     if (json.containsKey('colorCode')) color = json['colorCode']?.toString();
     if (color == null && json.containsKey('color_code')) {
@@ -79,7 +70,6 @@ class ProductAttribute {
   final String name;
   final bool isActive;
 
-  /// Optional: attribute type if backend provides it (e.g. "color", "size").
   final String? type;
 
   final List<AttributeValue> values;
@@ -92,7 +82,6 @@ class ProductAttribute {
     this.values = const [],
   });
 
-  /// Backward compatibility with older code that expects `title`.
   String get title => name;
 
   ProductAttribute copyWith({
@@ -111,10 +100,6 @@ class ProductAttribute {
     );
   }
 
-  /// Used by variation stepper: normalize API shape.
-  /// Accepts either:
-  ///  - {id,title,is_active,options:[{id,title,data?...}]}
-  ///  - {id,name,values:[{id,value,colorCode?...}]}
   factory ProductAttribute.fromApiJson(Map<String, dynamic> json) {
     final id = json['id']?.toString() ?? '';
     final name = (json['name'] ?? json['title'] ?? '').toString();
@@ -160,10 +145,8 @@ class ProductVariation {
   final RxString sku;
   final RxBool isActive;
 
-  /// key = attribute name/title, value = selected option title
   final Map<String, String> attributes;
 
-  /// optional variation images (urls/paths)
   final List<String> images;
 
   ProductVariation({
@@ -201,9 +184,7 @@ class ProductVariation {
     );
   }
 
-  /// Accepts either the stepper local JSON or the product details API JSON.
   factory ProductVariation.fromJson(Map<String, dynamic> json) {
-    // Case 1: stepper local format
     if (json.containsKey('attributes') || json.containsKey('sku')) {
       return ProductVariation(
         id: json['id']?.toString() ?? '',
@@ -223,7 +204,6 @@ class ProductVariation {
       );
     }
 
-    // Case 2: backend API format (product details)
     return ProductVariation.fromApiJson(json);
   }
 
@@ -236,8 +216,6 @@ class ProductVariation {
     final status = (json['status'] ?? json['active'] ?? '').toString();
     final isActive = status.isEmpty ? true : status == 'active' || status == '1';
 
-    // In product details response, attributes come as attributeOptions with
-    // nested {attribute:{title}, option:{title}}.
     final Map<String, String> attrs = {};
     final rawAttrOpts = json['attributeOptions'];
     if (rawAttrOpts is List) {
@@ -258,7 +236,6 @@ class ProductVariation {
       }
     }
 
-    // images: use image_url if present
     final List<String> images = [];
     if (json['image_url'] != null && json['image_url'].toString().isNotEmpty) {
       images.add(json['image_url'].toString());

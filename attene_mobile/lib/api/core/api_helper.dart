@@ -1,6 +1,7 @@
 import 'package:image_picker/image_picker.dart';
 
 import '../../general_index.dart';
+import '../../utils/ui/app_dialogs.dart';
 
 export 'package:get/get.dart' hide FormData, MultipartFile, Response;
 
@@ -443,14 +444,11 @@ class ApiHelper {
 
     try {
       if (withLoading) {
-        _startLoading();
+        AppDialogs.showLoading();
       }
 
       final baseHeaders = await _getBaseHeaders();
       final requestHeaders = {...baseHeaders, ...?headers};
-      // 🔑 Chat API requires storeId header (even for non-merchant users).
-      // If caller didn't provide it and it's available locally, add it automatically
-      // for chat-related endpoints only.
       if ((path.startsWith('/conversations') || path.startsWith('/messages')) &&
           !requestHeaders.containsKey('storeId')) {
         final sid = getStoreIdOrNull();
@@ -831,31 +829,6 @@ class ApiHelper {
     );
   }
 
-  static void _startLoading() {
-    if (Get.isDialogOpen ?? false) return;
-
-    Get.dialog(
-      Center(
-        child: Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 10),
-              Text('جاري التحميل...'),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    );
-  }
-
   static void _dismissLoading() {
     if (Get.isDialogOpen ?? false) {
       Get.back();
@@ -1049,7 +1022,7 @@ ${isDioError ? '📊 Status Code: $statusCode' : ''}
   }) async {
     try {
       if (withLoading) {
-        _startLoading();
+        AppDialogs.showLoading();
       }
 
       final String fileName = (file.name.isNotEmpty)

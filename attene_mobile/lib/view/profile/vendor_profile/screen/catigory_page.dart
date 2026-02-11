@@ -134,7 +134,6 @@ class _CategoriesListState extends State<CategoriesList> {
   }
 }
 
-/// Category Item Widget
 class CategoryItem extends StatelessWidget {
   final String title;
   final String imageUrl;
@@ -163,7 +162,6 @@ class CategoryItem extends StatelessWidget {
           ),
           child: Row(
             children: [
-              /// Circle Avatars (بدون تغيير)
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -183,7 +181,6 @@ class CategoryItem extends StatelessWidget {
               ),
               const SizedBox(width: 10),
 
-              /// Title
               Text(
                 title,
                 style: getMedium(

@@ -1,6 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
 
-/// رأس صفحة Flash Sale - يعرض التايمر والعنوان
 class FlashHeader extends StatelessWidget {
   const FlashHeader({super.key});
 
@@ -10,7 +9,6 @@ class FlashHeader extends StatelessWidget {
       height: 220,
       child: Stack(
         children: [
-          // خلفية الفقاعات
           Positioned.fill(
             right: 0,
             top: 0,
@@ -20,7 +18,6 @@ class FlashHeader extends StatelessWidget {
             ),
           ),
 
-          // محتوى الرأس
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
             child: Column(
@@ -28,7 +25,6 @@ class FlashHeader extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    // مؤقت العد التنازلي
                     const _TimeBox(value: "58"),
                     const _TimeBox(value: "36"),
                     const _TimeBox(value: "00"),
@@ -37,7 +33,6 @@ class FlashHeader extends StatelessWidget {
 
                     const Spacer(),
 
-                    // عنوان الصفحة
                     Column(
                       children: [
                         Text("بيع فلاش", style: getBold(fontSize: 28)),
@@ -56,7 +51,6 @@ class FlashHeader extends StatelessWidget {
   }
 }
 
-/// مربع عرض الوقت في العد التنازلي
 class _TimeBox extends StatelessWidget {
   final String value;
 

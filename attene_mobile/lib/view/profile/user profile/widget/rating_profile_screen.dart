@@ -3,10 +3,6 @@ import 'dart:math';
 import '../../../../general_index.dart';
 import '../../../../component/rating_summary.dart';
 
-/// نفس التصميم السابق تماماً، لكن مع إمكانية ربط التقييمات بالـ API عند تمرير [productSlug].
-///
-/// - إذا لم يتم تمرير slug: يعرض بيانات تجريبية (كما كان سابقاً) بدون كسر أي شاشة أخرى.
-/// - إذا تم تمرير slug: يجلب تقييمات المنتج من: /reviews/product/:slug
 class RatingProfile extends StatefulWidget {
   final String? productSlug;
 
@@ -28,7 +24,6 @@ class _RatingProfileState extends State<RatingProfile> {
   Future<_RatingData> _load() async {
     final slug = widget.productSlug?.trim();
 
-    // الوضع القديم (Placeholder)
     if (slug == null || slug.isEmpty) {
       return _RatingData.placeholder();
     }
@@ -173,7 +168,7 @@ class _RatingProfileState extends State<RatingProfile> {
 class _RatingData {
   final double average;
   final int total;
-  final List<int> counts; // [5..1] length 5
+  final List<int> counts;
   final List<_ReviewItem> reviews;
 
   _RatingData({

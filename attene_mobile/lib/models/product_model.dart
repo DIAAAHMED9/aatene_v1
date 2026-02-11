@@ -14,7 +14,6 @@ class Product {
   final String? cover;
   final String? coverUrl;
 
-  // ✅ الجديد: gallery + urls
   final List<String> gallery;
   final List<String> galleryUrls;
 
@@ -37,19 +36,15 @@ class Product {
 
   final String? price;
 
-  // ✅ الجديد: store
   final String? storeId;
   final ProductStore? store;
 
-  // ✅ الجديد: reviews
   final String? reviewRate;
   final String? reviewCount;
 
-  // ✅ الجديد: tags + variations
   final List<String> tags;
   final List<ProductVariation> variations;
 
-  // (عشان ما نكسر أي شاشات عندك كانت تستخدم sectionName)
   final String? sectionName;
 
   final RxBool isSelected;
@@ -88,8 +83,6 @@ class Product {
     bool isSelected = false,
   }) : isSelected = RxBool(isSelected);
 
-  /// ✅ صور جاهزة للاستخدام في الـ slider (بدون تعديل UI)
-  /// coverUrl + galleryUrls (مع تنظيف الفارغ)
   List<String> get allImageUrls {
     final urls = <String>[];
     if ((coverUrl ?? '').trim().isNotEmpty) urls.add(coverUrl!.trim());
@@ -97,11 +90,10 @@ class Product {
       final t = u.trim();
       if (t.isNotEmpty && t != 'https://aatene.dev/storage') urls.add(t);
     }
-    return urls.toSet().toList(); // remove duplicates
+    return urls.toSet().toList();
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    // ✅ معالجة gallery key الغلط (gallery    )
     final dynamic rawGallery = json['gallery'] ?? json['gallery    '];
     final dynamic rawGalleryUrls = json['gallery_url'] ?? json['gallery_urls'];
 
@@ -169,7 +161,6 @@ class Product {
     );
   }
 
-  /// نسخة مخففة (قائمة منتجات داخل قسم) — خليتها متوافقة كما كانت
   factory Product.fromSectionJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'] ?? 0,
@@ -183,7 +174,6 @@ class Product {
       shown: json['shown'] == true,
       favoritesCount: (json['favorites_count'] ?? '0').toString(),
       messagesCount: (json['messages_count'] ?? '0').toString(),
-      // ✅ مهم: لو القائمة فيها store_id/slug خلّيها تمر
       slug: json['slug']?.toString(),
       storeId: json['store_id']?.toString(),
     );
@@ -315,8 +305,6 @@ class Product {
   }
 }
 
-/// -------------------- Nested Models --------------------
-
 class ProductSection {
   final int id;
   final String name;
@@ -354,9 +342,6 @@ class ProductSection {
         'store_id': storeId,
       };
 
-
-  /// Convenience accessor to allow old code that treated ProductSection like a Map.
-  /// Prefer using the typed fields directly.
   dynamic operator [](String key) {
     switch (key) {
       case 'id':
@@ -447,5 +432,3 @@ class ProductStore {
     );
   }
 }
-
-

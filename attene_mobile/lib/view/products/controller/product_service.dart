@@ -93,7 +93,6 @@ class ProductService extends GetxController {
       if (response != null && response['status'] == true) {
         productData = response['data'];
         update();
-        // return Product.fromJson(response['data']);
       }
       return null;
     } catch (e) {

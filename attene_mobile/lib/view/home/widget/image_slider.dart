@@ -15,7 +15,6 @@ class ImageSlider extends StatelessWidget {
       width: double.infinity,
       child: Stack(
         children: [
-          // PageView بدون PageController (لتجنب المشاكل)
           PageView.builder(
             itemCount: controller.images.length,
             onPageChanged: controller.onImageSliderPageChanged,
@@ -36,7 +35,6 @@ class ImageSlider extends StatelessWidget {
             },
           ),
 
-          // النقاط الإرشادية
           Positioned(
             bottom: 16,
             left: 0,

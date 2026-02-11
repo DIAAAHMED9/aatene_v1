@@ -78,7 +78,6 @@ class _ProductDetailsState extends State<ProductDetails> {
     }
   }
 
-  // ✅ تحويل أي مسار/رابط لصيغة URL صحيحة
   String _toUrl(String path) {
     final p = path.trim();
     if (p.isEmpty) return '';
@@ -89,7 +88,6 @@ class _ProductDetailsState extends State<ProductDetails> {
     return '$base$clean';
   }
 
-  // ✅ جمع الصور من: cover_url + gallery_url + أي images (قديم) بدون كسر
   List<String> _collectImages(Map<String, dynamic> product) {
     final out = <String>[];
 
@@ -111,18 +109,15 @@ class _ProductDetailsState extends State<ProductDetails> {
       }
     }
 
-    // 1) لو عندك مودل جديد فيه allImageUrls
     try {
       final dynamic dyn = product as dynamic;
       final dynamic all = dyn.allImageUrls;
       addMany(all);
     } catch (_) {}
 
-    // 2) cover
     addOne(product['cover']);
     addOne(product['cover_url']);
 
-    // 3) gallery_url (من response)
     try {
       final dynamic dyn = product as dynamic;
       addMany(dyn.galleryUrls);
@@ -131,7 +126,6 @@ class _ProductDetailsState extends State<ProductDetails> {
       addMany(dyn.gallery_urls);
     } catch (_) {}
 
-    // 4) images (قديم)
     try {
       final dynamic dyn = product as dynamic;
       addMany(dyn.images);
@@ -139,7 +133,6 @@ class _ProductDetailsState extends State<ProductDetails> {
       addMany(dyn.imagesUrls);
     } catch (_) {}
 
-    // normalize -> url
     final normalized = <String>[];
     for (final s in out) {
       normalized.add(_toUrl(s));
@@ -150,7 +143,6 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   String? _extractStoreId(Map<String, dynamic> product) {
     try {
-      // Try from store object
       if (product['store'] != null && product['store'] is Map) {
         final store = product['store'] as Map<String, dynamic>;
         if (store['id'] != null) {
@@ -158,7 +150,6 @@ class _ProductDetailsState extends State<ProductDetails> {
         }
       }
 
-      // Try from section
       if (product['section'] != null && product['section'] is Map) {
         final section = product['section'] as Map<String, dynamic>;
         if (section['store_id'] != null) {
@@ -166,7 +157,6 @@ class _ProductDetailsState extends State<ProductDetails> {
         }
       }
 
-      // Try direct fields
       final storeId = product['store_id'] ?? product['storeId'];
       if (storeId != null) return storeId.toString();
 
@@ -177,13 +167,11 @@ class _ProductDetailsState extends State<ProductDetails> {
     }
   }
 
-  // ✅ tags
   List<dynamic> _extractTags(Map<String, dynamic> product) {
 
     return product['tags'] ?? '';
   }
 
-  // ✅ review rate/count
   String _extractReviewRate(Map<String, dynamic> product) {
     try {
       final dynamic dyn = product as dynamic;
@@ -203,7 +191,6 @@ class _ProductDetailsState extends State<ProductDetails> {
     }
   }
 
-  // ✅ store info (name/address/reviews)
   String _extractStoreName(Map<String, dynamic> product) {
     try {
       if (product['store'] != null && product['store'] is Map) {
@@ -831,7 +818,6 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                         const SizedBox(height: 10),
 
-                        // ✅ معلومات عن التاجر: نفس UI لكن بيانات حقيقية
                         ExpansionTile(
                           maintainState: true,
                           title: Row(
@@ -858,7 +844,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                               padding: const EdgeInsets.all(12.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Navigate to store details
                                 },
                                 child: Container(
                                   width: double.infinity,
@@ -873,7 +858,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       Row(
                                         children: [
                                           CircleAvatar(
-                                            backgroundImage: product['store'] != null && 
+                                            backgroundImage: product['store'] != null &&
                                                 product['store']['logo_url'] != null
                                                 ? NetworkImage(product['store']['logo_url'].toString())
                                                 : const AssetImage('assets/images/png/ser1.png') as ImageProvider,
@@ -1021,7 +1006,6 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                         const SizedBox(height: 10),
 
-                        // ✅ العلامات: نفس UI، لكن ديناميكي من product.tags
                         ExpansionTile(
                           maintainState: true,
                           title: Row(
@@ -1090,7 +1074,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           title: "المتاجر المميزة",
                           subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
                         ),
-                        const VendorCard(),
+                        const VendorCard(store: {},),
 
                         const SizedBox(height: 20),
 
@@ -1105,7 +1089,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                     ),
                   ),
 
-                  // ✅ شريط الدردشة (كما هو) + منطق B (فتح محادثة أو إنشاء)
                   Container(
                     width: double.infinity,
                     height: 100,
@@ -1136,7 +1119,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   return;
                                 }
 
-                                // Ensure storeId is available for Chat API headers
                                 try {
                                   final box = GetStorage();
                                   box.write('storeId', storeId);
@@ -1148,7 +1130,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     ? Get.find<ChatController>()
                                     : Get.put(ChatController());
 
-                                // Refresh conversations for this store context (silent)
                                 await chat.loadConversations(silent: true);
 
                                 ChatConversation? existing;
