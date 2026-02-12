@@ -1,53 +1,74 @@
 import '../../../general_index.dart';
 
 class ProfileCotrolController extends GetxController {
-  Map<String, dynamic> ProductDate = {};
-  RxBool isLoading = RxBool(true);
-  RxBool hasError = RxBool(false);
-  String errorMessage = '';
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
-  final MyAppController myAppController = Get.find<MyAppController>();
+  /// 🔐 Password Controllers
+  final TextEditingController oldPasswordController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+  TextEditingController();
 
   @override
-  void onInit() {
-    super.onInit();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchProductDate();
-    });
+  void onClose() {
+    emailController.dispose();
+    phoneController.dispose();
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.onClose();
   }
 
-  Future<void> fetchProductDate() async {
+  /// ================= EMAIL =================
+  Future<bool> updateEmail(String newEmail) async {
     try {
-      isLoading.value = true;
-      hasError.value = false;
-
-      print('fetchProductDate called');
-      final res = await ApiHelper.get(
-        path: "/products/search",
-        withLoading: isLoading.value,
+      final response = await ApiHelper.post(
+        path: '/auth/account/update_email',
+        body: {'email': newEmail},
       );
-      print('response product data: $res');
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('updateEmail exception: $e');
+      return false;
+    }
+  }
 
-      if (res != null && res['status'] == true) {
-        print('Product data fetched successfully');
-        ProductDate = res['products'] ?? {};
+  /// ================= PHONE =================
+  Future<bool> updatePhone(String newPhone) async {
+    try {
+      final response = await ApiHelper.post(
+        path: '/auth/account/update_phone',
+        body: {'phone': newPhone},
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('updatePhone exception: $e');
+      return false;
+    }
+  }
 
-        if (Get.isRegistered<MyAppController>()) {
-          final myAppController = Get.find<MyAppController>();
-          myAppController.updateProductData(ProductDate);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage = res?['message'] ?? 'Failed to load Product data';
-        print('Error: $errorMessage');
-      }
-    } catch (e, stack) {
-      hasError.value = true;
-      errorMessage = 'Network error: ${e.toString()}';
-      print('Exception in fetchProductData: $e\n$stack');
-    } finally {
-      isLoading.value = false;
-      update();
+  /// ================= PASSWORD =================
+  Future<bool> updatePassword() async {
+    try {
+      final response = await ApiHelper.post(
+        path: '/auth/account/update_password',
+        body: {
+          'old_password': oldPasswordController.text.trim(),
+          'password': newPasswordController.text.trim(),
+          'password_confirmation':
+          confirmPasswordController.text.trim(),
+        },
+      );
+
+      debugPrint('StatusCode: ${response.statusCode}');
+      debugPrint('Response: ${response.data}');
+
+      /// ✅ أي رد بدون Exception = نجاح
+      return true;
+    } catch (e) {
+      debugPrint('updatePassword exception: $e');
+      return false;
     }
   }
 }

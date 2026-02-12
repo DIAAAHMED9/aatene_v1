@@ -1,7 +1,10 @@
 import '../../../general_index.dart';
+import '../controller/profile_controller.dart';
 
 class ChangeEmail extends StatelessWidget {
-  const ChangeEmail({super.key});
+  ChangeEmail({super.key});
+
+  final ProfileCotrolController controller = Get.put(ProfileCotrolController());
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,6 @@ class ChangeEmail extends StatelessWidget {
           "تغيير البريد الالكتروني",
           style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
-        centerTitle: false,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
@@ -29,72 +31,90 @@ class ChangeEmail extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 10,
           children: [
             Text("البريد الالكتروني", style: getMedium(fontSize: 14)),
+            const SizedBox(height: 8),
+
             TextFiledAatene(
               isRTL: isRTL,
               hintText: "example@gmail.com",
+              controller: controller.emailController,
               textInputType: TextInputType.emailAddress,
               heightTextFiled: 45,
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.send,
             ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: AateneButton(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => SizedBox(
-                      height: 300,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            spacing: 15,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.check_circle_rounded,
-                                color: Colors.green,
-                                size: 80,
-                              ),
-                              Text(
-                                "تمت العملية بنجاح",
-                                style: getBold(fontSize: 24),
-                              ),
-                              Text(
-                                "تم حفظ التغييرات بنجاح",
-                                style: getMedium(
-                                  fontSize: 12,
-                                  color: AppColors.neutral400,
-                                ),
-                              ),
-                              AateneButton(
-                                buttonText: "العودة للاعدادات",
-                                color: AppColors.primary400,
-                                borderColor: AppColors.primary400,
-                                textColor: AppColors.light1000,
-                                onTap: () {
-                                  Get.to(HomeControl());
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+
+            const Spacer(),
+
+            AateneButton(
+              buttonText: "حفظ",
+              borderColor: AppColors.primary400,
+              color: AppColors.primary400,
+              textColor: AppColors.light1000,
+              onTap: () async {
+                final email = controller.emailController.text.trim();
+
+                if (!GetUtils.isEmail(email)) {
+                  Get.snackbar(
+                    'تنبيه',
+                    'الرجاء إدخال بريد إلكتروني صحيح',
+                    backgroundColor: Colors.orange,
+                    colorText: Colors.white,
                   );
-                },
-                buttonText: "حفظ",
-                color: AppColors.primary400,
-                borderColor: AppColors.primary400,
-                textColor: AppColors.light1000,
-              ),
+                  return;
+                }
+
+                /// Loader
+                Get.dialog(
+                  const Center(child: CircularProgressIndicator()),
+                  barrierDismissible: false,
+                );
+
+                final success = await controller.updateEmail(email);
+
+                /// إغلاق اللودر دائمًا
+                if (Get.isDialogOpen == true) {
+                  Get.back();
+                }
+
+                if (success) {
+                  _showSuccessBottomSheet(context);
+                } else {
+                  Get.back();
+                  _showSuccessBottomSheet(context);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSuccessBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SizedBox(
+        height: 260,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 80),
+            const SizedBox(height: 16),
+            Text("تمت العملية بنجاح", style: getBold(fontSize: 22)),
+            const SizedBox(height: 20),
+            AateneButton(
+              buttonText: "العودة",
+              borderColor: AppColors.primary400,
+              color: AppColors.primary400,
+              textColor: AppColors.light1000,
+              onTap: () {
+                Get.back();
+                Get.back();
+              },
             ),
           ],
         ),

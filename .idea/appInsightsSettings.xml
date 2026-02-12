@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.aatene.mobile" />
+                  <option name="mobileSdkAppId" value="1:1026858119799:android:195b837011c6ecd0700c72" />
+                  <option name="projectId" value="aatene-36a8c" />
+                  <option name="projectNumber" value="1026858119799" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

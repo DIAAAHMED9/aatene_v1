@@ -6,6 +6,7 @@ class PrivacyScreen extends StatefulWidget {
   @override
   State<PrivacyScreen> createState() => _PrivacyScreenState();
 }
+String? selectedLanguage = 'ar';
 
 class _PrivacyScreenState extends State<PrivacyScreen> {
   int expandedIndex = 0;

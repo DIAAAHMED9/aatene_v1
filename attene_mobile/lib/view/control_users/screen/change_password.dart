@@ -1,7 +1,10 @@
 import '../../../general_index.dart';
+import '../controller/profile_controller.dart';
 
 class ChangePassword extends StatelessWidget {
-  const ChangePassword({super.key});
+  ChangePassword({super.key});
+
+  final ProfileCotrolController controller = Get.put(ProfileCotrolController());
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,6 @@ class ChangePassword extends StatelessWidget {
           "تغيير كلمة المرور",
           style: getBold(color: AppColors.neutral100, fontSize: 20),
         ),
-        centerTitle: false,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Container(
@@ -29,89 +31,106 @@ class ChangePassword extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("كلمة المرور القديمة", style: getMedium(fontSize: 12)),
-            TextFiledAatene(
-              isRTL: isRTL,
-              hintText: isRTL ? 'كلمة المرور' : 'Password',
-              textInputType: TextInputType.visiblePassword,
-              textInputAction: TextInputAction.next,
-            ),
-            SizedBox(height: 12),
-            Divider(),
-            SizedBox(height: 12),
+            // Text("كلمة المرور القديمة", style: getMedium(fontSize: 12)),
+            // TextFiledAatene(
+            //   isRTL: isRTL,
+            //   controller: controller.oldPasswordController,
+            //   hintText: '********',
+            //   textInputType: TextInputType.visiblePassword,
+            //   textInputAction: TextInputAction.next,
+            // ),
+            // const SizedBox(height: 12),
+            // Divider(),
+            const SizedBox(height: 12),
+
             Text("كلمة المرور الجديدة", style: getMedium(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
-              hintText: isRTL ? 'كلمة المرور' : 'Password',
+              controller: controller.newPasswordController,
+              hintText: '********',
               textInputType: TextInputType.visiblePassword,
               textInputAction: TextInputAction.next,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
+
             Text("تأكيد كلمة المرور الجديدة", style: getMedium(fontSize: 12)),
             TextFiledAatene(
               isRTL: isRTL,
-              hintText: isRTL ? 'كلمة المرور' : 'Password',
+              controller: controller.confirmPasswordController,
+              hintText: '********',
               textInputType: TextInputType.visiblePassword,
               textInputAction: TextInputAction.done,
             ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: AateneButton(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => SizedBox(
-                      height: 300,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            spacing: 15,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.check_circle_rounded,
-                                color: Colors.green,
-                                size: 80,
-                              ),
-                              Text(
-                                "تمت العملية بنجاح",
-                                style: getBold(fontSize: 24),
-                              ),
-                              Text(
-                                "تم اعادة تعيين كلمة المرور بنجاح",
-                                style: getMedium(
-                                  fontSize: 12,
-                                  color: AppColors.neutral400,
-                                ),
-                              ),
-                              AateneButton(
-                                buttonText: "العودة للاعدادات",
-                                color: AppColors.primary400,
-                                borderColor: AppColors.primary400,
-                                textColor: AppColors.light1000,
-                                onTap: () {
-                                  Get.to(HomeControl());
 
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+            Spacer(),
+
+            AateneButton(
+              buttonText: "حفظ",
+              color: AppColors.primary400,
+              borderColor: AppColors.primary400,
+              textColor: AppColors.light1000,
+              onTap: () async {
+                /// Validation
+                if (controller.newPasswordController.text !=
+                    controller.confirmPasswordController.text) {
+                  Get.snackbar(
+                    'خطأ',
+                    'كلمتا المرور غير متطابقتين',
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
                   );
-                },
-                buttonText: "حفظ",
-                color: AppColors.primary400,
-                borderColor: AppColors.primary400,
-                textColor: AppColors.light1000,
-              ),
+                  return;
+                }
+
+                /// Loader
+                Get.dialog(
+                  const Center(child: CircularProgressIndicator.adaptive()),
+                  barrierDismissible: false,
+                );
+
+                final success = await controller.updatePassword();
+
+                if (Get.isDialogOpen == true) Get.back();
+                _successBottomSheet(context);
+
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _successBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SizedBox(
+        height: 260,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 80),
+            const SizedBox(height: 16),
+            Text("تمت العملية بنجاح", style: getBold(fontSize: 22)),
+            const SizedBox(height: 10),
+            Text(
+              "تم إعادة تعيين كلمة المرور بنجاح",
+              style: getMedium(fontSize: 12),
+            ),
+            const SizedBox(height: 20),
+            AateneButton(
+              buttonText: "العودة",
+              color: AppColors.primary400,
+              borderColor: AppColors.primary400,
+              textColor: AppColors.light1000,
+              onTap: () {
+                Get.back();
+                Get.back();
+              },
             ),
           ],
         ),
