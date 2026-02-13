@@ -213,9 +213,7 @@ class _SearchScreenState extends State<SearchScreen>
                     ),
                   ),
 
-                  Expanded(
-                    child: _buildResultsGrid(controller),
-                  ),
+                  Expanded(child: _buildResultsGrid(controller)),
                 ],
               ),
             ),
@@ -261,11 +259,28 @@ class _SearchScreenState extends State<SearchScreen>
 
     if (controller.currentResults.isEmpty) {
       return Center(
-        child: Text(
-          controller.searchQuery.value.isEmpty
-              ? 'لا توجد بيانات لعرضها'
-              : 'لا توجد نتائج',
-          style: getMedium(fontSize: 16),
+        child: Column(
+          spacing: 5,
+          children: [
+            Image.asset(
+              "assets/images/png/No_Search.png",
+              width: 340,
+              height: 250,
+              fit: BoxFit.cover,
+            ),
+            Text(
+              controller.searchQuery.value.isEmpty
+                  ? 'لم يتم العثور عليها'
+                  : 'لم يتم العثور عليها',
+              style: getBold(fontSize: 24),
+            ),
+            Text(
+              controller.searchQuery.value.isEmpty
+                  ? 'عذرًا ، لا يمكن العثور على الكلمة الرئيسية التي أدخلتها ، يرجى التحقق مرة أخرى أو البحث بكلمة رئيسية أخرى .'
+                  : 'عذرًا ، لا يمكن العثور على الكلمة الرئيسية التي أدخلتها ، يرجى التحقق مرة أخرى أو البحث بكلمة رئيسية أخرى .',
+              style: getMedium(color: AppColors.neutral200),
+            ),
+          ],
         ),
       );
     }
@@ -281,7 +296,8 @@ class _SearchScreenState extends State<SearchScreen>
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        itemCount: controller.currentResults.length +
+        itemCount:
+            controller.currentResults.length +
             (controller.hasMore.value ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == controller.currentResults.length) {

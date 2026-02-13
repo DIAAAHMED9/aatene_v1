@@ -62,7 +62,8 @@ class _ProductCardState extends State<ProductCard> {
 
     final p = widget.product!;
 
-    final String coverImage = p['cover'] ??
+    final String coverImage =
+        p['cover'] ??
         'https://images.unsplash.com/photo-1520975916090-3105956dac38';
 
     final String productName = p['name']?.toString() ?? 'منتج';
@@ -136,7 +137,8 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                   ),
                 ),
-                if ((p['discount_present'] ?? 0) > 0 || (p['condition'] == 'new'))
+                if ((p['discount_present'] ?? 0) > 0 ||
+                    (p['condition'] == 'new'))
                   Positioned(
                     top: 10,
                     right: 10,

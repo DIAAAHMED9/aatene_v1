@@ -108,4 +108,8 @@ class CustomMenuWidget extends StatelessWidget {
       ),
     );
   }
+
+  PopupMenuEntry<String> _buildDivider() {
+    return const PopupMenuDivider(height: 1);
+  }
 }
