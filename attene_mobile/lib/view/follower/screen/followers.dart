@@ -37,7 +37,7 @@ class FollowersPage extends StatelessWidget {
           spacing: 15,
           children: [
             Obx(
-              () => Row(
+                  () => Row(
                 spacing: 15,
                 children: [
                   FollowersTabItem(

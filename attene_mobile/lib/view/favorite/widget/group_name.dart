@@ -35,7 +35,7 @@ class GroupName extends StatelessWidget {
             child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
-        actions: [CustomMenuWidget()],
+        actions: [CustomMenuWidget(listId: '', listName: '',)],
       ),
       body: Center(child: Text("data")),
     );

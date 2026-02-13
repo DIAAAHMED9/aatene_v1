@@ -14,6 +14,7 @@ import 'package:attene_mobile/services/app_lifecycle_manager.dart';
 import 'package:attene_mobile/services/middleware/auth_guard_middleware.dart';
 import 'package:attene_mobile/services/screen/auth_required_screen.dart';
 
+import 'view/favorite/controller/favorite_controller.dart';
 import 'view/search/controller/search_controller.dart';
 
 class AppBindings extends Bindings {
@@ -53,7 +54,7 @@ class AppBindings extends Bindings {
       Get.lazyPut(() => CreateStoreController(), fenix: true);
       Get.lazyPut(() => DataSyncService(), fenix: true);
       Get.lazyPut(() => ChatController(), fenix: true);
-
+Get.lazyPut(() => FavoriteController(), fenix: true);
       Future.delayed(const Duration(seconds: 2), () {
         Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
         Get.lazyPut(() => ProductCentralController(), fenix: true);

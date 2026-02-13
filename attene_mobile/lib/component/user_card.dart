@@ -4,25 +4,25 @@ import 'package:attene_mobile/view/profile/vendor_profile/screen/store_profile.d
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class VendorCard extends StatefulWidget {
-  final Map<String, dynamic>? store;
+class UserCard extends StatefulWidget {
+  final Map<String, dynamic>? user;
   final bool showFavoriteButton;
   final bool initialFollowed;
   final Function(bool)? onFollowChanged;
 
-  const VendorCard({
+  const UserCard({
     super.key,
-    required this.store,
+    required this.user,
     this.showFavoriteButton = true,
     this.initialFollowed = false,
     this.onFollowChanged,
   });
 
   @override
-  State<VendorCard> createState() => _VendorCardState();
+  State<UserCard> createState() => _UserCardState();
 }
 
-class _VendorCardState extends State<VendorCard> {
+class _UserCardState extends State<UserCard> {
   late bool isFollowed;
   late FavoriteController _favController;
 
@@ -34,19 +34,19 @@ class _VendorCardState extends State<VendorCard> {
   }
 
   Future<void> toggleFollow() async {
-    if (widget.store == null) return;
+    if (widget.user  == null) return;
 
     final newState = !isFollowed;
     setState(() => isFollowed = newState);
 
     final success = newState
         ? await _favController.addToFavorites(
-            type: FavoriteType.store,
-            itemId: widget.store!['id'].toString(),
+            type: FavoriteType.user,
+            itemId: widget.user!['id'].toString(),
           )
         : await _favController.removeFromFavorites(
-            type: FavoriteType.store,
-            itemId: widget.store!['id'].toString(),
+            type: FavoriteType.user,
+            itemId: widget.user!['id'].toString(),
           );
 
     if (!success) {
@@ -58,10 +58,10 @@ class _VendorCardState extends State<VendorCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.store == null) return const SizedBox.shrink();
+    if (widget.user == null) return const SizedBox.shrink();
 
-    final s = widget.store!;
-    final String storeName = s['name']?.toString() ?? 'متجر';
+    final s = widget.user!;
+    final String userName = s['name']?.toString() ?? 'مستخدم';
     final String coverImage = s['cover']?.toString() ??
         s['logo']?.toString() ??
         'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400';
@@ -172,7 +172,7 @@ class _VendorCardState extends State<VendorCard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  storeName,
+                  userName,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,

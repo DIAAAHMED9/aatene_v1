@@ -9,7 +9,7 @@ import '../widget/offers.dart';
 import '../widget/store_states.dart';
 
 class StoreProfilePage extends StatefulWidget {
-  const StoreProfilePage({super.key});
+  const StoreProfilePage({super.key, required storeId});
 
   @override
   State<StoreProfilePage> createState() => _StoreProfilePageState();

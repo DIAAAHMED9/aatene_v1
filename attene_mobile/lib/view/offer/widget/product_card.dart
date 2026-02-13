@@ -32,6 +32,7 @@ class ProductCard extends StatelessWidget {
                 Positioned(top: 8, right: 8, child: _DiscountBadge()),
               ],
             ),
+            
           ),
 
           const Padding(
