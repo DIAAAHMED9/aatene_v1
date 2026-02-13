@@ -2,15 +2,19 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="android.file_picker" target="21" />
+      <module name="android.flutter_plugin_android_lifecycle" target="21" />
+      <module name="android.image_picker_android" target="21" />
+      <module name="android.path_provider_android" target="21" />
+      <module name="android.record_android" target="21" />
+      <module name="android.shared_preferences_android" target="21" />
+      <module name="android.sqflite_android" target="21" />
+      <module name="android.url_launcher_android" target="21" />
+      <module name="android.video_player_android" target="21" />
       <module name="com.baseflow.permissionhandler.android.permission_handler_android" target="21" />
-      <module name="com.mr.flutter.plugin.filepicker.android.file_picker" target="21" />
-      <module name="com.tekartik.sqflite.android.sqflite_android" target="21" />
-      <module name="io.flutter.plugins.flutter_plugin_android_lifecycle.android.flutter_plugin_android_lifecycle" target="21" />
-      <module name="io.flutter.plugins.imagepicker.android.image_picker_android" target="21" />
-      <module name="io.flutter.plugins.pathprovider.android.path_provider_android" target="21" />
-      <module name="io.flutter.plugins.sharedpreferences.android.shared_preferences_android" target="21" />
-      <module name="io.flutter.plugins.urllauncher.android.url_launcher_android" target="21" />
-      <module name="io.flutter.plugins.videoplayer.android.video_player_android" target="21" />
+      <module name="gradle" target="21" />
+      <module name="gradle.main" target="11" />
+      <module name="gradle.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

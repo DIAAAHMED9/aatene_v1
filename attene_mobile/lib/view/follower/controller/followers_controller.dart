@@ -12,47 +12,80 @@ class FollowersController extends GetxController {
   final filteredFollowing = <FollowerModel>[].obs;
   final filteredFollowers = <FollowerModel>[].obs;
 
+  final isLoadingFollowings = false.obs;
+  final isLoadingFollowers = false.obs;
+
   FollowerModel? _lastRemoved;
   int? _lastRemovedIndex;
 
   @override
   void onInit() {
     super.onInit();
-
-    followingList.addAll([
-      FollowerModel(
-        id: 1,
-        name: 'Ahmed Ali',
-        avatar: 'https://i.pravatar.cc/150?img=3',
-        followersCount: 1200,
-      ),
-      FollowerModel(
-        id: 6,
-        name: 'Ahmed Ali',
-        avatar: 'https://i.pravatar.cc/150?img=3',
-        followersCount: 1200,
-      ),
-    ]);
-
-    followersList.addAll([
-      FollowerModel(
-        id: 2,
-        name: 'Mohamed Noor',
-        avatar: 'https://i.pravatar.cc/150?img=5',
-        followersCount: 850,
-      ),
-      FollowerModel(
-        id: 9,
-        name: 'Mohamed Noor',
-        avatar: 'https://i.pravatar.cc/150?img=5',
-        followersCount: 850,
-      ),
-    ]);
-
-    filteredFollowing.assignAll(followingList);
-    filteredFollowers.assignAll(followersList);
+    loadFollowings();
+    loadFollowers();
   }
 
+  // ================================
+  // Load Followings
+  // ================================
+  Future<void> loadFollowings() async {
+    isLoadingFollowings.value = true;
+
+    try {
+      final response = await ApiHelper.get(path: '/followings');
+
+      if (response.statusCode == 200 && response.data != null) {
+        final List data = response.data['data'] ?? [];
+
+        final list = data.map((item) {
+          final userJson = item['followed'] ?? item;
+          return FollowerModel.fromJson(userJson);
+        }).toList();
+
+        followingList.assignAll(list);
+        filteredFollowing.assignAll(list);
+      } else {
+        Get.snackbar('خطأ', 'فشل تحميل قائمة المتابَعين');
+      }
+    } catch (e) {
+      debugPrint('loadFollowings error: $e');
+      Get.snackbar('خطأ', 'حدث خطأ أثناء تحميل البيانات');
+    } finally {
+      isLoadingFollowings.value = false;
+    }
+  }
+
+  // ================================
+  // Load Followers
+  // ================================
+  Future<void> loadFollowers() async {
+    isLoadingFollowers.value = true;
+
+    try {
+      final response = await ApiHelper.get(path: '/followers');
+
+      if (response.statusCode == 200 && response.data != null) {
+        final List data = response.data['data'] ?? [];
+
+        final list = data.map((item) {
+          final userJson = item['follower'] ?? item['followed'] ?? item;
+          return FollowerModel.fromJson(userJson);
+        }).toList();
+
+        followersList.assignAll(list);
+        filteredFollowers.assignAll(list);
+      } else {
+        Get.snackbar('خطأ', 'فشل تحميل قائمة المتابعين');
+      }
+    } catch (e) {
+      debugPrint('loadFollowers error: $e');
+      Get.snackbar('خطأ', 'حدث خطأ أثناء تحميل البيانات');
+    } finally {
+      isLoadingFollowers.value = false;
+    }
+  }
+
+  // ================================
   void changeTab(int index) {
     selectedTab.value = index;
     pageController.animateToPage(
@@ -62,6 +95,7 @@ class FollowersController extends GetxController {
     );
   }
 
+  // ================================
   void onSearch(String value) {
     final query = value.toLowerCase();
 
@@ -78,64 +112,83 @@ class FollowersController extends GetxController {
     );
   }
 
-  void unfollow(FollowerModel model) {
-    Get.defaultDialog(
-      title: 'تأكيد',
-      middleText: 'هل تريد إلغاء متابعة ${model.name}؟',
-      actions: [
-        AateneButton(
-          onTap: () {
-            _lastRemovedIndex = followingList.indexOf(model);
-            _lastRemoved = model;
-            followingList.remove(model);
-            onSearch(searchController.text);
-            Get.back();
-            Get.snackbar(
-              'تم إلغاء المتابعة',
-              snackPosition: SnackPosition.BOTTOM,
-              duration: const Duration(seconds: 4),
-              model.name,
-              mainButton: TextButton(
-                onPressed: undoUnfollow,
-                child: Text(
-                  'تراجع',
-                  style: getBold(color: AppColors.primary500),
-                ),
-              ),
-            );
-          },
-          buttonText: "نعم",
-          color: AppColors.primary400,
-          textColor: AppColors.light1000,
-          borderColor: AppColors.primary400,
+  // ================================
+  Future<void> unfollow(FollowerModel model) async {
+    _lastRemovedIndex = followingList.indexOf(model);
+    _lastRemoved = model;
+
+    final success = await _performUnfollow(model);
+
+    if (success) {
+      followingList.remove(model);
+      onSearch(searchController.text);
+
+      Get.snackbar(
+        'تم إلغاء المتابعة',
+        model.name,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 4),
+        mainButton: TextButton(
+          onPressed: undoUnfollow,
+          child: Text('تراجع', style: getBold(color: AppColors.primary500)),
         ),
-        SizedBox(height: 10),
-        AateneButton(
-          onTap: () => Get.back(result: false),
-          buttonText: "إلغاء",
-          color: AppColors.light1000,
-          textColor: AppColors.primary400,
-          borderColor: AppColors.primary400,
-        ),
-      ],
-    );
+      );
+    } else {
+      Get.snackbar('خطأ', 'فشل إلغاء المتابعة');
+    }
   }
 
-  void undoUnfollow() {
-    if (_lastRemoved != null && _lastRemovedIndex != null) {
+  Future<bool> _performUnfollow(FollowerModel model) async {
+    try {
+      final response = await ApiHelper.post(
+        path: '/followings/unfollow',
+        body: {'followed_type': model.followedType, 'followed_id': model.id},
+      );
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> undoUnfollow() async {
+    if (_lastRemoved == null || _lastRemovedIndex == null) return;
+
+    final success = await _performFollow(_lastRemoved!);
+
+    if (success) {
       followingList.insert(_lastRemovedIndex!, _lastRemoved!);
       onSearch(searchController.text);
     }
   }
 
-  void followBack(FollowerModel model) {
-    followersList.remove(model);
-    followingList.add(model);
+  Future<void> followBack(FollowerModel model) async {
+    final success = await _performFollow(model);
 
-    onSearch(searchController.text);
+    if (success) {
+      followersList.remove(model);
+      followingList.add(model);
+      onSearch(searchController.text);
+      changeTab(0);
+      Get.snackbar('تمت المتابعة', 'أصبحت تتابع ${model.name}');
+    }
+  }
 
-    Get.snackbar('تمت المتابعة', 'أصبحت تتابع ${model.name}');
+  Future<bool> _performFollow(FollowerModel model) async {
+    try {
+      final response = await ApiHelper.post(
+        path: '/followings',
+        body: {'followed_type': model.followedType, 'followed_id': model.id},
+      );
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 
-    changeTab(0);
+  @override
+  void onClose() {
+    pageController.dispose();
+    searchController.dispose();
+    super.onClose();
   }
 }

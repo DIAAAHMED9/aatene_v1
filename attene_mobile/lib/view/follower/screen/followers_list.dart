@@ -8,22 +8,27 @@ class FollowersListPage extends StatelessWidget {
     final controller = Get.find<FollowersController>();
 
     return Obx(
-      () => ListView.builder(
-        itemCount: controller.filteredFollowers.length,
-        itemBuilder: (_, index) {
-          final model = controller.filteredFollowers[index];
-          return FollowerListItem(
-            model: model,
-            actionText: 'رد متابعة',
-            actionIcon: Image.asset(
-              "assets/images/png/user-add.png",
-              width: 16,
-              height: 16,
-            ),
-            onAction: () => controller.followBack(model),
-          );
-        },
-      ),
+          () {
+        if (controller.isLoadingFollowers.value && controller.followersList.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return ListView.builder(
+          itemCount: controller.filteredFollowers.length,
+          itemBuilder: (_, index) {
+            final model = controller.filteredFollowers[index];
+            return FollowerListItem(
+              model: model,
+              actionText: 'رد متابعة',
+              actionIcon: Image.asset(
+                "assets/images/png/user-add.png",
+                width: 16,
+                height: 16,
+              ),
+              onAction: () => controller.followBack(model),
+            );
+          },
+        );
+      },
     );
   }
 }
