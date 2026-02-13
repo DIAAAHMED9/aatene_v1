@@ -1,17 +1,19 @@
+import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/view/favorite/widget/all_page.dart';
 import 'package:attene_mobile/view/favorite/widget/group_page.dart';
 import 'package:attene_mobile/view/favorite/widget/new_page.dart';
 import 'package:attene_mobile/view/favorite/widget/store_page.dart';
-
-import '../../../general_index.dart';
-import '../widget/product_page.dart';
-import '../widget/services_page.dart';
+import 'package:attene_mobile/view/favorite/widget/product_page.dart';
+import 'package:attene_mobile/view/favorite/widget/services_page.dart';
+import '../controller/favorite_controller.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(FavoriteController(), permanent: true);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -60,7 +62,6 @@ class FavoritesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               const Expanded(
                 child: TabBarView(
                   children: [

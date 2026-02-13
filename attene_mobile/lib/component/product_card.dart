@@ -1,19 +1,58 @@
 import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/view/favorite/controller/favorite_controller.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
   final Map<String, dynamic>? product;
+  final bool showFavoriteButton;
+  final bool isFavorite;
+  final Function(bool)? onFavoriteChanged;
 
-  const ProductCard({super.key, this.product});
+  const ProductCard({
+    super.key,
+    this.product,
+    this.showFavoriteButton = true,
+    this.isFavorite = false,
+    this.onFavoriteChanged,
+  });
 
   @override
   State<ProductCard> createState() => _ProductCardState();
 }
 
 class _ProductCardState extends State<ProductCard> {
-  bool isLiked = false;
+  late bool isLiked;
+  late FavoriteController _favController;
 
-  void toggleLike() => setState(() => isLiked = !isLiked);
+  @override
+  void initState() {
+    super.initState();
+    isLiked = widget.isFavorite;
+    _favController = Get.find<FavoriteController>();
+  }
+
+  Future<void> toggleLike() async {
+    if (widget.product == null) return;
+
+    final newState = !isLiked;
+    setState(() => isLiked = newState);
+
+    final success = newState
+        ? await _favController.addToFavorites(
+            type: FavoriteType.product,
+            itemId: widget.product!['id'].toString(),
+          )
+        : await _favController.removeFromFavorites(
+            type: FavoriteType.product,
+            itemId: widget.product!['id'].toString(),
+          );
+
+    if (!success) {
+      setState(() => isLiked = !newState);
+    } else {
+      widget.onFavoriteChanged?.call(newState);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,29 +64,30 @@ class _ProductCardState extends State<ProductCard> {
 
     final String coverImage = p['cover'] ??
         'https://images.unsplash.com/photo-1520975916090-3105956dac38';
-    
+
     final String productName = p['name']?.toString() ?? 'منتج';
-    
+
     int reviewRate = 0;
     if (p['review_rate'] != null) {
       reviewRate = int.tryParse(p['review_rate'].toString()) ?? 0;
     }
-    
+
     int reviewCount = 0;
     if (p['review_count'] != null) {
       reviewCount = int.tryParse(p['review_count'].toString()) ?? 0;
     }
-    
+
     double price = 0.0;
     if (p['price'] != null) {
       price = double.tryParse(p['price'].toString()) ?? 0.0;
     }
-    
+
     double priceAfterDiscount = price;
     if (p['price_after_discount'] != null) {
-      priceAfterDiscount = double.tryParse(p['price_after_discount'].toString()) ?? price;
+      priceAfterDiscount =
+          double.tryParse(p['price_after_discount'].toString()) ?? price;
     }
-    
+
     final bool hasDiscount = priceAfterDiscount < price;
     final String displayPrice = hasDiscount
         ? '${priceAfterDiscount.toStringAsFixed(0)}₪'
@@ -56,7 +96,9 @@ class _ProductCardState extends State<ProductCard> {
 
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/product-details', arguments: {'productId': p['id']});
+        if (p['id'] != null) {
+          Get.toNamed('/product-details', arguments: {'productId': p['id']});
+        }
       },
       child: Container(
         width: 170,
@@ -108,37 +150,38 @@ class _ProductCardState extends State<ProductCard> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'جديد',
+                        (p['condition'] == 'new') ? 'جديد' : 'خصم',
                         style: const TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
                   ),
-                Positioned(
-                  bottom: 0,
-                  left: 5,
-                  child: GestureDetector(
-                    onTap: toggleLike,
-                    child: Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        size: 18,
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: isLiked ? AppColors.primary400 : Colors.grey,
+                if (widget.showFavoriteButton)
+                  Positioned(
+                    bottom: 0,
+                    left: 5,
+                    child: GestureDetector(
+                      onTap: toggleLike,
+                      child: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          size: 18,
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: isLiked ? AppColors.primary400 : Colors.grey,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 7),
@@ -170,7 +213,10 @@ class _ProductCardState extends State<ProductCard> {
                     productName,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   Row(
                     spacing: 5,
@@ -188,7 +234,10 @@ class _ProductCardState extends State<ProductCard> {
                       if (reviewCount > 0)
                         Text(
                           '($reviewCount)',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                     ],
                   ),

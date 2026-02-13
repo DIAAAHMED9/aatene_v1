@@ -1,3 +1,4 @@
+import 'package:attene_mobile/component/user_card.dart';
 import 'package:attene_mobile/general_index.dart' hide SearchController;
 import 'package:attene_mobile/view/search/controller/search_controller.dart';
 import 'package:attene_mobile/view/search/widget/search_type.dart';
@@ -308,7 +309,7 @@ class _SearchScreenState extends State<SearchScreen>
       case SearchType.stores:
         return VendorCard(store: data);
       case SearchType.users:
-        return VendorCard(store: data);
+        return UserCard(user: data);
     }
   }
 }

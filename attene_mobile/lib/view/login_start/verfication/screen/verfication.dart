@@ -137,7 +137,7 @@ class Verification extends StatelessWidget {
                 Obx(
                   () => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(5, (index) {
+                    children: List.generate(4, (index) {
                       return VerificationCodeField(
                         controller: TextEditingController(
                         ),
