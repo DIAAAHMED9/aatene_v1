@@ -13,21 +13,28 @@ class NotificationListPage extends StatelessWidget {
     final controller = Get.find<NotificationController>();
 
     return Obx(() {
-      final list = isRead ? controller.readList : controller.unreadList;
+      final list =
+      isRead ? controller.readList : controller.unreadList;
 
       if (list.isEmpty) {
         return NotificationEmptyState(isReadTab: isRead);
       }
 
       return ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        physics: const BouncingScrollPhysics(),
+        padding:
+        const EdgeInsets.symmetric(horizontal: 16),
+        physics:
+        const BouncingScrollPhysics(),
         itemCount: list.length,
         itemBuilder: (context, index) {
+          final item = list[index];
+
           return AnimatedNotificationItem(
-            model: list[index],
-            onDelete: () => controller.removeWithUndo(list[index]),
-            onMarkRead: () => controller.markAsRead(list[index]),
+            model: item,
+            onDelete: () =>
+                controller.removeWithUndo(item),
+            onMarkRead: () =>
+                controller.markAsRead(item),
           );
         },
       );

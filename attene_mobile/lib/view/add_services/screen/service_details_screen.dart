@@ -1,6 +1,5 @@
 import '../../../general_index.dart';
-import '../../../utils/responsive/index.dart';
-import '../models/models.dart';
+
 
 class ServiceDetailsScreen extends StatefulWidget {
   final String? serviceId;

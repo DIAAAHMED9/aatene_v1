@@ -96,7 +96,6 @@ class ChangePassword extends StatelessWidget {
 
                 if (Get.isDialogOpen == true) Get.back();
                 _successBottomSheet(context);
-
               },
             ),
           ],

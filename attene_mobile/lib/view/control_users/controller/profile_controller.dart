@@ -8,7 +8,7 @@ class ProfileCotrolController extends GetxController {
   final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   @override
   void onClose() {
@@ -56,8 +56,7 @@ class ProfileCotrolController extends GetxController {
         body: {
           'old_password': oldPasswordController.text.trim(),
           'password': newPasswordController.text.trim(),
-          'password_confirmation':
-          confirmPasswordController.text.trim(),
+          'password_confirmation': confirmPasswordController.text.trim(),
         },
       );
 

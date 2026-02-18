@@ -1,6 +1,4 @@
-import '../../../../api/core/api_helper.dart';
 import '../../../../general_index.dart';
-import '../../../../my_app/my_app_controller.dart';
 import '../../common/profile_controller_base.dart';
 
 class ProfileController extends BaseProfileController {

@@ -57,7 +57,7 @@ class SelectReport extends StatelessWidget {
                   height: 150,
                   fit: BoxFit.cover,
                 ),
-                title: "شكوى أو إفتراح",
+                title: "شكوى أو إقتراح",
                 screen: ReportAbuseScreen(),
               ),
             ],

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../general_index.dart';
 
-enum FavoriteType { product, service, store, blog,user }
+enum FavoriteType { product, service, store, blog, user }
 
 class FavoriteController extends GetxController {
   final RxBool isLoading = false.obs;
@@ -12,15 +12,18 @@ class FavoriteController extends GetxController {
   final RxInt currentPage = 1.obs;
   String errorMessage = '';
 
-  final RxList<Map<String, dynamic>> allFavorites = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> allFavorites =
+      <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> products = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> services = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> stores = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> blogs = <Map<String, dynamic>>[].obs;
-  final RxList<Map<String, dynamic>> recentFavorites = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> recentFavorites =
+      <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> users = <Map<String, dynamic>>[].obs;
 
-  final RxList<Map<String, dynamic>> favoriteLists = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> favoriteLists =
+      <Map<String, dynamic>>[].obs;
   final RxMap<String, dynamic> selectedList = <String, dynamic>{}.obs;
 
   final Map<String, List<Map<String, dynamic>>> _pendingListItems = {};
@@ -51,10 +54,7 @@ class FavoriteController extends GetxController {
 
       final res = await ApiHelper.get(
         path: '/favorites',
-        queryParameters: {
-          'page': currentPage.value,
-          'per_page': 20,
-        },
+        queryParameters: {'page': currentPage.value, 'per_page': 20},
       );
 
       if (res != null && res['status'] == true) {
@@ -74,7 +74,10 @@ class FavoriteController extends GetxController {
     }
   }
 
-  Future<void> fetchFavoritesByType(FavoriteType type, {bool refresh = false}) async {
+  Future<void> fetchFavoritesByType(
+    FavoriteType type, {
+    bool refresh = false,
+  }) async {
     if (refresh) {
       currentPage.value = 1;
       _clearTypeList(type);
@@ -86,10 +89,7 @@ class FavoriteController extends GetxController {
 
       final res = await ApiHelper.get(
         path: '/favorites/type/${type.name}',
-        queryParameters: {
-          'page': currentPage.value,
-          'per_page': 20,
-        },
+        queryParameters: {'page': currentPage.value, 'per_page': 20},
       );
 
       if (res != null && res['status'] == true) {
@@ -124,10 +124,7 @@ class FavoriteController extends GetxController {
         if (listId != null) 'list_id': listId,
       };
 
-      final res = await ApiHelper.post(
-        path: '/favorites/add',
-        body: body,
-      );
+      final res = await ApiHelper.post(path: '/favorites/add', body: body);
 
       if (res != null && res['status'] == true) {
         final favoriteData = res['favorite'] as Map<String, dynamic>?;
@@ -171,10 +168,7 @@ class FavoriteController extends GetxController {
     try {
       final res = await ApiHelper.post(
         path: '/favorites/remove',
-        body: {
-          'favs_type': type.name,
-          'favs_id': itemId,
-        },
+        body: {'favs_type': type.name, 'favs_id': itemId},
       );
 
       if (res != null && res['status'] == true) {
@@ -210,10 +204,7 @@ class FavoriteController extends GetxController {
     try {
       final res = await ApiHelper.post(
         path: '/favorites/check',
-        body: {
-          'favs_type': type.name,
-          'favs_id': itemId,
-        },
+        body: {'favs_type': type.name, 'favs_id': itemId},
       );
       return res != null && res['status'] == true && res['data'] == true;
     } catch (e) {
@@ -315,8 +306,9 @@ class FavoriteController extends GetxController {
       final res = await ApiHelper.get(path: '/favorite-lists/$listId/favs');
 
       if (res != null && res['status'] == true) {
-        final List<dynamic> items = res['data'] ?? res['favorites'] ?? res['items'] ?? [];
-        
+        final List<dynamic> items =
+            res['data'] ?? res['favorites'] ?? res['items'] ?? [];
+
         final List<Map<String, dynamic>> actualItems = items.map((e) {
           final Map<String, dynamic> item = Map<String, dynamic>.from(e);
           return item.containsKey('favs')
@@ -346,6 +338,7 @@ class FavoriteController extends GetxController {
       isLoading.value = false;
     }
   }
+
   List<String> _extractPreviewImages(List<Map<String, dynamic>> items) {
     final List<String> previewImages = [];
     for (var item in items) {
@@ -369,7 +362,11 @@ class FavoriteController extends GetxController {
     }
     return previewImages;
   }
-  void _updateGroupPreviewImages(String listId, List<Map<String, dynamic>> items) {
+
+  void _updateGroupPreviewImages(
+    String listId,
+    List<Map<String, dynamic>> items,
+  ) {
     final previewImages = _extractPreviewImages(items);
     final index = favoriteLists.indexWhere((l) => l['id'].toString() == listId);
     if (index != -1) {
@@ -381,17 +378,22 @@ class FavoriteController extends GetxController {
   Future<void> loadPreviewImagesForAllGroups() async {
     for (var group in favoriteLists) {
       final listId = group['id'].toString();
-      if (group['preview_images'] != null && (group['preview_images'] as List).isNotEmpty) continue;
+      if (group['preview_images'] != null &&
+          (group['preview_images'] as List).isNotEmpty)
+        continue;
       try {
         final res = await ApiHelper.get(
           path: '/favorite-lists/$listId/favs',
           queryParameters: {'per_page': 4},
         );
         if (res != null && res['status'] == true) {
-          final List<dynamic> items = res['data'] ?? res['favorites'] ?? res['items'] ?? [];
+          final List<dynamic> items =
+              res['data'] ?? res['favorites'] ?? res['items'] ?? [];
           final List<Map<String, dynamic>> actualItems = items.map((e) {
             final item = Map<String, dynamic>.from(e);
-            return item.containsKey('favs') ? Map<String, dynamic>.from(item['favs']) : item;
+            return item.containsKey('favs')
+                ? Map<String, dynamic>.from(item['favs'])
+                : item;
           }).toList();
           _updateGroupPreviewImages(listId, actualItems);
         }
@@ -433,15 +435,26 @@ class FavoriteController extends GetxController {
     update();
   }
 
-   void _addFavoriteToListLocally(String listId, Map<String, dynamic>? favoriteData) {
+  void _addFavoriteToListLocally(
+    String listId,
+    Map<String, dynamic>? favoriteData,
+  ) {
     if (favoriteData == null) return;
 
-    final listIndex = favoriteLists.indexWhere((l) => l['id'].toString() == listId);
+    final listIndex = favoriteLists.indexWhere(
+      (l) => l['id'].toString() == listId,
+    );
     if (listIndex != -1) {
-      final currentCount = int.tryParse(favoriteLists[listIndex]['favs_count']?.toString() ?? '0') ?? 0;
+      final currentCount =
+          int.tryParse(
+            favoriteLists[listIndex]['favs_count']?.toString() ?? '0',
+          ) ??
+          0;
       favoriteLists[listIndex]['favs_count'] = (currentCount + 1).toString();
 
-      final currentPreview = List<String>.from(favoriteLists[listIndex]['preview_images'] ?? []);
+      final currentPreview = List<String>.from(
+        favoriteLists[listIndex]['preview_images'] ?? [],
+      );
       final newImage = _extractPreviewImages([favoriteData]).firstOrNull;
       if (newImage != null && !currentPreview.contains(newImage)) {
         currentPreview.insert(0, newImage);
@@ -452,7 +465,9 @@ class FavoriteController extends GetxController {
     }
 
     if (selectedList['id'] == listId) {
-      final currentItems = List<Map<String, dynamic>>.from(selectedList['items'] ?? []);
+      final currentItems = List<Map<String, dynamic>>.from(
+        selectedList['items'] ?? [],
+      );
       currentItems.add(favoriteData);
       selectedList['items'] = currentItems;
     } else {
@@ -463,29 +478,43 @@ class FavoriteController extends GetxController {
   }
 
   void _removeFavoriteFromLocalLists(FavoriteType type, String itemId) {
-    allFavorites.removeWhere((e) =>
-        e['favs_type'] == type.name && e['favs_id'].toString() == itemId);
+    allFavorites.removeWhere(
+      (e) => e['favs_type'] == type.name && e['favs_id'].toString() == itemId,
+    );
 
     final list = _getTypeList(type);
     list.removeWhere((e) => e['id'].toString() == itemId);
 
-    recentFavorites.removeWhere((e) =>
-        e['favs_type'] == type.name && e['favs_id'].toString() == itemId);
+    recentFavorites.removeWhere(
+      (e) => e['favs_type'] == type.name && e['favs_id'].toString() == itemId,
+    );
 
     if (selectedList.isNotEmpty) {
-      final items = List<Map<String, dynamic>>.from(selectedList['items'] ?? []);
+      final items = List<Map<String, dynamic>>.from(
+        selectedList['items'] ?? [],
+      );
       items.removeWhere((e) => e['id'].toString() == itemId);
       selectedList['items'] = items;
     }
 
     final listId = selectedList['id']?.toString();
     if (listId != null) {
-      final listIndex = favoriteLists.indexWhere((l) => l['id'].toString() == listId);
+      final listIndex = favoriteLists.indexWhere(
+        (l) => l['id'].toString() == listId,
+      );
       if (listIndex != -1) {
-        final currentCount = int.tryParse(favoriteLists[listIndex]['favs_count']?.toString() ?? '0') ?? 0;
-        favoriteLists[listIndex]['favs_count'] = (currentCount - 1).clamp(0, double.infinity).toString();
+        final currentCount =
+            int.tryParse(
+              favoriteLists[listIndex]['favs_count']?.toString() ?? '0',
+            ) ??
+            0;
+        favoriteLists[listIndex]['favs_count'] = (currentCount - 1)
+            .clamp(0, double.infinity)
+            .toString();
 
-        final currentItems = List<Map<String, dynamic>>.from(selectedList['items'] ?? []);
+        final currentItems = List<Map<String, dynamic>>.from(
+          selectedList['items'] ?? [],
+        );
         final updatedPreview = _extractPreviewImages(currentItems);
         favoriteLists[listIndex]['preview_images'] = updatedPreview;
         favoriteLists.refresh();
@@ -543,7 +572,7 @@ class FavoriteController extends GetxController {
         return stores;
       case FavoriteType.blog:
         return blogs;
-        case FavoriteType.user:
+      case FavoriteType.user:
         return users;
     }
   }

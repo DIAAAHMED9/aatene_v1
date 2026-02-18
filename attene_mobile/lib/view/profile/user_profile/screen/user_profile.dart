@@ -373,7 +373,7 @@ class ProfilePage extends StatelessWidget {
                                 controller.profileData['avatar'] ??
                                     'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png',
                                 
-                              )
+                              ),
                             ),
                          Text(
                               controller.profileData['fullname'] ?? 'اسم المستخدم',

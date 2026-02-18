@@ -1,3 +1,5 @@
+import 'package:attene_mobile/view/control_users/controller/support_controller.dart';
+
 import '../../../general_index.dart';
 
 enum UserType { merchant, buyer }
@@ -17,77 +19,77 @@ class _FaqPageState extends State<FaqPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "الأسئلة الشائعة",
-          style: getBold(color: AppColors.neutral100, fontSize: 20),
-        ),
-        centerTitle: false,
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.grey[100],
+    return GetBuilder<SupportController>(
+      builder: (controller) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Text(
+              "الأسئلة الشائعة",
+              style: getBold(color: AppColors.neutral100, fontSize: 20),
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+            centerTitle: false,
+            leading: IconButton(
+              onPressed: () => Get.back(),
+              icon: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.grey[100],
+                ),
+                child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+              ),
+            ),
           ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          spacing: 15,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16),
-
-            Text(
-              "إجابات وافية على أكثر الأسئلة شيوعًا لضمان تجربة سلسة وواضحة.",
-              style: getMedium(color: AppColors.neutral400),
-            ),
-
-            _buildTabs(),
-
-            _searchField(),
-
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: pages.length,
-                onPageChanged: (index) {
-                  setState(() => currentIndex = index);
-                },
-                itemBuilder: (context, index) {
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0.1, 0),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
+          body: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              spacing: 15,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                Text(
+                  "إجابات وافية على أكثر الأسئلة شيوعًا لضمان تجربة سلسة وواضحة.",
+                  style: getMedium(color: AppColors.neutral400),
+                ),
+                _buildTabs(),
+                _searchField(),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: pages.length,
+                    onPageChanged: (index) {
+                      setState(() => currentIndex = index);
+                    },
+                    itemBuilder: (context, index) {
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.1, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: FaqContent(
+                          key: ValueKey(pages[index]),
+                          userType: pages[index],
                         ),
                       );
                     },
-                    child: FaqContent(
-                      key: ValueKey(pages[index]),
-                      userType: pages[index],
-                    ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

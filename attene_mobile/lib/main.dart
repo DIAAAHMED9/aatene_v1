@@ -1,7 +1,9 @@
+import 'package:attene_mobile/view/control_users/controller/support_controller.dart';
 import 'package:attene_mobile/view/notification/controller/notification_controller.dart';
 import 'package:attene_mobile/view/notification/services/notification_service.dart';
 import 'package:attene_mobile/view/onboarding/screen/new_onboarding.dart';
 import 'package:attene_mobile/view/profile/user_profile/controller/user_controller.dart';
+import 'package:attene_mobile/view/report/controller/report_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -71,6 +73,8 @@ Get.lazyPut(() => FavoriteController(), fenix: true);
         Get.lazyPut(() => SearchController(), fenix: true);
         Get.lazyPut(() => NotificationService());
         Get.lazyPut(() => NotificationController());
+        Get.lazyPut(() => ReportController(), fenix: true);
+        Get.lazyPut(() => SupportController(), fenix: true);
         final OnboardingController controller = Get.put(
           OnboardingController(),
           permanent: true,
@@ -256,6 +260,7 @@ class MyApp extends StatelessWidget {
           middlewares: [AuthGuardMiddleware(featureName: 'الخدمات')],
         ),
       ],
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -43,10 +43,7 @@ class AboutUsScreen extends StatelessWidget {
                 children: [
                   Text(
                     '"أعطيني" هي منصة إلكترونية وسّطية، تربط بين مزوّدي الخدمات وبائعي المنتجات المحليين مع الزبائن ، عبر واجهة بسيطة وسريعة، نمنح كل شخص عنده خدمة أو منتج فرصة للظهور الرقمي، والوصول لجمهور مهتم بدون عمولات أو تعقيدات.',
-                    style: getMedium(
-                      fontSize: 14,
-                      color: AppColors.neutral600,
-                    ),
+                    style: getMedium(fontSize: 14, color: AppColors.neutral600),
                   ),
                   Text('من نحن؟', style: getBold()),
                   Center(
@@ -138,7 +135,6 @@ class AboutUsScreen extends StatelessWidget {
                       width: 14,
                       height: 14,
                     ),
-
                   ),
                   SectionItems2(
                     title: "سهولة استخدام من جميع الأجهزة",
@@ -563,7 +559,10 @@ class AboutUsScreen extends StatelessWidget {
                         onPressed: () {
                           UrlHelper.open("https://wa.me/+972526213879");
                         },
-                        child: Text('واتس خدمة العملاء',style: getMedium(color: AppColors.light1000),),
+                        child: Text(
+                          'واتس خدمة العملاء',
+                          style: getMedium(color: AppColors.light1000),
+                        ),
                       ),
                     ),
                     Container(
@@ -577,7 +576,10 @@ class AboutUsScreen extends StatelessWidget {
                         onPressed: () {
                           UrlHelper.open("https://wa.me/+972559390851");
                         },
-                        child: Text('واتس لاستعلام عن الخدمات والمنتجات',style: getMedium(color: AppColors.light1000),),
+                        child: Text(
+                          'واتس لاستعلام عن الخدمات والمنتجات',
+                          style: getMedium(color: AppColors.light1000),
+                        ),
                       ),
                     ),
                   ],

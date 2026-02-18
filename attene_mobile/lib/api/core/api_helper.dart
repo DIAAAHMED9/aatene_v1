@@ -614,6 +614,83 @@ class ApiHelper {
     );
   }
 
+  static Future<dynamic> termsAndConditions({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/pages/terms-and-conditions',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> privacyPolicy({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/pages/privacy-policy',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+  static Future<dynamic> faqs({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/pages/faqs',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+
+  static Future<dynamic> reportType({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/report-types',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> reportData({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/reports/my',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> reportStates({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/reports/my/stats',
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> notificationData({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/my-notifications',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+
   static Future<dynamic> verifyOtp({
     required String id,
     required String code,

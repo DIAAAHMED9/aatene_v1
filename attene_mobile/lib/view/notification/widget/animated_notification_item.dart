@@ -84,7 +84,6 @@ class _AnimatedNotificationItemState extends State<AnimatedNotificationItem> {
     return Container(
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.only(left: 24),
-
       decoration: BoxDecoration(
         color: AppColors.error200,
         borderRadius: BorderRadius.circular(16),
