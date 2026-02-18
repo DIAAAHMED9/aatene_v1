@@ -1,14 +1,19 @@
 import '../../../general_index.dart';
 import '../../../utils/responsive/index.dart';
 
+import '../../../general_index.dart';
+import '../../../utils/responsive/index.dart';
+
 class ServiceScreen extends StatelessWidget {
   ServiceScreen({super.key});
 
-  final ServiceController controller = Get.find<ServiceController>();
+  // final ServiceController controller = Get.find<ServiceController>();
+  final ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      controller: scrollController,
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveDimensions.responsiveWidth(16, 30, 40),
         vertical: ResponsiveDimensions.responsiveHeight(20),
@@ -17,23 +22,19 @@ class ServiceScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'المعلومات الاساسية',
+            'المعلومات الأساسية',
             style: getBold(
               fontSize: ResponsiveDimensions.responsiveFontSize(25),
             ),
           ),
           _buildServiceTitleField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(24)),
-
           _buildMainCategoryField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(24)),
-
           _buildCategoryField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(24)),
-
           _buildSpecializationsField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(24)),
-
           _buildKeywordsField(),
           SizedBox(height: ResponsiveDimensions.responsiveHeight(40)),
         ],
@@ -41,84 +42,77 @@ class ServiceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceTitleField() {
-    return GetBuilder<ServiceController>(
-      id: 'service_title_field',
-      builder: (controller) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextWithStar(text: 'عنوان الخدمة'),
-            SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: controller.isServiceTitleError.value
-                      ? Colors.red
-                      : Colors.grey[300]!,
-                  width: controller.isServiceTitleError.value ? 2 : 1,
-                ),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.next,
+// service_screen.dart - داخل _buildServiceTitleField
 
-                onChanged: (value) {
-                  controller.serviceTitle.value = value.trim();
-                  controller.isServiceTitleError.value =
-                      controller.serviceTitle.value.isEmpty;
-                  controller.update(['service_title_field']);
-                },
-                maxLines: 3,
-                maxLength: 140,
-                decoration: InputDecoration(
-                  hintText: 'اكتب اسم الخدمة',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(
-                    ResponsiveDimensions.responsiveWidth(12),
-                  ),
-                  counterText: '',
-                ),
-                controller:
-                    TextEditingController(text: controller.serviceTitle.value)
-                      ..selection = TextSelection.collapsed(
-                        offset: controller.serviceTitle.value.length,
-                      ),
+Widget _buildServiceTitleField() {
+  return GetBuilder<ServiceController>(
+    id: 'service_title_field',
+    builder: (controller) {
+      // طباعة hashCode للتأكد من ثبات الـ Controller
+      print('📌 building title field with controller hash: ${controller.titleController.hashCode}');
+      
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextWithStar(text: 'عنوان الخدمة'),
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: controller.isServiceTitleError.value
+                    ? Colors.red
+                    : Colors.grey[300]!,
+                width: controller.isServiceTitleError.value ? 2 : 1,
               ),
+              borderRadius: BorderRadius.circular(25),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: ResponsiveDimensions.responsiveHeight(4),
-                right: ResponsiveDimensions.responsiveWidth(4),
+            child: TextField(
+              controller: controller.titleController,
+              textInputAction: TextInputAction.next,
+              maxLines: 3,
+              maxLength: 140,
+              decoration: InputDecoration(
+                hintText: 'اكتب اسم الخدمة',
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.all(12),
+                counterText: '',
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (controller.isServiceTitleError.value)
-                    Text(
-                      'هذا الحقل مطلوب',
-                      style: getMedium(
-                        color: Colors.red,
-                        fontSize: ResponsiveDimensions.responsiveFontSize(12),
-                      ),
-                    )
-                  else
-                    const SizedBox(),
+              onChanged: (value) {
+                // تحديث حالة الخطأ فوراً عند الكتابة
+                controller.isServiceTitleError.value = value.trim().isEmpty;
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 4, right: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (controller.isServiceTitleError.value)
                   Text(
-                    '${controller.serviceTitle.value.length}/100',
+                    'هذا الحقل مطلوب',
                     style: getMedium(
-                      color: Color(0xFF757575),
-                      fontSize: ResponsiveDimensions.responsiveFontSize(12),
+                      color: Colors.red,
+                      fontSize: 12,
                     ),
+                  )
+                else
+                  const SizedBox(),
+                Text(
+                  '${controller.titleController.text.length}/100',
+                  style: getMedium(
+                    color: const Color(0xFF757575),
+                    fontSize: 12,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        );
-      },
-    );
-  }
+          ),
+        ],
+      );
+    },
+  );
+}
 
   Widget _buildMainCategoryField() {
     return GetBuilder<ServiceController>(
@@ -128,7 +122,6 @@ class ServiceScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextWithStar(text: 'القسم الرئيسي'),
-
             SizedBox(height: ResponsiveDimensions.responsiveHeight(8)),
             Container(
               height: 50,
@@ -157,9 +150,7 @@ class ServiceScreen extends StatelessWidget {
                               ? 'اختر القسم الرئيسي'
                               : controller.selectedMainCategory.value,
                           style: getMedium(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(
-                              10,
-                            ),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(10),
                             color: controller.selectedMainCategory.value.isEmpty
                                 ? Colors.grey
                                 : Colors.black,
@@ -258,9 +249,7 @@ class ServiceScreen extends StatelessWidget {
                               ? 'اختر الفئة الفرعية'
                               : controller.selectedCategory.value,
                           style: getMedium(
-                            fontSize: ResponsiveDimensions.responsiveFontSize(
-                              10,
-                            ),
+                            fontSize: ResponsiveDimensions.responsiveFontSize(10),
                             color: controller.selectedCategory.value.isEmpty
                                 ? Colors.grey
                                 : Colors.black,
@@ -712,6 +701,8 @@ class ServiceScreen extends StatelessWidget {
     );
   }
 
+  // هذه الدالة غير مستخدمة في هذا الكلاس ولكن قد تكون مستخدمة في مكان آخر
+  // تم تضمينها للاكتمال
   Widget _buildNavigationButtons() {
     return GetBuilder<ServiceController>(
       builder: (controller) {
@@ -740,7 +731,7 @@ class ServiceScreen extends StatelessWidget {
               width: double.infinity,
               child: AateneButton(
                 onTap: () {
-                  if (controller.serviceTitle.value.isNotEmpty ||
+                  if (controller.titleController.text.isNotEmpty ||
                       controller.selectedMainCategory.value.isNotEmpty ||
                       controller.selectedCategory.value.isNotEmpty ||
                       controller.specializations.isNotEmpty ||
@@ -764,7 +755,7 @@ class ServiceScreen extends StatelessWidget {
                           textColor: AppColors.light1000,
                           borderColor: AppColors.primary400,
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         AateneButton(
                           onTap: () => Get.back(),
                           buttonText: "لا",
@@ -803,14 +794,13 @@ class ServiceScreen extends StatelessWidget {
           width: ResponsiveDimensions.responsiveWidth(300, 400, 500),
           child: GetBuilder<ServiceController>(
             builder: (controller) {
-              if (controller.isLoadingCategories.value &&
-                  controller.sections.isEmpty) {
+              if (controller.isLoadingCategories.value && controller.sections.isEmpty) {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('جاري تحميل الأقسام...'),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    const Text('جاري تحميل الأقسام...'),
                   ],
                 );
               }
@@ -824,20 +814,19 @@ class ServiceScreen extends StatelessWidget {
                       size: 48,
                       color: Colors.grey[400],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       'لا توجد أقسام متاحة',
                       style: getMedium(color: Color(0xFF757575)),
                     ),
-
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     if (controller.categoriesError.isNotEmpty)
                       Text(
                         controller.categoriesError.value,
                         style: getMedium(fontSize: 12, color: Colors.red),
                         textAlign: TextAlign.center,
                       ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         Get.back();
@@ -849,7 +838,7 @@ class ServiceScreen extends StatelessWidget {
                           colorText: Colors.white,
                         );
                       },
-                      child: Text('إعادة المحاولة'),
+                      child: const Text('إعادة المحاولة'),
                     ),
                   ],
                 );

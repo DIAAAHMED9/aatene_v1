@@ -233,8 +233,11 @@ class CategoryBottomSheet extends StatelessWidget {
                             )
                           : null,
                       onTap: () {
-                        controller.selectTempCategory(categoryId, categoryName);
-                      },
+        // حفظ الفئة مباشرة وإغلاق النافذة
+        controller.selectTempCategory(categoryId, categoryName);
+        controller.saveSelectedCategory(); // تعيين القيمة النهائية
+        Get.back(); // إغلاق الـ BottomSheet
+      },
                     );
                   },
                 );

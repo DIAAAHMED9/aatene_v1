@@ -66,7 +66,7 @@ Get.lazyPut(() => FavoriteController(), fenix: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
-        Get.lazyPut(() => ServiceController(), fenix: true);
+      Get.put(ServiceController(), permanent: true);
         Get.lazyPut(() => ProfileController(), fenix: true);
         Get.lazyPut(() => SearchController(), fenix: true);
         Get.lazyPut(() => NotificationService());

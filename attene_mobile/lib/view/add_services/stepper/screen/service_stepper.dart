@@ -22,25 +22,26 @@ class ServiceStepperScreen extends StepperScreenBase {
   State<ServiceStepperScreen> createState() => _ServiceStepperScreenState();
 }
 
-class _ServiceStepperScreenState
-    extends StepperScreenBaseState<ServiceStepperScreen> {
+class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   List<StepperStep> getSteps() {
-    return [
-      const StepperStep(
+    return const [
+      StepperStep(
         title: 'معلومات الخدمة',
         subtitle: 'المعلومات الأساسية والتصنيفات',
       ),
-      const StepperStep(
+      StepperStep(
         title: 'السعر والتطويرات',
         subtitle: 'تحديد السعر ومدة التنفيذ',
       ),
-      const StepperStep(title: 'صور الخدمة', subtitle: 'إضافة صور للخدمة'),
-      const StepperStep(
+      StepperStep(title: 'صور الخدمة', subtitle: 'إضافة صور للخدمة'),
+      StepperStep(
         title: 'الوصف والأسئلة الشائعة',
         subtitle: 'وصف الخدمة والأسئلة المتكررة',
       ),
-      const StepperStep(
+      StepperStep(
         title: 'الموافقة النهائية',
         subtitle: 'الموافقة على السياسات والشروط',
       ),
@@ -84,7 +85,7 @@ class _ServiceStepperScreenState
   Future<bool> onWillPop() async {
     final controller = Get.find<ServiceController>();
 
-    if (currentStep > 0 || controller.serviceTitle.value.isNotEmpty) {
+    if (currentStep > 0 || controller.titleController.text.isNotEmpty) {
       final result = await Get.defaultDialog<bool>(
         title: 'تأكيد',
         middleText: 'هل تريد حفظ التغييرات قبل المغادرة؟',
@@ -99,7 +100,7 @@ class _ServiceStepperScreenState
             textColor: AppColors.light1000,
             borderColor: AppColors.primary400,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           AateneButton(
             onTap: () => Get.back(result: true),
             buttonText: 'تجاهل والخروج',
@@ -122,12 +123,6 @@ class _ServiceStepperScreenState
       switch (oldStep) {
         case 0:
           if (!controller.validateServiceForm()) {
-            Get.snackbar(
-              'تنبيه',
-              'يرجى إكمال معلومات الخدمة أولاً',
-              backgroundColor: Colors.orange,
-              colorText: Colors.white,
-            );
             setState(() {
               currentStep = oldStep;
             });
@@ -135,12 +130,6 @@ class _ServiceStepperScreenState
           break;
         case 1:
           if (!controller.validatePriceForm()) {
-            Get.snackbar(
-              'تنبيه',
-              'يرجى إكمال السعر و أولاً',
-              backgroundColor: Colors.orange,
-              colorText: Colors.white,
-            );
             setState(() {
               currentStep = oldStep;
             });
@@ -148,12 +137,6 @@ class _ServiceStepperScreenState
           break;
         case 2:
           if (!controller.validateImagesForm()) {
-            Get.snackbar(
-              'تنبيه',
-              'يجب إضافة صورة واحدة على الأقل',
-              backgroundColor: Colors.orange,
-              colorText: Colors.white,
-            );
             setState(() {
               currentStep = oldStep;
             });
@@ -161,12 +144,6 @@ class _ServiceStepperScreenState
           break;
         case 3:
           if (!controller.validateDescriptionForm()) {
-            Get.snackbar(
-              'تنبيه',
-              'يرجى إدخال وصف للخدمة أولاً',
-              backgroundColor: Colors.orange,
-              colorText: Colors.white,
-            );
             setState(() {
               currentStep = oldStep;
             });
@@ -178,26 +155,21 @@ class _ServiceStepperScreenState
 
   @override
   bool validateStep(int stepIndex) {
-    final controller = Get.find<ServiceController>();
+  final controller = Get.find<ServiceController>();
 
     switch (stepIndex) {
       case 0:
-        if (!controller.validateServiceForm()) {
-          Get.snackbar(
-            'خطأ',
-            'يرجى إكمال معلومات الخدمة أولاً',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return false;
-        }
-        return true;
+             return controller.validateServiceForm(); // هذه الدالة تظهر رسالة الخطأ تلقائياً
 
       case 1:
         if (!controller.validatePriceForm()) {
+          List<String> missing = [];
+          if (controller.price.value.isEmpty) missing.add('السعر');
+          if (controller.executionTimeValue.value.isEmpty) missing.add('مدة التنفيذ');
+
           Get.snackbar(
             'خطأ',
-            'يرجى إكمال السعر و أولاً',
+            'الحقول التالية مطلوبة: ${missing.join('، ')}',
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );
@@ -221,7 +193,7 @@ class _ServiceStepperScreenState
         if (!controller.validateDescriptionForm()) {
           Get.snackbar(
             'خطأ',
-            'يرجى إدخال وصف للخدمة أولاً',
+            'يرجى إدخال وصف للخدمة',
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );
@@ -258,13 +230,12 @@ class _ServiceStepperScreenState
           borderColor: AppColors.primary400,
           color: AppColors.primary400,
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         AateneButton(
           onTap: () {
             Get.back(result: true);
             Get.back();
           },
-
           buttonText: "نعم، إلغاء",
           textColor: AppColors.primary400,
           borderColor: AppColors.primary400,
@@ -317,9 +288,7 @@ class _ServiceStepperScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
                   isLastStep
-                      ? isEditMode
-                            ? 'تحديث الخدمة'
-                            : 'إنهاء ونشر الخدمة'
+                      ? isEditMode ? 'تحديث الخدمة' : 'إنهاء ونشر الخدمة'
                       : 'التالي',
                   style: getMedium(color: Colors.white, fontSize: 14),
                 ),
@@ -331,9 +300,7 @@ class _ServiceStepperScreenState
   Future<void> _saveProgress() async {
     final controller = Get.find<ServiceController>();
     final data = controller.getAllData();
-
     await Future.delayed(const Duration(milliseconds: 500));
-
     Get.snackbar(
       'تم الحفظ',
       'تم حفظ التقدم بنجاح',
@@ -393,12 +360,10 @@ class _ServiceStepperScreenState
     Get.bottomSheet(
       Container(
         height: ResponsiveDimensions.h(500),
-
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
         ),
-
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -408,7 +373,7 @@ class _ServiceStepperScreenState
                 Icons.check_circle,
                 size: 170,
                 color: Colors.green,
-                shadows: [
+                shadows: const [
                   Shadow(
                     blurRadius: 30,
                     color: AppColors.success100,
@@ -423,14 +388,12 @@ class _ServiceStepperScreenState
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-
               Text(
                 'تم رفع الخدمة بنجاح، وهي الآن قيد المراجعة من قبل الفريق المختص. سنوافيكم بالرد خلال 24 إلى 48 ساعة.',
                 style: getBold(fontSize: 14, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 5),
-
               AateneButton(
                 buttonText: 'قائمة الخدمات',
                 color: AppColors.primary400,
@@ -440,11 +403,9 @@ class _ServiceStepperScreenState
                   if (Get.isBottomSheetOpen == true) {
                     Get.back();
                   }
-
                   if (Get.isRegistered<ServiceController>()) {
                     Get.find<ServiceController>().resetAll();
                   }
-
                   Get.back(result: true);
                 },
               ),

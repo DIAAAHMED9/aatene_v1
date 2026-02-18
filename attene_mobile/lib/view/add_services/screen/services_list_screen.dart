@@ -29,6 +29,7 @@ class _ServicesListScreenState extends State<ServicesListScreen>
     super.initState();
     _initializeTabs();
     _loadServices();
+    
   }
 
   @override

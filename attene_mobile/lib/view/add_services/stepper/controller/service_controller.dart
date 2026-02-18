@@ -1,14 +1,19 @@
 import 'dart:convert';
-
 import 'package:flutter_quill/flutter_quill.dart';
-
 import '../../../../general_index.dart';
 import '../../models/models.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ServiceController extends GetxController {
   final RxString editingStoreId = ''.obs;
+  bool _disposed = false;
 
+  // متغير ثابت لحفظ النص عند التدمير (لحالات إعادة الإنشاء)
+  static String? _savedTitle;
+
+  late TextEditingController titleController;
+
+  // دالة تسوية الأرقام من String إلى num
   dynamic _normalizeNumericStrings(dynamic v, {String? key}) {
     const numericKeys = <String>{
       'id',
@@ -59,7 +64,6 @@ class ServiceController extends GetxController {
 
   RxInt currentStep = 0.obs;
 
-  RxString serviceTitle = ''.obs;
   RxString selectedMainCategory = ''.obs;
   RxString selectedCategory = ''.obs;
   RxList<String> specializations = <String>[].obs;
@@ -133,12 +137,27 @@ class ServiceController extends GetxController {
   final RxList<String> _selectedServiceIds = <String>[].obs;
 
   bool get isInSelectionMode => _isSelectionMode.value;
-
   List<String> get selectedServiceIds => _selectedServiceIds.toList();
 
   @override
   void onInit() {
     super.onInit();
+    titleController = TextEditingController();
+
+    // استعادة النص المحفوظ إذا كان موجوداً
+    if (_savedTitle != null) {
+      titleController.text = _savedTitle!;
+      _savedTitle = null; // مسح بعد الاستعادة
+    }
+
+    print('✅ titleController created with hash: ${titleController.hashCode}');
+
+    titleController.addListener(() {
+      if (_disposed) return;
+      isServiceTitleError.value = titleController.text.trim().isEmpty;
+      update(['service_title_field']);
+    });
+
     _initializeData();
     _initializeQuill();
     loadSections();
@@ -146,10 +165,12 @@ class ServiceController extends GetxController {
 
   void _initializeData() {
     specializationTextController.addListener(() {
+      if (_disposed) return;
       update(['specialization_input']);
     });
 
     keywordTextController.addListener(() {
+      if (_disposed) return;
       update(['keyword_input']);
     });
   }
@@ -163,13 +184,11 @@ class ServiceController extends GetxController {
     );
 
     editorFocusNode.addListener(() {
+      if (_disposed) return;
       if (editorFocusNode.hasFocus) {
-        print('🎯 التركيز على محرر الوصف');
-
         if (!hasUserTypedInDescription.value) {
           hasUserTypedInDescription.value = true;
           showDescriptionPlaceholder.value = false;
-          print('👆 المستخدم لمس المحرر - تشغيل وضع الكتابة');
           update(['description_field']);
         }
       } else {
@@ -178,13 +197,13 @@ class ServiceController extends GetxController {
 
         if (hasUserTypedInDescription.value && !hasRealContent) {
           isDescriptionError.value = true;
-          print('⚠️ ترك المستخدم المحرر دون إدخال محتوى');
           update(['description_field']);
         }
       }
     });
 
     quillController.document.changes.listen((event) {
+      if (_disposed) return;
       try {
         final plainText = quillController.document.toPlainText();
         final trimmedText = plainText.trim();
@@ -195,23 +214,9 @@ class ServiceController extends GetxController {
         final hasRealContent = _hasRealContent(plainText);
         isEditorEmpty.value = !hasRealContent;
 
-        print('✍️ تغيير في محتوى الوصف:');
-        print('- النص الكامل: "$plainText"');
-        print('- النص بعد trim: "$trimmedText"');
-        print('- طول النص: ${plainText.length}');
-        print('- hasRealContent: $hasRealContent');
-        print('- isEditorEmpty: ${isEditorEmpty.value}');
-        print(
-          '- hasUserTypedInDescription: ${hasUserTypedInDescription.value}',
-        );
-
         if (hasRealContent) {
           hasUserTypedInDescription.value = true;
           showDescriptionPlaceholder.value = false;
-
-          print('✅ تم اكتشاف كتابة المستخدم في الوصف');
-          print('📝 المحتوى المكتوب: "$plainText"');
-
           isDescriptionError.value = false;
         } else {
           showDescriptionPlaceholder.value = !hasUserTypedInDescription.value;
@@ -223,11 +228,6 @@ class ServiceController extends GetxController {
           isDescriptionError.value = false;
         }
 
-        print('- isDescriptionError: ${isDescriptionError.value}');
-        print(
-          '- showDescriptionPlaceholder: ${showDescriptionPlaceholder.value}',
-        );
-
         update(['description_field']);
       } catch (e) {
         print('❌ خطأ في مستمع تغييرات Quill: $e');
@@ -237,48 +237,34 @@ class ServiceController extends GetxController {
 
   bool _hasRealContent(String text) {
     if (text.isEmpty) return false;
-
     final trimmed = text.trim();
-
     if (trimmed.isEmpty) return false;
-
     if (trimmed == '\n' ||
         trimmed == '\r\n' ||
         trimmed == '\n\n' ||
         trimmed == '\r\n\r\n') {
       return false;
     }
-
     final hasRealChars = trimmed.codeUnits.any((unit) {
       return unit > 32;
     });
-
     return hasRealChars;
   }
 
   void checkDescriptionContent() {
+    if (_disposed) return;
     try {
       final plainText = quillController.document.toPlainText();
       final hasRealContent = _hasRealContent(plainText);
-
-      print('🔍 التحقق المباشر من محتوى الوصف:');
-      print('- النص الكامل: "$plainText"');
-      print('- hasRealContent: $hasRealContent');
-      print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
-      print('- isEditorEmpty: ${isEditorEmpty.value}');
 
       if (hasRealContent) {
         hasUserTypedInDescription.value = true;
         showDescriptionPlaceholder.value = false;
         isDescriptionError.value = false;
-
         serviceDescriptionPlainText.value = plainText;
         serviceDescriptionRichText.value = getQuillContentAsJson();
-
-        print('✅ تم العثور على محتوى حقيقي في الوصف');
       } else if (hasUserTypedInDescription.value) {
         isDescriptionError.value = true;
-        print('❌ المستخدم بدأ الكتابة لكن المحتوى غير صالح');
       }
 
       update(['description_field']);
@@ -289,15 +275,9 @@ class ServiceController extends GetxController {
 
   void debugDescription() {
     print('🔍 فحص الوصف المفصل:');
-    print(
-      '- serviceDescriptionPlainText: "${serviceDescriptionPlainText.value}"',
-    );
-    print(
-      '- serviceDescriptionPlainText length: ${serviceDescriptionPlainText.value.length}',
-    );
-    print(
-      '- serviceDescriptionRichText length: ${serviceDescriptionRichText.value.length}',
-    );
+    print('- serviceDescriptionPlainText: "${serviceDescriptionPlainText.value}"');
+    print('- serviceDescriptionPlainText length: ${serviceDescriptionPlainText.value.length}');
+    print('- serviceDescriptionRichText length: ${serviceDescriptionRichText.value.length}');
     print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
     print('- isEditorEmpty: ${isEditorEmpty.value}');
     print('- isValidDescription: ${isValidDescription}');
@@ -313,15 +293,11 @@ class ServiceController extends GetxController {
   }
 
   void updateDescriptionTexts() {
+    if (_disposed) return;
     try {
       final plainText = quillController.document.toPlainText();
       serviceDescriptionPlainText.value = plainText;
       serviceDescriptionRichText.value = getQuillContentAsJson();
-
-      print('🔄 تحديث نصوص الوصف:');
-      print('- Plain text: "$plainText"');
-      print('- Plain text length: ${plainText.length}');
-      print('- Rich text length: ${serviceDescriptionRichText.value.length}');
     } catch (e) {
       print('❌ خطأ في updateDescriptionTexts: $e');
     }
@@ -338,73 +314,54 @@ class ServiceController extends GetxController {
 
   bool get hasValidDescription {
     if (!hasUserTypedInDescription.value) return true;
-
     final plainText = serviceDescriptionPlainText.value.trim();
     return _hasRealContent(plainText);
   }
 
   bool validateDescriptionForm() {
-    print('✅ بدء التحقق من صحة الوصف...');
-
     checkDescriptionContent();
-
     final plainText = serviceDescriptionPlainText.value;
     final hasRealContent = _hasRealContent(plainText);
 
-    print('📝 حالة التحقق:');
-    print('- plainText: "$plainText"');
-    print('- hasRealContent: $hasRealContent');
-    print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
-
     if (!hasUserTypedInDescription.value) {
-      print('📝 الحالة 1: المستخدم لم يلمس المحرر - صالح');
       isDescriptionError.value = false;
       return true;
     }
 
     if (hasUserTypedInDescription.value && hasRealContent) {
-      print('📝 الحالة 2: المستخدم لمس المحرر والمحتوى صالح - صالح');
       isDescriptionError.value = false;
       return true;
     }
 
     if (hasUserTypedInDescription.value && !hasRealContent) {
-      print('📝 الحالة 3: المستخدم لمس المحرر لكن المحتوى غير صالح - خطأ');
       isDescriptionError.value = true;
       return false;
     }
 
-    print('📝 الحالة الافتراضية: صالح');
     isDescriptionError.value = false;
     return true;
   }
 
   Future<bool> validateAndPrepareDescription() async {
-    print('🔍 التحقق النهائي للوصف قبل الإرسال...');
-
     updateDescriptionTexts();
-
     debugDescription();
 
     if (!validateDescriptionForm()) {
-      print('❌ الوصف غير صالح');
       return false;
     }
 
     if (hasUserTypedInDescription.value) {
       final plainText = serviceDescriptionPlainText.value.trim();
       if (!_hasRealContent(plainText)) {
-        print('❌ الوصف فارغ رغم أن المستخدم كتب فيه');
         return false;
       }
     }
 
-    print('✅ الوصف صالح وجاهز للإرسال');
-    print('📄 محتوى الوصف: "${serviceDescriptionPlainText.value}"');
     return true;
   }
 
   void resetDescription() {
+    if (_disposed) return;
     quillController.document = Document();
     hasUserTypedInDescription.value = false;
     isEditorEmpty.value = true;
@@ -416,6 +373,7 @@ class ServiceController extends GetxController {
   }
 
   void setDescription(String? description) {
+    if (_disposed) return;
     if (description != null && description.trim().isNotEmpty) {
       try {
         if (description.trim().startsWith('[') ||
@@ -435,8 +393,7 @@ class ServiceController extends GetxController {
         showDescriptionPlaceholder.value = false;
         isDescriptionError.value = false;
 
-        serviceDescriptionPlainText.value = quillController.document
-            .toPlainText();
+        serviceDescriptionPlainText.value = quillController.document.toPlainText();
         serviceDescriptionRichText.value = getQuillContentAsJson();
       } catch (e) {
         print('❌ خطأ في تحميل الوصف: $e');
@@ -453,11 +410,13 @@ class ServiceController extends GetxController {
   }
 
   void updateTermsAcceptance(bool value) {
+    if (_disposed) return;
     acceptedTerms.value = value;
     update(['terms_section']);
   }
 
   void updatePrivacyAcceptance(bool value) {
+    if (_disposed) return;
     acceptedPrivacy.value = value;
     update(['privacy_section']);
   }
@@ -496,27 +455,63 @@ class ServiceController extends GetxController {
     return allAccepted;
   }
 
-  bool validateServiceForm() {
-    bool isValid = true;
+// service_controller.dart - الجزء المعدل
 
-    if (serviceTitle.value.isEmpty) {
-      isServiceTitleError.value = true;
-      isValid = false;
-    }
+// service_controller.dart
+// ... باقي الكود ...
 
-    if (selectedMainCategory.value.isEmpty) {
-      isMainCategoryError.value = true;
-      isValid = false;
-    }
+bool validateServiceForm() {
+  bool isValid = true;
+  List<String> missingFields = [];
 
-    if (selectedCategory.value.isEmpty || selectedCategoryId.value == 0) {
-      isCategoryError.value = true;
-      isValid = false;
-    }
+  // ✅ طباعة معلومات التصحيح
+  final title = titleController.text.trim();
+  print('🔍 validateServiceForm - titleController.hashCode: ${titleController.hashCode}');
+  print('🔍 title text: "${titleController.text}" (trimmed: "$title")');
 
-    update(['service_title_field', 'main_category_field', 'category_field']);
-    return isValid;
+  if (title.isEmpty) {
+    isServiceTitleError.value = true;
+    missingFields.add('عنوان الخدمة');
+    isValid = false;
+    print('❌ عنوان الخدمة فارغ');
+  } else {
+    isServiceTitleError.value = false;
+    print('✅ عنوان الخدمة: "$title"');
   }
+
+  // التحقق من القسم الرئيسي
+  if (selectedMainCategory.value.trim().isEmpty) {
+    isMainCategoryError.value = true;
+    missingFields.add('القسم الرئيسي');
+    isValid = false;
+  } else {
+    isMainCategoryError.value = false;
+  }
+
+  // التحقق من الفئة الفرعية
+  if (selectedCategory.value.trim().isEmpty || selectedCategoryId.value == 0) {
+    isCategoryError.value = true;
+    missingFields.add('الفئة الفرعية');
+    isValid = false;
+  } else {
+    isCategoryError.value = false;
+  }
+
+  // عرض رسالة خطأ مفصلة إذا كان هناك حقول ناقصة
+  if (!isValid) {
+    Get.snackbar(
+      'تنبيه',
+      'الحقول التالية مطلوبة: ${missingFields.join('، ')}',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  update(['service_title_field', 'main_category_field', 'category_field']);
+  return isValid;
+}
+
 
   bool validatePriceForm() {
     bool isValid = true;
@@ -524,11 +519,15 @@ class ServiceController extends GetxController {
     if (price.value.isEmpty) {
       isPriceError.value = true;
       isValid = false;
+    } else {
+      isPriceError.value = false;
     }
 
     if (executionTimeValue.value.isEmpty) {
       isExecutionTimeError.value = true;
       isValid = false;
+    } else {
+      isExecutionTimeError.value = false;
     }
 
     update(['price_field', 'execution_time_field']);
@@ -541,7 +540,6 @@ class ServiceController extends GetxController {
 
   bool validateAllForms() {
     validateDescriptionForm();
-
     return validateServiceForm() &&
         validatePriceForm() &&
         validateImagesForm() &&
@@ -550,6 +548,7 @@ class ServiceController extends GetxController {
   }
 
   void toggleServiceSelection(String serviceId) {
+    if (_disposed) return;
     if (_selectedServiceIds.contains(serviceId)) {
       _selectedServiceIds.remove(serviceId);
     } else {
@@ -562,16 +561,9 @@ class ServiceController extends GetxController {
   }
 
   String getFullImageUrl(String imagePath) {
-    if (imagePath.isEmpty) {
-      return '';
-    }
-
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
-
+    if (imagePath.isEmpty) return '';
+    if (imagePath.startsWith('http')) return imagePath;
     String baseUrl = ApiHelper.getBaseUrl();
-
     if (imagePath.startsWith('storage/')) {
       return '$baseUrl/$imagePath';
     } else if (imagePath.startsWith('images/')) {
@@ -582,6 +574,7 @@ class ServiceController extends GetxController {
   }
 
   void toggleSelectionMode() {
+    if (_disposed) return;
     _isSelectionMode.value = !_isSelectionMode.value;
     if (!_isSelectionMode.value) {
       _selectedServiceIds.clear();
@@ -589,11 +582,13 @@ class ServiceController extends GetxController {
   }
 
   void clearSelection() {
+    if (_disposed) return;
     _selectedServiceIds.clear();
     _isSelectionMode.value = false;
   }
 
   void selectAllServices(List<String> allServiceIds) {
+    if (_disposed) return;
     _selectedServiceIds.assignAll(allServiceIds);
     if (allServiceIds.isNotEmpty) {
       _isSelectionMode.value = true;
@@ -601,18 +596,21 @@ class ServiceController extends GetxController {
   }
 
   void goToNextStep() {
+    if (_disposed) return;
     if (currentStep.value < 4) {
       currentStep.value++;
     }
   }
 
   void goToPreviousStep() {
+    if (_disposed) return;
     if (currentStep.value > 0) {
       currentStep.value--;
     }
   }
 
   void goToStep(int step) {
+    if (_disposed) return;
     if (step >= 0 && step <= 4) {
       currentStep.value = step;
     }
@@ -636,6 +634,7 @@ class ServiceController extends GetxController {
   }
 
   Future<void> navigateToNextStep() async {
+    if (_disposed) return;
     if (canGoToNextStep()) {
       if (currentStep.value < 4) {
         goToNextStep();
@@ -645,17 +644,17 @@ class ServiceController extends GetxController {
     }
   }
 
-  void validateServiceTitle(String value) {
-    serviceTitle.value = value.trim();
-    isServiceTitleError.value = serviceTitle.value.isEmpty;
-    update(['service_title_field']);
-  }
-
   void selectMainCategory(String category, int sectionId) {
+    if (_disposed) return;
     selectedMainCategory.value = category;
     selectedSectionName.value = category;
     selectedSectionId.value = sectionId;
     isMainCategoryError.value = false;
+
+    selectedCategory.value = '';
+    selectedCategoryId.value = 0;
+    tempSelectedCategory.value = '';
+    tempSelectedCategoryId.value = 0;
 
     loadCategories();
 
@@ -663,19 +662,21 @@ class ServiceController extends GetxController {
   }
 
   void searchCategories(String query) {
+    if (_disposed) return;
     searchCategoryQuery.value = query.trim();
     update(['categories_list']);
   }
 
   void selectTempCategory(int categoryId, String categoryName) {
+    if (_disposed) return;
     tempSelectedCategoryId.value = categoryId;
     tempSelectedCategory.value = categoryName;
     update(['categories_list']);
   }
 
   void saveSelectedCategory() {
-    if (tempSelectedCategory.value.isNotEmpty &&
-        tempSelectedCategoryId.value > 0) {
+    if (_disposed) return;
+    if (tempSelectedCategory.value.isNotEmpty && tempSelectedCategoryId.value > 0) {
       selectedCategory.value = tempSelectedCategory.value;
       selectedCategoryId.value = tempSelectedCategoryId.value;
       isCategoryError.value = false;
@@ -684,8 +685,8 @@ class ServiceController extends GetxController {
   }
 
   void addSpecialization() {
+    if (_disposed) return;
     final text = specializationTextController.text.trim();
-
     if (text.isEmpty) return;
     if (specializations.contains(text)) return;
     if (specializations.length >= maxSpecializations) return;
@@ -696,6 +697,7 @@ class ServiceController extends GetxController {
   }
 
   void removeSpecialization(int index) {
+    if (_disposed) return;
     if (index >= 0 && index < specializations.length) {
       specializations.removeAt(index);
       update(['specializations_list']);
@@ -703,8 +705,8 @@ class ServiceController extends GetxController {
   }
 
   void addKeyword() {
+    if (_disposed) return;
     final text = keywordTextController.text.trim();
-
     if (text.isEmpty) return;
     if (keywords.contains(text)) return;
     if (keywords.length >= maxKeywords) return;
@@ -715,6 +717,7 @@ class ServiceController extends GetxController {
   }
 
   void removeKeyword(int index) {
+    if (_disposed) return;
     if (index >= 0 && index < keywords.length) {
       keywords.removeAt(index);
       update(['keywords_list']);
@@ -722,43 +725,51 @@ class ServiceController extends GetxController {
   }
 
   void validatePrice(String value) {
+    if (_disposed) return;
     price.value = value.trim();
     isPriceError.value = price.value.isEmpty;
     update(['price_field']);
   }
 
   void updateExecutionTimeValue(String value) {
+    if (_disposed) return;
     executionTimeValue.value = value.trim();
     isExecutionTimeError.value = executionTimeValue.value.isEmpty;
     update(['execution_time_field']);
   }
 
   void selectTimeUnit(String unit) {
+    if (_disposed) return;
     executionTimeUnit.value = unit;
     update(['execution_time_field']);
   }
 
   void updateDevelopmentTitle(String text) {
+    if (_disposed) return;
     developmentTitle.value = text.trim();
     update(['development_form']);
   }
 
   void updateDevelopmentPrice(String text) {
+    if (_disposed) return;
     developmentPrice.value = text.trim();
     update(['development_form']);
   }
 
   void updateDevelopmentTimeValue(String text) {
+    if (_disposed) return;
     developmentTimeValue.value = text.trim();
     update(['development_form']);
   }
 
   void selectDevelopmentTimeUnit(String unit) {
+    if (_disposed) return;
     developmentTimeUnit.value = unit;
     update(['development_form']);
   }
 
   void addDevelopment() {
+    if (_disposed) return;
     final title = developmentTitle.value.trim();
     final priceText = developmentPrice.value.trim();
     final timeValue = developmentTimeValue.value.trim();
@@ -790,11 +801,13 @@ class ServiceController extends GetxController {
   }
 
   void removeDevelopment(int id) {
+    if (_disposed) return;
     developments.removeWhere((dev) => dev.id == id);
     update(['developments_list']);
   }
 
   void addFAQ(String question, String answer) {
+    if (_disposed) return;
     if (faqs.length >= maxFAQs) return;
 
     final newFAQ = FAQ(
@@ -808,6 +821,7 @@ class ServiceController extends GetxController {
   }
 
   void updateFAQ(int id, String newQuestion, String newAnswer) {
+    if (_disposed) return;
     final index = faqs.indexWhere((faq) => faq.id == id);
     if (index != -1) {
       faqs[index] = FAQ(
@@ -820,11 +834,13 @@ class ServiceController extends GetxController {
   }
 
   void removeFAQ(int id) {
+    if (_disposed) return;
     faqs.removeWhere((faq) => faq.id == id);
     update(['faqs_list']);
   }
 
   void addImagesFromMediaLibrary(List<MediaItem> mediaItems) {
+    if (_disposed) return;
     final List<ServiceImage> newImages = [];
 
     for (var mediaItem in mediaItems) {
@@ -866,6 +882,7 @@ class ServiceController extends GetxController {
   }
 
   void removeImage(int id) {
+    if (_disposed) return;
     final imageIndex = serviceImages.indexWhere((img) => img.id == id);
     if (imageIndex != -1) {
       final wasMain = serviceImages[imageIndex].isMain;
@@ -880,6 +897,7 @@ class ServiceController extends GetxController {
   }
 
   void setMainImage(int id) {
+    if (_disposed) return;
     final updatedImages = serviceImages.map((image) {
       return image.copyWith(isMain: image.id == id);
     }).toList();
@@ -889,6 +907,7 @@ class ServiceController extends GetxController {
   }
 
   void reorderImages(int oldIndex, int newIndex) {
+    if (_disposed) return;
     if (oldIndex < 0 || oldIndex >= serviceImages.length) return;
     if (newIndex < 0) newIndex = 0;
     if (newIndex >= serviceImages.length) newIndex = serviceImages.length - 1;
@@ -909,6 +928,7 @@ class ServiceController extends GetxController {
   }
 
   Future<void> loadSections({String? storeIdOverride}) async {
+    if (_disposed) return;
     try {
       isLoadingCategories(true);
       categoriesError('');
@@ -951,6 +971,7 @@ class ServiceController extends GetxController {
     int? sectionIdOverride,
     String? storeIdOverride,
   }) async {
+    if (_disposed) return;
     try {
       final sectionId = sectionIdOverride ?? selectedSectionId.value;
 
@@ -1018,6 +1039,7 @@ class ServiceController extends GetxController {
   }
 
   bool get canAddSpecialization {
+    if (_disposed) return false;
     final text = specializationTextController.text.trim();
     if (text.isEmpty) return false;
     if (specializations.contains(text)) return false;
@@ -1026,6 +1048,7 @@ class ServiceController extends GetxController {
   }
 
   bool get canAddKeyword {
+    if (_disposed) return false;
     final text = keywordTextController.text.trim();
     if (text.isEmpty) return false;
     if (keywords.contains(text)) return false;
@@ -1100,7 +1123,7 @@ class ServiceController extends GetxController {
     updateDescriptionTexts();
 
     return {
-      'serviceTitle': serviceTitle.value,
+      'serviceTitle': titleController.text,
       'mainCategory': selectedMainCategory.value,
       'mainCategoryId': selectedSectionId.value,
       'category': selectedCategory.value,
@@ -1133,7 +1156,6 @@ class ServiceController extends GetxController {
   String getQuillContentAsJson() {
     try {
       final json = jsonEncode(quillController.document.toDelta().toJson());
-      print('📝 تحويل Quill إلى JSON: ${json.length} حرف');
       return json;
     } catch (e) {
       print('❌ خطأ في تحويل محتوى Quill إلى JSON: $e');
@@ -1142,8 +1164,9 @@ class ServiceController extends GetxController {
   }
 
   void resetAll() {
+    if (_disposed) return;
     currentStep.value = 0;
-    serviceTitle.value = '';
+    titleController.clear();
     selectedMainCategory.value = '';
     selectedCategory.value = '';
     selectedSectionId.value = 0;
@@ -1188,11 +1211,10 @@ class ServiceController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> addService() async {
+    if (_disposed) return null;
     try {
       isSaving.value = true;
       update();
-
-      print('🚀 بدء إضافة خدمة جديدة...');
 
       if (!await validateAndPrepareDescription()) {
         Get.snackbar(
@@ -1221,9 +1243,6 @@ class ServiceController extends GetxController {
       await _uploadServiceImages();
 
       final serviceData = _prepareServiceData();
-
-      print('📦 البيانات المرسلة للخادم:');
-      print(jsonEncode(serviceData));
 
       final response = await ApiHelper.post(
         path: '/merchants/services',
@@ -1255,16 +1274,11 @@ class ServiceController extends GetxController {
           'service_id': serviceId.value,
         };
       } else {
-        print('❌ خطأ من الخادم: ${response?['message']}');
-        print('❌ تفاصيل الخطأ: ${response}');
         throw Exception(response?['message'] ?? 'فشل في إضافة الخدمة');
       }
     } catch (e) {
       isSaving.value = false;
       update();
-
-      print('❌ استثناء في addService: $e');
-      print('❌ تفاصيل الاستثناء: ${e.toString()}');
 
       Get.snackbar(
         'خطأ',
@@ -1279,11 +1293,10 @@ class ServiceController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> updateService(String serviceId) async {
+    if (_disposed) return null;
     try {
       isSaving.value = true;
       update();
-
-      print('🔄 بدء تحديث الخدمة $serviceId...');
 
       if (!await validateAndPrepareDescription()) {
         Get.snackbar(
@@ -1313,9 +1326,6 @@ class ServiceController extends GetxController {
 
       final serviceData = _prepareServiceData(forUpdate: true);
 
-      print('📦 البيانات المرسلة للخادم (تحديث):');
-      print(jsonEncode(serviceData));
-
       final response = await ApiHelper.post(
         path: '/merchants/services/$serviceId',
         body: serviceData,
@@ -1341,14 +1351,11 @@ class ServiceController extends GetxController {
           'data': response['data'],
         };
       } else {
-        print('❌ خطأ من الخادم (تحديث): ${response?['message']}');
         throw Exception(response?['message'] ?? 'فشل في تحديث الخدمة');
       }
     } catch (e) {
       isSaving.value = false;
       update();
-
-      print('❌ استثناء في updateService: $e');
 
       Get.snackbar(
         'خطأ',
@@ -1363,6 +1370,7 @@ class ServiceController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> deleteService(String serviceId) async {
+    if (_disposed) return null;
     try {
       isLoading.value = true;
       update();
@@ -1410,6 +1418,7 @@ class ServiceController extends GetxController {
   }
 
   Future<Service?> getServiceById(String serviceId) async {
+    if (_disposed) return null;
     try {
       isLoading.value = true;
       update();
@@ -1419,7 +1428,6 @@ class ServiceController extends GetxController {
         withLoading: false,
         shouldShowMessage: false,
       );
-      print('TESTE2020 $response');
 
       if (response != null && response['status'] == true) {
         final data = response['data'];
@@ -1446,38 +1454,6 @@ class ServiceController extends GetxController {
 
         if (serviceJson == null) {
           throw Exception('Invalid service payload');
-        }
-
-        final bool looksIncomplete =
-            !serviceJson.containsKey('price') &&
-            !serviceJson.containsKey('description') &&
-            !serviceJson.containsKey('execute_type') &&
-            !serviceJson.containsKey('section_id') &&
-            !serviceJson.containsKey('category_id');
-
-        if (looksIncomplete) {
-          try {
-            final listResp = await ApiHelper.get(
-              path: '/merchants/services',
-              queryParameters: {'page': 1, 'limit': 1000},
-              withLoading: false,
-              shouldShowMessage: false,
-            );
-
-            if (listResp != null && listResp['status'] == true) {
-              final list = (listResp['data'] as List?) ?? [];
-              final found = list.cast<dynamic>().firstWhere(
-                (e) => (e is Map) && e['id']?.toString() == serviceId,
-                orElse: () => null,
-              );
-              if (found is Map) {
-                final m = Map<String, dynamic>.from(found);
-                for (final entry in m.entries) {
-                  serviceJson.putIfAbsent(entry.key, () => entry.value);
-                }
-              }
-            }
-          } catch (_) {}
         }
 
         final normalized = _normalizeNumericStrings(serviceJson);
@@ -1521,6 +1497,7 @@ class ServiceController extends GetxController {
     int? sectionId,
     int? categoryId,
   }) async {
+    if (_disposed) return [];
     try {
       isLoading.value = true;
       update();
@@ -1580,6 +1557,7 @@ class ServiceController extends GetxController {
   }
 
   Future<void> _uploadServiceImages() async {
+    if (_disposed) return;
     try {
       isUploading.value = true;
       uploadedImages.clear();
@@ -1619,7 +1597,7 @@ class ServiceController extends GetxController {
   Map<String, dynamic> _prepareServiceData({bool forUpdate = false}) {
     updateDescriptionTexts();
 
-    final slug = _generateSlug(serviceTitle.value);
+    final slug = _generateSlug(titleController.text);
 
     final MyAppController myAppController = Get.find<MyAppController>();
     final storeId = myAppController.userData['store_id']?.toString();
@@ -1650,18 +1628,13 @@ class ServiceController extends GetxController {
 
     String descriptionText = serviceDescriptionPlainText.value.trim();
 
-    print('📝 وصف الخدمة للإرسال:');
-    print(
-      '- النص العادي (${descriptionText.length} حرف): ${descriptionText.length > 100 ? descriptionText.substring(0, 100) + '...' : descriptionText}',
-    );
-
     if (hasUserTypedInDescription.value && descriptionText.isEmpty) {
       throw Exception('الرجاء إضافة وصف مفصل للخدمة');
     }
 
     final serviceData = {
       'slug': slug,
-      'title': serviceTitle.value,
+      'title': titleController.text,
       'section_id': selectedSectionId.value,
       'category_id': selectedCategoryId.value,
       'specialties': specializations.toList(),
@@ -1682,21 +1655,14 @@ class ServiceController extends GetxController {
       serviceData['store_id'] = storeId;
     }
 
-    print('📦 البيانات المرسلة للخادم (JSON):');
-    try {
-      final jsonStr = jsonEncode(serviceData);
-      print(jsonStr.length > 500 ? jsonStr.substring(0, 500) + '...' : jsonStr);
-    } catch (e) {
-      print('❌ خطأ في تحويل البيانات إلى JSON: $e');
-    }
-
     return serviceData;
   }
 
   Future<void> _updateControllerFromService(Service service) async {
+    if (_disposed) return;
     serviceId.value = service.id?.toString() ?? '';
     serviceSlug.value = service.slug;
-    serviceTitle.value = service.title;
+    titleController.text = service.title ?? '';
 
     selectedSectionId.value = service.sectionId;
     selectedCategoryId.value = service.categoryId;
@@ -1760,6 +1726,7 @@ class ServiceController extends GetxController {
     int sectionId,
     int categoryId,
   ) async {
+    if (_disposed) return;
     try {
       final String? storeIdOverride = editingStoreId.value.trim().isNotEmpty
           ? editingStoreId.value.trim()
@@ -1834,6 +1801,7 @@ class ServiceController extends GetxController {
   }
 
   Future<Map<String, dynamic>?> saveService() async {
+    if (_disposed) return null;
     if (!allPoliciesAccepted) {
       Get.snackbar(
         'خطأ',
@@ -1853,6 +1821,7 @@ class ServiceController extends GetxController {
   }
 
   Future<void> loadServiceForEditing(String id) async {
+    if (_disposed) return;
     try {
       isInEditMode = true;
       isLoading.value = true;
@@ -1937,6 +1906,7 @@ class ServiceController extends GetxController {
   }
 
   Future<void> deleteCurrentService() async {
+    if (_disposed) return;
     if (serviceId.value.isEmpty) {
       Get.snackbar(
         'خطأ',
@@ -1964,7 +1934,7 @@ class ServiceController extends GetxController {
           textColor: AppColors.light1000,
           borderColor: AppColors.primary400,
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         AateneButton(
           onTap: () => Get.back(result: false),
           buttonText: 'إلغاء',
@@ -1981,8 +1951,9 @@ class ServiceController extends GetxController {
   }
 
   void setEditMode(String id, String title) {
+    if (_disposed) return;
     serviceId.value = id;
-    serviceTitle.value = title;
+    titleController.text = title;
     Get.snackbar(
       'وضع التعديل',
       'أنت الآن تقوم بتعديل الخدمة: $title',
@@ -1992,6 +1963,7 @@ class ServiceController extends GetxController {
   }
 
   void setCreateMode() {
+    if (_disposed) return;
     serviceId.value = '';
     resetAll();
   }
@@ -2000,32 +1972,37 @@ class ServiceController extends GetxController {
 
   String get currentServiceId => serviceId.value;
 
-  String get currentServiceTitle => serviceTitle.value;
+  String get currentServiceTitle => titleController.text;
 
   void setServiceStatus(String status) {
+    if (_disposed) return;
     if (['pending', 'draft', 'rejected', 'active'].contains(status)) {
       serviceStatus.value = status;
     }
   }
 
   void resetDescriptionState() {
+    if (_disposed) return;
     hasUserTypedInDescription.value = false;
     isDescriptionError.value = false;
     showDescriptionPlaceholder.value = true;
     update(['description_field']);
-
-    print('🔄 تم إعادة تعيين حالة الوصف');
-    print('- hasUserTypedInDescription: ${hasUserTypedInDescription.value}');
-    print('- isDescriptionError: ${isDescriptionError.value}');
   }
 
   @override
-  void onClose() {
+  void dispose() {
+    // حفظ النص قبل التدمير
+    if (titleController.text.isNotEmpty) {
+      _savedTitle = titleController.text;
+    }
+
+    _disposed = true;
+    titleController.dispose();
     specializationTextController.dispose();
     keywordTextController.dispose();
     quillController.dispose();
     editorFocusNode.dispose();
     editorScrollController.dispose();
-    super.onClose();
+    super.dispose();
   }
 }
