@@ -831,12 +831,12 @@ class ProductCentralController extends GetxController {
     return response['message'] ?? 'فشل في إضافة المنتج';
   }
 
-  void resetAllData() {
-    reset(resetSection: true);
-    isEditMode(false);
-    editingProductId(0);
-    editingSku('');
-  }
+void resetAllData({bool keepSection = false}) {
+  reset(resetSection: !keepSection);
+  isEditMode(false);
+  editingProductId(0);
+  editingSku('');
+}
 
   void resetAfterSuccess(ProductVariationController variationController) {
     reset(resetSection: true);

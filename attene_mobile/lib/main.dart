@@ -57,12 +57,12 @@ class AppBindings extends Bindings {
 Get.lazyPut(() => FavoriteController(), fenix: true);
       Future.delayed(const Duration(seconds: 2), () {
         Get.lazyPut(() => ManageAccountStoreController(), fenix: true);
-        Get.lazyPut(() => ProductCentralController(), fenix: true);
-        Get.lazyPut(() => ProductVariationController(), fenix: true);
-        Get.lazyPut(() => KeywordController(), fenix: true);
-        Get.lazyPut(() => AddProductController(), fenix: true);
-        Get.lazyPut(() => MediaLibraryController(), fenix: true);
-        Get.lazyPut(() => RelatedProductsController(), fenix: true);
+  Get.put(ProductCentralController(), permanent: true);
+  Get.put(ProductVariationController(), permanent: true);
+  Get.put(KeywordController(), permanent: true);
+  Get.put(AddProductController(), permanent: true);
+  Get.put(MediaLibraryController(), permanent: true);
+  Get.put(RelatedProductsController(), permanent: true);
         Get.lazyPut(() => ProductController(), fenix: true);
         Get.lazyPut(() => ProductService(), fenix: true);
         Get.lazyPut(() => SectionController(), fenix: true);
