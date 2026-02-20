@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:attene_mobile/general_index.dart';
 
 class AppDialogs {
   AppDialogs._();
@@ -16,19 +15,29 @@ class AppDialogs {
         child: Center(
           child: Container(
             width: 260,
+            height: 250,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
+              border: Border.all(
+                color: AppColors.neutra90
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Row(
+            child: Column(
+              spacing: 10,
               children: [
-                const SizedBox(
-                  width: 26,
-                  height: 26,
-                  child: CircularProgressIndicator(strokeWidth: 3),
+                Image.asset(
+                  "assets/images/gif/aatene_logo.gif",
+                  width: double.infinity,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(width: 12),
+                // const SizedBox(
+                //   width: 26,
+                //   height: 26,
+                //   child: CircularProgressIndicator(strokeWidth: 3),
+                // ),
                 Expanded(
                   child: Text(
                     message ?? 'جاري التحميل...',

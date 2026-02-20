@@ -102,19 +102,19 @@ class AddProductStepperDialogs {
             if (result['data'] != null && result['data'] is List)
               Text(
                 'رقم المنتج: ${_extractProductSku(result)}',
-                style: getMedium(fontSize: 14, color: Colors.grey),
+                style: getMedium(fontSize: 14, color: AppColors.primary400),
               ),
+            AateneButton(
+              onTap: () => onOk,
+              buttonText: "حسناً",
+              textColor: AppColors.light1000,
+              borderColor: AppColors.primary400,
+              color: AppColors.primary400,
+            ),
           ],
         ),
-        actions: [
-          AateneButton(
-            onTap: () => onOk,
-            buttonText: "حسناً",
-            textColor: AppColors.light1000,
-            borderColor: AppColors.primary400,
-            color: AppColors.primary400,
-          ),
-        ],
+        // actions: [
+        // ],
       ),
     );
   }

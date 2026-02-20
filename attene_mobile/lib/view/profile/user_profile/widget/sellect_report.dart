@@ -1,6 +1,8 @@
+import 'package:attene_mobile/api/api_request.dart';
 import 'package:attene_mobile/component/index.dart';
 import 'package:attene_mobile/view/profile/user_profile/screen/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../../../utils/index.dart';
 import '../../../../utils/responsive/responsive_dimensions.dart';
@@ -189,13 +191,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                                           borderColor: AppColors.primary400,
                                           textColor: AppColors.light1000,
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute<void>(
-                                                builder: (context) =>
-                                                    ProfilePage(),
-                                              ),
-                                            );
+                                            Get.to(ProfilePage());
                                           },
                                         ),
                                       ],

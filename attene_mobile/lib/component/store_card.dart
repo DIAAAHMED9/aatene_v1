@@ -1,5 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
-import 'package:attene_mobile/services/follow_state_controller.dart';
+import 'package:attene_mobile/view/favorite/controller/favorite_controller.dart';
 import 'package:attene_mobile/view/profile/vendor_profile/screen/store_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,20 +24,13 @@ class VendorCard extends StatefulWidget {
 
 class _VendorCardState extends State<VendorCard> {
   late bool isFollowed;
-  late FollowStateController _followController;
+  late FavoriteController _favController;
 
   @override
   void initState() {
     super.initState();
     isFollowed = widget.initialFollowed;
-    _followController = Get.isRegistered<FollowStateController>()
-        ? Get.find<FollowStateController>()
-        : Get.put(FollowStateController(), permanent: true);
-
-    final id = widget.store!['id']?.toString() ?? '';
-    if (id.isNotEmpty) {
-      isFollowed = _followController.isFollowing(followedType: 'store', followedId: id);
-    }
+    _favController = Get.find<FavoriteController>();
   }
 
   Future<void> toggleFollow() async {
@@ -46,15 +39,19 @@ class _VendorCardState extends State<VendorCard> {
     final newState = !isFollowed;
     setState(() => isFollowed = newState);
 
-    final id = widget.store!['id'].toString();
     final success = newState
-        ? await _followController.follow(followedType: 'store', followedId: id)
-        : await _followController.unfollow(followedType: 'store', followedId: id);
+        ? await _favController.addToFavorites(
+            type: FavoriteType.store,
+            itemId: widget.store!['slug'].toString(),
+          )
+        : await _favController.removeFromFavorites(
+            type: FavoriteType.store,
+            itemId: widget.store!['slug'].toString(),
+          );
 
     if (!success) {
       setState(() => isFollowed = !newState);
     } else {
-      widget.store!['is_following'] = newState;
       widget.onFollowChanged?.call(newState);
     }
   }
@@ -65,11 +62,14 @@ class _VendorCardState extends State<VendorCard> {
 
     final s = widget.store!;
     final String storeName = s['name']?.toString() ?? 'متجر';
-    final String coverImage = s['cover']?.toString() ??
+    final String coverImage =
+        s['cover']?.toString() ??
         s['logo']?.toString() ??
         'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400';
-    final double rating = double.tryParse(s['rating']?.toString() ?? '0') ?? 0.0;
-    final int reviewCount = int.tryParse(s['review_count']?.toString() ?? '0') ?? 0;
+    final double rating =
+        double.tryParse(s['rating']?.toString() ?? '0') ?? 0.0;
+    final int reviewCount =
+        int.tryParse(s['review_count']?.toString() ?? '0') ?? 0;
     final bool isVerified = s['is_verified'] == true || s['verified'] == true;
     final bool isFeatured = s['is_featured'] == true || s['shown'] == true;
 
@@ -183,11 +183,7 @@ class _VendorCardState extends State<VendorCard> {
                 ),
                 if (isVerified) ...[
                   const SizedBox(width: 4),
-                  const Icon(
-                    Icons.verified,
-                    size: 14,
-                    color: Colors.blue,
-                  ),
+                  const Icon(Icons.verified, size: 14, color: Colors.blue),
                 ],
               ],
             ),
@@ -216,10 +212,7 @@ class _VendorCardState extends State<VendorCard> {
                 if (reviewCount > 0)
                   Text(
                     '($reviewCount)',
-                    style: getMedium(
-                      fontSize: 10,
-                      color: AppColors.neutral500,
-                    ),
+                    style: getMedium(fontSize: 10, color: AppColors.neutral500),
                   ),
                 SvgPicture.asset(
                   "assets/images/svg_images/bus.svg",
