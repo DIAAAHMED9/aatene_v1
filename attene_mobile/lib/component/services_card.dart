@@ -132,9 +132,17 @@ class _ServicesCardState extends State<ServicesCard> {
 
     return GestureDetector(
       onTap: () {
-        if (s['id'] != null) {
-          Get.toNamed('/service-details', arguments: {'serviceId': s['id']});
-        }
+      // ✅ مثل المنتجات: تفاصيل الخدمة بالـ slug إن وجد (مع id كـ fallback)
+      final slug = (s['slug'] ?? s['service_slug'] ?? '').toString();
+      Get.toNamed(
+        '/service-details',
+        arguments: {
+          'serviceId': s['id'],
+          'id': s['id'],
+          'slug': slug,
+          'serviceSlug': slug,
+        },
+      );
       },
       child: Container(
         width: 160,

@@ -27,6 +27,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     if (args is Map) {
       final maybeService = args['service'];
       if (maybeService is Service) return maybeService;
+
+      // ✅ مثل المنتجات: لو عندنا slug نجيب التفاصيل عن طريقه
+      final slug = (args['slug'] ?? args['serviceSlug'] ?? args['slag'] ?? '').toString().trim();
+      if (slug.isNotEmpty) return await _fetchServiceBySlug(slug);
+
       final sid = (args['serviceId'] ?? '').toString().trim();
       if (sid.isNotEmpty) return await _fetchServiceById(sid);
     }
@@ -35,6 +40,48 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     if (sid.isNotEmpty) return await _fetchServiceById(sid);
 
     return null;
+  }
+
+  /// ✅ تفاصيل الخدمة عبر الـ slug (حسب نفس أسلوب المنتجات من السيرش)
+  /// متوقع endpoint: /services/search/{slug}
+  Future<Service?> _fetchServiceBySlug(String slug) async {
+    final response = await ApiHelper.get(
+      path: '/services/$slug',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+
+    if (response == null || response['status'] != true) {
+      throw Exception(response?['message'] ?? 'فشل في جلب تفاصيل الخدمة');
+    }
+
+    // بعض الريسبونس يرجع service وبعضه data
+    final dynamic raw = response['service'] ?? response['data'] ?? response['product'];
+    if (raw is! Map) {
+      throw Exception('Invalid service payload');
+    }
+
+    final serviceJson = Map<String, dynamic>.from(raw as Map);
+
+    final normalized = <String, dynamic>{};
+    serviceJson.forEach((k, v) {
+      if (v is String &&
+          {
+            'id',
+            'price',
+            'price_after_discount',
+            'discount_present',
+            'review_rate',
+            'review_count',
+          }.contains(k)) {
+        final numVal = num.tryParse(v);
+        normalized[k] = numVal ?? v;
+      } else {
+        normalized[k] = v;
+      }
+    });
+
+    return Service.fromJson(normalized);
   }
 
   Future<Service?> _fetchServiceById(String serviceId) async {
