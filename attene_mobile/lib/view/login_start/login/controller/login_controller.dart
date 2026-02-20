@@ -1,4 +1,5 @@
 import '../../../../general_index.dart';
+import '../../../../services/app_view_mode.dart';
 
 class LoginController extends GetxController {
   final RxString email = ''.obs;

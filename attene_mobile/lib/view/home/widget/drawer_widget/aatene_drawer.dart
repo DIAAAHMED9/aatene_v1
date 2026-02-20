@@ -2,6 +2,7 @@ import 'package:attene_mobile/view/control_users/screen/faq_page.dart';
 import 'package:attene_mobile/view/control_users/screen/safety_tips.dart';
 
 import '../../../../general_index.dart';
+import '../../../../services/app_view_mode.dart';
 import '../../../../utils/responsive/responsive_dimensions.dart';
 import '../../controller/controller_drawer.dart';
 import 'account_item.dart';
@@ -26,7 +27,46 @@ class AateneDrawer extends StatelessWidget {
                 height: ResponsiveDimensions.h(50),
                 fit: BoxFit.cover,
               ),
-              Padding(
+              
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  child: Obx(
+    () => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('وضع التطبيق', style: getMedium()),
+        const SizedBox(height: 8),
+        _ModeTile(
+          title: 'مستخدم',
+          isSelected: controller.currentViewMode.value == AppViewMode.user,
+          onTap: () async {
+            Get.back();
+            await controller.setViewMode(AppViewMode.user);
+          },
+        ),
+        _ModeTile(
+          title: 'تاجر منتجات',
+          isSelected: controller.currentViewMode.value == AppViewMode.merchantProducts,
+          onTap: () async {
+            Get.back();
+            await controller.setViewMode(AppViewMode.merchantProducts);
+          },
+        ),
+        _ModeTile(
+          title: 'تاجر خدمات',
+          isSelected: controller.currentViewMode.value == AppViewMode.merchantServices,
+          onTap: () async {
+            Get.back();
+            await controller.setViewMode(AppViewMode.merchantServices);
+          },
+        ),
+        const Divider(height: 24),
+      ],
+    ),
+  ),
+),
+
+Padding(
                 padding: const EdgeInsets.all(16),
                 child: Obx(
                   () => Column(
@@ -155,6 +195,47 @@ class AateneDrawer extends StatelessWidget {
               SizedBox(height: 100),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModeTile extends StatelessWidget {
+  const _ModeTile({
+    required this.title,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String title;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppColors.primary400 : AppColors.neutral200,
+          ),
+          color: isSelected ? AppColors.primary50 : Colors.transparent,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              size: 18,
+              color: isSelected ? AppColors.primary400 : AppColors.neutral500,
+            ),
+            const SizedBox(width: 10),
+            Expanded(child: Text(title, style: getMedium())),
+          ],
         ),
       ),
     );

@@ -9,7 +9,9 @@ import '../widget/membership_card.dart';
 class DashboardView extends StatelessWidget {
   DashboardView({super.key});
 
-  final controller = Get.put(DashboardController(),permanent: true);
+  // لا نجعله permanent حتى يُعاد تهيئته عند تغيير وضع التطبيق (User / Merchant)
+  // لأننا نُعيد بناء الواجهة عند التبديل من الـ Drawer.
+  final controller = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,34 +82,50 @@ class DashboardView extends StatelessWidget {
               spacing: 5,
               children: [
                 Icon(Icons.campaign_outlined, size: 28),
-                Text("المحتوي (الشهر الحالي)", style: getMedium(fontSize: 14)),
-                Spacer(),
-                Container(
-                  padding: EdgeInsets.all(8),
-
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: AppColors.primary50),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 4,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/svg_images/calender_black.svg',
-                        semanticsLabel: 'My SVG Image',
-                        height: 17,
-                        width: 17,
+                Obx(() => Expanded(
+                  child: Text(
+                        "المحتوي (${controller.filterLabel.value})",
+                             maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+                        style: getMedium(fontSize: 14),
                       ),
-                      Text("الشهر الحالي", style: getMedium(fontSize: 12)),
-                      Icon(Icons.keyboard_arrow_down_outlined, size: 20),
-                    ],
+                )),
+                Spacer(),
+                InkWell(
+                  borderRadius: BorderRadius.circular(50),
+                  onTap: () => controller.openFilterSheet(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(color: AppColors.primary50),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 4,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/svg_images/calender_black.svg',
+                          semanticsLabel: 'My SVG Image',
+                          height: 17,
+                          width: 17,
+                        ),
+                        Obx(() => Text(
+                              controller.filterLabel.value,
+                              style: getMedium(fontSize: 12),
+                            )),
+                        const Icon(Icons.keyboard_arrow_down_outlined, size: 20),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
 
-            DashboardStats(controller: controller),
+            DashboardStats(
+              controller: controller,
+              isServicesMode: controller.isServicesMode,
+            ),
 
             _sectionTitle('المزيد'),
             Divider(

@@ -2,70 +2,74 @@ import '../../general_index.dart';
 import '../../services/screen/auth_required_screen.dart';
 import '../../api/core/api_helper.dart';
 import '../../view/home/screen/home_page.dart';
+import '../../services/app_view_mode.dart';
+import '../../view/control_panel_vendor/screen/vindor_home.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final dataService = DataInitializerService.to;
-    final bool isGuest = ApiHelper.isGuestMode;
 
-    List<String> names = ['الرئسية', 'منتجات', 'دردشة', 'USER'];
-    List<Widget> pages = [
-      HomePageWithTab(),
-      SearchScreen(),
-      isGuest ? const AuthRequiredScreen(featureName: 'الدردشة') : ChatScreen(),
-      isGuest
-          ? const AuthRequiredScreen(featureName: 'الملف الشخصي')
-          : ProfilePage(),
-    ];
-    List<IconData> icons = const [
-      Icons.home_filled,
-      Icons.search,
-      Icons.chat_sharp,
-      Icons.person_sharp,
-    ];
+final dataService = DataInitializerService.to;
+final bool isGuest = ApiHelper.isGuestMode;
+final box = GetStorage();
 
-    if (dataService.isMerchantUser) {
-      final mode = dataService.currentStoreMode;
+// App view mode: default is user (even if the account is merchant)
+AppViewMode viewMode = AppViewModeX.fromKey(box.read('app_view_mode')?.toString());
 
-      final List<String> mNames = [];
-      final List<Widget> mPages = [];
-      final List<IconData> mIcons = [];
+// Safety fallback: if stored merchant mode but the account isn't a merchant, force user mode
+if (viewMode.isMerchant && !dataService.isMerchantUser) {
+  viewMode = AppViewMode.user;
+  box.write('app_view_mode', viewMode.key);
+}
 
-      mNames.add('الرئسية');
-      mPages.add(isGuest ? SearchScreen() : HomePageWithTab());
-      mIcons.add(Icons.home_filled);
+final bool isMerchantView = viewMode.isMerchant;
 
-      mNames.add('بحث');
-      mPages.add(SearchScreen());
-      mIcons.add(Icons.search);
+List<String> names;
+List<Widget> pages;
+List<IconData> icons;
 
-      mNames.add('دردشة');
-      mPages.add(
-        isGuest
-            ? const AuthRequiredScreen(featureName: 'المحادثات')
-            : ChatScreen(),
-      );
-      mIcons.add(Icons.chat_sharp);
+if (!isMerchantView) {
+  names = ['الرئسية', 'منتجات', 'دردشة', 'USER'];
+  pages = [
+    HomePageWithTab(),
+    SearchScreen(),
+    isGuest ? const AuthRequiredScreen(featureName: 'الدردشة') : ChatScreen(),
+    isGuest
+        ? const AuthRequiredScreen(featureName: 'الملف الشخصي')
+        : ProfilePage(),
+  ];
+  icons = const [
+    Icons.home_filled,
+    Icons.search,
+    Icons.chat_sharp,
+    Icons.person_sharp,
+  ];
+} else {
+  names = ['الرئسية', 'بحث', 'دردشة', 'الحساب'];
+  pages = [
+    DashboardView(),
+    SearchScreen(),
+    isGuest ? const AuthRequiredScreen(featureName: 'المحادثات') : ChatScreen(),
+    isGuest ? const AuthRequiredScreen(featureName: 'الحساب') : ProfilePage(),
+  ];
+  icons = const [
+    Icons.home_filled,
+    Icons.search,
+    Icons.chat_sharp,
+    Icons.person_sharp,
+  ];
+}
 
-      mNames.add('الحساب');
-      mPages.add(
-        isGuest
-            ? const AuthRequiredScreen(featureName: 'الحساب')
-            : ProfilePage(),
-      );
-      mIcons.add(Icons.person_sharp);
+final bool showFab = isMerchantView;
+final bool isServices = viewMode == AppViewMode.merchantServices;
 
-      names = mNames;
-      pages = mPages;
-      icons = mIcons;
-    }
 
     return Stack(
       children: [
         CustomBottomNavigation(
+          showFab: showFab,
           notchWidthRatio: 0.3,
           notchDepthRatio: 0.4,
           pageName: names,
@@ -75,24 +79,27 @@ class MainScreen extends StatelessWidget {
           fabColor: AppColors.primary400,
           selectedColor: AppColors.primary400,
           unselectedColor: Colors.grey,
-          onFabTap: () {
-            final di = Get.find<DataInitializerService>();
-            if (ApiHelper.isGuestMode) {
-              Get.to(
-                () => const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'),
-              );
-              return;
-            }
-            if (di.currentStoreMode == StoreMode.services) {
-              Get.toNamed('/services-Screen');
-            } else {
-              Get.toNamed('/products-Screen');
-              try {
-                Get.find<ProductController>().navigateToAddProduct();
-              } catch (_) {}
-            }
-          },
+          onFabTap: !showFab
+            ? null
+            : () {
+                if (ApiHelper.isGuestMode) {
+                  Get.to(
+                    () => const AuthRequiredScreen(featureName: 'إضافة منتج/خدمة'),
+                  );
+                  return;
+                }
+
+                if (isServices) {
+                  Get.toNamed('/services-Screen');
+                } else {
+                  Get.toNamed('/products-Screen');
+                  try {
+                    Get.find<ProductController>().navigateToAddProduct();
+                  } catch (_) {}
+                }
+              },
         ),
+
       ],
     );
   }

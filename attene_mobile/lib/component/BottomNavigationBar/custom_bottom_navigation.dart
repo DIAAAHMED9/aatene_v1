@@ -7,6 +7,7 @@ class CustomBottomNavigation extends StatefulWidget {
   final List<Widget> pages;
   final List<IconData> icons;
   final List<String> pageName;
+  final bool showFab;
   final VoidCallback? onFabTap;
   final IconData fabIcon;
   final Color fabColor;
@@ -20,6 +21,7 @@ class CustomBottomNavigation extends StatefulWidget {
     required this.pages,
     required this.icons,
     required this.pageName,
+    this.showFab = true,
     this.onFabTap,
     this.fabColor = Colors.blueGrey,
     this.fabIcon = Icons.add,
@@ -78,10 +80,10 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
         .size
         .width;
     final double containerWidth = screenWidth - 30;
-    final double notchWidth = containerWidth * widget.notchWidthRatio;
-    final double notchDepth = 68 * widget.notchDepthRatio;
-
-    return Container(
+    final bool _showFab = widget.showFab && widget.onFabTap != null;
+    final double notchWidth = _showFab ? (containerWidth * widget.notchWidthRatio) : 0;
+    final double notchDepth = _showFab ? (68 * widget.notchDepthRatio) : 0;
+return Container(
       color: Colors.transparent,
       height: 100,
       child: Stack(
@@ -138,6 +140,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
             ),
           ),
 
+          if (_showFab)
           Positioned(
             bottom: 20 + 34,
             left: (screenWidth - _fabSize) / 2,

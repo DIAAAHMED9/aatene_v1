@@ -181,6 +181,17 @@ class ApiHelper {
           }
         } catch (_) {}
 
+        // دعم اختيار المتجر من الـ Drawer (يُحفظ عادةً في selected_store_id)
+        if (storeId == null || storeId!.isEmpty) {
+          try {
+            final box = GetStorage();
+            final v = box.read('selected_store_id') ??
+                box.read('store_id') ??
+                box.read('storeId');
+            if (v != null) storeId = v.toString();
+          } catch (_) {}
+        }
+
         if (storeId != null && storeId!.isNotEmpty) {
           print('🏪 [API] storeId in headers = $storeId');
         } else {

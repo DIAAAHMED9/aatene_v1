@@ -5,8 +5,13 @@ import '../controller/vendor_controller.dart';
 
 class DashboardStats extends StatelessWidget {
   final DashboardController controller;
+  final bool isServicesMode;
 
-  const DashboardStats({super.key, required this.controller});
+  const DashboardStats({
+    super.key,
+    required this.controller,
+    required this.isServicesMode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +19,7 @@ class DashboardStats extends StatelessWidget {
       spacing: 10,
       children: [
         _statCard(
-          title: 'اجمالي المنتجات',
+          title: isServicesMode ? 'اجمالي الخدمات' : 'اجمالي المنتجات',
           value: controller.productsCount,
           icon: SvgPicture.asset(
             'assets/images/svg_images/shirt.svg',
