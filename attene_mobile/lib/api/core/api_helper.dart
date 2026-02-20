@@ -624,6 +624,18 @@ class ApiHelper {
     );
   }
 
+  static Future<dynamic> storeData({
+    required String slug,
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) {
+    return get(
+      path: '/stores/$slug',
+      withLoading: withLoading,
+      shouldShowMessage: shouldShowMessage,
+    );
+  }
+
   static Future<dynamic> termsAndConditions({
     bool withLoading = true,
     bool shouldShowMessage = true,
@@ -631,6 +643,28 @@ class ApiHelper {
     return get(
       path: '/pages/terms-and-conditions',
       withLoading: withLoading,
+    );
+  }
+
+  static Future<dynamic> safetyRules({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/pages/safety-rules',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
+    );
+  }
+
+  static Future<dynamic> aboutUs({
+    bool withLoading = true,
+    bool shouldShowMessage = true,
+  }) async {
+    return get(
+      path: '/pages/about-us',
+      withLoading: withLoading,
+      // shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -643,6 +677,7 @@ class ApiHelper {
       withLoading: withLoading,
     );
   }
+
   static Future<dynamic> faqs({
     bool withLoading = true,
     bool shouldShowMessage = true,

@@ -1,9 +1,15 @@
-import 'package:attene_mobile/api/api_request.dart';
+import '../../../general_index.dart';
 
-class SupportController extends GetxController {
+class SupportController extends GetxController
+    with GetTickerProviderStateMixin {
   List<dynamic> termsAndConditions = [];
   List<dynamic> privacyPolicy = [];
-  List<dynamic> faqs = [];
+
+  Map<String, dynamic> safetyRules = {};
+  Map<String, dynamic> aboutUs = {};
+  List<dynamic> faqSections = [];
+
+  TabController? tabController;
 
   bool isLoading = true;
   bool hasError = false;
@@ -14,12 +20,65 @@ class SupportController extends GetxController {
     super.onReady();
     fetchTermsAndConditions();
 
+    /// لجلب بيانات شروط الخدمة
     fetchPrivacyPolicy();
 
-    fetchfaqs();
+    /// لجلب بيانات سياسات الخصوصية
+    fetchFaqs();
+
+    /// جلب بيانات شروط الخدمة
+    fetchSafetyRules();
+    fetchAboutUs();
 
     update();
   }
+
+  Future<void> fetchAboutUs() async {
+    try {
+      isLoading = true;
+      hasError = false;
+      update();
+
+      final res = await ApiHelper.aboutUs();
+
+      if (res != null && res['status'] == true) {
+        aboutUs = res['aboutUs'] ?? {};
+      } else {
+        hasError = true;
+        errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';
+      }
+    } catch (e) {
+      hasError = true;
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+  Future<void> fetchSafetyRules() async {
+    try {
+      isLoading = true;
+      hasError = false;
+      update();
+
+      final res = await ApiHelper.safetyRules();
+
+      if (res != null && res['status'] == true) {
+        safetyRules = res['safetyRules'] ?? {};
+      } else {
+        hasError = true;
+        errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';
+      }
+    } catch (e) {
+      hasError = true;
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  ///  TermsAndConditions
 
   Future<void> fetchTermsAndConditions() async {
     try {
@@ -54,6 +113,7 @@ class SupportController extends GetxController {
     return item['content']?[locale] ?? item['content']?['ar'] ?? '';
   }
 
+  ///  privacy-policy
   Future<void> fetchPrivacyPolicy() async {
     try {
       isLoading = true;
@@ -86,18 +146,21 @@ class SupportController extends GetxController {
     return item['content']?[locale] ?? item['content']?['ar'] ?? '';
   }
 
-  Future<void> fetchfaqs() async {
+  Future<void> fetchFaqs() async {
     try {
       isLoading = true;
       hasError = false;
       update();
 
-      final res = await ApiHelper.faqs();
-      if (res != null && res['status'] == true) {
-        faqs = res['faqs'] ?? [];
+      final response = await ApiHelper.faqs();
+
+      if (response != null && response['status'] == true) {
+        faqSections = response['faqs'] ?? [];
+
+        _initTabs();
       } else {
         hasError = true;
-        errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';
+        errorMessage = response['message'] ?? 'Error';
       }
     } catch (e) {
       hasError = true;
@@ -106,5 +169,19 @@ class SupportController extends GetxController {
       isLoading = false;
       update();
     }
+  }
+
+  void _initTabs() {
+    tabController?.dispose();
+
+    tabController = TabController(length: faqSections.length, vsync: this);
+
+    update();
+  }
+
+  @override
+  void onClose() {
+    tabController?.dispose();
+    super.onClose();
   }
 }

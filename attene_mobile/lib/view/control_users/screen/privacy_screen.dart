@@ -10,7 +10,6 @@ class PrivacyScreen extends StatefulWidget {
 
 class _PrivacyScreenState extends State<PrivacyScreen> {
   int expandedIndex = -1;
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SupportController>(

@@ -160,12 +160,7 @@ class _ReviewSheetState extends State<ReviewSheet> {
                                       borderColor: AppColors.primary400,
                                       textColor: AppColors.light1000,
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute<void>(
-                                            builder: (context) => ProfilePage(),
-                                          ),
-                                        );
+                                        Get.to(ProfilePage());
                                       },
                                     ),
                                   ],
