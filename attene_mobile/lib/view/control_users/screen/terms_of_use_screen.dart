@@ -11,9 +11,6 @@ class TermsOfUseScreen extends StatefulWidget {
 class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
   int expandedIndex = -1;
 
-  // final SupportController controller =
-  // Get.put(SupportController());
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SupportController>(
@@ -70,7 +67,6 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
             ],
           ),
 
-          // ================= BODY =================
           body: controller.isLoading
               ? const Center(child: CircularProgressIndicator())
               : controller.hasError

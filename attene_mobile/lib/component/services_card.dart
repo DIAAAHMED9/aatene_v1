@@ -21,37 +21,79 @@ class ServicesCard extends StatefulWidget {
 }
 
 class _ServicesCardState extends State<ServicesCard> {
-  late bool isLiked;
   late FavoriteController _favController;
+  bool _favoriteBusy = false;
 
   @override
   void initState() {
     super.initState();
-    isLiked = widget.isFavorite;
-    _favController = Get.find<FavoriteController>();
+
+    _favController = Get.isRegistered<FavoriteController>()
+        ? Get.find<FavoriteController>()
+        : Get.put(FavoriteController(), permanent: true);
+
+    final apiFav = (widget.service?['is_favorite'] == true);
+    final id = (widget.service?['id'] ?? '').toString();
+    if (apiFav && id.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _favController.cacheFavorite(
+          type: FavoriteType.service,
+          itemId: id,
+          value: true,
+          setOverride: false,
+        );
+      });
+    }
   }
 
   Future<void> toggleLike() async {
     if (widget.service == null) return;
 
-    final newState = !isLiked;
-    setState(() => isLiked = newState);
+    final serviceId = (widget.service!['id'] ?? '').toString();
+    final apiFav = (widget.service!['is_favorite'] == true);
+    if (serviceId.isEmpty || _favoriteBusy) return;
 
-    final success = newState
-        ? await _favController.addToFavorites(
-            type: FavoriteType.service,
-            itemId: widget.service!['id'].toString(),
-          )
-        : await _favController.removeFromFavorites(
-            type: FavoriteType.service,
-            itemId: widget.service!['id'].toString(),
-          );
+    final wasLiked = _favController.getEffectiveFavorite(
+      FavoriteType.service,
+      serviceId,
+      apiFav: apiFav,
+    );
+    final newState = !wasLiked;
+
+    setState(() => _favoriteBusy = true);
+
+    _favController.setLocalFavorite(
+      type: FavoriteType.service,
+      itemId: serviceId,
+      value: newState,
+      setOverride: true,
+    );
+
+    bool success = false;
+    if (newState) {
+      success = await _favController.addToFavorites(
+        type: FavoriteType.service,
+        itemId: serviceId,
+      );
+    } else {
+      success = await _favController.removeFromFavorites(
+        type: FavoriteType.service,
+        itemId: serviceId,
+      );
+    }
 
     if (!success) {
-      setState(() => isLiked = !newState);
+      _favController.setLocalFavorite(
+        type: FavoriteType.service,
+        itemId: serviceId,
+        value: wasLiked,
+        setOverride: true,
+      );
     } else {
       widget.onFavoriteChanged?.call(newState);
     }
+
+    if (mounted) setState(() => _favoriteBusy = false);
   }
 
   @override
@@ -61,6 +103,7 @@ class _ServicesCardState extends State<ServicesCard> {
     }
 
     final s = widget.service!;
+    final String serviceId = s['id']?.toString() ?? '';
 
     final String coverImage = s['cover']?.toString() ??
         s['image']?.toString() ??
@@ -142,11 +185,21 @@ class _ServicesCardState extends State<ServicesCard> {
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? AppColors.primary400 : Colors.grey,
-                          size: 18,
-                        ),
+                        child: Obx(() {
+                          final apiFav = (s['is_favorite'] == true);
+                          final liked = serviceId.isNotEmpty
+                              ? _favController.getEffectiveFavorite(
+                                  FavoriteType.service,
+                                  serviceId,
+                                  apiFav: apiFav,
+                                )
+                              : apiFav;
+                          return Icon(
+                            liked ? Icons.favorite : Icons.favorite_border,
+                            color: liked ? AppColors.primary400 : Colors.grey,
+                            size: 18,
+                          );
+                        }),
                       ),
                     ),
                   ),

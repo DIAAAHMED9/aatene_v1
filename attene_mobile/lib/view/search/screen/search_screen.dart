@@ -319,7 +319,7 @@ class _SearchScreenState extends State<SearchScreen>
     print('dataProduct = $data');
     switch (type) {
       case SearchType.products:
-        return ProductCard(product: data);
+      return ProductCard(key: ValueKey('product_${data['id'] ?? ''}'), product: data);
       case SearchType.services:
         return ServicesCard(service: data);
       case SearchType.stores:

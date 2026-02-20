@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
@@ -36,9 +37,21 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   @override
   void initState() {
-    print('objectargs $args');
     super.initState();
-    _loadProduct();
+
+    final dynamic rawSlug = (args is Map) ? (args['slug'] ?? args['slag'] ?? args['productSlug']) : null;
+    final dynamic rawId = (args is Map) ? (args['productId'] ?? args['id']) : null;
+
+    final String slug = (rawSlug ?? '').toString();
+    final String idStr = (rawId ?? '').toString();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.previousRoute=='/mainScreen') {
+        _loadProductBySlug(slug);
+      } else {
+        _loadProductById(idStr);
+      }
+    });
   }
 
   @override
@@ -50,26 +63,36 @@ class _ProductDetailsState extends State<ProductDetails> {
   void toggleLike() {
     setState(() => isLiked = !isLiked);
   }
-
-  Future<void> _loadProduct() async {
+  Future<void> _loadProductBySlug(String slug) async {
     try {
       setState(() => isLoading = true);
       
-      if (args is Map<String, dynamic> && args.containsKey('id')) {
-        final productId = args['id'];
+      await _productService.fetchProductBySlug(
+        slug: slug,
+        withLoading: false,
+      );
         
-        if (productId is int) {
-          await _productService.fetchProductById(
-            productId: productId,
-            withLoading: false,
-          );
-        } else if (productId is String) {
-          await _productService.fetchProductById(
-            productId: int.parse(productId),
-            withLoading: false,
-          );
-        }
+    } catch (e) {
+      print('Error loading product: $e');
+      Get.snackbar('خطأ', 'فشل في تحميل بيانات المنتج');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _loadProductById(String idStr) async {
+    try {
+      setState(() => isLoading = true);
+
+      final int id = int.tryParse(idStr) ?? 0;
+      if (id == 0) {
+        throw Exception('Missing product id/slug');
       }
+
+      await _productService.fetchProductById(
+        productId: id,
+        withLoading: false,
+      );
     } catch (e) {
       print('Error loading product: $e');
       Get.snackbar('خطأ', 'فشل في تحميل بيانات المنتج');
@@ -167,9 +190,39 @@ class _ProductDetailsState extends State<ProductDetails> {
     }
   }
 
-  List<dynamic> _extractTags(Map<String, dynamic> product) {
+  List<String> _extractTags(Map<String, dynamic> product) {
+    final dynamic raw = product['tags'];
 
-    return product['tags'] ?? '';
+    if (raw == null) return <String>[];
+
+    if (raw is String) {
+      final s = raw.trim();
+      if (s.isEmpty) return <String>[];
+      try {
+        final decoded = json.decode(s);
+        if (decoded is List) {
+          return decoded.map((e) => _tagToString(e)).where((e) => e.isNotEmpty).toList();
+        }
+      } catch (_) {}
+      return s.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    }
+
+    if (raw is List) {
+      return raw.map((e) => _tagToString(e)).where((e) => e.isNotEmpty).toList();
+    }
+
+    final one = _tagToString(raw);
+    return one.isEmpty ? <String>[] : <String>[one];
+  }
+
+  String _tagToString(dynamic e) {
+    if (e == null) return '';
+    if (e is String) return e.trim();
+    if (e is Map) {
+      final v = e['name'] ?? e['title'] ?? e['label'] ?? e['value'];
+      return (v ?? '').toString().trim();
+    }
+    return e.toString().trim();
   }
 
   String _extractReviewRate(Map<String, dynamic> product) {

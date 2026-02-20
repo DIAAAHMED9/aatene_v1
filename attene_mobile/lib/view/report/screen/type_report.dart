@@ -15,7 +15,6 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ReportController>(
-      // init: ReportController(),
       builder: (controller) {
         return Scaffold(
           appBar: AppBar(
@@ -72,7 +71,6 @@ class _ReportAbuseScreenState extends State<ReportAbuseScreen> {
 
                           const SizedBox(height: 20),
 
-                          /// القائمة
                           Expanded(
                             child: ListView.builder(
                               itemCount: controller.reportTypes.length,

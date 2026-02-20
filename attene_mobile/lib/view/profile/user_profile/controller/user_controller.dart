@@ -49,7 +49,9 @@ class ProfileController extends BaseProfileController {
     }
   }
 
-  void toggleFollow() {
+  @override
+  Future<void> toggleFollow() async {
+    await super.toggleFollow();
     update();
   }
 }

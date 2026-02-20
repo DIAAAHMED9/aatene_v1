@@ -1,112 +1,3 @@
-// import '../../../../general_index.dart';
-//
-// class ReportController extends GetxController {
-//
-//   Map<String, dynamic> reportStates = {};
-//   List<dynamic> reportData = [];
-//
-//
-//   bool isLoading = true;
-//   bool hasError = false;
-//   String errorMessage = '';
-//
-//   @override
-//   void onReady() {
-//     super.onReady();
-//     fetchReportStateData();
-//     fetchReportTypeData();
-//     fetchReportData();
-//   }
-//
-//   Future<void> fetchReportData() async {
-//     try {
-//       isLoading = true;
-//       hasError = false;
-//       update();
-//
-//       final res = await ApiHelper.reportData();
-//
-//       if (res != null && res['status'] == true) {
-//         reportData = res['reports'] ?? [];
-//       } else {
-//         hasError = true;
-//         errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';
-//       }
-//     } catch (e) {
-//       hasError = true;
-//       errorMessage = e.toString();
-//     } finally {
-//       isLoading = false;
-//       update();
-//     }
-//   }
-//
-//   Future<void> fetchReportStateData() async {
-//     try {
-//       isLoading = true;
-//       hasError = false;
-//       update();
-//
-//       final res = await ApiHelper.reportStates();
-//
-//       if (res != null && res['status'] == true) {
-//         reportStates = res['by_status'] ?? {};
-//       } else {
-//         hasError = true;
-//         errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';
-//       }
-//
-//     } catch (e) {
-//       hasError = true;
-//       errorMessage = e.toString();
-//     } finally {
-//       isLoading = false;
-//       update();
-//     }
-//   }
-//
-//   /// helper لتحويل الحالة إلى لون
-//   Color getStatusColor(String status) {
-//     switch (status) {
-//       case 'pending':
-//         return AppColors.primary400;
-//
-//       case 'processing':
-//         return Colors.orange;
-//
-//       case 'finished':
-//         return Colors.green;
-//
-//       case 'cancelled':
-//         return Colors.red;
-//
-//       default:
-//         return Colors.grey;
-//     }
-//   }
-//
-//   /// helper لتحويل الحالة إلى نص عربي
-//   String getStatusTitle(String status) {
-//     switch (status) {
-//       case 'pending':
-//         return "جديدة";
-//
-//       case 'processing':
-//         return "قيد المراجعة";
-//
-//       case 'finished':
-//         return "مكتملة";
-//
-//       case 'cancelled':
-//         return "ملغية";
-//
-//       default:
-//         return status;
-//     }
-//   }
-// }
-//
-
 import '../../../../general_index.dart';
 
 class ReportController extends GetxController {
@@ -115,7 +6,6 @@ class ReportController extends GetxController {
 
   List<dynamic> reportData = [];
 
-  /// القائمة النهائية بعد البحث + الفلترة
   List<dynamic> filteredReports = [];
 
   final TextEditingController searchController = TextEditingController();
@@ -124,7 +14,6 @@ class ReportController extends GetxController {
   bool hasError = false;
   String errorMessage = '';
 
-  /// الحالة المختارة للفلترة
   String selectedStatus = "all";
 
   @override
@@ -170,7 +59,7 @@ class ReportController extends GetxController {
 
       if (res != null && res['status'] == true) {
         reportData = res['reports'] ?? [];
-        applyFilters(); // تطبيق أولي
+        applyFilters();
       }
     } catch (e) {
       hasError = true;
@@ -194,12 +83,10 @@ class ReportController extends GetxController {
     final query = searchController.text.toLowerCase();
 
     filteredReports = reportData.where((report) {
-      /// فلترة حسب الحالة
       final matchesStatus = selectedStatus == "all"
           ? true
           : report['status'] == selectedStatus;
 
-      /// فلترة حسب البحث
       final uuid = (report['uuid'] ?? '').toString().toLowerCase();
       final typeName = (report['report_type']?['name'] ?? '')
           .toString()
@@ -220,18 +107,15 @@ class ReportController extends GetxController {
     update();
   }
 
-  /// عند تغيير الفلتر
   void changeStatusFilter(String status) {
     selectedStatus = status;
     applyFilters();
   }
 
-  /// عند البحث
   void onSearchChanged(String value) {
     applyFilters();
   }
 
-  /// الحالة
   Color getStatusColor(String status) {
     switch (status) {
       case 'pending':

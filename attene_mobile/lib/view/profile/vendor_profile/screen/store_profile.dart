@@ -1,4 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
+import 'package:attene_mobile/services/follow_state_controller.dart';
 import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -9,7 +10,8 @@ import '../widget/offers.dart';
 import '../widget/store_states.dart';
 
 class StoreProfilePage extends StatefulWidget {
-  const StoreProfilePage({super.key, required storeId});
+  final int storeId;
+  const StoreProfilePage({super.key, required this.storeId});
 
   @override
   State<StoreProfilePage> createState() => _StoreProfilePageState();
@@ -17,6 +19,19 @@ class StoreProfilePage extends StatefulWidget {
 
 class _StoreProfilePageState extends State<StoreProfilePage> {
   bool isFollowing = false;
+  late FollowStateController _followController;
+
+  @override
+  void initState() {
+    super.initState();
+    _followController = Get.isRegistered<FollowStateController>()
+        ? Get.find<FollowStateController>()
+        : Get.put(FollowStateController(), permanent: true);
+    isFollowing = _followController.isFollowing(
+      followedType: 'store',
+      followedId: widget.storeId.toString(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -595,7 +610,17 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  onPressed: () => setState(() => isFollowing = !isFollowing),
+                  onPressed: () async {
+                    final newState = !isFollowing;
+                    setState(() => isFollowing = newState);
+                    final ok = newState
+                        ? await _followController.follow(followedType: 'store', followedId: widget.storeId.toString())
+                        : await _followController.unfollow(followedType: 'store', followedId: widget.storeId.toString());
+                    if (!ok) {
+                      setState(() => isFollowing = !newState);
+                      Get.snackbar('خطأ', 'فشل تحديث المتابعة');
+                    }
+                  },
                   icon: Icon(
                     isFollowing ? Icons.done : Icons.person_add_alt_1,
                     color: isFollowing

@@ -1,5 +1,5 @@
 import '../../../general_index.dart';
-import '../controller/report_controller.dart'; // قد نحتاج إلى دوال المساعدة getStatusTitle, getStatusColor
+import '../controller/report_controller.dart';
 
 class ShowReport extends StatelessWidget {
   const ShowReport({super.key});
@@ -35,7 +35,6 @@ class ShowReport extends StatelessWidget {
           child: Container(
             width: double.infinity,
             constraints: BoxConstraints(maxHeight: 500),
-            // حد أقصى مع إمكانية التمدد
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -83,12 +82,8 @@ class ShowReport extends StatelessWidget {
                       valueColor: Colors.grey,
                     ),
                     Divider(),
-                    // يمكن إضافة المزيد من المعلومات مثل المستخدم إذا رغبت:
-                    // _buildInfoRow("مقدم الشكوى", report['user']?['fullname'] ?? "غير معروف"),
-                    // Divider(),
                     AateneButton(
                       onTap: () => Get.back(),
-                      // رجوع بسيط
                       buttonText: "إغلاق",
                       color: AppColors.primary400,
                       borderColor: AppColors.primary400,
@@ -130,7 +125,6 @@ class ShowReport extends StatelessWidget {
   }
 
   Widget _buildStatusRow(String status) {
-    // استخدام دوال المساعدة من ReportController (إذا كانت متاحة static) أو تكرارها هنا
     String statusText = _getStatusTitle(status);
     Color statusColor = _getStatusColor(status);
 
@@ -192,7 +186,6 @@ class ShowReport extends StatelessWidget {
     if (dateStr == null) return "";
     try {
       final date = DateTime.parse(dateStr);
-      // تنسيق عربي بسيط: 2026-02-10
       return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
     } catch (_) {
       return dateStr;

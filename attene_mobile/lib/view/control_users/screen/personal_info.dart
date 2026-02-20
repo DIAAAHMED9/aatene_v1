@@ -39,7 +39,6 @@ class DistrictModel {
   int get hashCode => id.hashCode;
 }
 
-//                      CONTROLLER
 class PersonalInfoController extends GetxController {
   final fullNameController = TextEditingController();
 
@@ -86,10 +85,8 @@ class PersonalInfoController extends GetxController {
   final RxBool isLoadingCities = false.obs;
   final RxBool isLoadingDistricts = false.obs;
 
-  // كاش المدن
   static List<CityModel>? _citiesCache;
 
-  // دالة مساعدة للبحث
   E? firstWhereOrNull<E>(List<E> list, bool Function(E) test) {
     for (final element in list) {
       if (test(element)) return element;
@@ -110,22 +107,16 @@ class PersonalInfoController extends GetxController {
     loadInitialData();
   }
 
-  // ============================================================
-  // ✅ تحميل المدن أولاً ثم بيانات المستخدم
   Future<void> loadInitialData() async {
     isLoadingPage.value = true;
 
-    // 1️⃣ أولاً: تحميل قائمة المدن
     await getCities();
 
-    // 2️⃣ ثانياً: تحميل بيانات المستخدم (الآن المدن متوفرة)
     await getUserData();
 
     isLoadingPage.value = false;
   }
 
-  // ============================================================
-  // جلب بيانات المستخدم من API
   Future<void> getUserData() async {
     try {
       final response = await ApiHelper.get(path: '/auth/account/profile');
@@ -178,8 +169,6 @@ class PersonalInfoController extends GetxController {
     }
   }
 
-  // ============================================================
-  // جلب قائمة المدن
   Future<void> getCities() async {
     if (_citiesCache != null) {
       cities.value = _citiesCache!;
@@ -218,8 +207,6 @@ class PersonalInfoController extends GetxController {
     }
   }
 
-  // ============================================================
-  // جلب الأحياء حسب المدينة
   Future<void> getDistricts(int cityId) async {
     try {
       isLoadingDistricts.value = true;
@@ -256,8 +243,6 @@ class PersonalInfoController extends GetxController {
     }
   }
 
-  // ============================================================
-  // تغيير المدينة المحددة
   void changeCity(CityModel city) {
     _selectedCity.value = city;
     _selectedDistrict.value = null;
@@ -265,8 +250,6 @@ class PersonalInfoController extends GetxController {
     getDistricts(city.id);
   }
 
-  // ============================================================
-  // تحديث بيانات الحساب
   Future<bool> updateAccount() async {
     try {
       final nameParts = fullNameController.text.trim().split(' ');
@@ -297,7 +280,6 @@ class PersonalInfoController extends GetxController {
     }
   }
 
-  // ============================================================
   @override
   void onClose() {
     fullNameController.dispose();
@@ -306,9 +288,6 @@ class PersonalInfoController extends GetxController {
   }
 }
 
-// ============================================================
-//                      الواجهة (UI)
-// ============================================================
 class PersonalInfo extends StatefulWidget {
   const PersonalInfo({super.key});
 

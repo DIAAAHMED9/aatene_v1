@@ -4,7 +4,6 @@ class ProfileCotrolController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  /// 🔐 Password Controllers
   final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -20,7 +19,6 @@ class ProfileCotrolController extends GetxController {
     super.onClose();
   }
 
-  /// ================= EMAIL =================
   Future<bool> updateEmail(String newEmail) async {
     try {
       final response = await ApiHelper.post(
@@ -34,7 +32,6 @@ class ProfileCotrolController extends GetxController {
     }
   }
 
-  /// ================= PHONE =================
   Future<bool> updatePhone(String newPhone) async {
     try {
       final response = await ApiHelper.post(
@@ -48,7 +45,6 @@ class ProfileCotrolController extends GetxController {
     }
   }
 
-  /// ================= PASSWORD =================
   Future<bool> updatePassword() async {
     try {
       final response = await ApiHelper.post(
@@ -63,7 +59,6 @@ class ProfileCotrolController extends GetxController {
       debugPrint('StatusCode: ${response.statusCode}');
       debugPrint('Response: ${response.data}');
 
-      /// ✅ أي رد بدون Exception = نجاح
       return true;
     } catch (e) {
       debugPrint('updatePassword exception: $e');

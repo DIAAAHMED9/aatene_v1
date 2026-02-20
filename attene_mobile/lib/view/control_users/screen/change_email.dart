@@ -67,7 +67,6 @@ class ChangeEmail extends StatelessWidget {
                   return;
                 }
 
-                /// Loader
                 Get.dialog(
                   const Center(child: CircularProgressIndicator()),
                   barrierDismissible: false,
@@ -75,7 +74,6 @@ class ChangeEmail extends StatelessWidget {
 
                 final success = await controller.updateEmail(email);
 
-                /// إغلاق اللودر دائمًا
                 if (Get.isDialogOpen == true) {
                   Get.back();
                 }

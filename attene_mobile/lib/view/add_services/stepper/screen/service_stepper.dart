@@ -159,7 +159,7 @@ class _ServiceStepperScreenState extends StepperScreenBaseState<ServiceStepperSc
 
     switch (stepIndex) {
       case 0:
-             return controller.validateServiceForm(); // هذه الدالة تظهر رسالة الخطأ تلقائياً
+             return controller.validateServiceForm();
 
       case 1:
         if (!controller.validatePriceForm()) {

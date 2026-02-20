@@ -101,6 +101,43 @@ class ProductService extends GetxController {
     }
   }
 
+  fetchProductBySlug({required String slug, bool withLoading = false}) async {
+    try {
+      final response = await ApiHelper.get(
+        path: '/products/search/$slug',
+        withLoading: withLoading,
+      );
+
+      if (response != null && response['status'] == true) {
+        final Map<String, dynamic> p =
+            (response['product'] is Map)
+                ? Map<String, dynamic>.from(response['product'])
+                : (response['data'] is Map)
+                    ? Map<String, dynamic>.from(response['data'])
+                    : <String, dynamic>{};
+
+        if (response['store'] is Map) {
+          p['store'] = Map<String, dynamic>.from(response['store']);
+        }
+        if (response['attributes'] is List) {
+          p['attributes'] = List<dynamic>.from(response['attributes']);
+        }
+
+        productData = p;
+        update();
+      }
+      return null;
+    } catch (e) {
+      print('❌ [PRODUCT SERVICE] Error fetching product by slug: $e');
+      return null;
+    }
+  }
+
+  @Deprecated('Use fetchProductBySlug')
+  fetchProductBySlag({required String slag, bool withLoading = false}) async {
+    return fetchProductBySlug(slug: slag, withLoading: withLoading);
+  }
+
   Future<bool> deleteProduct(String productId) async {
     try {
       final response = await ApiHelper.delete(

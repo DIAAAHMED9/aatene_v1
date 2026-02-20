@@ -70,14 +70,12 @@ class _DemoStepperScreenState
 
 @override
 Future<void> initializeControllers() async {
-  // المتحكمات مسجلة مسبقاً في AppBindings، لا داعي لإعادة تسجيلها
   final central = Get.find<ProductCentralController>();
   final variation = Get.find<ProductVariationController>();
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
     final Section? argSection = Get.arguments?['selectedSection'] as Section?;
 
-    // إعادة تعيين البيانات مع الاحتفاظ بالقسم إذا كان موجوداً
     central.resetAllData(keepSection: argSection == null);
     if (argSection != null) {
       central.selectedSection(argSection);
@@ -348,48 +346,4 @@ Future<void> initializeControllers() async {
     });
   }
 
-  // @override
-  // Future<void> initializeControllers() async {
-  //   print('🚀 [DEMO STEPPER] Initializing all required controllers');
-
-  //   try {
-  //     if (!Get.isRegistered<ProductCentralController>()) {
-  //       Get.put<ProductCentralController>(
-  //         ProductCentralController(),
-  //         permanent: true,
-  //       );
-  //       print('✅ [DEMO STEPPER] ProductCentralController initialized');
-  //     }
-
-  //     if (!Get.isRegistered<ProductVariationController>()) {
-  //       Get.put<ProductVariationController>(
-  //         ProductVariationController(),
-  //         permanent: true,
-  //       );
-  //       print('✅ [DEMO STEPPER] ProductVariationController initialized');
-  //     }
-
-  //     if (!Get.isRegistered<AddProductController>()) {
-  //       Get.put<AddProductController>(AddProductController(), permanent: true);
-  //       print('✅ [DEMO STEPPER] AddProductController initialized');
-  //     }
-
-  //     if (!Get.isRegistered<KeywordController>()) {
-  //       Get.put<KeywordController>(KeywordController(), permanent: true);
-  //       print('✅ [DEMO STEPPER] KeywordController initialized');
-  //     }
-
-  //     if (!Get.isRegistered<RelatedProductsController>()) {
-  //       Get.put<RelatedProductsController>(
-  //         RelatedProductsController(),
-  //         permanent: true,
-  //       );
-  //       print('✅ [DEMO STEPPER] RelatedProductsController initialized');
-  //     }
-
-  //     print('✅ [DEMO STEPPER] All controllers initialized successfully');
-  //   } catch (e) {
-  //     print('❌ [DEMO STEPPER] Error initializing controllers: $e');
-  //   }
-  // }
 }

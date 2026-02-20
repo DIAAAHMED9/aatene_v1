@@ -25,9 +25,6 @@ class FollowersController extends GetxController {
     loadFollowers();
   }
 
-  // ================================
-  // Load Followings
-  // ================================
   Future<void> loadFollowings() async {
     isLoadingFollowings.value = true;
 
@@ -55,9 +52,6 @@ class FollowersController extends GetxController {
     }
   }
 
-  // ================================
-  // Load Followers
-  // ================================
   Future<void> loadFollowers() async {
     isLoadingFollowers.value = true;
 
@@ -85,7 +79,6 @@ class FollowersController extends GetxController {
     }
   }
 
-  // ================================
   void changeTab(int index) {
     selectedTab.value = index;
     pageController.animateToPage(
@@ -95,7 +88,6 @@ class FollowersController extends GetxController {
     );
   }
 
-  // ================================
   void onSearch(String value) {
     final query = value.toLowerCase();
 
@@ -112,7 +104,6 @@ class FollowersController extends GetxController {
     );
   }
 
-  // ================================
   Future<void> unfollow(FollowerModel model) async {
     _lastRemovedIndex = followingList.indexOf(model);
     _lastRemoved = model;

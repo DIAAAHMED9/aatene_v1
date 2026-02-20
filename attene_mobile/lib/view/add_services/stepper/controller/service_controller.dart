@@ -8,12 +8,10 @@ class ServiceController extends GetxController {
   final RxString editingStoreId = ''.obs;
   bool _disposed = false;
 
-  // متغير ثابت لحفظ النص عند التدمير (لحالات إعادة الإنشاء)
   static String? _savedTitle;
 
   late TextEditingController titleController;
 
-  // دالة تسوية الأرقام من String إلى num
   dynamic _normalizeNumericStrings(dynamic v, {String? key}) {
     const numericKeys = <String>{
       'id',
@@ -144,10 +142,9 @@ class ServiceController extends GetxController {
     super.onInit();
     titleController = TextEditingController();
 
-    // استعادة النص المحفوظ إذا كان موجوداً
     if (_savedTitle != null) {
       titleController.text = _savedTitle!;
-      _savedTitle = null; // مسح بعد الاستعادة
+      _savedTitle = null;
     }
 
     print('✅ titleController created with hash: ${titleController.hashCode}');
@@ -455,16 +452,10 @@ class ServiceController extends GetxController {
     return allAccepted;
   }
 
-// service_controller.dart - الجزء المعدل
-
-// service_controller.dart
-// ... باقي الكود ...
-
 bool validateServiceForm() {
   bool isValid = true;
   List<String> missingFields = [];
 
-  // ✅ طباعة معلومات التصحيح
   final title = titleController.text.trim();
   print('🔍 validateServiceForm - titleController.hashCode: ${titleController.hashCode}');
   print('🔍 title text: "${titleController.text}" (trimmed: "$title")');
@@ -479,7 +470,6 @@ bool validateServiceForm() {
     print('✅ عنوان الخدمة: "$title"');
   }
 
-  // التحقق من القسم الرئيسي
   if (selectedMainCategory.value.trim().isEmpty) {
     isMainCategoryError.value = true;
     missingFields.add('القسم الرئيسي');
@@ -488,7 +478,6 @@ bool validateServiceForm() {
     isMainCategoryError.value = false;
   }
 
-  // التحقق من الفئة الفرعية
   if (selectedCategory.value.trim().isEmpty || selectedCategoryId.value == 0) {
     isCategoryError.value = true;
     missingFields.add('الفئة الفرعية');
@@ -497,7 +486,6 @@ bool validateServiceForm() {
     isCategoryError.value = false;
   }
 
-  // عرض رسالة خطأ مفصلة إذا كان هناك حقول ناقصة
   if (!isValid) {
     Get.snackbar(
       'تنبيه',
@@ -511,7 +499,6 @@ bool validateServiceForm() {
   update(['service_title_field', 'main_category_field', 'category_field']);
   return isValid;
 }
-
 
   bool validatePriceForm() {
     bool isValid = true;
@@ -1991,7 +1978,6 @@ bool validateServiceForm() {
 
   @override
   void dispose() {
-    // حفظ النص قبل التدمير
     if (titleController.text.isNotEmpty) {
       _savedTitle = titleController.text;
     }

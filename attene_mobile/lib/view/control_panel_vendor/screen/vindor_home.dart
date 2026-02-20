@@ -9,8 +9,6 @@ import '../widget/membership_card.dart';
 class DashboardView extends StatelessWidget {
   DashboardView({super.key});
 
-  // لا نجعله permanent حتى يُعاد تهيئته عند تغيير وضع التطبيق (User / Merchant)
-  // لأننا نُعيد بناء الواجهة عند التبديل من الـ Drawer.
   final controller = Get.put(DashboardController());
 
   @override
@@ -35,6 +33,9 @@ class DashboardView extends StatelessWidget {
             child: Icon(Icons.arrow_back, color: AppColors.neutral100),
           ),
         ),
+        actions: [
+          IconButton(onPressed: ()=>ApiHelper.logout(), icon: Icon(Icons.logout_outlined))
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -82,14 +83,10 @@ class DashboardView extends StatelessWidget {
               spacing: 5,
               children: [
                 Icon(Icons.campaign_outlined, size: 28),
-                Obx(() => Expanded(
-                  child: Text(
-                        "المحتوي (${controller.filterLabel.value})",
-                             maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-                        style: getMedium(fontSize: 14),
-                      ),
-                )),
+                Obx(() => Text(
+                      "المحتوي (${controller.filterLabel.value})",
+                      style: getMedium(fontSize: 14),
+                    )),
                 Spacer(),
                 InkWell(
                   borderRadius: BorderRadius.circular(50),

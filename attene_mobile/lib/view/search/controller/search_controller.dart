@@ -95,10 +95,7 @@ class SearchController extends GetxController {
         params['search'] = searchQuery.value;
       }
 
-      final queryString = params.entries
-          .where((e) => e.value != null && e.value.toString().isNotEmpty)
-          .map((e) => '${e.key}=${Uri.encodeComponent(e.value.toString())}')
-          .join('&');
+      final queryString = _buildQueryString(params);
 
       final fullUrl = queryString.isEmpty ? basePath : '$basePath?$queryString';
       print('🌐 [Search] Request: $fullUrl');
@@ -124,6 +121,32 @@ class SearchController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  String _buildQueryString(Map<String, dynamic> params) {
+    final pairs = <String>[];
+
+    for (final entry in params.entries) {
+      final key = entry.key;
+      final value = entry.value;
+      if (value == null) continue;
+
+      if (value is List) {
+        for (final v in value) {
+          if (v == null) continue;
+          final s = v.toString();
+          if (s.isEmpty) continue;
+          pairs.add('$key=${Uri.encodeComponent(s)}');
+        }
+        continue;
+      }
+
+      final s = value.toString();
+      if (s.isEmpty) continue;
+      pairs.add('$key=${Uri.encodeComponent(s)}');
+    }
+
+    return pairs.join('&');
   }
 
   Future<void> loadMore() async {

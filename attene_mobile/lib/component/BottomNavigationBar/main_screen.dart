@@ -15,10 +15,8 @@ final dataService = DataInitializerService.to;
 final bool isGuest = ApiHelper.isGuestMode;
 final box = GetStorage();
 
-// App view mode: default is user (even if the account is merchant)
 AppViewMode viewMode = AppViewModeX.fromKey(box.read('app_view_mode')?.toString());
 
-// Safety fallback: if stored merchant mode but the account isn't a merchant, force user mode
 if (viewMode.isMerchant && !dataService.isMerchantUser) {
   viewMode = AppViewMode.user;
   box.write('app_view_mode', viewMode.key);
@@ -64,7 +62,6 @@ if (!isMerchantView) {
 
 final bool showFab = isMerchantView;
 final bool isServices = viewMode == AppViewMode.merchantServices;
-
 
     return Stack(
       children: [

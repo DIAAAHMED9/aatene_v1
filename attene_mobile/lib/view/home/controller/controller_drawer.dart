@@ -94,16 +94,12 @@ class DrawerControllerX extends GetxController {
     } catch (e) {}
   }
 
-  
-
 Future<void> setViewMode(AppViewMode mode) async {
-  // Disallow merchant modes for non-merchant accounts
   if (mode.isMerchant && !ApiHelper.isMerchantUser) {
     Get.snackbar('تنبيه', 'حسابك ليس حساب تاجر');
     return;
   }
 
-  // If merchant mode requires a selected store, route to store selection first
   final selectedStoreId = _storage.read('store_id');
   if (mode.isMerchant && (selectedStoreId == null || selectedStoreId.toString().isEmpty)) {
     await _storage.write('app_view_mode', mode.key);
@@ -117,7 +113,6 @@ Future<void> setViewMode(AppViewMode mode) async {
   currentViewMode.value = mode;
   update();
 
-  // Rebuild main screen to apply mode changes safely
   Get.offAllNamed('/mainScreen');
 }
 

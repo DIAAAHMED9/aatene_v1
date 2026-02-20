@@ -30,13 +30,10 @@ class DashboardController extends GetxController {
   final productsCount = 0.obs;
   final points = 0.obs;
 
-  /// فلتر المحتوى
-  /// - افتراضيًا: الشهر الحالي
   final filterLabel = 'الشهر الحالي'.obs;
   final fromDate = Rxn<DateTime>();
   final toDate = Rxn<DateTime>();
 
-  /// فعّل فلتر الشهر الحالي
   void applyCurrentMonth() {
     final now = DateTime.now();
     final start = DateTime(now.year, now.month, 1);
@@ -47,7 +44,6 @@ class DashboardController extends GetxController {
     fetchMerchantCounters();
   }
 
-  /// فعّل فلتر حسب التاريخ (مدى تاريخي)
   void applyCustomRange(DateTime start, DateTime end) {
     fromDate.value = DateUtils.dateOnly(start);
     toDate.value = DateUtils.dateOnly(end);
@@ -55,7 +51,6 @@ class DashboardController extends GetxController {
     fetchMerchantCounters();
   }
 
-  /// نافذة اختيار الفلتر
   Future<void> openFilterSheet(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
@@ -93,7 +88,7 @@ class DashboardController extends GetxController {
                   Navigator.of(ctx).pop();
                   final picked = await showDateRangePicker(
                     context: context,
-                    firstDate: DateTime(2026, 1, 1),
+                    firstDate: DateTime(2020, 1, 1),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     initialDateRange: (fromDate.value != null && toDate.value != null)
                         ? DateTimeRange(start: fromDate.value!, end: toDate.value!)
@@ -115,13 +110,8 @@ class DashboardController extends GetxController {
   final hasError = false.obs;
   String errorMessage = '';
 
-  /// الرصيد الحالي
-  // final points = 0.obs;
-
-  /// الباقات
   final packages = [].obs;
 
-  /// وضع التطبيق الحالي (User / Merchant Products / Merchant Services)
   AppViewMode get currentMode {
     try {
       final box = GetStorage();
@@ -133,14 +123,6 @@ class DashboardController extends GetxController {
 
   bool get isServicesMode => currentMode == AppViewMode.merchantServices;
 
-  /// ==============================
-  /// Fetch Merchant Dashboard Counters
-  /// - total items count (products/services)
-  /// - favorites sum across items (products/services)
-  ///
-  /// ملاحظة: لا يوجد Endpoint واضح في Postman يعيد counters جاهزة للتاجر.
-  /// لذلك نعتمد على قائمة المنتجات/الخدمات ونقرأ الـ pagination + نجمع favorites_count.
-  /// ==============================
   Future<void> fetchMerchantCounters() async {
     try {
       isLoading.value = true;
@@ -161,16 +143,12 @@ class DashboardController extends GetxController {
           queryParameters: {
             'page': page,
             'per_page': perPage,
-            // فلاتر التاريخ (إن وُجدت)
             if (fromDate.value != null) 'date_from': _apiDate(fromDate.value!),
             if (toDate.value != null) 'date_to': _apiDate(toDate.value!),
           },
-          // لا نعرض رسائل لكل صفحة حتى لا يزعج المستخدم
           shouldShowMessage: false,
         );
 
-        // بعض الـ APIs قد لا تدعم date_from/date_to
-        // إذا فشلت أول صفحة مع الفلتر، جرّب مرة واحدة بدون فلتر لتجنب تعطّل لوحة التاجر.
         Map<String, dynamic>? res = (resDyn is Map) ? resDyn.cast<String, dynamic>() : null;
 
         if (res == null && page == 1 && (fromDate.value != null || toDate.value != null)) {
@@ -186,7 +164,6 @@ class DashboardController extends GetxController {
           res = (resDyn is Map) ? resDyn.cast<String, dynamic>() : null;
 
           if (res != null) {
-            // نُبقي الفلتر على واجهة المستخدم كما هو، لكن ننبه أن السيرفر تجاهله
             Get.snackbar('تنبيه', 'الفلترة بالتاريخ غير مدعومة حاليًا من السيرفر لهذا المحتوى');
           }
         }
@@ -197,19 +174,16 @@ class DashboardController extends GetxController {
           break;
         }
 
-        // محاولة استخراج القائمة من أكثر من شكل شائع في الـ API
         final dynamic listRaw =
             res['data'] ?? res['items'] ?? res['products'] ?? res['services'];
         final List items = (listRaw is List) ? listRaw : <dynamic>[];
 
-        // total من meta أو pagination إن وجد
         final dynamic meta = res['meta'] ?? res['pagination'] ?? res['paginate'];
         if (meta is Map) {
           final t = meta['total'] ?? meta['total_items'] ?? meta['count'];
           if (t != null) total = int.tryParse(t.toString()) ?? total;
         }
 
-        // في حال لم يوجد meta.total، نجمع بناءً على طول القائمة
         if (total == 0) {
           total = (page - 1) * perPage + items.length;
         }
@@ -221,12 +195,10 @@ class DashboardController extends GetxController {
           }
         }
 
-        // stop condition
         if (items.length < perPage) {
           break;
         }
 
-        // safety guard (منع حلقات لا نهائية إذا الـ API أعاد نفس الصفحة)
         if (page > 50) {
           break;
         }
@@ -245,9 +217,6 @@ class DashboardController extends GetxController {
     }
   }
 
-  /// ==============================
-  /// Fetch Balance
-  /// ==============================
   Future<void> fetchBalance() async {
     try {
       isLoading.value = true;
@@ -274,9 +243,6 @@ class DashboardController extends GetxController {
     }
   }
 
-  /// ==============================
-  /// Fetch Packages
-  /// ==============================
   Future<void> fetchPackages() async {
     try {
       isLoading.value = true;
@@ -301,9 +267,6 @@ class DashboardController extends GetxController {
     }
   }
 
-  /// ==============================
-  /// Purchase Coins (POST)
-  /// ==============================
   Future<void> purchaseCoins(int packageId) async {
     try {
       isLoading.value = true;
@@ -315,7 +278,7 @@ class DashboardController extends GetxController {
       print('response purchase: $res');
 
       if (res != null && res['status'] == true) {
-        await fetchBalance(); // تحديث الرصيد بعد الشراء
+        await fetchBalance();
         Get.snackbar("نجاح", "تمت عملية الشراء بنجاح");
       } else {
         hasError.value = true;
@@ -334,7 +297,6 @@ class DashboardController extends GetxController {
 
   @override
   void onInit() {
-    // افتراضيًا: الشهر الحالي
     applyCurrentMonth();
     fetchBalance();
     fetchPackages();

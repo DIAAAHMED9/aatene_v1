@@ -181,7 +181,6 @@ class ApiHelper {
           }
         } catch (_) {}
 
-        // دعم اختيار المتجر من الـ Drawer (يُحفظ عادةً في selected_store_id)
         if (storeId == null || storeId!.isEmpty) {
           try {
             final box = GetStorage();
@@ -632,7 +631,6 @@ class ApiHelper {
     return get(
       path: '/pages/terms-and-conditions',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -643,7 +641,6 @@ class ApiHelper {
     return get(
       path: '/pages/privacy-policy',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
   static Future<dynamic> faqs({
@@ -653,10 +650,8 @@ class ApiHelper {
     return get(
       path: '/pages/faqs',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
-
 
   static Future<dynamic> reportType({
     bool withLoading = true,
@@ -665,7 +660,6 @@ class ApiHelper {
     return get(
       path: '/report-types',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -676,7 +670,6 @@ class ApiHelper {
     return get(
       path: '/reports/my',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -698,7 +691,6 @@ class ApiHelper {
     return get(
       path: '/my-notifications',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
 

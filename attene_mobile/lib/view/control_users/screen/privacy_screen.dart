@@ -11,9 +11,6 @@ class PrivacyScreen extends StatefulWidget {
 class _PrivacyScreenState extends State<PrivacyScreen> {
   int expandedIndex = -1;
 
-  // final SupportController controller =
-  // Get.put(SupportController());
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SupportController>(

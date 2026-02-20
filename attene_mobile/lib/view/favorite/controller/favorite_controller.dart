@@ -12,6 +12,113 @@ class FavoriteController extends GetxController {
   final RxInt currentPage = 1.obs;
   String errorMessage = '';
 
+  final _box = GetStorage();
+  static const _kFavProducts = 'fav_product_ids';
+  static const _kFavServices = 'fav_service_ids';
+  static const _kFavStores = 'fav_store_ids';
+  static const _kFavUsers = 'fav_user_ids';
+  static const _kFavBlogs = 'fav_blog_ids';
+
+  final favProductIds = <String>{}.obs;
+  final favServiceIds = <String>{}.obs;
+  final favStoreIds = <String>{}.obs;
+  final favUserIds = <String>{}.obs;
+  final favBlogIds = <String>{}.obs;
+  final favOverrides = <String, bool>{}.obs;
+
+  String _overrideKey(FavoriteType type, String itemId) => '${type.name}:$itemId';
+
+  bool getEffectiveFavorite(FavoriteType type, String itemId, {bool apiFav = false}) {
+    final key = _overrideKey(type, itemId);
+    if (favOverrides.containsKey(key)) return favOverrides[key] ?? false;
+    return isFavoriteLocal(type: type, itemId: itemId) || apiFav;
+  }
+
+  void setLocalFavorite({required FavoriteType type, required String itemId, required bool value, bool setOverride = true}) {
+    cacheFavorite(type: type, itemId: itemId, value: value, setOverride: setOverride);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadFavIdsFromStorage();
+
+    Future.microtask(() async {
+      await syncFavorites();
+      await loadPreviewImagesForAllGroups();
+    });
+  }
+
+  Future<void> syncFavorites() async {
+    await Future.wait([
+      fetchAllFavorites(),
+      fetchFavoriteLists(),
+    ]);
+  }
+
+  void _loadFavIdsFromStorage() {
+    favProductIds.assignAll((_box.read<List<dynamic>>(_kFavProducts) ?? []).map((e) => e.toString()).toSet());
+    favServiceIds.assignAll((_box.read<List<dynamic>>(_kFavServices) ?? []).map((e) => e.toString()).toSet());
+    favStoreIds.assignAll((_box.read<List<dynamic>>(_kFavStores) ?? []).map((e) => e.toString()).toSet());
+    favUserIds.assignAll((_box.read<List<dynamic>>(_kFavUsers) ?? []).map((e) => e.toString()).toSet());
+    favBlogIds.assignAll((_box.read<List<dynamic>>(_kFavBlogs) ?? []).map((e) => e.toString()).toSet());
+  }
+
+  void _persistFavIds() {
+    _box.write(_kFavProducts, favProductIds.toList());
+    _box.write(_kFavServices, favServiceIds.toList());
+    _box.write(_kFavStores, favStoreIds.toList());
+    _box.write(_kFavUsers, favUserIds.toList());
+    _box.write(_kFavBlogs, favBlogIds.toList());
+  }
+
+  bool isFavoriteLocal({required FavoriteType type, required String itemId}) {
+    final id = itemId.toString();
+    switch (type) {
+      case FavoriteType.product:
+        return favProductIds.contains(id);
+      case FavoriteType.service:
+        return favServiceIds.contains(id);
+      case FavoriteType.store:
+        return favStoreIds.contains(id);
+      case FavoriteType.user:
+        return favUserIds.contains(id);
+      case FavoriteType.blog:
+        return favBlogIds.contains(id);
+    }
+  }
+
+  void cacheFavorite({
+    required FavoriteType type,
+    required String itemId,
+    required bool value,
+    bool setOverride = true,
+  }) {
+    if (itemId.isEmpty) return;
+    final id = itemId.toString();
+    if (setOverride) {
+      favOverrides[_overrideKey(type, id)] = value;
+    }
+    switch (type) {
+      case FavoriteType.product:
+        value ? favProductIds.add(id) : favProductIds.remove(id);
+        break;
+      case FavoriteType.service:
+        value ? favServiceIds.add(id) : favServiceIds.remove(id);
+        break;
+      case FavoriteType.store:
+        value ? favStoreIds.add(id) : favStoreIds.remove(id);
+        break;
+      case FavoriteType.user:
+        value ? favUserIds.add(id) : favUserIds.remove(id);
+        break;
+      case FavoriteType.blog:
+        value ? favBlogIds.add(id) : favBlogIds.remove(id);
+        break;
+    }
+    _persistFavIds();
+  }
+
   final RxList<Map<String, dynamic>> allFavorites =
       <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> products = <Map<String, dynamic>>[].obs;
@@ -29,24 +136,16 @@ class FavoriteController extends GetxController {
   final Map<String, List<Map<String, dynamic>>> _pendingListItems = {};
 
   @override
-  void onInit() {
-    super.onInit();
-    fetchAllFavorites();
-    fetchFavoriteLists();
-    loadPreviewImagesForAllGroups();
-  }
 
-  Future<void> fetchAllFavorites({bool refresh = false}) async {
-    if (refresh) {
-      currentPage.value = 1;
-      allFavorites.clear();
-      products.clear();
-      services.clear();
-      stores.clear();
-      users.clear();
-      blogs.clear();
-      recentFavorites.clear();
-    }
+  Future<void> fetchAllFavorites() async {
+    currentPage.value = 1;
+    allFavorites.clear();
+    products.clear();
+    services.clear();
+    stores.clear();
+    users.clear();
+    blogs.clear();
+    recentFavorites.clear();
 
     try {
       isLoading.value = true;
@@ -126,6 +225,14 @@ class FavoriteController extends GetxController {
 
       final res = await ApiHelper.post(path: '/favorites/add', body: body);
 
+      if (res != null && res['status'] == false) {
+        final msg = (res['message'] ?? '').toString();
+        if (msg.contains('موجود') || msg.contains('بالفعل')) {
+          cacheFavorite(type: type, itemId: itemId, value: true);
+          return true;
+        }
+      }
+
       if (res != null && res['status'] == true) {
         final favoriteData = res['favorite'] as Map<String, dynamic>?;
 
@@ -137,6 +244,7 @@ class FavoriteController extends GetxController {
           }
         }
 
+        cacheFavorite(type: type, itemId: itemId, value: true);
         Get.snackbar(
           'تم',
           res['message'] ?? 'تمت الإضافة إلى المفضلة',
@@ -173,6 +281,7 @@ class FavoriteController extends GetxController {
 
       if (res != null && res['status'] == true) {
         _removeFavoriteFromLocalLists(type, itemId);
+         cacheFavorite(type: type, itemId: itemId, value: false);
         Get.snackbar(
           'تم',
           'تمت الإزالة من المفضلة',
@@ -385,6 +494,7 @@ class FavoriteController extends GetxController {
         final res = await ApiHelper.get(
           path: '/favorite-lists/$listId/favs',
           queryParameters: {'per_page': 4},
+          withLoading: false,
         );
         if (res != null && res['status'] == true) {
           final List<dynamic> items =
@@ -530,21 +640,47 @@ class FavoriteController extends GetxController {
       final String favsType = map['favs_type'] ?? '';
       final dynamic favsData = map['favs'] ?? {};
 
+      String? _extractId(dynamic data) {
+        if (data is Map) {
+          final v = data['id'];
+          if (v == null) return null;
+          return v.toString();
+        }
+        return null;
+      }
+
+      final favId = _extractId(favsData);
+
       switch (favsType) {
         case 'product':
           products.add(Map<String, dynamic>.from(favsData));
+          if (favId != null) {
+            cacheFavorite(type: FavoriteType.product, itemId: favId, value: true, setOverride: false);
+          }
           break;
         case 'service':
           services.add(Map<String, dynamic>.from(favsData));
+          if (favId != null) {
+            cacheFavorite(type: FavoriteType.service, itemId: favId, value: true, setOverride: false);
+          }
           break;
         case 'store':
           stores.add(Map<String, dynamic>.from(favsData));
+          if (favId != null) {
+            cacheFavorite(type: FavoriteType.store, itemId: favId, value: true, setOverride: false);
+          }
           break;
         case 'blog':
           blogs.add(Map<String, dynamic>.from(favsData));
+          if (favId != null) {
+            cacheFavorite(type: FavoriteType.blog, itemId: favId, value: true, setOverride: false);
+          }
           break;
         case 'user':
           users.add(Map<String, dynamic>.from(favsData));
+          if (favId != null) {
+            cacheFavorite(type: FavoriteType.user, itemId: favId, value: true, setOverride: false);
+          }
           break;
       }
       allFavorites.add(map);

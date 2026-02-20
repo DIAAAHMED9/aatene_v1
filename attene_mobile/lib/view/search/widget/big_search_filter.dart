@@ -1,6 +1,9 @@
 import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/view/search/controller/search_controller.dart' as app;
 import 'package:attene_mobile/view/search/controller/search_filter_controller.dart';
+import 'package:attene_mobile/view/search/controller/search_filter_options_controller.dart';
+
+import 'filter_selection_sheet.dart';
 
 import '../controller/search_controller.dart';
 
@@ -13,6 +16,9 @@ class FilterBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final filterController = Get.put(SearchFilterController(), permanent: false);
     final searchController = Get.find<app.SearchController>();
+    final optionsController = Get.put(SearchFilterOptionsController(), permanent: true);
+
+    optionsController.ensureLoaded(searchType);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -53,7 +59,21 @@ class FilterBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            _buildFilterContent(searchType, filterController),
+            Obx(() {
+              if (optionsController.isLoading.value && optionsController.categories.isEmpty && optionsController.cities.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (optionsController.error.value.isNotEmpty && optionsController.categories.isEmpty && optionsController.cities.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(optionsController.error.value, style: getMedium(color: Colors.red)),
+                );
+              }
+              return _buildFilterContent(searchType, filterController, optionsController, context);
+            }),
 
             const SizedBox(height: 24),
 
@@ -102,35 +122,28 @@ class FilterBottomSheet extends StatelessWidget {
 
     final filters = filterController.buildFilterQuery(searchType);
 
-    if (searchController.searchQuery.value.isEmpty) {
-      Get.snackbar(
-        'تنبيه',
-        'الرجاء كتابة كلمة البحث أولاً',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.warning100,
-        colorText: AppColors.neutral900,
-        duration: const Duration(seconds: 2),
-      );
-      return;
-    }
-
     searchController.applyFilters(filters);
   }
 
-  Widget _buildFilterContent(SearchType type, SearchFilterController controller) {
+  Widget _buildFilterContent(
+    SearchType type,
+    SearchFilterController controller,
+    SearchFilterOptionsController options,
+    BuildContext context,
+  ) {
     switch (type) {
       case SearchType.products:
-        return _buildProductsFilter(controller);
+        return _buildProductsFilter(controller, options, context);
       case SearchType.stores:
-        return _buildStoresFilter(controller);
+        return _buildStoresFilter(controller, options, context);
       case SearchType.services:
-        return _buildServicesFilter(controller);
+        return _buildServicesFilter(controller, options, context);
       case SearchType.users:
-        return _buildUsersFilter(controller);
+        return _buildUsersFilter(controller, options, context);
     }
   }
 
-  Widget _buildProductsFilter(SearchFilterController controller) {
+  Widget _buildProductsFilter(SearchFilterController controller, SearchFilterOptionsController options, BuildContext context) {
     return GetBuilder<SearchFilterController>(
       builder: (_) {
         return Column(
@@ -143,12 +156,65 @@ class FilterBottomSheet extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildFilterItem('فئات', 'assets/images/svg_images/Category.svg'),
-                  _buildFilterItem('التصنيفات', 'assets/images/svg_images/filtter.svg'),
-                  _buildFilterItem('العلامات', 'assets/images/svg_images/tags.svg'),
-                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
-                  _buildFilterItem('الألوان', 'assets/images/svg_images/color.svg'),
-                  _buildFilterItem('المقاسات', 'assets/images/svg_images/size.svg'),
+                  _buildFilterItem(
+                    title: 'فئات',
+                    iconPath: 'assets/images/svg_images/Category.svg',
+                    valueText: _labelForId(options.categories, controller.selectedCategoryId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار فئة', items: options.categories);
+                      controller.selectedCategoryId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'التصنيفات',
+                    iconPath: 'assets/images/svg_images/filtter.svg',
+                    valueText: _labelForId(options.sections, controller.selectedSectionId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار تصنيف', items: options.sections);
+                      controller.selectedSectionId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'العلامات',
+                    iconPath: 'assets/images/svg_images/tags.svg',
+                    valueText: _multiLabel(options.tags, controller.selectedTagIds),
+                    onTap: () async {
+                      final selected = await _pickMulti(context, title: 'اختيار علامات', items: options.tags, current: controller.selectedTagIds);
+                      controller.selectedTagIds
+                        ..clear()
+                        ..addAll(selected);
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'المدينة',
+                    iconPath: 'assets/images/svg_images/location.svg',
+                    valueText: _labelForId(options.cities, controller.selectedCityId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار مدينة', items: options.cities);
+                      controller.selectedCityId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'المقاسات/الخيارات',
+                    iconPath: 'assets/images/svg_images/size.svg',
+                    valueText: _multiLabel(options.variationOptions, controller.selectedVariationOptionIds, labelKey: 'name'),
+                    onTap: () async {
+                      final selected = await _pickMulti(
+                        context,
+                        title: 'اختيار المقاسات/الخيارات',
+                        items: options.variationOptions,
+                        current: controller.selectedVariationOptionIds,
+                      );
+                      controller.selectedVariationOptionIds
+                        ..clear()
+                        ..addAll(selected);
+                      controller.update();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -219,7 +285,7 @@ class FilterBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildStoresFilter(SearchFilterController controller) {
+  Widget _buildStoresFilter(SearchFilterController controller, SearchFilterOptionsController options, BuildContext context) {
     return GetBuilder<SearchFilterController>(
       builder: (_) {
         return Column(
@@ -232,9 +298,36 @@ class FilterBottomSheet extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildFilterItem('فئات', 'assets/images/svg_images/Category.svg'),
-                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
-                  _buildFilterItem('التقييم', 'assets/images/svg_images/Star.svg'),
+                  _buildFilterItem(
+                    title: 'فئات',
+                    iconPath: 'assets/images/svg_images/Category.svg',
+                    valueText: _labelForId(options.categories, controller.selectedStoreCategoryId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار فئة', items: options.categories);
+                      controller.selectedStoreCategoryId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'المدينة',
+                    iconPath: 'assets/images/svg_images/location.svg',
+                    valueText: _labelForId(options.cities, controller.selectedCityId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار مدينة', items: options.cities);
+                      controller.selectedCityId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'التقييم (الحد الأدنى)',
+                    iconPath: 'assets/images/svg_images/Star.svg',
+                    valueText: controller.selectedReviewRateMin?.toString() ?? 'الكل',
+                    onTap: () async {
+                      final selected = await _pickRating(context, current: controller.selectedReviewRateMin);
+                      controller.selectedReviewRateMin = selected;
+                      controller.update();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -269,7 +362,7 @@ class FilterBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildServicesFilter(SearchFilterController controller) {
+  Widget _buildServicesFilter(SearchFilterController controller, SearchFilterOptionsController options, BuildContext context) {
     return GetBuilder<SearchFilterController>(
       builder: (_) {
         return Column(
@@ -282,11 +375,48 @@ class FilterBottomSheet extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildFilterItem('التصنيف', 'assets/images/svg_images/filtter.svg'),
-                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
-                  _buildFilterItem('التقييم', 'assets/images/svg_images/Star.svg'),
-                  _buildFilterItem('المراجعات', 'assets/images/svg_images/Chat9.svg'),
-                  _buildFilterItem('مستوى البائع', 'assets/images/svg_images/Profile.svg'),
+                  _buildFilterItem(
+                    title: 'التصنيف',
+                    iconPath: 'assets/images/svg_images/filtter.svg',
+                    valueText: _labelForId(options.categories, controller.selectedServiceCategoryId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار تصنيف', items: options.categories);
+                      controller.selectedServiceCategoryId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'المدينة',
+                    iconPath: 'assets/images/svg_images/location.svg',
+                    valueText: _labelForId(options.cities, controller.selectedCityId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار مدينة', items: options.cities);
+                      controller.selectedCityId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'التقييم (الحد الأدنى)',
+                    iconPath: 'assets/images/svg_images/Star.svg',
+                    valueText: controller.selectedReviewRateMin?.toString() ?? 'الكل',
+                    onTap: () async {
+                      final selected = await _pickRating(context, current: controller.selectedReviewRateMin);
+                      controller.selectedReviewRateMin = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'العلامات',
+                    iconPath: 'assets/images/svg_images/tags.svg',
+                    valueText: _multiLabel(options.tags, controller.selectedTagIds),
+                    onTap: () async {
+                      final selected = await _pickMulti(context, title: 'اختيار علامات', items: options.tags, current: controller.selectedTagIds);
+                      controller.selectedTagIds
+                        ..clear()
+                        ..addAll(selected);
+                      controller.update();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -357,7 +487,7 @@ class FilterBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildUsersFilter(SearchFilterController controller) {
+  Widget _buildUsersFilter(SearchFilterController controller, SearchFilterOptionsController options, BuildContext context) {
     return GetBuilder<SearchFilterController>(
       builder: (_) {
         return Column(
@@ -370,8 +500,38 @@ class FilterBottomSheet extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildFilterItem('المدينة', 'assets/images/svg_images/location.svg'),
-                  _buildFilterItem('التقييم', 'assets/images/svg_images/Star.svg'),
+                  _buildFilterItem(
+                    title: 'المدينة',
+                    iconPath: 'assets/images/svg_images/location.svg',
+                    valueText: _labelForId(options.cities, controller.selectedCityId),
+                    onTap: () async {
+                      final selected = await _pickSingle(context, title: 'اختيار مدينة', items: options.cities);
+                      controller.selectedCityId = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'التقييم',
+                    iconPath: 'assets/images/svg_images/Star.svg',
+                    valueText: controller.selectedReviewRate?.toString() ?? 'الكل',
+                    onTap: () async {
+                      final selected = await _pickRating(context, current: controller.selectedReviewRate);
+                      controller.selectedReviewRate = selected;
+                      controller.update();
+                    },
+                  ),
+                  _buildFilterItem(
+                    title: 'العلامات',
+                    iconPath: 'assets/images/svg_images/tags.svg',
+                    valueText: _multiLabel(options.tags, controller.selectedTagIds),
+                    onTap: () async {
+                      final selected = await _pickMulti(context, title: 'اختيار علامات', items: options.tags, current: controller.selectedTagIds);
+                      controller.selectedTagIds
+                        ..clear()
+                        ..addAll(selected);
+                      controller.update();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -449,23 +609,139 @@ class FilterBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterItem(String title, String iconPath) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              SvgPicture.asset(iconPath, width: 20, height: 20, fit: BoxFit.cover),
-              const SizedBox(width: 5),
-              Text(title, style: getMedium()),
-            ],
-          ),
-          Text('الكل', style: getMedium(color: AppColors.neutral500, fontSize: 13)),
-        ],
+  Widget _buildFilterItem({
+    required String title,
+    required String iconPath,
+    required String valueText,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                SvgPicture.asset(iconPath, width: 20, height: 20, fit: BoxFit.cover),
+                const SizedBox(width: 5),
+                Text(title, style: getMedium()),
+              ],
+            ),
+            Flexible(
+              child: Text(
+                valueText.isEmpty ? 'الكل' : valueText,
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: getMedium(color: AppColors.neutral500, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<int?> _pickSingle(
+    BuildContext context, {
+    required String title,
+    required List<Map<String, dynamic>> items,
+  }) async {
+    final result = await showModalBottomSheet<List<int>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => FilterSelectionSheet(
+        title: title,
+        items: items,
+        multi: false,
+        selectedIds: <int>{},
+        getId: (m) => int.tryParse(m['id'].toString()) ?? -1,
+        getLabel: (m) => (m['name'] ?? m['title'] ?? m['label'] ?? '').toString(),
+      ),
+    );
+    if (result == null || result.isEmpty) return null;
+    return result.first;
+  }
+
+  Future<List<int>> _pickMulti(
+    BuildContext context, {
+    required String title,
+    required List<Map<String, dynamic>> items,
+    required List<int> current,
+  }) async {
+    final selected = <int>{...current};
+    final result = await showModalBottomSheet<List<int>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => FilterSelectionSheet(
+        title: title,
+        items: items,
+        multi: true,
+        selectedIds: selected,
+        getId: (m) => int.tryParse(m['id'].toString()) ?? -1,
+        getLabel: (m) => (m['name'] ?? m['title'] ?? m['label'] ?? '').toString(),
+      ),
+    );
+    if (result == null) return current;
+    return result.where((e) => e > 0).toList();
+  }
+
+  Future<int?> _pickRating(BuildContext context, {int? current}) async {
+    final items = List.generate(5, (i) => {'id': i + 1, 'name': '${i + 1}+'});
+    final result = await showModalBottomSheet<List<int>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => FilterSelectionSheet(
+        title: 'اختيار التقييم',
+        items: items,
+        multi: false,
+        selectedIds: current == null ? <int>{} : <int>{current},
+        getId: (m) => m['id'] as int,
+        getLabel: (m) => m['name'] as String,
+      ),
+    );
+    if (result == null || result.isEmpty) return null;
+    return result.first;
+  }
+
+  String _labelForId(List<Map<String, dynamic>> items, int? id) {
+    if (id == null) return 'الكل';
+    Map<String, dynamic>? found;
+    for (final e in items) {
+      if (int.tryParse(e['id'].toString()) == id) {
+        found = e;
+        break;
+      }
+    }
+    return (found?['name'] ?? found?['title'] ?? 'الكل').toString();
+  }
+
+  String _multiLabel(
+    List<Map<String, dynamic>> items,
+    List<int> ids, {
+    String labelKey = 'name',
+  }) {
+    if (ids.isEmpty) return 'الكل';
+    final labels = <String>[];
+    for (final id in ids) {
+      Map<String, dynamic>? found;
+      for (final e in items) {
+        if (int.tryParse(e['id'].toString()) == id) {
+          found = e;
+          break;
+        }
+      }
+      final label = (found?[labelKey] ?? found?['title'] ?? '').toString();
+      if (label.isNotEmpty) labels.add(label);
+    }
+    if (labels.isEmpty) return 'مختار';
+    if (labels.length <= 2) return labels.join(', ');
+    return '${labels.take(2).join(', ')} (+${labels.length - 2})';
   }
 
   Widget _buildSwitchRow({

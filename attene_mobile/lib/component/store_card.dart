@@ -1,5 +1,5 @@
 import 'package:attene_mobile/general_index.dart';
-import 'package:attene_mobile/view/favorite/controller/favorite_controller.dart';
+import 'package:attene_mobile/services/follow_state_controller.dart';
 import 'package:attene_mobile/view/profile/vendor_profile/screen/store_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,13 +24,20 @@ class VendorCard extends StatefulWidget {
 
 class _VendorCardState extends State<VendorCard> {
   late bool isFollowed;
-  late FavoriteController _favController;
+  late FollowStateController _followController;
 
   @override
   void initState() {
     super.initState();
     isFollowed = widget.initialFollowed;
-    _favController = Get.find<FavoriteController>();
+    _followController = Get.isRegistered<FollowStateController>()
+        ? Get.find<FollowStateController>()
+        : Get.put(FollowStateController(), permanent: true);
+
+    final id = widget.store!['id']?.toString() ?? '';
+    if (id.isNotEmpty) {
+      isFollowed = _followController.isFollowing(followedType: 'store', followedId: id);
+    }
   }
 
   Future<void> toggleFollow() async {
@@ -39,19 +46,15 @@ class _VendorCardState extends State<VendorCard> {
     final newState = !isFollowed;
     setState(() => isFollowed = newState);
 
+    final id = widget.store!['id'].toString();
     final success = newState
-        ? await _favController.addToFavorites(
-            type: FavoriteType.store,
-            itemId: widget.store!['id'].toString(),
-          )
-        : await _favController.removeFromFavorites(
-            type: FavoriteType.store,
-            itemId: widget.store!['id'].toString(),
-          );
+        ? await _followController.follow(followedType: 'store', followedId: id)
+        : await _followController.unfollow(followedType: 'store', followedId: id);
 
     if (!success) {
       setState(() => isFollowed = !newState);
     } else {
+      widget.store!['is_following'] = newState;
       widget.onFollowChanged?.call(newState);
     }
   }

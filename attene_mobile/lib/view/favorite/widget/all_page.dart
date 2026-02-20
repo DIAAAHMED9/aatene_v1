@@ -23,7 +23,7 @@ class AllPage extends StatelessWidget {
               Text(controller.errorMessage),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => controller.fetchAllFavorites(refresh: true),
+                onPressed: () => controller.fetchAllFavorites(),
                 child: const Text('إعادة المحاولة'),
               ),
             ],
@@ -36,7 +36,7 @@ class AllPage extends StatelessWidget {
       }
 
       return RefreshIndicator(
-        onRefresh: () => controller.fetchAllFavorites(refresh: true),
+        onRefresh: () => controller.fetchAllFavorites(),
         child: GridView.builder(
           padding: const EdgeInsets.all(12),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

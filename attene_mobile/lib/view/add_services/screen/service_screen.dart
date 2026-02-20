@@ -7,7 +7,6 @@ import '../../../utils/responsive/index.dart';
 class ServiceScreen extends StatelessWidget {
   ServiceScreen({super.key});
 
-  // final ServiceController controller = Get.find<ServiceController>();
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -42,13 +41,10 @@ class ServiceScreen extends StatelessWidget {
     );
   }
 
-// service_screen.dart - داخل _buildServiceTitleField
-
 Widget _buildServiceTitleField() {
   return GetBuilder<ServiceController>(
     id: 'service_title_field',
     builder: (controller) {
-      // طباعة hashCode للتأكد من ثبات الـ Controller
       print('📌 building title field with controller hash: ${controller.titleController.hashCode}');
       
       return Column(
@@ -78,7 +74,6 @@ Widget _buildServiceTitleField() {
                 counterText: '',
               ),
               onChanged: (value) {
-                // تحديث حالة الخطأ فوراً عند الكتابة
                 controller.isServiceTitleError.value = value.trim().isEmpty;
               },
             ),
@@ -701,8 +696,6 @@ Widget _buildServiceTitleField() {
     );
   }
 
-  // هذه الدالة غير مستخدمة في هذا الكلاس ولكن قد تكون مستخدمة في مكان آخر
-  // تم تضمينها للاكتمال
   Widget _buildNavigationButtons() {
     return GetBuilder<ServiceController>(
       builder: (controller) {

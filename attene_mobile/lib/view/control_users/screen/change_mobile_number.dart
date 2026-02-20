@@ -69,7 +69,6 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                     return;
                   }
 
-                  /// Loader
                   Get.dialog(
                     const Center(child: CircularProgressIndicator()),
                     barrierDismissible: false,
@@ -77,10 +76,8 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
 
                   final success = await controller.updatePhone(phone);
 
-                  /// إغلاق اللودر دائمًا
                   if (Get.isDialogOpen == true) Get.back();
 
-                  /// عرض رسالة النجاح
                   showModalBottomSheet(
                     context: context,
                     builder: (context) => SizedBox(
