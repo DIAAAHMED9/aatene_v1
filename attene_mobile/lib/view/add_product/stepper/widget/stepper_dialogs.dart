@@ -113,8 +113,6 @@ class AddProductStepperDialogs {
             ),
           ],
         ),
-        // actions: [
-        // ],
       ),
     );
   }

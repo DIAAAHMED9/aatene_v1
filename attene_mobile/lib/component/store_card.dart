@@ -75,8 +75,10 @@ class _VendorCardState extends State<VendorCard> {
 
     return GestureDetector(
       onTap: () {
-        if (s['id'] != null) {
-          Get.to(() => StoreProfilePage(storeId: s['id']));
+        final dynamic raw = s['slug'] ?? s['id'];
+        final String slugOrId = raw?.toString() ?? '';
+        if (slugOrId.isNotEmpty) {
+          Get.to(() => StoreProfilePage(storeSlugOrId: slugOrId));
         }
       },
       child: Container(

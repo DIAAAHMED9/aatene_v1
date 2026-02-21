@@ -27,7 +27,6 @@ class SafetyTipsPage extends StatelessWidget {
 
         final rules = controller.safetyRules;
 
-        // استخراج التابات ديناميكيًا (merchants + customers)
         final tabsKeys = rules.keys
             .where(
               (key) =>
@@ -57,7 +56,6 @@ class SafetyTipsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// العنوان الرئيسي
                       Text(
                         rules['content'] ?? '',
                         style: const TextStyle(color: Colors.black54),
@@ -65,13 +63,11 @@ class SafetyTipsPage extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      /// كارد حماية الحساب
                       if (rules['keep_account_save'] != null)
                         _buildKeepAccountCard(rules['keep_account_save']),
 
                       const SizedBox(height: 20),
 
-                      /// عناصر التاب (merchants أو customers)
                       ...items.map((item) {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),

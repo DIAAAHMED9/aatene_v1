@@ -653,7 +653,6 @@ class ApiHelper {
     return get(
       path: '/pages/safety-rules',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -664,7 +663,6 @@ class ApiHelper {
     return get(
       path: '/pages/about-us',
       withLoading: withLoading,
-      // shouldShowMessage: shouldShowMessage,
     );
   }
 
@@ -850,6 +848,14 @@ class ApiHelper {
   static Future<dynamic> getUserProfile() async {
     return await get(
       path: '/user/profile',
+      withLoading: false,
+      shouldShowMessage: false,
+    );
+  }
+
+  static Future<dynamic> getProfilePageData(String slugOrId) async {
+    return await get(
+      path: '/profile/$slugOrId/pageData',
       withLoading: false,
       shouldShowMessage: false,
     );

@@ -132,7 +132,6 @@ class _ServicesCardState extends State<ServicesCard> {
 
     return GestureDetector(
       onTap: () {
-      // ✅ مثل المنتجات: تفاصيل الخدمة بالـ slug إن وجد (مع id كـ fallback)
       final slug = (s['slug'] ?? s['service_slug'] ?? '').toString();
       Get.toNamed(
         '/service-details',

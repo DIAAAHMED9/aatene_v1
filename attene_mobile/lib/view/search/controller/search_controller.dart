@@ -22,13 +22,11 @@ class SearchController extends GetxController {
   final RxMap<String, dynamic> userFilters = <String, dynamic>{}.obs;
 
   Timer? _debounce;
+  int _requestSeq = 0;
 
   @override
   void onInit() {
     super.onInit();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadInitialData();
-    });
   }
 
   @override
@@ -39,17 +37,24 @@ class SearchController extends GetxController {
 
   Future<void> loadInitialData() async {
     searchQuery.value = '';
-    await resetAndSearch(force: true);
+    clearResults();
+    hasError.value = false;
+    isLoading.value = false;
+    update();
   }
 
   void changeSearchType(SearchType type) {
     if (selectedType.value == type) return;
     selectedType.value = type;
-    if (searchQuery.value.isEmpty) {
-      resetAndSearch(force: true);
-    } else {
-      resetAndSearch();
+    if (searchQuery.value.isEmpty && _getCurrentFilters().isEmpty) {
+      clearResults();
+      hasError.value = false;
+      isLoading.value = false;
+      update();
+      return;
     }
+
+    resetAndSearch(force: searchQuery.value.isEmpty);
   }
 
   void updateSearchQuery(String query) {
@@ -75,11 +80,12 @@ class SearchController extends GetxController {
   }
 
   Future<void> performSearch({bool force = false}) async {
-    if (!force && searchQuery.value.isEmpty) {
+    if (!force && searchQuery.value.isEmpty && _getCurrentFilters().isEmpty) {
       print('⏸️ [Search] Query empty, skipping search');
       return;
     }
 
+    final int requestId = ++_requestSeq;
     try {
       isLoading.value = true;
       hasError.value = false;
@@ -102,8 +108,13 @@ class SearchController extends GetxController {
 
       final res = await ApiHelper.get(
         path: fullUrl,
-        withLoading: isLoading.value,
+        withLoading: false,
       );
+
+      if (requestId != _requestSeq) {
+        print('🟡 [Search] Stale response ignored');
+        return;
+      }
 
       print('📦 [Search] Response: ${res?['status']}');
 
@@ -115,11 +126,14 @@ class SearchController extends GetxController {
         print('❌ [Search] Error: $errorMessage');
       }
     } catch (e, stack) {
+      if (requestId != _requestSeq) return;
       hasError.value = true;
       errorMessage = 'خطأ في الشبكة: ${e.toString()}';
       print('🔥 [Search] Exception: $e\n$stack');
     } finally {
-      isLoading.value = false;
+      if (requestId == _requestSeq) {
+        isLoading.value = false;
+      }
     }
   }
 
@@ -151,8 +165,7 @@ class SearchController extends GetxController {
 
   Future<void> loadMore() async {
     if (!hasMore.value || isLoading.value) return;
-    if (searchQuery.value.isEmpty && currentPage.value == 1) {
-    }
+    if (searchQuery.value.isEmpty && _getCurrentFilters().isEmpty) return;
     currentPage.value++;
     await performSearch(force: searchQuery.value.isNotEmpty);
   }

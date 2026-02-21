@@ -270,13 +270,13 @@ class _SearchScreenState extends State<SearchScreen>
             ),
             Text(
               controller.searchQuery.value.isEmpty
-                  ? 'لم يتم العثور عليها'
+                  ? 'ابدأ بالبحث'
                   : 'لم يتم العثور عليها',
               style: getBold(fontSize: 24),
             ),
             Text(
               controller.searchQuery.value.isEmpty
-                  ? 'عذرًا ، لا يمكن العثور على الكلمة الرئيسية التي أدخلتها ، يرجى التحقق مرة أخرى أو البحث بكلمة رئيسية أخرى .'
+                  ? 'اكتب كلمة البحث بالأعلى أو اختر من البحث الأخير.'
                   : 'عذرًا ، لا يمكن العثور على الكلمة الرئيسية التي أدخلتها ، يرجى التحقق مرة أخرى أو البحث بكلمة رئيسية أخرى .',
               style: getMedium(color: AppColors.neutral200),
             ),

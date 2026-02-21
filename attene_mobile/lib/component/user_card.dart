@@ -1,6 +1,6 @@
 import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/services/follow_state_controller.dart';
-import 'package:attene_mobile/view/profile/vendor_profile/screen/store_profile.dart';
+import 'package:attene_mobile/view/profile/user_profile/screen/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -75,8 +75,10 @@ class _UserCardState extends State<UserCard> {
 
     return GestureDetector(
       onTap: () {
-        if (s['id'] != null) {
-          Get.to(() => StoreProfilePage(storeId: s['id']));
+        final dynamic raw = s['slug'] ?? s['id'];
+        final String slugOrId = raw?.toString() ?? '';
+        if (slugOrId.isNotEmpty) {
+          Get.to(() => ProfilePage(slugOrId: slugOrId));
         }
       },
       child: Container(

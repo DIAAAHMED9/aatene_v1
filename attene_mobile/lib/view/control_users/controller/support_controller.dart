@@ -20,13 +20,10 @@ class SupportController extends GetxController
     super.onReady();
     fetchTermsAndConditions();
 
-    /// لجلب بيانات شروط الخدمة
     fetchPrivacyPolicy();
 
-    /// لجلب بيانات سياسات الخصوصية
     fetchFaqs();
 
-    /// جلب بيانات شروط الخدمة
     fetchSafetyRules();
     fetchAboutUs();
 
@@ -78,8 +75,6 @@ class SupportController extends GetxController
     }
   }
 
-  ///  TermsAndConditions
-
   Future<void> fetchTermsAndConditions() async {
     try {
       isLoading = true;
@@ -113,7 +108,6 @@ class SupportController extends GetxController
     return item['content']?[locale] ?? item['content']?['ar'] ?? '';
   }
 
-  ///  privacy-policy
   Future<void> fetchPrivacyPolicy() async {
     try {
       isLoading = true;

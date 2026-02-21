@@ -2,6 +2,10 @@ import '../../../../general_index.dart';
 import '../../common/profile_controller_base.dart';
 
 class ProfileController extends BaseProfileController {
+  ProfileController({this.slugOrId});
+
+  final String? slugOrId;
+
   Map<String, dynamic> profileData = {};
   RxBool isLoading = RxBool(true);
   RxBool hasError = RxBool(false);
@@ -13,8 +17,35 @@ class ProfileController extends BaseProfileController {
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchAccountData();
+      if (slugOrId != null && slugOrId!.trim().isNotEmpty) {
+        fetchPublicProfile(slugOrId!.trim());
+      } else {
+        fetchAccountData();
+      }
     });
+  }
+
+  Future<void> fetchPublicProfile(String slugOrId) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+
+      final res = await ApiHelper.getProfilePageData(slugOrId);
+
+      if (res != null && res['status'] == true) {
+        profileData = res['user'] ?? res['profile'] ?? res['data'] ?? {};
+      } else {
+        hasError.value = true;
+        errorMessage = res?['message'] ?? 'Failed to load profile data';
+      }
+    } catch (e, stack) {
+      hasError.value = true;
+      errorMessage = 'Network error: ${e.toString()}';
+      print('Exception in fetchPublicProfile: $e\n$stack');
+    } finally {
+      isLoading.value = false;
+      update();
+    }
   }
 
   Future<void> fetchAccountData() async {

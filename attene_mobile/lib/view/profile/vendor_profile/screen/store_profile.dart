@@ -9,8 +9,12 @@ import '../controller/user_controller.dart';
 import '../widget/store_states.dart';
 
 class StoreProfilePage extends StatefulWidget {
-  final int storeId;
-  const StoreProfilePage({super.key, required this.storeId});
+  final String storeSlugOrId;
+
+  const StoreProfilePage({
+    super.key,
+    required this.storeSlugOrId,
+  });
 
   @override
   State<StoreProfilePage> createState() => _StoreProfilePageState();
@@ -28,13 +32,14 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
         : Get.put(FollowStateController(), permanent: true);
     isFollowing = _followController.isFollowing(
       followedType: 'store',
-      followedId: widget.storeId.toString(),
+      followedId: widget.storeSlugOrId.toString(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<VendorProfileController>(
+      init: VendorProfileController(storeSlugOrId: widget.storeSlugOrId),
       builder: (controller) {
         final vendorDate = controller.storeData;
         return Scaffold(
@@ -58,15 +63,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                       ),
                     ),
                     actions: [
-                      // _buildCircleIcon(
-                      //   SvgPicture.asset(
-                      //     "assets/images/svg_images/waze.svg",
-                      //     height: 20,
-                      //     width: 20,
-                      //     color: Colors.black,
-                      //     fit: BoxFit.cover,
-                      //   ),
-                      // ),
                       _buildCircleIcon(
                         Icon(
                           Icons.favorite_border,
@@ -508,7 +504,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                 },
                               ),
 
-                              /// مؤشر النقاط
                               Positioned(
                                 bottom: 15,
                                 left: 0,
@@ -592,7 +587,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                               ),
                               Tab(text: "أقسام"),
                               Tab(text: "منتجات"),
-                              // Tab(text: "عروض"),
                               Tab(text: "مراجعات"),
                             ],
                           ),
@@ -604,10 +598,9 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
               },
               body: TabBarView(
                 children: [
-                  _buildOverviewContent(),
+                  _buildOverviewContent(controller),
                   _buildCategoriesGrid(),
                   const Center(child: Text("منتجات")),
-                  // OffersTabPage(),
                   RatingProfile(),
                 ],
               ),
@@ -643,9 +636,6 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                   controller.storeData['logo_url'] ??
                       'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png',
                 ),
-                // AssetImage(
-                //   'assets/images/png/placeholder_bag_image_png.png',
-                // ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -694,8 +684,14 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                     final newState = !isFollowing;
                     setState(() => isFollowing = newState);
                     final ok = newState
-                        ? await _followController.follow(followedType: 'store', followedId: widget.storeId.toString())
-                        : await _followController.unfollow(followedType: 'store', followedId: widget.storeId.toString());
+                        ? await _followController.follow(
+                            followedType: 'store',
+                            followedId: widget.storeSlugOrId.toString(),
+                          )
+                        : await _followController.unfollow(
+                            followedType: 'store',
+                            followedId: widget.storeSlugOrId.toString(),
+                          );
                     if (!ok) {
                       setState(() => isFollowing = !newState);
                       Get.snackbar('خطأ', 'فشل تحديث المتابعة');
@@ -809,27 +805,17 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
     );
   }
 
-  Widget _buildOverviewContent() {
+  Widget _buildOverviewContent(VendorProfileController controller) {
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
         StoryItem(),
         SizedBox(height: 10),
-        _bioCard(VendorProfileController()),
+        _bioCard(controller),
         SizedBox(height: 10),
       ],
     );
   }
-
-  // Widget _buildSectionHeader(String title) {
-  //   return Padding(
-  //     padding: const EdgeInsets.fromLTRB(16, 25, 16, 10),
-  //     child: Text(
-  //       title,
-  //       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-  //     ),
-  //   );
-  // }
 
   Widget _buildCircleIcon(Widget icon) {
     return Container(

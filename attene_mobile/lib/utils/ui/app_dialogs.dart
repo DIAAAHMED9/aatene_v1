@@ -33,11 +33,6 @@ class AppDialogs {
                   height: 100,
                   fit: BoxFit.cover,
                 ),
-                // const SizedBox(
-                //   width: 26,
-                //   height: 26,
-                //   child: CircularProgressIndicator(strokeWidth: 3),
-                // ),
                 Expanded(
                   child: Text(
                     message ?? 'جاري التحميل...',

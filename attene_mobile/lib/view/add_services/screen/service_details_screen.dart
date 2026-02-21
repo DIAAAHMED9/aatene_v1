@@ -28,7 +28,6 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
       final maybeService = args['service'];
       if (maybeService is Service) return maybeService;
 
-      // ✅ مثل المنتجات: لو عندنا slug نجيب التفاصيل عن طريقه
       final slug = (args['slug'] ?? args['serviceSlug'] ?? args['slag'] ?? '').toString().trim();
       if (slug.isNotEmpty) return await _fetchServiceBySlug(slug);
 
@@ -42,8 +41,6 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     return null;
   }
 
-  /// ✅ تفاصيل الخدمة عبر الـ slug (حسب نفس أسلوب المنتجات من السيرش)
-  /// متوقع endpoint: /services/search/{slug}
   Future<Service?> _fetchServiceBySlug(String slug) async {
     final response = await ApiHelper.get(
       path: '/services/$slug',
@@ -55,7 +52,6 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
       throw Exception(response?['message'] ?? 'فشل في جلب تفاصيل الخدمة');
     }
 
-    // بعض الريسبونس يرجع service وبعضه data
     final dynamic raw = response['service'] ?? response['data'] ?? response['product'];
     if (raw is! Map) {
       throw Exception('Invalid service payload');

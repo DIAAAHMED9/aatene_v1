@@ -2,6 +2,10 @@ import 'package:attene_mobile/general_index.dart';
 import 'package:attene_mobile/view/profile/common/profile_controller_base.dart';
 
 class VendorProfileController extends BaseProfileController {
+  VendorProfileController({required this.storeSlugOrId});
+
+  final String storeSlugOrId;
+
   Map<String, dynamic> storeData = {};
   List<String> coverUrls = [];
 
@@ -37,8 +41,11 @@ class VendorProfileController extends BaseProfileController {
       hasError = false;
       update();
 
-      final res =
-      await ApiHelper.storeData(slug: 'abanob-magdy-hakeem');
+      final res = await ApiHelper.storeData(
+        slug: storeSlugOrId,
+        withLoading: false,
+        shouldShowMessage: false,
+      );
 
       if (res != null && res['status'] == true) {
         storeData = res['store'] ?? {};

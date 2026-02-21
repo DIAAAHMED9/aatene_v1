@@ -11,14 +11,17 @@ import '../widget/vendor_card.dart';
 import '../widget/row_profile.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+
+  final String? slugOrId;
+
+  const ProfilePage({super.key, this.slugOrId});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return GetBuilder<ProfileController>(
-      init: ProfileController(),
+      init: ProfileController(slugOrId: slugOrId),
       builder: (ProfileController controller) {
         return Scaffold(
           body: CustomScrollView(
