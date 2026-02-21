@@ -50,6 +50,45 @@ class ProfilePage extends StatelessWidget {
                               style: getMedium(fontSize: 18),
                             ),
                             GestureDetector(
+                              onTap: () async {
+                                final data = controller.profileData;
+                                final userId =
+                                    (data['id'] ?? data['user_id'] ?? '')
+                                        .toString()
+                                        .trim();
+                                if (userId.isEmpty) {
+                                  Get.snackbar(
+                                    'خطأ',
+                                    'تعذر تحديد معرف المستخدم',
+                                  );
+                                  return;
+                                }
+
+                                final chat = Get.isRegistered<ChatController>()
+                                    ? Get.find<ChatController>()
+                                    : Get.put(ChatController());
+
+                                final name =
+                                    (data['name'] ?? data['username'] ?? '')
+                                        .toString()
+                                        .trim();
+                                final firstBody = name.isNotEmpty
+                                    ? 'مرحباً $name، أريد الاستفسار.'
+                                    : 'مرحباً، أريد الاستفسار.';
+
+                                final conv = await chat
+                                    .startDirectChatByFirstMessage(
+                                  participantType: 'user',
+                                  participantId: userId,
+                                  body: firstBody,
+                                );
+
+                                if (conv != null) {
+                                  Get.back();
+                                  Get.to(() =>
+                                      ChatDetailPage(conversation: conv));
+                                }
+                              },
                               child: Row(
                                 spacing: 5,
                                 children: [

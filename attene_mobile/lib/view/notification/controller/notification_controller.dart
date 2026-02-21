@@ -30,10 +30,14 @@ class NotificationController extends GetxController {
       final res = await ApiHelper.notificationData();
 
       if (res != null && res['status'] == true) {
-        final List list = res['notifications'] ?? [];
+        final List raw = (res['notifications'] as List?) ?? const [];
 
-        notifications.value =
-            list.map((e) => NotificationModel.fromJson(e)).toList();
+        notifications.value = raw
+            .whereType<Map>()
+            .map((e) => NotificationModel.fromJson(
+                  Map<String, dynamic>.from(e as Map),
+                ))
+            .toList(growable: false);
       } else {
         hasError = true;
         errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';

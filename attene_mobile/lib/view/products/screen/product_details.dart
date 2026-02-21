@@ -1377,53 +1377,38 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   return;
                                 }
 
-                                try {
-                                  final box = GetStorage();
-                                  box.write('storeId', storeId);
-                                  box.write('store_id', storeId);
-                                  box.write('selected_store_id', storeId);
-                                } catch (_) {}
+                                // ⚠️ لا تقم بتغيير storeId العالمي هنا.
+                                // هذا الـ storeId هو صاحب المنتج (الطرف الآخر) وليس المتجر النشط للمستخدم.
+                                // تخزينه في GetStorage يجعل كل طلبات الشات تعمل بسياق متجر خاطئ
+                                // ويؤدي لخطأ: "أنت لست مشاركًا في هذه المحادثة".
 
                                 final ChatController chat =
                                     Get.isRegistered<ChatController>()
                                     ? Get.find<ChatController>()
                                     : Get.put(ChatController());
 
-                                await chat.loadConversations(silent: true);
-
-                                ChatConversation? existing;
-                                for (final c in chat.allConversations) {
-                                  if (c.type != 'direct') continue;
-                                  for (final p in c.participants) {
-                                    final d = p.participantData;
-                                    if (d == null) continue;
-                                    final pid = (d.id ?? '').toString();
-                                    final ptype = (d.type ?? '')
-                                        .toString()
-                                        .toLowerCase();
-                                    if (pid == storeId &&
-                                        (ptype == 'store' ||
-                                            ptype == 'merchant' ||
-                                            ptype == 'vendor')) {
-                                      existing = c;
-                                      break;
-                                    }
-                                  }
-                                  if (existing != null) break;
-                                }
+                                // ✅ Postman solution #2:
+                                // create/find the direct conversation by sending a first message
+                                // that includes product_id.
+                                // product is a Map<String, dynamic> in this screen.
+                                final int pid =
+                                    int.tryParse((product?['id'] ?? 0).toString()) ?? 0;
+                                final String pname =
+                                    (product?['name'] ?? '').toString();
+                                final firstBody =
+                                    pname.isNotEmpty
+                                        ? 'مرحباً، بخصوص المنتج "$pname" (#$pid) هل هو متوفر؟'
+                                        : 'مرحباً، بخصوص المنتج (#$pid) هل هو متوفر؟';
 
                                 final conv =
-                                    existing ??
-                                    await chat.createConversation(
-                                      type: 'direct',
-                                      participants: [
-                                        {'type': 'store', 'id': storeId},
-                                      ],
-                                      storeId: storeId,
+                                    await chat.startDirectChatByFirstMessage(
+                                      participantType: 'store',
+                                      participantId: storeId,
+                                      body: firstBody,
+                                      productId: pid > 0 ? pid : null,
                                     );
 
                                 if (conv != null) {
-                                  await chat.openConversation(conv);
                                   Get.to(
                                     () => ChatDetailPage(conversation: conv),
                                   );

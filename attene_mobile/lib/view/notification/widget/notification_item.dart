@@ -29,11 +29,29 @@ class NotificationItem extends StatelessWidget {
       return const SizedBox();
     }
 
-    return Image.asset(
-      model.media as String,
-      width: 70,
-      height: 50,
-      fit: BoxFit.cover,
+    // API can return media as a list of urls/paths.
+    final dynamic first = model.media.first;
+    final String? path = first?.toString();
+    if (path == null || path.isEmpty) return const SizedBox();
+
+    final bool isNetwork = path.startsWith('http://') || path.startsWith('https://');
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: isNetwork
+          ? Image.network(
+              path,
+              width: 70,
+              height: 50,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const SizedBox(width: 70, height: 50),
+            )
+          : Image.asset(
+              path,
+              width: 70,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
     );
   }
 

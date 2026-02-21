@@ -335,7 +335,7 @@ class Service {
       sectionName: sectionName,
       specialties: specialties,
       tags: tags,
-      storeId: json['store_id']?.toString(),
+      storeId: (json['store_id'] ?? (json['store'] is Map ? (json['store'] as Map)['id'] : null))?.toString(),
       status: _toStr(json['status'], defaultValue: 'pending'),
       price: _toDouble(json['price']),
       executeType: _toStr(json['execute_type'], defaultValue: 'hour'),

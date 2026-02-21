@@ -136,6 +136,46 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     return Service.fromApiJson(normalized);
   }
 
+  /// Ensure we can obtain the store id for a service before opening chat.
+  ///
+  /// In some flows the service object may be partial (cached list item or
+  /// different DTO), which can result in `storeId` being null/empty even though
+  /// the API payload contains it.
+  Future<String?> _resolveStoreId(Service service) async {
+    final direct = (service.storeId ?? '').trim();
+    if (direct.isNotEmpty) return direct;
+
+    final slug = (service.slug ?? '').trim();
+    if (slug.isEmpty) return null;
+
+    try {
+      // ApiHelper.get returns `response.data` directly (already decoded).
+      final dynamic data = await ApiHelper.get(
+        // Keep a leading slash so Dio resolves it under baseUrl correctly.
+        path: '/services/$slug',
+        withLoading: false,
+        shouldShowMessage: false,
+      );
+
+      if (data is Map) {
+        final dynamic svc = data['service'];
+        if (svc is Map) {
+          final dynamic store = svc['store'];
+          if (store is Map && store['id'] != null) {
+            return store['id'].toString();
+          }
+          if (svc['store_id'] != null) {
+            return svc['store_id'].toString();
+          }
+        }
+      }
+    } catch (_) {
+      // ignore
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LanguageUtils.isRTL;
@@ -404,6 +444,58 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
               );
             }),
           ],
+
+          // ✅ Chat with the service owner (store) using the same Postman flow
+          // (POST /messages with participant_type/id + service_id).
+          SizedBox(height: ResponsiveDimensions.f(18)),
+          SizedBox(
+            height: 50,
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.chat_bubble_outline),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary400,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                final storeId = ((await _resolveStoreId(service)) ?? '').trim();
+                if (storeId.isEmpty) {
+                  Get.snackbar(
+                    'خطأ',
+                    isRTL
+                        ? 'تعذر تحديد المتجر الخاص بهذه الخدمة'
+                        : 'Could not determine the store for this service',
+                  );
+                  return;
+                }
+
+                // ⚠️ لا تقم بتغيير storeId العالمي هنا.
+                // storeId هنا يمثل صاحب الخدمة (الطرف الآخر) وليس المتجر النشط للمستخدم.
+
+                final chat = Get.isRegistered<ChatController>()
+                    ? Get.find<ChatController>()
+                    : Get.put(ChatController());
+
+                final sid = service.id ?? 0;
+                final title = service.title.trim();
+                final firstBody = title.isNotEmpty
+                    ? 'مرحباً، بخصوص الخدمة "$title" (#$sid) أريد الاستفسار.'
+                    : 'مرحباً، بخصوص الخدمة (#$sid) أريد الاستفسار.';
+
+                final conv = await chat.startDirectChatByFirstMessage(
+                  participantType: 'store',
+                  participantId: storeId,
+                  body: firstBody,
+                  serviceId: sid > 0 ? sid : null,
+                );
+
+                if (conv != null) {
+                  Get.to(() => ChatDetailPage(conversation: conv));
+                }
+              },
+              label: Text(isRTL ? 'دردش' : 'Chat'),
+            ),
+          ),
         ],
       ),
     );

@@ -223,7 +223,7 @@ class _VendorCardState extends State<VendorCard> {
                   fit: BoxFit.cover,
                 ),
                 SvgPicture.asset(
-                  "assets/images/svg_images/privicy_vendor.svg.svg",
+                  "assets/images/svg_images/privicy_vendor.svg",
                   width: 16,
                   height: 16,
                   fit: BoxFit.cover,

@@ -96,6 +96,48 @@ class _StoreProfilePageState extends State<StoreProfilePage> {
                                       ),
 
                                       GestureDetector(
+                                        onTap: () async {
+                                          final storeId =
+                                              (vendorDate['id'] ?? '')
+                                                  .toString()
+                                                  .trim();
+                                          if (storeId.isEmpty) {
+                                            Get.snackbar(
+                                              'خطأ',
+                                              'تعذر تحديد معرف المتجر',
+                                            );
+                                            return;
+                                          }
+
+                                          // ⚠️ لا تقم بتغيير storeId العالمي هنا.
+                                          // هذا يمثل المتجر الذي تريد مراسلته (الطرف الآخر)، وليس متجرك أنت.
+
+                                          final chat =
+                                              Get.isRegistered<ChatController>()
+                                                  ? Get.find<ChatController>()
+                                                  : Get.put(ChatController());
+
+                                          final storeName =
+                                              (vendorDate['name'] ?? '')
+                                                  .toString()
+                                                  .trim();
+                                          final firstBody = storeName.isNotEmpty
+                                              ? 'مرحباً، أريد الاستفسار من متجر "$storeName".'
+                                              : 'مرحباً، أريد الاستفسار.';
+
+                                          final conv = await chat
+                                              .startDirectChatByFirstMessage(
+                                            participantType: 'store',
+                                            participantId: storeId,
+                                            body: firstBody,
+                                          );
+
+                                          if (conv != null) {
+                                            Get.back();
+                                            Get.to(() =>
+                                                ChatDetailPage(conversation: conv));
+                                          }
+                                        },
                                         child: Row(
                                           spacing: 5,
                                           children: [

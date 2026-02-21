@@ -43,10 +43,10 @@ class _ChatAllState extends State<ChatAll> {
           ],
         ),
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 40),
+          padding: const EdgeInsets.only(bottom: 60),
           child: FloatingActionButton.extended(
             backgroundColor: AppColors.primary400,
-            onPressed: _openNewChatSheet,
+            onPressed:_openNewChatSheet,
             icon: const Icon(
               Icons.add_comment_rounded,
               color: AppColors.light1000,
@@ -125,6 +125,7 @@ class _ChatAllState extends State<ChatAll> {
   }
 
   Future<void> _openNewChatSheet() async {
+    print('object');
     if (!mounted) return;
 
     showModalBottomSheet(

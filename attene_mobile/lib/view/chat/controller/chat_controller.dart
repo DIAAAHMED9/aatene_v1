@@ -31,6 +31,11 @@ class ChatController extends GetxController {
   final RxList<ChatMessage> currentMessages = <ChatMessage>[].obs;
 
   Timer? _pollTimer;
+  int? _pollConversationId;
+
+  bool _messagesFetchInFlight = false;
+  DateTime? _lastMessagesFetchAt;
+  final Map<int, DateTime> _openedAt = <int, DateTime>{};
 
   final Set<String> _blockedKeySet = <String>{};
   final RxInt blockedVersion = 0.obs;
@@ -376,13 +381,33 @@ class ChatController extends GetxController {
 
   Future<void> openConversation(ChatConversation conversation) async {
     currentConversation.value = conversation;
+
+    // Remember open time (used to do a one-shot delayed refresh).
+    _openedAt[conversation.id] = DateTime.now();
+
     await loadConversationMessages(conversation.id);
+
+    // Some backends may not surface the first message immediately.
+    // Do a single delayed refresh if the list is still empty.
+    if (currentConversation.value?.id == conversation.id &&
+        currentMessages.isEmpty) {
+      Future.delayed(const Duration(milliseconds: 500), () async {
+        if (currentConversation.value?.id != conversation.id) return;
+        await loadConversationMessages(conversation.id, silent: true);
+      });
+    }
+
     _startPolling(conversation.id);
   }
 
   void _startPolling(int conversationId) {
+    // Prevent creating multiple timers for the same conversation.
+    if (_pollConversationId == conversationId && _pollTimer != null) return;
+
     _stopPolling();
-    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+    _pollConversationId = conversationId;
+
+    _pollTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
       if (currentConversation.value?.id != conversationId) return;
       await loadConversationMessages(conversationId, silent: true);
     });
@@ -391,6 +416,16 @@ class ChatController extends GetxController {
   void _stopPolling() {
     _pollTimer?.cancel();
     _pollTimer = null;
+    _pollConversationId = null;
+  }
+
+  /// Call this when leaving the chat detail page.
+  void leaveConversation(int conversationId) {
+    if (currentConversation.value?.id == conversationId) {
+      _stopPolling();
+      currentConversation.value = null;
+      currentMessages.clear();
+    }
   }
 
   Future<ChatConversation?> loadConversationDetails(int conversationId) async {
@@ -406,6 +441,18 @@ class ChatController extends GetxController {
     bool silent = false,
   }) async {
     try {
+      // Avoid overlapping fetches (polling + screen refresh).
+      if (_messagesFetchInFlight) return;
+
+      // Throttle silent polling bursts.
+      if (silent && _lastMessagesFetchAt != null) {
+        final diff = DateTime.now().difference(_lastMessagesFetchAt!);
+        if (diff.inMilliseconds < 500) return;
+      }
+
+      _messagesFetchInFlight = true;
+      _lastMessagesFetchAt = DateTime.now();
+
       if (!silent) isLoadingMessages.value = true;
 
       final res = await ApiHelper.get(
@@ -434,6 +481,7 @@ class ChatController extends GetxController {
     } catch (e) {
       print('❌ loadConversationMessages: $e');
     } finally {
+      _messagesFetchInFlight = false;
       if (!silent) isLoadingMessages.value = false;
     }
   }
@@ -479,6 +527,51 @@ class ChatController extends GetxController {
         throw 'Cannot determine my participant identity (type/id)';
       }
 
+      // ✅ Optimistic UI: insert a pending message locally.
+      final int pendingId = -DateTime.now().millisecondsSinceEpoch;
+      final String pendingText = (body ?? '').trim();
+      final bool hasAnyText = pendingText.isNotEmpty;
+      final bool hasAnyFiles = filePaths != null && filePaths.isNotEmpty;
+      ChatMessage? pending;
+
+      if (currentConversation.value?.id == conversationId &&
+          (hasAnyText || hasAnyFiles)) {
+        try {
+          final myName = () {
+            try {
+              if (Get.isRegistered<MyAppController>()) {
+                final ud = Get.find<MyAppController>().userData;
+                if (ud is Map) {
+                  return (ud['fullname'] ?? ud['name'] ?? ud['email'])?.toString();
+                }
+              }
+            } catch (_) {}
+            return null;
+          }();
+
+          pending = ChatMessage(
+            id: pendingId,
+            conversationId: conversationId.toString(),
+            body: pendingText.isNotEmpty ? pendingText : '...',
+            files: null,
+            filesUrl: null,
+            senderId: _myParticipantForConversation(conv)?.id.toString(),
+            productId: productId,
+            variationId: varationId,
+            serviceId: serviceId,
+            senderData: SenderData(
+              id: ownerId.toString(),
+              type: ownerType,
+              name: myName,
+              avatar: null,
+            ),
+            createdAt: DateTime.now().toIso8601String(),
+            updatedAt: DateTime.now().toIso8601String(),
+          );
+          currentMessages.add(pending);
+        } catch (_) {}
+      }
+
       final form = FormData();
 
       form.fields.add(MapEntry('conversation_id', conversationId.toString()));
@@ -516,7 +609,24 @@ class ChatController extends GetxController {
         );
 
         if (currentConversation.value?.id == conversationId) {
-          currentMessages.add(msg);
+          // Replace pending message if exists.
+          if (pending != null) {
+            final idx = currentMessages.indexWhere((m) => m.id == pendingId);
+            if (idx >= 0) {
+              currentMessages[idx] = msg;
+            } else {
+              currentMessages.add(msg);
+            }
+          } else {
+            currentMessages.add(msg);
+          }
+
+          // One-shot delayed sync to ensure backend catches up.
+          Future.delayed(const Duration(milliseconds: 400), () {
+            if (currentConversation.value?.id == conversationId) {
+              loadConversationMessages(conversationId, silent: true);
+            }
+          });
         }
 
         final convJson = (res['message'] as Map)['conversation'];
@@ -537,8 +647,101 @@ class ChatController extends GetxController {
         _applyFilters();
         return msg;
       }
+
+      // If request failed, remove pending message.
+      if (pending != null && currentConversation.value?.id == conversationId) {
+        currentMessages.removeWhere((m) => m.id == pendingId);
+      }
     } catch (e) {
       print('❌ sendMessage: $e');
+
+      // Cleanup pending in case of exceptions.
+      try {
+        currentMessages.removeWhere(
+          (m) => m.id < 0 && (m.conversationId ?? '') == conversationId.toString(),
+        );
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  /// Start (or reuse) a direct conversation by sending a first context message.
+  ///
+  /// This matches the Postman flow you verified:
+  /// POST /messages with participant_type + participant_id (no conversation_id)
+  /// and optionally product_id/service_id.
+  Future<ChatConversation?> startDirectChatByFirstMessage({
+    required String participantType,
+    required String participantId,
+    String? body,
+    int? productId,
+    int? serviceId,
+    int? varationId,
+  }) async {
+    try {
+      final pt = participantType.trim();
+      final pid = participantId.trim();
+      if (pt.isEmpty || pid.isEmpty) {
+        throw 'participant_type/participant_id are required';
+      }
+
+      final form = FormData();
+      form.fields.add(MapEntry('participant_type', pt));
+      form.fields.add(MapEntry('participant_id', pid));
+
+      final text = (body ?? '').trim();
+      // Many backends require body; send a safe default if empty.
+      form.fields.add(MapEntry('body', text.isNotEmpty ? text : 'مرحباً'));
+
+      if (productId != null) {
+        form.fields.add(MapEntry('product_id', productId.toString()));
+      }
+      if (serviceId != null) {
+        form.fields.add(MapEntry('service_id', serviceId.toString()));
+      }
+      if (varationId != null) {
+        form.fields.add(MapEntry('varation_id', varationId.toString()));
+      }
+
+      final res = await ApiHelper.post(
+        path: '/messages',
+        body: form,
+        withLoading: true,
+        shouldShowMessage: true,
+      );
+
+      if (res is Map && res['status'] == true) {
+        final msgJson = (res['message'] is Map)
+            ? Map<String, dynamic>.from(res['message'] as Map)
+            : null;
+
+        Map<String, dynamic>? convJson;
+        if (msgJson != null && msgJson['conversation'] is Map) {
+          convJson = Map<String, dynamic>.from(msgJson['conversation'] as Map);
+        } else if (res['conversation'] is Map) {
+          convJson = Map<String, dynamic>.from(res['conversation'] as Map);
+        }
+
+        if (convJson != null) {
+          final conv = ChatConversation.fromJson(convJson);
+          _upsertConversation(conv);
+          _applyFilters();
+
+          // If chat is already open on this conversation, append the message.
+          if (msgJson != null) {
+            try {
+              final msg = ChatMessage.fromJson(msgJson);
+              if (currentConversation.value?.id == conv.id) {
+                currentMessages.add(msg);
+              }
+            } catch (_) {}
+          }
+
+          return conv;
+        }
+      }
+    } catch (e) {
+      print('❌ startDirectChatByFirstMessage: $e');
     }
     return null;
   }

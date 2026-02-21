@@ -459,12 +459,17 @@ class ApiHelper {
 
       final baseHeaders = await _getBaseHeaders();
       final requestHeaders = {...baseHeaders, ...?headers};
-      if ((path.startsWith('/conversations') || path.startsWith('/messages')) &&
-          !requestHeaders.containsKey('storeId')) {
-        final sid = getStoreIdOrNull();
-        if (sid != null && sid.trim().isNotEmpty) {
-          requestHeaders['storeId'] = sid.trim();
-        }
+
+      // ✅ Important:
+      // Chat endpoints are user-scoped in the backend (based on the token), and
+      // adding a storeId header may switch the guard/context to a store account.
+      // That often results in: "أنت لست مشاركًا في هذه المحادثة" even when the
+      // same token works in Postman (where storeId is usually not sent).
+      // لذلك، نحذف storeId دائمًا من طلبات الشات.
+      if (path.startsWith('/conversations') ||
+          path.startsWith('/messages') ||
+          path.startsWith('/blocks')) {
+        requestHeaders.remove('storeId');
       }
 
       if (body is FormData) {

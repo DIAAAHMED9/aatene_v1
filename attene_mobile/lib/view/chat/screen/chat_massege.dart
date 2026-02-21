@@ -31,15 +31,22 @@ class _ChatMassegeState extends State<ChatMassege> {
   Timer? _recordTimer;
   String? _recordPath;
 
+  Worker? _msgWorker;
+
   @override
   void initState() {
     super.initState();
     c.openConversation(widget.conversation);
-    ever<List<ChatMessage>>(c.currentMessages, (_) => _scrollToBottomSoon());
+    _msgWorker = ever<List<ChatMessage>>(
+      c.currentMessages,
+      (_) => _scrollToBottomSoon(),
+    );
   }
 
   @override
   void dispose() {
+    _msgWorker?.dispose();
+    c.leaveConversation(widget.conversation.id);
     _text.dispose();
     _scroll.dispose();
     _recordTimer?.cancel();
