@@ -55,6 +55,14 @@ class NotificationView extends StatelessWidget {
           child: Icon(Icons.arrow_back, color: AppColors.neutral100),
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            Get.to(NotificationFeed());
+          },
+          icon: Icon(Icons.settings),
+        ),
+      ],
     );
   }
 

@@ -5,32 +5,60 @@ class NotificationController extends GetxController {
   final pageController = PageController();
   final currentIndex = 0.obs;
 
-  final notifications = <NotificationModel>[
-    NotificationModel(
-      title: 'عاد المنتج المفضل لديك للتوفر الآن!',
-      body: 'تحقق من الكمية المتوفرة قبل انتهاء العرض',
-      time: 'منذ ساعة',
-      image: 'assets/images/user1.png',
-      isRead: false,
-    ),
-    NotificationModel(
-      title: 'خصم جديد على متجرك المفضل!',
-      body: 'المنتج الذي أضفته لمفضلاتك عاد للتخزين',
-      time: 'منذ ساعة',
-      image: 'assets/images/user1.png',
-      isRead: false,
-    ),
-  ].obs;
+  /// القائمة الرئيسية
+  final notifications = <NotificationModel>[].obs;
 
-  NotificationModel? _lastRemoved;
-  int? _lastRemovedIndex;
+  bool isLoading = true;
+  bool hasError = false;
+  String errorMessage = '';
 
+  @override
+  void onReady() {
+    super.onReady();
+    fetchNotificationData();
+  }
+
+  /// =========================
+  /// FETCH DATA FROM API
+  /// =========================
+  Future<void> fetchNotificationData() async {
+    try {
+      isLoading = true;
+      hasError = false;
+      update();
+
+      final res = await ApiHelper.notificationData();
+
+      if (res != null && res['status'] == true) {
+        final List list = res['notifications'] ?? [];
+
+        notifications.value =
+            list.map((e) => NotificationModel.fromJson(e)).toList();
+      } else {
+        hasError = true;
+        errorMessage = res?['message'] ?? 'حدث خطأ أثناء جلب البيانات';
+      }
+    } catch (e) {
+      hasError = true;
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  /// =========================
+  /// FILTERS
+  /// =========================
   List<NotificationModel> get unreadList =>
       notifications.where((e) => !e.isRead).toList();
 
   List<NotificationModel> get readList =>
       notifications.where((e) => e.isRead).toList();
 
+  /// =========================
+  /// PAGE CONTROL
+  /// =========================
   void changePage(int index) {
     currentIndex.value = index;
     pageController.animateToPage(
@@ -40,6 +68,9 @@ class NotificationController extends GetxController {
     );
   }
 
+  /// =========================
+  /// MARK AS READ
+  /// =========================
   void markAsRead(NotificationModel model) {
     final index = notifications.indexOf(model);
     if (index != -1) {
@@ -50,10 +81,17 @@ class NotificationController extends GetxController {
   void markAllAsRead() {
     for (int i = 0; i < notifications.length; i++) {
       if (!notifications[i].isRead) {
-        notifications[i] = notifications[i].copyWith(isRead: true);
+        notifications[i] =
+            notifications[i].copyWith(isRead: true);
       }
     }
   }
+
+  /// =========================
+  /// DELETE WITH UNDO
+  /// =========================
+  NotificationModel? _lastRemoved;
+  int? _lastRemovedIndex;
 
   void removeWithUndo(NotificationModel model) {
     _lastRemovedIndex = notifications.indexOf(model);

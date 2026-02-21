@@ -55,16 +55,15 @@ class _AnimatedNotificationItemState extends State<AnimatedNotificationItem> {
                     }
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: widget.model.isRead
-                          ? AppColors.neutral50
-                          : AppColors.primary50.withOpacity(0.3),
+                      color:
+                          AppColors.primary50.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: widget.model.isRead
-                            ? AppColors.neutral100
-                            : AppColors.primary100,
+                            ? AppColors.primary50
+                            : AppColors.primary500,
                         width: 1,
                       ),
                     ),

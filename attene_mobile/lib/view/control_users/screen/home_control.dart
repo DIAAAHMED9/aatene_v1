@@ -223,6 +223,8 @@ class HomeControl extends StatelessWidget {
                           ],
                         ),
                         GestureDetector(
+                          onTap: () => ApiHelper.logout(),
+
                           child: Row(
                             spacing: 10,
                             children: [

@@ -39,14 +39,18 @@ class _ProductDetailsState extends State<ProductDetails> {
   void initState() {
     super.initState();
 
-    final dynamic rawSlug = (args is Map) ? (args['slug'] ?? args['slag'] ?? args['productSlug']) : null;
-    final dynamic rawId = (args is Map) ? (args['productId'] ?? args['id']) : null;
+    final dynamic rawSlug = (args is Map)
+        ? (args['slug'] ?? args['slag'] ?? args['productSlug'])
+        : null;
+    final dynamic rawId = (args is Map)
+        ? (args['productId'] ?? args['id'])
+        : null;
 
     final String slug = (rawSlug ?? '').toString();
     final String idStr = (rawId ?? '').toString();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Get.previousRoute=='/mainScreen') {
+      if (Get.previousRoute == '/mainScreen') {
         _loadProductBySlug(slug);
       } else {
         _loadProductById(idStr);
@@ -63,15 +67,12 @@ class _ProductDetailsState extends State<ProductDetails> {
   void toggleLike() {
     setState(() => isLiked = !isLiked);
   }
+
   Future<void> _loadProductBySlug(String slug) async {
     try {
       setState(() => isLoading = true);
-      
-      await _productService.fetchProductBySlug(
-        slug: slug,
-        withLoading: false,
-      );
-        
+
+      await _productService.fetchProductBySlug(slug: slug, withLoading: false);
     } catch (e) {
       print('Error loading product: $e');
       Get.snackbar('خطأ', 'فشل في تحميل بيانات المنتج');
@@ -89,10 +90,7 @@ class _ProductDetailsState extends State<ProductDetails> {
         throw Exception('Missing product id/slug');
       }
 
-      await _productService.fetchProductById(
-        productId: id,
-        withLoading: false,
-      );
+      await _productService.fetchProductById(productId: id, withLoading: false);
     } catch (e) {
       print('Error loading product: $e');
       Get.snackbar('خطأ', 'فشل في تحميل بيانات المنتج');
@@ -201,14 +199,24 @@ class _ProductDetailsState extends State<ProductDetails> {
       try {
         final decoded = json.decode(s);
         if (decoded is List) {
-          return decoded.map((e) => _tagToString(e)).where((e) => e.isNotEmpty).toList();
+          return decoded
+              .map((e) => _tagToString(e))
+              .where((e) => e.isNotEmpty)
+              .toList();
         }
       } catch (_) {}
-      return s.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      return s
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
     }
 
     if (raw is List) {
-      return raw.map((e) => _tagToString(e)).where((e) => e.isNotEmpty).toList();
+      return raw
+          .map((e) => _tagToString(e))
+          .where((e) => e.isNotEmpty)
+          .toList();
     }
 
     final one = _tagToString(raw);
@@ -292,7 +300,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             }
 
             final product = controller.productData;
-            
+
             if (product.isEmpty) {
               return Center(
                 child: Column(
@@ -311,7 +319,10 @@ class _ProductDetailsState extends State<ProductDetails> {
 
             final images = _collectImages(product);
             final title = (product['name'] ?? '').toString().trim();
-            final desc = (product['description'] ?? product['short_description'] ?? '').toString().trim();
+            final desc =
+                (product['description'] ?? product['short_description'] ?? '')
+                    .toString()
+                    .trim();
             final price = (product['price'] ?? '').toString().trim();
 
             final reviewRate = _extractReviewRate(product);
@@ -341,23 +352,32 @@ class _ProductDetailsState extends State<ProductDetails> {
                             : PageView.builder(
                                 controller: _pageController,
                                 itemCount: images.length,
-                                onPageChanged: (i) => setState(() => _pageIndex = i),
+                                onPageChanged: (i) =>
+                                    setState(() => _pageIndex = i),
                                 itemBuilder: (_, i) {
                                   return Image.network(
                                     images[i],
                                     width: double.infinity,
                                     fit: BoxFit.cover,
                                     height: 400,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
                                     errorBuilder: (_, __, ___) => Image.asset(
                                       'assets/images/png/ser1.png',
                                       width: double.infinity,
@@ -398,7 +418,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                               color: AppColors.light1000,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -455,7 +478,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                 ),
                                 const Spacer(),
-                                const Icon(Icons.star, color: Colors.amberAccent),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amberAccent,
+                                ),
                                 Text(reviewRate),
                                 Text("($reviewCount)"),
                               ],
@@ -472,7 +498,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          title.isNotEmpty ? title : (isRTL ? 'منتج' : 'Product'),
+                          title.isNotEmpty
+                              ? title
+                              : (isRTL ? 'منتج' : 'Product'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 24,
@@ -520,7 +548,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 decoration: CustomDropdownDecoration(
                                   hintStyle: getMedium(fontSize: 12),
                                   closedBorderRadius: BorderRadius.circular(10),
-                                  closedBorder: Border.all(color: AppColors.primary100),
+                                  closedBorder: Border.all(
+                                    color: AppColors.primary100,
+                                  ),
                                   closedSuffixIcon: Icon(
                                     Icons.keyboard_arrow_down_outlined,
                                     color: AppColors.primary100,
@@ -528,8 +558,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 items: _listSize,
                                 onListChanged: (value) {},
-                                listValidator: (value) =>
-                                    value.isEmpty ? "يجب عليك الاختيار للمتابعة" : null,
+                                listValidator: (value) => value.isEmpty
+                                    ? "يجب عليك الاختيار للمتابعة"
+                                    : null,
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -539,7 +570,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 decoration: CustomDropdownDecoration(
                                   hintStyle: getMedium(fontSize: 12),
                                   closedBorderRadius: BorderRadius.circular(10),
-                                  closedBorder: Border.all(color: AppColors.primary100),
+                                  closedBorder: Border.all(
+                                    color: AppColors.primary100,
+                                  ),
                                   closedSuffixIcon: Icon(
                                     Icons.keyboard_arrow_down_outlined,
                                     color: AppColors.primary100,
@@ -547,8 +580,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 ),
                                 items: _listColor,
                                 onListChanged: (value) {},
-                                listValidator: (value) =>
-                                    value.isEmpty ? "يجب عليك الاختيار للمتابعة" : null,
+                                listValidator: (value) => value.isEmpty
+                                    ? "يجب عليك الاختيار للمتابعة"
+                                    : null,
                               ),
                             ),
                           ],
@@ -558,11 +592,17 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                         Row(
                           children: [
-                            const Text(" السعر", style: TextStyle(fontSize: 13)),
+                            const Text(
+                              " السعر",
+                              style: TextStyle(fontSize: 13),
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               price.isNotEmpty ? " $price ₪" : " -",
-                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -580,7 +620,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                             ),
                             Text(
                               "  50% off ",
-                              style: TextStyle(fontSize: 13, color: AppColors.error200),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: AppColors.error200,
+                              ),
                             ),
                           ],
                         ),
@@ -596,20 +639,30 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   height: 100,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: AppColors.primary50, width: 2),
+                                    border: Border.all(
+                                      color: AppColors.primary50,
+                                      width: 2,
+                                    ),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        isLiked ? Icons.favorite : Icons.favorite_border,
+                                        isLiked
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
                                         size: 30,
                                         color: isLiked
                                             ? AppColors.primary400
                                             : AppColors.neutral300,
                                       ),
                                       const SizedBox(height: 8),
-                                      Text("اعجبني", style: TextStyle(color: AppColors.neutral400)),
+                                      Text(
+                                        "اعجبني",
+                                        style: TextStyle(
+                                          color: AppColors.neutral400,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -628,7 +681,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   height: 100,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: AppColors.primary50, width: 2),
+                                    border: Border.all(
+                                      color: AppColors.primary50,
+                                      width: 2,
+                                    ),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -640,7 +696,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         color: AppColors.neutral300,
                                       ),
                                       const SizedBox(height: 8),
-                                      Text("مشاركه", style: TextStyle(color: AppColors.neutral400)),
+                                      Text(
+                                        "مشاركه",
+                                        style: TextStyle(
+                                          color: AppColors.neutral400,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -652,14 +713,26 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 height: 100,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(color: AppColors.primary50, width: 2),
+                                  border: Border.all(
+                                    color: AppColors.primary50,
+                                    width: 2,
+                                  ),
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.star_border_rounded, size: 30, color: AppColors.neutral300),
+                                    Icon(
+                                      Icons.star_border_rounded,
+                                      size: 30,
+                                      color: AppColors.neutral300,
+                                    ),
                                     const SizedBox(height: 8),
-                                    Text("تقيم", style: TextStyle(color: AppColors.neutral400)),
+                                    Text(
+                                      "تقيم",
+                                      style: TextStyle(
+                                        color: AppColors.neutral400,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -670,14 +743,26 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 height: 100,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(color: AppColors.primary50, width: 2),
+                                  border: Border.all(
+                                    color: AppColors.primary50,
+                                    width: 2,
+                                  ),
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.flag_outlined, size: 30, color: AppColors.neutral300),
+                                    Icon(
+                                      Icons.flag_outlined,
+                                      size: 30,
+                                      color: AppColors.neutral300,
+                                    ),
                                     const SizedBox(height: 8),
-                                    Text("إبلاغ", style: TextStyle(color: AppColors.neutral400)),
+                                    Text(
+                                      "إبلاغ",
+                                      style: TextStyle(
+                                        color: AppColors.neutral400,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -702,7 +787,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                   color: AppColors.primary50,
                                 ),
-                                child: SvgPicture.asset("assets/images/svg_images/car.svg", width: 18, height: 18),
+                                child: SvgPicture.asset(
+                                  "assets/images/svg_images/car.svg",
+                                  width: 18,
+                                  height: 18,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               const Text("معلومات التوصيل"),
@@ -722,7 +811,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
                                           color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
                                         ),
                                         child: SvgPicture.asset(
                                           "assets/images/svg_images/Calendar12.svg",
@@ -731,7 +822,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         ),
                                       ),
                                       const SizedBox(width: 20),
-                                      Text("يتم التوصيل خلال 1–4 أيام ", style: getBold(), overflow: TextOverflow.ellipsis),
+                                      Text(
+                                        "يتم التوصيل خلال 1–4 أيام ",
+                                        style: getBold(),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -755,10 +850,19 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         const SizedBox(width: 10),
                                         const Text(
                                           "توصيل إلي الناصرة من 2-3 أيام",
-                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         const Spacer(),
-                                        Text("1200.0 ₪", style: TextStyle(color: AppColors.primary400, fontSize: 14)),
+                                        Text(
+                                          "1200.0 ₪",
+                                          style: TextStyle(
+                                            color: AppColors.primary400,
+                                            fontSize: 14,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -783,7 +887,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     const SizedBox(width: 10),
                                     const Text(
                                       "التوصيل إلى: ",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(width: 10),
                                     Expanded(
@@ -791,10 +898,19 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         hintText: 'اختر المدينة',
                                         items: _listCity,
                                         decoration: CustomDropdownDecoration(
-                                          hintStyle: getMedium(fontSize: 12, color: AppColors.primary400),
-                                          closedBorderRadius: BorderRadius.circular(10),
-                                          closedBorder: Border.all(color: AppColors.primary100),
-                                          closedSuffixIcon: Icon(Icons.keyboard_arrow_down_outlined, color: AppColors.primary400),
+                                          hintStyle: getMedium(
+                                            fontSize: 12,
+                                            color: AppColors.primary400,
+                                          ),
+                                          closedBorderRadius:
+                                              BorderRadius.circular(10),
+                                          closedBorder: Border.all(
+                                            color: AppColors.primary100,
+                                          ),
+                                          closedSuffixIcon: Icon(
+                                            Icons.keyboard_arrow_down_outlined,
+                                            color: AppColors.primary400,
+                                          ),
                                         ),
                                         initialItem: _listCity[0],
                                         onChanged: (value) {},
@@ -808,7 +924,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: AppColors.primary50),
+                                    border: Border.all(
+                                      color: AppColors.primary50,
+                                    ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
@@ -820,7 +938,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           padding: const EdgeInsets.all(7),
                                           decoration: BoxDecoration(
                                             color: AppColors.primary400,
-                                            borderRadius: BorderRadius.circular(15),
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
                                           ),
                                           child: SvgPicture.asset(
                                             "assets/images/svg_images/city_delevery.svg",
@@ -831,7 +951,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         const SizedBox(width: 10),
                                         const Text(
                                           "شركة مرسال للتوصيل ",
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -845,30 +968,29 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                         const SizedBox(height: 10),
 
-                        ExpansionTile(
-                          maintainState: true,
-                          title: Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 40,
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(100),
-                                    topLeft: Radius.circular(100),
-                                  ),
-                                  color: AppColors.primary50,
-                                ),
-                                child: SvgPicture.asset("assets/images/svg_images/bag-2.svg", width: 18, height: 18),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text("عروض"),
-                            ],
-                          ),
-                          children: const [],
-                        ),
-
+                        // ExpansionTile(
+                        //   maintainState: true,
+                        //   title: Row(
+                        //     children: [
+                        //       Container(
+                        //         width: 60,
+                        //         height: 40,
+                        //         padding: const EdgeInsets.all(8),
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.only(
+                        //             bottomLeft: Radius.circular(100),
+                        //             topLeft: Radius.circular(100),
+                        //           ),
+                        //           color: AppColors.primary50,
+                        //         ),
+                        //         child: SvgPicture.asset("assets/images/svg_images/bag-2.svg", width: 18, height: 18),
+                        //       ),
+                        //       const SizedBox(width: 10),
+                        //       const Text("عروض"),
+                        //     ],
+                        //   ),
+                        //   children: const [],
+                        // ),
                         const SizedBox(height: 10),
 
                         ExpansionTile(
@@ -886,7 +1008,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                   color: AppColors.primary50,
                                 ),
-                                child: SvgPicture.asset("assets/images/svg_images/user.svg", width: 18, height: 18),
+                                child: SvgPicture.asset(
+                                  "assets/images/svg_images/user.svg",
+                                  width: 18,
+                                  height: 18,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               const Text("معلومات عن التاجر"),
@@ -896,42 +1022,68 @@ class _ProductDetailsState extends State<ProductDetails> {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: GestureDetector(
-                                onTap: () {
-                                },
+                                onTap: () {},
                                 child: Container(
                                   width: double.infinity,
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: AppColors.primary50, width: 2),
+                                    border: Border.all(
+                                      color: AppColors.primary50,
+                                      width: 2,
+                                    ),
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           CircleAvatar(
-                                            backgroundImage: product['store'] != null &&
-                                                product['store']['logo_url'] != null
-                                                ? NetworkImage(product['store']['logo_url'].toString())
-                                                : const AssetImage('assets/images/png/ser1.png') as ImageProvider,
+                                            backgroundImage:
+                                                product['store'] != null &&
+                                                    product['store']['logo_url'] !=
+                                                        null
+                                                ? NetworkImage(
+                                                    product['store']['logo_url']
+                                                        .toString(),
+                                                  )
+                                                : const AssetImage(
+                                                        'assets/images/png/ser1.png',
+                                                      )
+                                                      as ImageProvider,
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  storeName.isNotEmpty ? storeName : "—",
-                                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                                  storeName.isNotEmpty
+                                                      ? storeName
+                                                      : "—",
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                                 Row(
                                                   children: [
-                                                    Icon(Icons.location_on, color: AppColors.primary400, size: 15),
+                                                    Icon(
+                                                      Icons.location_on,
+                                                      color:
+                                                          AppColors.primary400,
+                                                      size: 15,
+                                                    ),
                                                     const SizedBox(width: 4),
                                                     Text(
-                                                      storeAddress.isNotEmpty ? storeAddress : "—",
-                                                      style: TextStyle(color: AppColors.primary400),
+                                                      storeAddress.isNotEmpty
+                                                          ? storeAddress
+                                                          : "—",
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .primary400,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -945,27 +1097,48 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               height: 25,
                                               decoration: BoxDecoration(
                                                 color: AppColors.primary400,
-                                                borderRadius: BorderRadius.circular(50),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
                                               ),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(Icons.person_add_alt, color: AppColors.light1000, size: 15),
+                                                  Icon(
+                                                    Icons.person_add_alt,
+                                                    color: AppColors.light1000,
+                                                    size: 15,
+                                                  ),
                                                   const SizedBox(width: 5),
-                                                  Text("متابعة", style: TextStyle(color: AppColors.light1000, fontSize: 12)),
+                                                  Text(
+                                                    "متابعة",
+                                                    style: TextStyle(
+                                                      color:
+                                                          AppColors.light1000,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      Divider(color: AppColors.primary50, height: 2),
+                                      Divider(
+                                        color: AppColors.primary50,
+                                        height: 2,
+                                      ),
                                       Row(
                                         children: [
-                                          SvgPicture.asset("assets/images/svg_images/timer.svg", width: 16, height: 16),
+                                          SvgPicture.asset(
+                                            "assets/images/svg_images/timer.svg",
+                                            width: 16,
+                                            height: 16,
+                                          ),
                                           const SizedBox(width: 5),
                                           Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: const [
                                               Text("عضو منذ "),
                                               Text(" — "),
@@ -975,10 +1148,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           const Icon(Icons.star_border_rounded),
                                           const SizedBox(width: 5),
                                           Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               const Text(" تقيم التاجر"),
-                                              Text(product['store']['review_rate'] ?? 0),
+                                              Text(
+                                                product['store']['review_rate'] ??
+                                                    0,
+                                              ),
                                             ],
                                           ),
                                         ],
@@ -1007,7 +1184,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                   color: AppColors.primary50,
                                 ),
-                                child: Icon(Icons.info_outline_rounded, color: AppColors.primary400),
+                                child: Icon(
+                                  Icons.info_outline_rounded,
+                                  color: AppColors.primary400,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               const Text("مواصفات المنتج"),
@@ -1018,7 +1198,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                               padding: const EdgeInsets.all(20.0),
                               child: Text(
                                 desc.isNotEmpty ? desc : "لا توجد مواصفات",
-                                style: TextStyle(fontSize: 13, color: AppColors.neutral500),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.neutral500,
+                                ),
                               ),
                             ),
                           ],
@@ -1040,7 +1223,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                   color: AppColors.primary50,
                                 ),
-                                child: Icon(Icons.star_border_rounded, color: AppColors.primary400),
+                                child: Icon(
+                                  Icons.star_border_rounded,
+                                  color: AppColors.primary400,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               const Text("تقييمات ومراجعات"),
@@ -1073,7 +1259,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                   color: AppColors.primary50,
                                 ),
-                                child: Icon(Icons.local_offer_outlined, color: AppColors.primary400),
+                                child: Icon(
+                                  Icons.local_offer_outlined,
+                                  color: AppColors.primary400,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               const Text("العلامات"),
@@ -1096,7 +1285,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       child: const Padding(
                                         padding: EdgeInsets.all(10.0),
                                         child: Center(
-                                          child: Text("—", style: TextStyle(fontSize: 12)),
+                                          child: Text(
+                                            "—",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
                                         ),
                                       ),
                                     )
@@ -1105,13 +1297,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       Container(
                                         height: 35,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(50),
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
                                           color: Colors.grey[100],
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Center(
-                                            child: Text(t, style: const TextStyle(fontSize: 12)),
+                                            child: Text(
+                                              t,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -1125,15 +1324,17 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                         TitleHome(
                           title: "المتاجر المميزة",
-                          subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
+                          subtitle:
+                              "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
                         ),
-                        const VendorCard(store: {},),
+                        const VendorCard(store: {}),
 
                         const SizedBox(height: 20),
 
                         TitleHome(
                           title: "منتجات تم تخصيصها لك",
-                          subtitle: "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
+                          subtitle:
+                              "أفضل المنتجات مبيعاً من بائعين موثوق بهم | ممول",
                         ),
                         const ProductCard(),
 
@@ -1166,9 +1367,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 height: 24,
                               ),
                               onPressed: () async {
-                                final storeId = _extractStoreId(product)?.trim() ?? '';
+                                final storeId =
+                                    _extractStoreId(product)?.trim() ?? '';
                                 if (storeId.isEmpty) {
-                                  Get.snackbar('خطأ', 'تعذر تحديد المتجر الخاص بهذا المنتج');
+                                  Get.snackbar(
+                                    'خطأ',
+                                    'تعذر تحديد المتجر الخاص بهذا المنتج',
+                                  );
                                   return;
                                 }
 
@@ -1179,7 +1384,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   box.write('selected_store_id', storeId);
                                 } catch (_) {}
 
-                                final ChatController chat = Get.isRegistered<ChatController>()
+                                final ChatController chat =
+                                    Get.isRegistered<ChatController>()
                                     ? Get.find<ChatController>()
                                     : Get.put(ChatController());
 
@@ -1192,8 +1398,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     final d = p.participantData;
                                     if (d == null) continue;
                                     final pid = (d.id ?? '').toString();
-                                    final ptype = (d.type ?? '').toString().toLowerCase();
-                                    if (pid == storeId && (ptype == 'store' || ptype == 'merchant' || ptype == 'vendor')) {
+                                    final ptype = (d.type ?? '')
+                                        .toString()
+                                        .toLowerCase();
+                                    if (pid == storeId &&
+                                        (ptype == 'store' ||
+                                            ptype == 'merchant' ||
+                                            ptype == 'vendor')) {
                                       existing = c;
                                       break;
                                     }
@@ -1201,7 +1412,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   if (existing != null) break;
                                 }
 
-                                final conv = existing ??
+                                final conv =
+                                    existing ??
                                     await chat.createConversation(
                                       type: 'direct',
                                       participants: [
@@ -1212,7 +1424,9 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                                 if (conv != null) {
                                   await chat.openConversation(conv);
-                                  Get.to(() => ChatDetailPage(conversation: conv));
+                                  Get.to(
+                                    () => ChatDetailPage(conversation: conv),
+                                  );
                                 }
                               },
                               label: const Text('دردش'),
