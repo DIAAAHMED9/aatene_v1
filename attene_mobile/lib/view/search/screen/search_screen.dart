@@ -13,7 +13,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
-  final List<String> _history = ['ملابس أطفال', 'براند', 'ديكور منزلي'];
+  final List<String> _history = [];
   String? _removedItem;
   int? _removedIndex;
   final ScrollController _scrollController = ScrollController();
@@ -319,7 +319,10 @@ class _SearchScreenState extends State<SearchScreen>
     print('dataProduct = $data');
     switch (type) {
       case SearchType.products:
-      return ProductCard(key: ValueKey('product_${data['id'] ?? ''}'), product: data);
+        return ProductCard(
+          key: ValueKey('product_${data['id'] ?? ''}'),
+          product: data,
+        );
       case SearchType.services:
         return ServicesCard(service: data);
       case SearchType.stores:

@@ -135,8 +135,8 @@ class ShowReport extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: AppColors.colorShowReport,
-            border: Border.all(color: AppColors.customColor02),
+            color: statusColor.withOpacity(0.2),
+            border: Border.all(color: statusColor),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),

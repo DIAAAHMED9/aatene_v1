@@ -27,46 +27,59 @@ class AateneDrawer extends StatelessWidget {
                 height: ResponsiveDimensions.h(50),
                 fit: BoxFit.cover,
               ),
-              
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-  child: Obx(
-    () => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('وضع التطبيق', style: getMedium()),
-        const SizedBox(height: 8),
-        _ModeTile(
-          title: 'مستخدم',
-          isSelected: controller.currentViewMode.value == AppViewMode.user,
-          onTap: () async {
-            Get.back();
-            await controller.setViewMode(AppViewMode.user);
-          },
-        ),
-        _ModeTile(
-          title: 'تاجر منتجات',
-          isSelected: controller.currentViewMode.value == AppViewMode.merchantProducts,
-          onTap: () async {
-            Get.back();
-            await controller.setViewMode(AppViewMode.merchantProducts);
-          },
-        ),
-        _ModeTile(
-          title: 'تاجر خدمات',
-          isSelected: controller.currentViewMode.value == AppViewMode.merchantServices,
-          onTap: () async {
-            Get.back();
-            await controller.setViewMode(AppViewMode.merchantServices);
-          },
-        ),
-        const Divider(height: 24),
-      ],
-    ),
-  ),
-),
 
-Padding(
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Obx(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('وضع التطبيق', style: getMedium()),
+                      const SizedBox(height: 8),
+                      _ModeTile(
+                        title: 'مستخدم',
+                        isSelected:
+                            controller.currentViewMode.value ==
+                            AppViewMode.user,
+                        onTap: () async {
+                          Get.back();
+                          await controller.setViewMode(AppViewMode.user);
+                        },
+                      ),
+                      _ModeTile(
+                        title: 'تاجر منتجات',
+                        isSelected:
+                            controller.currentViewMode.value ==
+                            AppViewMode.merchantProducts,
+                        onTap: () async {
+                          Get.back();
+                          await controller.setViewMode(
+                            AppViewMode.merchantProducts,
+                          );
+                        },
+                      ),
+                      _ModeTile(
+                        title: 'تاجر خدمات',
+                        isSelected:
+                            controller.currentViewMode.value ==
+                            AppViewMode.merchantServices,
+                        onTap: () async {
+                          Get.back();
+                          await controller.setViewMode(
+                            AppViewMode.merchantServices,
+                          );
+                        },
+                      ),
+                      const Divider(height: 24),
+                    ],
+                  ),
+                ),
+              ),
+
+              Padding(
                 padding: const EdgeInsets.all(16),
                 child: Obx(
                   () => Column(
@@ -190,6 +203,15 @@ Padding(
                 title: 'الأسئلة الشائعة',
                 onTap: () {
                   Get.to(FaqPage());
+                },
+              ),
+              DrawerMenuItem(
+                icon: Icon(Icons.login_rounded, color: AppColors.error200),
+
+                title: "تسجيل خروج",
+                onTap: () {
+                  ApiHelper.logout();
+                  Get.back();
                 },
               ),
               SizedBox(height: 100),

@@ -2,6 +2,8 @@ import 'package:attene_mobile/view/control_users/controller/support_controller.d
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/colors/app_color.dart';
+
 class FaqPage extends StatelessWidget {
   const FaqPage({super.key});
 
@@ -18,15 +20,11 @@ class FaqPage extends StatelessWidget {
         }
 
         if (controller.hasError) {
-          return Scaffold(
-            body: Center(child: Text(controller.errorMessage)),
-          );
+          return Scaffold(body: Center(child: Text(controller.errorMessage)));
         }
 
         if (controller.faqSections.isEmpty) {
-          return const Scaffold(
-            body: Center(child: Text("No Data")),
-          );
+          return const Scaffold(body: Center(child: Text("No Data")));
         }
 
         return DefaultTabController(
@@ -34,12 +32,29 @@ class FaqPage extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: const Text("FAQs"),
+              leading: IconButton(
+                onPressed: () => Get.back(),
+                icon: Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.grey[100],
+                  ),
+                  child: Icon(Icons.arrow_back, color: AppColors.neutral100),
+                ),
+              ),
+
               bottom: TabBar(
+                unselectedLabelColor: AppColors.neutral100,
+                // dividerColor: Colors.blue,
+                labelColor: AppColors.primary400,
+                indicatorColor: AppColors.primary400,
                 isScrollable: true,
                 tabs: controller.faqSections
                     .map<Widget>(
                       (category) => Tab(text: category['title'] ?? ''),
-                )
+                    )
                     .toList(),
               ),
             ),

@@ -34,7 +34,10 @@ class DashboardView extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(onPressed: ()=>ApiHelper.logout(), icon: Icon(Icons.logout_outlined))
+          IconButton(
+            onPressed: () => ApiHelper.logout(),
+            icon: Icon(Icons.logout_outlined),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -83,10 +86,12 @@ class DashboardView extends StatelessWidget {
               spacing: 5,
               children: [
                 Icon(Icons.campaign_outlined, size: 28),
-                Obx(() => Text(
-                      "المحتوي (${controller.filterLabel.value})",
-                      style: getMedium(fontSize: 14),
-                    )),
+                Obx(
+                  () => Text(
+                    "المحتوي (${controller.filterLabel.value})",
+                    style: getMedium(fontSize: 14),
+                  ),
+                ),
                 Spacer(),
                 InkWell(
                   borderRadius: BorderRadius.circular(50),
@@ -107,11 +112,16 @@ class DashboardView extends StatelessWidget {
                           height: 17,
                           width: 17,
                         ),
-                        Obx(() => Text(
-                              controller.filterLabel.value,
-                              style: getMedium(fontSize: 12),
-                            )),
-                        const Icon(Icons.keyboard_arrow_down_outlined, size: 20),
+                        Obx(
+                          () => Text(
+                            controller.filterLabel.value,
+                            style: getMedium(fontSize: 12),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.keyboard_arrow_down_outlined,
+                          size: 20,
+                        ),
                       ],
                     ),
                   ),
